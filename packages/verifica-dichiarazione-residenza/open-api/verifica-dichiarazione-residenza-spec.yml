@@ -1,0 +1,455 @@
+openapi: 3.0.3
+info:
+  title: Interoperability API Data Preparation Micro Service - Verifica Residenza
+  description: exposes the API for interacting with interoperability features
+  version: '1.0'
+  termsOfService: 'http://swagger.io/terms/'
+  x-api-id: an x-api-id
+  x-summary: an x-summary
+servers:
+  - url: https://localhost:8080
+    description: This service is the interoperability API gateway
+tags:
+  - name: Data Preparation
+    description: Data Preparation APIs
+  - name: health
+    description: Verify service status
+security:
+  - bearerAuth: []
+paths:
+  /data-preparation:
+    post:
+      tags:
+        - Data Preparation
+      summary: Insert data preparation
+      description: Insert data preparation
+      operationId: pushData
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DataPreparationRequest'
+      responses:
+        '200':
+          description: signal inteserted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataPreparationResponse'
+        '400':
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+
+components:
+  schemas:
+    DataPreparationRequest:
+      type: object
+      additionalProperties: false
+      title: SignalRequest
+      description: represents the details of a verified attribute bound to the agreement.
+      properties:
+        requestData:
+          $ref: '#/components/schemas/RichiestaE002'
+        responsetData:
+          $ref: '#/components/schemas/RispostaE002'
+    RichiestaE002:
+      type: object
+      required:
+        - idOperazioneClient
+        - criteriRicerca
+        - datiRichiesta
+      properties:
+        idOperazioneClient:
+          type: string
+          description: Identificativo univoco attribuito all'operazione dall'ente. Deve essere numerico e crescente.
+        criteriRicerca:
+          $ref: '#/components/schemas/TipoCriteriRicercaE002'
+        verifica:
+          $ref: '#/components/schemas/TipoVerificaE002'
+        datiRichiesta:
+          $ref: '#/components/schemas/TipoDatiRichiestaE002'
+    RispostaE002:
+      type: object
+      properties:
+        statusCode:
+          type: string        
+        idOperazioneANPR:
+          type: string
+        listaSoggetti:
+          $ref: '#/components/schemas/TipoListaSoggetti'
+        listaAnomalie:
+          type: array
+          items:
+            $ref: '#/components/schemas/TipoErroriAnomalia'
+    RispostaKO:
+      type: object
+      properties:
+        idOperazioneANPR:
+          type: string
+        listaErrori:
+          type: array
+          items:
+            $ref: '#/components/schemas/TipoErroriAnomalia'
+    TipoCriteriRicercaE002:
+      type: object
+      properties:
+        codiceFiscale:
+          type: string
+        idANPR:
+          type: string
+          description: Identificativo Unico Nazionale
+        cognome:
+          type: string
+        senzaCognome:
+          type: string
+        nome:
+          type: string
+        senzaNome:
+          type: string
+        sesso:
+          type: string
+        datiNascita:
+          $ref: '#/components/schemas/TipoDatiNascitaE000'
+    TipoDatiRichiestaE002:
+      type: object
+      required:
+        - dataRiferimentoRichiesta
+        - casoUso
+        - motivoRichiesta
+      properties:
+        dataRiferimentoRichiesta:
+          type: string
+          description: Data cui deve essere riferita la versione della scheda anagrafica
+          format: YYYY-MM-DD
+          example: '2021-11-15'
+        motivoRichiesta:
+          type: string
+          description: campo per l’indicazione obbligatoria del numero di riferimento della pratica per quale è effettuata l’interrogazione (es. numero di protocollo, fascicolo, verbale, etc.)
+        casoUso:
+          type: string
+          description: caso d'uso (es. C001)
+    TipoErroriAnomalia:
+      type: object
+      properties:
+        codiceErroreAnomalia:
+          type: string
+        tipoErroreAnomalia:
+          type: string
+        testoErroreAnomalia:
+          type: string
+        oggettoErroreAnomalia:
+          type: string
+        campoErroreAnomalia:
+          type: string
+        valoreErroreAnomalia:
+          type: string    
+    TipoDatiNascitaE000:
+      type: object
+      properties:
+        dataEvento:
+          type: string
+          format: YYYY-MM-DD
+          example: '2021-11-15'
+        senzaGiorno:
+          type: string
+        senzaGiornoMese:
+          type: string
+        luogoNascita:
+          $ref: '#/components/schemas/TipoLuogoNascitaE000'  
+    TipoLuogoNascitaE000:
+      type: object
+      properties:
+        luogoEccezionale:
+          type: string
+        comune:
+          $ref: '#/components/schemas/TipoComune'
+        localita:
+          $ref: '#/components/schemas/TipoLocalita'  
+    TipoComune:
+      type: object
+      properties:
+        nomeComune:
+          type: string
+        codiceIstat:
+          type: string
+        siglaProvinciaIstat:
+          type: string
+        descrizioneLocalita:
+          type: string          
+    TipoLocalita:
+      type: object
+      properties:
+        descrizioneLocalita:
+          type: string
+        descrizioneStato:
+          type: string
+        codiceStato:
+          type: string
+        provinciaContea:
+          type: string
+    TipoListaSoggetti:
+      type: object
+      properties:
+        datiSoggetto:
+          type: array
+          items:
+            $ref: '#/components/schemas/TipoDatiSoggettiEnte'
+    TipoDatiSoggettiEnte:
+      type: object
+      properties:
+        infoSoggettoEnte:
+          type: array
+          items:
+            $ref: '#/components/schemas/TipoInfoSoggettoEnte'
+    TipoIndirizzo:
+      type: object
+      properties:
+        cap:
+          type: string
+        comune:
+          $ref: '#/components/schemas/TipoComune'
+        frazione:
+          type: string
+        toponimo:
+          $ref: '#/components/schemas/TipoToponimo'
+        numeroCivico:
+          $ref: '#/components/schemas/TipoNumeroCivico'
+    TipoToponimo:
+      type: object
+      properties:
+        codSpecie:
+          type: string
+        specie:
+          type: string
+        specieFonte:
+          type: string
+        codToponimo:
+          type: string
+        denominazioneToponimo:
+          type: string
+        toponimoFonte:
+          type: string          
+    TipoNumeroCivico:
+      type: object
+      properties:
+        codiceCivico:
+          type: string
+        civicoFonte:
+          type: string
+        numero:
+          type: string
+        metrico:
+          type: string
+        progSNC:
+          type: string
+        lettera:
+          type: string
+        esponente1:
+          type: string
+        colore:
+          type: string
+        civicoInterno:
+          $ref: '#/components/schemas/TipoCivicoInterno'          
+    TipoCivicoInterno:
+      type: object
+      properties:
+        corte:
+          type: string
+        scala:
+          type: string
+        interno1:
+          type: string
+        espInterno1:
+          type: string
+        interno2:
+          type: string
+        espInterno2:
+          type: string
+        scalaEsterna:
+          type: string
+        secondario:
+          type: string
+        piano:
+          type: string
+        nui:
+          type: string
+        isolato:
+          type: string          
+    TipoIndirizzoEstero:
+      type: object
+      properties:
+        cap:
+          type: string
+        localita:
+          $ref: '#/components/schemas/TipoDatoLocalitaEstera'
+        toponimo:
+          $ref: '#/components/schemas/TipoToponimoEstero'          
+    TipoDatoLocalitaEstera:
+      type: object
+      properties:
+        descrizioneLocalita:
+          type: string
+        descrizioneStato:
+          type: string
+        codiceStato:
+          type: string
+        provinciaContea:
+          type: string          
+    TipoToponimoEstero:
+      type: object
+      properties:
+        denominazione:
+          type: string
+        numeroCivico:
+          type: string          
+    TipoConsolato:
+      type: object
+      properties:
+        codiceConsolato:
+          type: string
+        descrizioneConsolato:
+          type: string          
+    TipoInfoSoggettoEnte:
+      type: object
+      properties:
+        id:
+          type: string
+        chiave:
+          type: string
+        valore:
+          $ref: '#/components/schemas/TipoInfoValore'
+        valoreTesto:
+          type: string
+        valoreData:
+          type: string
+          format: YYYY-MM-DD
+          example: '2021-11-15'
+        dettaglio:
+          type: string      
+    TipoInfoValore:
+      enum:
+      - A
+      - "N"
+      - S
+      type: string          
+    TipoVerificaE002:
+      type: object
+      properties:
+        residenza:
+          $ref: '#/components/schemas/TipoVerificaResidenza'
+    TipoVerificaResidenza:
+      type: object
+      properties:
+        tipoIndirizzo:
+          type: string
+        indirizzo:
+          $ref: '#/components/schemas/TipoIndirizzo'
+        localitaEstera:
+          $ref: '#/components/schemas/TipoLocalitaEstera'
+    TipoLocalitaEstera:
+      type: object
+      properties:
+        indirizzoEstero:
+          $ref: '#/components/schemas/TipoIndirizzoEstero'
+        consolato:
+          $ref: '#/components/schemas/TipoConsolato'
+    Problem:
+      properties:
+        type:
+          description: URI reference of type definition
+          type: string
+        status:
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+          example: 400
+          exclusiveMaximum: true
+          format: int32
+          maximum: 600
+          minimum: 100
+          type: integer
+        title:
+          description: A short, summary of the problem type. Written in english and readable
+          example: Service Unavailable
+          maxLength: 64
+          pattern: '^[ -~]{0,64}$'
+          type: string
+        correlationId:
+          description: Unique identifier of the request
+          example: '53af4f2d-0c87-41ef-a645-b726a821852b'
+          maxLength: 64
+          type: string
+        detail:
+          description: A human readable explanation of the problem.
+          example: Request took too long to complete.
+          maxLength: 4096
+          pattern: '^.{0,1024}$'
+          type: string
+        errors:
+          type: array
+          minItems: 0
+          items:
+            $ref: '#/components/schemas/ProblemError'
+      additionalProperties: false
+      required:
+        - type
+        - status
+        - title
+        - errors
+    DataPreparationResponse:
+      type: object
+      additionalProperties: false
+      title: Signal
+      description: represents the id of the signal just entered.
+      properties:
+        message:
+          type: string
+          description: status
+    ProblemError:
+      properties:
+        code:
+          description: Internal code of the error
+          example: 123-4567
+          minLength: 8
+          maxLength: 8
+          pattern: '^[0-9]{3}-[0-9]{4}$'
+          type: string
+        detail:
+          description: A human readable explanation specific to this occurrence of the problem.
+          example: Parameter not valid
+          maxLength: 4096
+          pattern: '^.{0,1024}$'
+          type: string
+      required:
+        - code
+        - detail
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: 'A bearer token in the format of a JWS and conformed to the specifications included in [RFC8725](https://tools.ietf.org/html/RFC8725).'
+      scheme: bearer
+      bearerFormat: JWT

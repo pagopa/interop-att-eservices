@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "name": "root",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start:vdr": "turbo start --filter verifica-dichiarazione-residenza",
+    "test": "turbo test",
+    "test:it": "turbo test:it",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "lint:autofix": "turbo lint:autofix",
+    "format:check": "turbo format:check",
+    "format:write": "turbo format:write",
+    "generate-model": "turbo generate-model"
+  },
+  "devDependencies": {
+    "@tsconfig/node-lts": "^18.12.3",
+    "turbo": "^1.10.7"
+  },
+  "packageManager": "pnpm@8.6.3"
+}

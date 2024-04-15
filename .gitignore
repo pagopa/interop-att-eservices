@@ -1,0 +1,9 @@
+dist/
+node_modules/
+.turbo/
+package-lock.json
+.vscode/
+pnpm-lock.yaml
+.idea/
+packages/verifica-dichiarazione-residenza/src/model/generated/api.ts
+packages/verifica-dichiarazione-residenza/aws.config.local

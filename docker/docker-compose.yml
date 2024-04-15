@@ -1,0 +1,38 @@
+version: "3"
+name: pagopa-interop
+services:
+
+  # # PGAdmin is a web-based PostgreSQL admin interface, included for convenience
+  # pg-admin:
+  #   image: dpage/pgadmin4
+  #   ports:
+  #     - 8082:80
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: root@example.com
+  #     PGADMIN_DEFAULT_PASSWORD: example
+  #     PGADMIN_CONFIG_SERVER_MODE: "False"
+  #     PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+  #   restart: always
+  #   volumes:
+  #     - ./pg-servers.json:/pgadmin4/servers.json
+  #     - ./pg-pass:/pgadmin4/pgpass
+  #   # see https://stackoverflow.com/a/69475874/846273
+  #   entrypoint: >
+  #     /bin/sh -c "
+  #     mkdir -m 700 /var/lib/pgadmin/storage/root_example.com;
+  #     chown -R pgadmin:pgadmin /var/lib/pgadmin/storage/root_example.com;
+  #     cp -prv /pgadmin4/pgpass /var/lib/pgadmin/storage/root_example.com/;
+  #     chmod 600 /var/lib/pgadmin/storage/root_example.com/pgpass;
+  #     /entrypoint.sh
+  #     "
+  redis:
+    image: redis:4.0.6
+    networks:
+      - net-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - volume-redis:/data
+    environment:
+      REDIS_PASSWORD: psw
+    command: ["sh", "-c", 'exec redis-server --requirepass "$$REDIS_PASSWORD"']
