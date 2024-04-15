@@ -15,8 +15,7 @@ import {
   TipoConsolatoModel,
   TipoLocalitaEsteraModel,
   TipoResidenzaModel,
-  // UserModelFullResponse
-  // DataPreparationResponseModel,
+
   
   TipoDatiNascitaModel,
   TipoParametriRicercaModel,
@@ -25,9 +24,8 @@ import {
   TipoCodiceFiscaleModel,
   TipoLuogoEventoModel,
   TipoIdSchedaSoggettoComuneModel,
- 
   TipoGeneralitaModel,
-/*   TipoIdentificativiModel,
+  TipoIdentificativiModel,
   TipoAttoModel,
   TipoAttoANSCModel,
   TipoAttoEventoModel,
@@ -37,7 +35,7 @@ import {
   TipoErroriAnomaliaModel,
   RispostaAR001Model,
   ProblemErrorModel,
-  ProblemModel, */
+  ProblemModel,
 } from "pdnd-model";
 import { getUserModelByCodiceFiscale } from "../../utilities/userUtilities.js";
 import {
@@ -73,7 +71,7 @@ import {
   TipoIdSchedaSoggettoComune,
 
   TipoGeneralita,
-/*   TipoIdentificativi,
+  TipoIdentificativi,
   TipoAtto,
   TipoAttoANSC,
   TipoAttoEvento,
@@ -83,7 +81,7 @@ import {
   TipoErroriAnomalia,
   RispostaAR001,
   ProblemError,
-  Problem,  */
+  Problem,  
 } from "./models.js";
 
 export const apiTipoComuneToTipoComuneModel = (
@@ -562,156 +560,107 @@ export const TipoGeneralitaModelToApiTipoGeneralita = (
   note: tipoGeneralitaModel?.note,
 });
 
-/******************************************************************************** */
-/*
- 
- 
-export const TipoGeneralitaModel = z
-.object({
-  codiceFiscale: TipoCodiceFiscaleModel,
-  cognome: z.string(),
-  senzaCognome: z.string(),
-  nome: z.string(),
-  senzaNome: z.string(),
-  sesso: z.string(),
-  dataNascita: z.string(),
-  senzaGiorno: z.string(),
-  senzaGiornoMese: z.string(),
-  luogoNascita: TipoLuogoEventoModel,
-  soggettoAIRE: z.string(),
-  annoEspatrio: z.string(),
-  idSchedaSoggettoComune: TipoIdSchedaSoggettoComuneModel,
-  idSchedaSoggetto: z.string(),
-  note: z.string(),
-})
-.partial()
-.passthrough();
-export type TipoGeneralitaModel = z.infer<typeof TipoGeneralitaModel>;
+
+export const TipoIdentificativiModelToApiTipoIdentificativi = (
+  tipoIdentificativiModel: TipoIdentificativiModel
+): TipoIdentificativi => ({
+  id: tipoIdentificativiModel?.id
+});
+
+export const TipoAttoModelToApiTipoAtto = (
+  tipoAttoModel: TipoAttoModel
+): TipoAtto => ({
+  comuneRegistrazione: tipoAttoModel?.comuneRegistrazione,
+  ufficioMunicipio: tipoAttoModel?.ufficioMunicipio,
+  anno: tipoAttoModel?.anno,
+  parte: tipoAttoModel?.parte,
+  serie: tipoAttoModel?.serie,
+  numeroAtto: tipoAttoModel?.numeroAtto,
+  volume: tipoAttoModel?.volume,
+  dataFormazioneAtto: tipoAttoModel?.dataFormazioneAtto,
+  trascritto: tipoAttoModel?.trascritto,
+});
+
+export const TipoAttoANSCModelToApiTipoAttoANSC = (
+  tipoAttoANSCModel: TipoAttoANSCModel
+): TipoAttoANSC => ({
+  idANSC: tipoAttoANSCModel?.idANSC,
+  comuneRegistrazione: tipoAttoANSCModel?.comuneRegistrazione,
+  anno: tipoAttoANSCModel?.anno,
+  ufficioMunicipio: tipoAttoANSCModel?.ufficioMunicipio,
+  numeroComunale: tipoAttoANSCModel?.numeroComunale,
+  dataFormazioneAtto: tipoAttoANSCModel?.dataFormazioneAtto,
+  trascritto: tipoAttoANSCModel?.trascritto,
+});
+
+export const TipoAttoEventoModelToApiTipoAttoEvento = (
+  tipoDatiEvento: TipoAttoEventoModel
+): TipoAttoEvento => ({
+  atto: tipoDatiEvento?.atto,
+  attoANSC: tipoDatiEvento?.attoANSC,
+});
 
 
+export const TipoDatiEventoModelToApiTipoDatiEvento = (
+  tipoDatiEvento: TipoDatiEventoModel
+): TipoDatiEvento => ({
+  dataEvento: tipoDatiEvento?.dataEvento,
+  senzaGiorno: tipoDatiEvento?.senzaGiorno,
+  senzaGiornoMese: tipoDatiEvento?.senzaGiorno,
+  luogoEvento: tipoDatiEvento?.luogoEvento,
+  attoEvento: tipoDatiEvento?.attoEvento,
+});
 
-export const TipoIdentificativiModel = z
-.object({
-  id: z.string() 
-})
-.partial()
-.passthrough();
-export type TipoIdentificativiModel = z.infer<typeof TipoIdentificativiModel>;
+export const TipoDatiSoggettiEnteModelToApiTipoDatiSoggettiEnte = (
+  tipoDatiSoggettiEnteModel: TipoDatiSoggettiEnteModel
+): TipoDatiSoggettiEnte => ({
+  generalita: tipoDatiSoggettiEnteModel?.generalita,
+  residenza: tipoDatiSoggettiEnteModel?.residenza,
+  identificativi: tipoDatiSoggettiEnteModel?.identificativi,,
+  datiDecesso: tipoDatiSoggettiEnteModel?.datiDecesso,,
+});
 
-export const TipoAttoModel = z
-.object({
-  comuneRegistrazione: TipoComuneModel,
-  ufficioMunicipio: z.string(),
-  anno: z.string(),
-  parte: z.string(),
-  serie: z.string(),
-  numeroAtto: z.string(),
-  volume: z.string(),
-  dataFormazioneAtto: z.string(),
-  trascritto: z.string(),
-})
-.partial()
-.passthrough();
-export type TipoAttoModel = z.infer<typeof TipoAttoModel>;
-
-
-
-export const TipoAttoANSCModel = z
-.object({
-  idANSC: z.string(),
-  comuneRegistrazione: TipoComuneModel,
-  anno: z.string(),
-  ufficioMunicipio: z.string(),
-  numeroComunale: z.string(),
-  dataFormazioneAtto: z.string(),
-  trascritto: z.string(),
-})
-.partial()
-.passthrough();
-export type TipoAttoANSCModel = z.infer<typeof TipoAttoANSCModel>;
+export const TipoListaSoggettiModelToApiTipoListaSoggetti = (
+  tipoListaSoggettiModel: TipoListaSoggettiModel
+): TipoListaSoggetti => ({
+  soggetto: tipoListaSoggettiModel?.soggetto
+});
 
 
-export const TipoAttoEventoModel = z
-.object({
-  atto: TipoAttoModel,
-  attoANSC: TipoAttoANSCModel
-})
-.partial()
-.passthrough();
-export type TipoAttoEventoModel = z.infer<typeof TipoAttoEventoModel>;
+export const TipoErroriAnomaliaModelToApiTipoErroriAnomalia = (
+  tipoErroriAnomaliaModel: TipoErroriAnomaliaModel
+): TipoErroriAnomalia => ({
+  codiceErroreAnomalia: tipoErroriAnomaliaModel?.campoErroreAnomalia,
+  tipoErroreAnomalia: tipoErroriAnomaliaModel?.tipoErroreAnomalia,
+  testoErroreAnomalia: tipoErroriAnomaliaModel?.testoErroreAnomalia,
+  oggettoErroreAnomalia: tipoErroriAnomaliaModel?.oggettoErroreAnomalia,
+  campoErroreAnomalia: tipoErroriAnomaliaModel?.campoErroreAnomalia,
+  valoreErroreAnomalia: tipoErroriAnomaliaModel?.valoreErroreAnomalia,
+});
 
 
+export const RispostaAR001ModelToApiRispostaAR001 = (
+  rispostaAR001Model: RispostaAR001Model
+): RispostaAR001 => ({
+  idOperazione: rispostaAR001Model?.idOperazione,
+  //soggetti: rispostaAR001Model?.soggetti,
+  listaAnomalie: rispostaAR001Model?.listaAnomalie,
+});
 
+export const ProblemErrorModelToApiProblemError = (
+  problemErrorModel: ProblemErrorModel
+): ProblemError => ({
+  code: problemErrorModel?.code,
+  detail: problemErrorModel?.detail
+});
 
-export const TipoDatiEventoModel = z
-.object({
-  dataEvento: z.string(),
-  senzaGiorno: z.string(),
-  senzaGiornoMese: z.string(),
-  luogoEvento: TipoLuogoEventoModel,
-  attoEvento: TipoAttoEventoModel,
-})
-.partial()
-.passthrough();
-export type TipoDatiEventoModel = z.infer<typeof TipoDatiEventoModel>;
-
-export const TipoDatiSoggettiEnteModel = z
-.object({
-  generalita: TipoGeneralitaModel,
-  residenza: z.array(TipoResidenzaModel),
-  identificativi: TipoIdentificativiModel,
-  datiDecesso: TipoDatiEventoModel,
-})
-.partial()
-.passthrough();
-export type TipoDatiSoggettiEnteModel = z.infer<typeof TipoDatiSoggettiEnteModel>;
-
-export const TipoListaSoggettiModel = z
-.object({
-  soggetto: z.array(TipoDatiSoggettiEnteModel)
-})
-.partial()
-.passthrough();
-export type TipoListaSoggettiModel = z.infer<typeof TipoListaSoggettiModel>;
-
-export const TipoErroriAnomaliaModel = z
-.object({
-  codiceErroreAnomalia: z.string(),
-    tipoErroreAnomalia: z.string(),
-    testoErroreAnomalia: z.string(),
-    oggettoErroreAnomalia: z.string(),
-    campoErroreAnomalia: z.string(),
-    valoreErroreAnomalia: z.string(),})
-.partial()
-.passthrough();
-export type TipoErroriAnomaliaModel = z.infer<typeof TipoErroriAnomaliaModel>;
-
-export const RispostaAR001Model = z
-.object({
-  idOperazione: z.string(),
-  //soggetti: TipoListaSoggettiModel,
-  listaAnomalie: z.array(TipoErroriAnomaliaModel),
-})
-.partial()
-.passthrough();
-export type RispostaAR001Model = z.infer<typeof RispostaAR001Model>;
-
-export const ProblemErrorModel = z
-.object({
-  code: z.string(), detail: z.string()
-})
-.partial()
-.passthrough();
-export type ProblemErrorModel = z.infer<typeof ProblemErrorModel>;
-
-export const ProblemModel = z
-.object({
-  type: z.string(),
-  status: z.number().int(),
-  title: z.string(),
-  correlationId: z.string().optional(),
-  detail: z.string().optional(),
-  errors: z.array(ProblemErrorModel).min(1),
-})
-.passthrough();
-export type ProblemModel = z.infer<typeof ProblemModel>; */
+export const ProblemModelToApiProblem= (
+  problemModel: ProblemModel
+): Problem => ({
+  type: problemModel?.type,
+  status: problemModel?.status,
+  title: problemModel?.title,
+  correlationId: problemModel?.correlationId,
+  detail: problemModel?.detail,
+  errors: problemModel?.errors,
+});
