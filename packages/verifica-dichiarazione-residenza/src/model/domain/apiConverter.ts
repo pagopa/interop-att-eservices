@@ -27,7 +27,7 @@ import {
   TipoIdSchedaSoggettoComuneModel,
  
   TipoGeneralitaModel,
-  TipoIdentificativiModel,
+/*   TipoIdentificativiModel,
   TipoAttoModel,
   TipoAttoANSCModel,
   TipoAttoEventoModel,
@@ -37,7 +37,7 @@ import {
   TipoErroriAnomaliaModel,
   RispostaAR001Model,
   ProblemErrorModel,
-  ProblemModel,
+  ProblemModel, */
 } from "pdnd-model";
 import { getUserModelByCodiceFiscale } from "../../utilities/userUtilities.js";
 import {
@@ -73,7 +73,7 @@ import {
   TipoIdSchedaSoggettoComune,
 
   TipoGeneralita,
-  TipoIdentificativi,
+/*   TipoIdentificativi,
   TipoAtto,
   TipoAttoANSC,
   TipoAttoEvento,
@@ -83,7 +83,7 @@ import {
   TipoErroriAnomalia,
   RispostaAR001,
   ProblemError,
-  Problem, 
+  Problem,  */
 } from "./models.js";
 
 export const apiTipoComuneToTipoComuneModel = (
