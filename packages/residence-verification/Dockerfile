@@ -20,7 +20,7 @@ COPY turbo.json /app/
 COPY ./packages/residence-verification /app/packages/residence-verification
 COPY ./packages/commons /app/packages/commons
 COPY ./packages/models /app/packages/models
-COPY ./packages/interoperability-api/package.json /app/packages/interoperability-api/package.json
+COPY ./packages/interoperability-api /app/packages/interoperability-api
 
 RUN pnpm build && \
     rm -rf /app/node_modules/.modules.yaml && \
