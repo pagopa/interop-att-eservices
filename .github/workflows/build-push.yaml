@@ -30,7 +30,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image_name: residence-verification-eservice
+          - image_name: residence-verification
             dockerfile_path: packages/residence-verification
 
     steps:
@@ -53,7 +53,7 @@ jobs:
         if: ${{ github.ref_type == 'branch' }}
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: ${{ steps.login-ecr.outputs.registry }}/interop-att-${{ matrix.image_name }}
+          images: ${{ steps.login-ecr.outputs.registry }}/interop-att-eservice-${{ matrix.image_name }}
           flavor: |
             latest=false
             prefix=
