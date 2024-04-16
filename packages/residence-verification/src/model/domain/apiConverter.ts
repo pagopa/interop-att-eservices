@@ -455,6 +455,7 @@ export const tipoResidenzaModelToApiTipoResidenza = (
   dataDecorrenzaResidenza: tipoResidenzaModel?.dataDecorrenzaResidenza,
 });
 
+
 export const userModelToApiDataPreparationTemplate = (
   userModel: UserModel
 ): DataPreparationTemplate => ({
@@ -647,12 +648,87 @@ export const RispostaAR001ModelToApiRispostaAR001 = (
   listaAnomalie: rispostaAR001Model?.listaAnomalie,
 });
 
+/***************************************** */
+
+export const codiceFiscaleToApiTipoCodiceFiscale = (
+  codiceFiscale: string
+): TipoGeneralita => ({
+    codFiscale: codiceFiscale,
+    validitaCF: "",
+    dataAttribuzioneValidita: "", 
+});
+
+
+
+export const TipoDataNascitaModelToApiTipoLuogoEvento = (
+  tipoDataNascitaModel: TipoDataNascitaModel
+): TipoLuogoEvento => ({
+  luogoEccezionale: tipoDataNascitaModel.luogoNascita.luogoEccezionale,
+  comune:  tipoComuneModelToApiTipoComune(tipoDataNascitaModel.luogoNascita.comune),
+  localita: tipoLocalitaModelToApiTipoLocalita(tipoDataNascitaModel.luogoNascita.localita),
+});
+
+
+export const SoggettoModelToApiTipoGeneralita = (
+  soggettoModel: SoggettoModel
+): TipoGeneralita => ({
+  codiceFiscale:  codiceFiscaleToApiTipoCodiceFiscale(soggettoModel.codiceFiscale),
+  cognome: soggettoModel.cognome,
+  senzaCognome: soggettoModel.cognome == null ? 'true' : 'false',
+  nome: soggettoModel.nome,
+  senzaNome:  soggettoModel.nome == null ? 'true' : 'false', 
+  sesso: soggettoModel.sesso,
+  dataNascita: soggettoModel?.datiNascita.dataEvento, 
+  senzaGiorno: "",
+  senzaGiornoMese: "",
+  luogoNascita: TipoDataNascitaModelToApiTipoLuogoEvento(soggettoModel.datiNascita),
+  soggettoAIRE: "", 
+  annoEspatrio: "", 
+  //idSchedaSoggettoComune: TipoIdSchedaSoggettoComuneModelToApiTipoIdSchedaSoggettoComune()), 
+  idSchedaSoggetto: "", 
+  note: "", 
+});
+
+export const TipoIndirizzoModelToApiTipoIndirizzo = (
+  tipoIndirizzoModel: TipoIndirizzoModel
+): TipoIndirizzo => ({
+    cap: tipoIndirizzoModel?.cap,
+    comune: tipoComuneModelToApiTipoComune(tipoIndirizzoModel.comune),
+    frazione: tipoIndirizzoModel?.frazione,
+    toponimo: tipoToponimoModelToApiTipoToponimo(tipoIndirizzoModel.toponimo),
+    numeroCivico: tipoNumeroCivicoModelToApiTipoNumeroCivico(tipoIndirizzoModel.numeroCivico),
+});
+
+export const TipoResidenzaModelToApiTipoResidenza = (
+  tipoResidenzaModel: TipoResidenzaModel
+): TipoResidenza[] => {
+  return [{
+    tipoIndirizzo: tipoResidenzaModel?.tipoIndirizzo,
+    noteIndirizzo: tipoResidenzaModel?.noteIndirizzo,
+    indirizzo: TipoIndirizzoModelToApiTipoIndirizzo(tipoResidenzaModel?.indirizzo),
+    localitaEstera: tipoLocalitaEsteraModelToApiTipoLocalitaEstera1(tipoResidenzaModel.localitaEstera),
+    presso: tipoResidenzaModel?.presso,
+    dataDecorrenzaResidenza: tipoResidenzaModel?.dataDecorrenzaResidenza,
+  }];
+};
+
+
+export const UserModelToApiTipoDatiSoggettiEnte = (
+  userModel: UserModel
+): TipoDatiSoggettiEnte => ({
+    generalita: SoggettoModelToApiTipoGeneralita(userModel.soggetto),
+    residenza: TipoResidenzaModelToApiTipoResidenza(userModel.residenza),
+    //identificativi: TipoIdentificativi,
+    //datiDecesso: TipoDatiEvento, 
+});
+
 export const ProblemErrorModelToApiProblemError = (
   problemErrorModel: ProblemErrorModel
 ): ProblemError => ({
   code: problemErrorModel?.code || "",
   detail: problemErrorModel?.detail || ""
 });
+
 /* 
 export const ProblemModelToApiProblem= (
   problemModel: ProblemModel
@@ -665,3 +741,7 @@ export const ProblemModelToApiProblem= (
   errors: problemModel?.errors
 });
  */
+
+
+
+ 
