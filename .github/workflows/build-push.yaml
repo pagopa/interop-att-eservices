@@ -5,12 +5,14 @@ on:
     branches:
       - 'main'
       - 'develop'
-      - '*'
     tags:
       - '*'
     paths:
       - 'packages/**'
       - '!packages/*/scripts/**'
+  pull_request:
+    branches:
+      - 'develop'
 
 jobs:
   build_push_image:
