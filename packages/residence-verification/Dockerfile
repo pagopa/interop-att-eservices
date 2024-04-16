@@ -4,7 +4,6 @@ RUN corepack enable
 
 WORKDIR /app
 COPY package.json /app/
-COPY pnpm-lock.yaml /app/
 COPY pnpm-workspace.yaml /app/
 
 COPY ./packages/residence-verification/package.json /app/packages/residence-verification/package.json
