@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { ZodiosRouterContextRequestHandler } from "@zodios/express";
-import { ErrorHandling, makeApiProblemBuilder } from "pdnd-model";
+import { ErrorHandling, makeApiProblemBuilder } from "pdnd-models";
 import { P, match } from "ts-pattern";
 import { ExpressContext } from "../index.js";
 import { logger } from "../logging/index.js";

@@ -6,7 +6,7 @@ import {
 } from "@aws-sdk/client-kms";
 import {
   ErrorHandling,
-} from "pdnd-model";
+} from "pdnd-models";
 import { logger, signerConfig } from "../index.js";
 
 /**

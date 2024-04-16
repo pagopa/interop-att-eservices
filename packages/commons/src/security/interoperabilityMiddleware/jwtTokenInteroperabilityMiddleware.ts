@@ -1,7 +1,7 @@
 import { InteroperabilityConfig } from "../../config/index.js";
   //import { signerConfig } from "../index.js";
   import axios, { AxiosResponse } from 'axios';
-import {TokenResponse} from "pdnd-model"
+import {TokenResponse} from "pdnd-models"
   export async function getOauth2Token(
     assertion: string
   ): Promise<string | undefined> {
