@@ -5,7 +5,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "start:vdr": "turbo start --filter verifica-dichiarazione-residenza",
+    "start:residence-verification": "turbo start --filter residence-verification",
     "test": "turbo test",
     "test:it": "turbo test:it",
     "build": "turbo build",
