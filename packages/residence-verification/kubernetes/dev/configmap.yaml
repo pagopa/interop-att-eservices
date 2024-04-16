@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: residence-verification-configmap
+  namespace: att
+data:
+  KMS_KEYID: {{KMS_KEYID}}
