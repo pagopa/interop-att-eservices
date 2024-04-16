@@ -14,6 +14,10 @@ on:
     branches:
       - 'develop'
 
+env:
+  AWS_REGION: eu-south-1
+  IAM_ROLE_ARN: arn:aws:iam::248862543363:role/GitHubActionIACRole
+
 jobs:
   build_push_image:
     name: ${{ matrix.image_name }}
