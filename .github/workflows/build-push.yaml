@@ -30,8 +30,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image_name: verifica-dichiarazione-residenza-eservice
-            dockerfile_path: packages/verifica-dichiarazione-residenza
+          - image_name: residence-verification-eservice
+            dockerfile_path: packages/residence-verification
 
     steps:
       - name: Checkout repository
