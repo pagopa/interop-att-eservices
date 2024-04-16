@@ -4,6 +4,7 @@ RUN corepack enable
 
 WORKDIR /app
 COPY package.json /app/
+# COPY pnpm-lock.yaml /app/
 COPY pnpm-workspace.yaml /app/
 
 COPY ./packages/residence-verification/package.json /app/packages/residence-verification/package.json
@@ -11,7 +12,8 @@ COPY ./packages/commons/package.json /app/packages/commons/package.json
 COPY ./packages/models/package.json /app/packages/models/package.json
 COPY ./packages/interoperability-api/package.json /app/packages/interoperability-api/package.json
 
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+# RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 
 COPY tsconfig.json /app/
 COPY turbo.json /app/
