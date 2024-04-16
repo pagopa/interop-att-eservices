@@ -1,0 +1,87 @@
+name: "Build & Push"
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'develop'
+      - '*'
+    tags:
+      - '*'
+    paths:
+      - 'packages/**'
+      - '!packages/*/scripts/**'
+
+jobs:
+  build_push_image:
+    name: ${{ matrix.image_name }}
+    runs-on: ubuntu-latest
+    environment: dev
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image_name: verifica-dichiarazione-residenza-eservice
+            dockerfile_path: packages/verifica-dichiarazione-residenza
+
+    steps:
+      - name: Dump GitHub context
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          IAM_ROLE_ARN: ${{ vars.IAM_ROLE_ARN }}
+        run:
+          echo "AWS_REGION is $AWS_REGION"
+          echo "IAM_ROLE_ARN is $IAM_ROLE_ARN"
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.IAM_ROLE_ARN }}
+          role-session-name: att-eservices-build-push-${{ github.run_number }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: (latest) Docker metadata
+        id: meta_latest
+        if: ${{ github.ref_type == 'branch' }}
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ steps.login-ecr.outputs.registry }}/interop-att-${{ matrix.image_name }}
+          flavor: |
+            latest=false
+            prefix=
+            suffix=
+          tags: |
+            type=raw,value=2.x-latest
+
+      - name: (tag) Docker metadata
+        id: meta_tag
+        if: ${{ github.ref_type == 'tag' }}
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ steps.login-ecr.outputs.registry }}/interop-att-${{ matrix.image_name }}
+          flavor: |
+            latest=false
+            prefix=
+            suffix=
+          tags: |
+            type=ref,event=tag
+
+      - name: Build and push Docker image
+        id: build_push
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: .
+          file: ${{ matrix.dockerfile_path }}/Dockerfile
+          push: true
+          tags: ${{ github.ref_type == 'branch' && steps.meta_latest.outputs.tags || steps.meta_tag.outputs.tags }}
+          labels: ${{ github.ref_type == 'branch' && steps.meta_latest.outputs.labels || steps.meta_tag.outputs.labels }}
