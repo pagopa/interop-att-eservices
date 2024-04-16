@@ -30,14 +30,6 @@ jobs:
             dockerfile_path: packages/verifica-dichiarazione-residenza
 
     steps:
-      - name: Dump GitHub context
-        env:
-          AWS_REGION: ${{ vars.AWS_REGION }}
-          IAM_ROLE_ARN: ${{ vars.IAM_ROLE_ARN }}
-        run:
-          echo "AWS_REGION is $AWS_REGION"
-          echo "IAM_ROLE_ARN is $IAM_ROLE_ARN"
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
