@@ -4,29 +4,26 @@ import { logger } from "pdnd-common";
 // import { signerConfig } from "../index.js";
 import jose from "node-jose";
 // import { JWS, JWK } from 'node-jose';
-
 export async function decodePublicKey(
   publicKey: Uint8Array
 ): Promise<jose.JWK.Key> {
   try {
-    logger.info("decodePublicKey " + publicKey);
+    logger.info(`[START] decode public key`);
 
     if (!publicKey) {
       throw ErrorHandling.genericInternalError("Error: public key not valid");
     }
     const publicKeyBuffer = Buffer.from(publicKey);
     const publicKeyString = publicKeyBuffer.toString("base64");
-    console.log("publicKeyString: " + publicKeyString);
 
     const _publicKey = `-----BEGIN PUBLIC KEY-----
         ${publicKeyString}
         -----END PUBLIC KEY-----`;
 
-    console.log("_publicKey: " + _publicKey);
-
     return await jose.JWK.asKey(_publicKey, "pem");
+
   } catch (err) {
-    console.log("err_pem   " + err);
+    logger.error(`Error decode public key: ${err}`);
     throw ErrorHandling.thirdPartyCallError("PK_DECODE", JSON.stringify(err));
   }
 }
@@ -35,7 +32,7 @@ export async function generateRSAPublicKey(jwk: JWK): Promise<jose.JWK.Key> {
   try {
     return await jose.JWK.asKey(jwk, "json");
   } catch (err) {
-    console.log("err_pem   " + err);
+    logger.error(`Error decode public key: ${err}`);
     throw ErrorHandling.thirdPartyCallError("PK_DECODE", JSON.stringify(err));
   }
 }
@@ -50,10 +47,11 @@ export async function verify(
 
     // Verifica il token JWT
     const result = await verifier.verify(token);
-    console.log("La firma del token è valida:", result);
+    logger.info(`La firma del token è valida: ${result}`);
+
     return true;
   } catch (error) {
-    console.error("Errore durante la verifica del token:", error);
+    logger.error(`Errore durante la verifica del token: ${error}`);
     return false;
   }
 }

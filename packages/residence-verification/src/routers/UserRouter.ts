@@ -3,12 +3,13 @@ import UserController from "../controllers/UserController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem } from "../exceptions/errors.js";
+import { logger } from "pdnd-common";
 
 const userRouter = zodiosRouter(api.api);
 
 userRouter.post("/ar-service-001", async (req, res) => {
   try {
-    console.log("post request: " + req.body);
+    logger.info(`post request: ${req.body}`);
     // RispostaAR001
     const data = await UserController.findUser(req.body);
     if (data) {

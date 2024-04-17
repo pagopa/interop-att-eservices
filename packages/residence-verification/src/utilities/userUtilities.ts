@@ -1,4 +1,5 @@
 import { ErrorHandling, UserModel } from "pdnd-models";
+import { TipoParametriRicercaAR001 } from "../model/domain/models.js";
 
 // Funzione che aggiunge una lista di UserModel a un array esistente solo se non esistono già, sostituendo eventuali duplicati
 export function appendUniqueUserModelsToArray(
@@ -79,6 +80,36 @@ export function findUserModelByFiscalCode(
 }
 
 // Funzione che cerca un UserModel all'interno di un array esistente utilizzando l'id come criterio di ricerca
+export function findUserModelByPersonalInfo(
+  existingArray: UserModel[] | null,
+  pm: TipoParametriRicercaAR001
+): UserModel[] {
+  // Verifica se l'array esistente è nullo o undefined
+  if (!existingArray) {
+    throw new Error("L'array esistente deve essere definito.");
+  }
+
+  var userModelFound: UserModel[] = [];
+  
+  // Cerca UserModel con lo stesso codice fiscale all'interno dell'array esistente
+  for (const userModel of existingArray) {
+    if (
+      userModel.soggetto.nome !== pm.nome ||
+      userModel.soggetto.cognome !== pm.cognome ||
+      userModel.soggetto.sesso !== pm.sesso ||
+      userModel.soggetto.datiNascita.dataEvento !== pm.datiNascita?.dataEvento ||
+      userModel.soggetto.datiNascita.luogoNascita.comune.nomeComune !== pm.datiNascita?.luogoNascita?.comune?.nomeComune ||
+      userModel.soggetto.datiNascita.luogoNascita.localita.codiceStato !== pm.datiNascita?.luogoNascita?.localita?.codiceStato
+      ) {
+      continue;
+    }
+    
+    userModelFound.push(userModel);
+  }
+
+  return userModelFound;
+}
+
 export function findUserModelById(
   existingArray: UserModel[] | null,
   id: string

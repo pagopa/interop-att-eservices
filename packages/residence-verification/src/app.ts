@@ -5,15 +5,16 @@ import { integrityValidationMiddleware } from "./interoperability/integrityValid
 import { auditValidationMiddleware } from "./interoperability/auditValidationMiddleware.js";
 import apiRoutes from "./routers/index.js";
 import TokenService from "./services/TokenService.js";
+ import { logger } from "pdnd-common";
 const app = zodiosCtx.app();
 
 app.use(express.json());
 app.use(contextDataMiddleware);
 const config = InteroperabilityConfig.parse(process.env);
-console.log(
-  "config.skipInteroperabilityVerification" +
-    config.skipInteroperabilityVerification
+logger.info(
+  `config.skipInteroperabilityVerification  ${config.skipInteroperabilityVerification}`
 );
+
 if (!config.skipInteroperabilityVerification) {
   // app.use(authenticationMiddleware());
   app.use(integrityValidationMiddleware());
@@ -50,7 +51,7 @@ router.get("/", (req, res) => {
     // Se la validazione ha successo, invia una risposta positiva
     res.send("Questa è una risposta da GET");
   } catch (error) {
-    console.error("Errore durante la validazione del token:", error);
+    logger.error(`Errore durante la validazione del token:  ${error}`);
     res
       .status(500)
       .send("Si è verificato un errore durante la validazione del token");
