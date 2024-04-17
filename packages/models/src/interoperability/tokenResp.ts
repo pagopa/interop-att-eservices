@@ -4,7 +4,7 @@ import { z } from "zod";
 export const TokenResponseSchema = z.object({
   access_token: z.string(),
   expires_in: z.number(),
-  token_type: z.string()
+  token_type: z.string(),
 });
 
 // Definisci il tipo TokenResponse utilizzando z.infer

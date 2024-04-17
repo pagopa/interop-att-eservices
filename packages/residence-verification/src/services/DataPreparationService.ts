@@ -92,7 +92,7 @@ class DataPreparationService {
       const allSaved = await dataPreparationRepository.findAllByKey(hash);
       const user = deleteUserModelByUUID(allSaved, uuid);
       this.deleteAllByKey();
-      if(user) {
+      if (user) {
         dataPreparationRepository.saveList(user, hash);
       }
       return user;

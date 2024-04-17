@@ -1,14 +1,8 @@
-import {
-  JWTModel
-} from "pdnd-models";
+import { JWTModel } from "pdnd-models";
 
-import {
-  JWK
-} from "./models.js";
+import { JWK } from "./models.js";
 
-export const apiJwtToTwtModel = (
-  jwt: JWK | undefined
-): JWTModel => ({
+export const apiJwtToTwtModel = (jwt: JWK | undefined): JWTModel => ({
   n: jwt?.n || "",
   e: jwt?.e || "",
   alg: jwt?.alg || "",
@@ -16,7 +10,6 @@ export const apiJwtToTwtModel = (
   kid: jwt?.kty || "",
   use: jwt?.use || "",
 });
-
 
 /*
  " ": "RS256",
@@ -47,5 +40,4 @@ export const apiJwtToTwtModel = (
   dp: z.string().optional(),
   dq: z.string().optional(),
   qi: z.string().optional(),
-  oth: z.array(OtherPrimeInfoModel).min(1).optional(),*/
-
+  oth: z.array(OtherPrimeInfoModel).min(1).optional(), */

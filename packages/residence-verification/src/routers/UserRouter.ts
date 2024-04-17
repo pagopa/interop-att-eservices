@@ -9,18 +9,14 @@ const userRouter = zodiosRouter(api.api);
 userRouter.post("/ar-service-001", async (req, res) => {
   try {
     console.log("post request: " + req.body);
-    //RispostaAR001
-      const data = await UserController.findUser(
-        req.body
-      );
-      if (data) {
+    // RispostaAR001
+    const data = await UserController.findUser(req.body);
+    if (data) {
       return res.status(200).json(data).end();
-        } else {
-          return res.status(500);
-        }
-      
+    } else {
+      return res.status(500);
     }
-   catch (error) {
+  } catch (error) {
     const errorRes = makeApiProblem(error, createEserviceDataPreparation);
     return res.status(errorRes.status).json(errorRes).end();
   }

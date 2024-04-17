@@ -2,11 +2,9 @@ import {
   KMSClient,
   SignCommand,
   SignCommandInput,
-  SigningAlgorithmSpec
+  SigningAlgorithmSpec,
 } from "@aws-sdk/client-kms";
-import {
-  ErrorHandling,
-} from "pdnd-models";
+import { ErrorHandling } from "pdnd-models";
 import { logger, signerConfig } from "../index.js";
 
 /**
@@ -27,17 +25,18 @@ import { logger, signerConfig } from "../index.js";
  */
 export type SignerService = {
   signWithRSA256: (keyId: string, data: string) => Promise<string>;
-
 };
 
 export const buildSignerService = (): SignerService => {
   const config = signerConfig();
-  logger.info ("aws config:kmsEndpoint " + config.kmsEndpoint);
-  const kmsClient =config.kmsEndpoint ? new KMSClient(
-    {
-      endpoint: config.kmsEndpoint
-    },
-  ) : new KMSClient();
+  logger.info(`[START] aws-kms buildSigner`);
+  logger.info(`aws-kms url: ${config.kmsEndpoint}`);
+  
+  const kmsClient = config.kmsEndpoint
+    ? new KMSClient({
+        endpoint: config.kmsEndpoint,
+      })
+    : new KMSClient();
 
   return {
     signWithRSA256: async (keyId: string, data: string): Promise<string> => {
@@ -59,16 +58,19 @@ export const buildSignerService = (): SignerService => {
         }
 
         const base64JWS = Buffer.from(res.Signature).toString("base64");
+        logger.info(`[END] aws-kms buildSigner`);
         return base64JWS
           .replaceAll("=", "")
           .replaceAll("+", "-")
           .replaceAll("/", "_");
       } catch (err) {
-        const internalError = ErrorHandling.thirdPartyCallError("KMS", JSON.stringify(err));
+        const internalError = ErrorHandling.thirdPartyCallError(
+          "KMS",
+          JSON.stringify(err)
+        );
         logger.error(internalError);
         throw internalError;
       }
-    }
+    },
   };
 };
-

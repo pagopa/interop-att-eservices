@@ -3,9 +3,4 @@ import { api } from "./generated/api.js";
 
 type Api = typeof api.api;
 
-export type ByKid = ZodiosBodyByPath<
-  Api,
-  "get",
-  "/keys/:kid"
->;
-
+export type ByKid = ZodiosBodyByPath<Api, "get", "/keys/:kid">;

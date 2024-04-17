@@ -20,8 +20,7 @@ export function appendUniqueUserModelsToArray(
     // Cerca se esiste già un UserModel con lo stesso codice fiscale nell'array esistente
     const existingModelIndex = newArray.findIndex(
       (model) =>
-        model.soggetto.codiceFiscale ===
-        modelToAdd.soggetto.codiceFiscale
+        model.soggetto.codiceFiscale === modelToAdd.soggetto.codiceFiscale
     );
     if (existingModelIndex !== -1) {
       // Se esiste già un UserModel con lo stesso codice fiscale, aggiorna l'UUID dell'elemento da sostituire
@@ -110,7 +109,7 @@ export function findUserModelByUUID(
   if (!existingArray) {
     throw ErrorHandling.genericError();
   }
-  
+
   for (const userModel of existingArray) {
     if (userModel.uuid === uuid) {
       return userModel;

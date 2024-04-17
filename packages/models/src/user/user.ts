@@ -155,7 +155,7 @@ export const UserModelFullResponse = z
   .and(UserModel);
 export type UserModelFullResponse = z.infer<typeof UserModelFullResponse>;
 
-/******************************************************************************** */
+/** ****************************************************************************** */
 export const TipoDatiNascitaModel = z
   .object({
     dataEvento: z.string(),
@@ -180,7 +180,9 @@ export const TipoParametriRicercaModel = z
   })
   .partial()
   .passthrough();
-export type TipoParametriRicercaModel = z.infer<typeof TipoParametriRicercaModel>;
+export type TipoParametriRicercaModel = z.infer<
+  typeof TipoParametriRicercaModel
+>;
 
 export const TipoRichiestaModel = z
   .object({
@@ -221,133 +223,129 @@ export const TipoLuogoEventoModel = z
 export type TipoLuogoEventoModel = z.infer<typeof TipoLuogoEventoModel>;
 
 export const TipoIdSchedaSoggettoComuneModel = z
-.object({
-  idSchedaSoggettoComuneIstat: z.string(),
-  idSchedaSoggetto: z.string(),
-})
-.partial()
-.passthrough();
-export type TipoIdSchedaSoggettoComuneModel = z.infer<typeof TipoIdSchedaSoggettoComuneModel>;
-
+  .object({
+    idSchedaSoggettoComuneIstat: z.string(),
+    idSchedaSoggetto: z.string(),
+  })
+  .partial()
+  .passthrough();
+export type TipoIdSchedaSoggettoComuneModel = z.infer<
+  typeof TipoIdSchedaSoggettoComuneModel
+>;
 
 export const TipoGeneralitaModel = z
-.object({
-  codiceFiscale: TipoCodiceFiscaleModel,
-  cognome: z.string(),
-  senzaCognome: z.string(),
-  nome: z.string(),
-  senzaNome: z.string(),
-  sesso: z.string(),
-  dataNascita: z.string(),
-  senzaGiorno: z.string(),
-  senzaGiornoMese: z.string(),
-  luogoNascita: TipoLuogoEventoModel,
-  soggettoAIRE: z.string(),
-  annoEspatrio: z.string(),
-  idSchedaSoggettoComune: TipoIdSchedaSoggettoComuneModel,
-  idSchedaSoggetto: z.string(),
-  note: z.string(),
-})
-.partial()
-.passthrough();
+  .object({
+    codiceFiscale: TipoCodiceFiscaleModel,
+    cognome: z.string(),
+    senzaCognome: z.string(),
+    nome: z.string(),
+    senzaNome: z.string(),
+    sesso: z.string(),
+    dataNascita: z.string(),
+    senzaGiorno: z.string(),
+    senzaGiornoMese: z.string(),
+    luogoNascita: TipoLuogoEventoModel,
+    soggettoAIRE: z.string(),
+    annoEspatrio: z.string(),
+    idSchedaSoggettoComune: TipoIdSchedaSoggettoComuneModel,
+    idSchedaSoggetto: z.string(),
+    note: z.string(),
+  })
+  .partial()
+  .passthrough();
 export type TipoGeneralitaModel = z.infer<typeof TipoGeneralitaModel>;
 
-
-
 export const TipoIdentificativiModel = z
-.object({
-  id: z.string() 
-})
-.partial()
-.passthrough();
+  .object({
+    id: z.string(),
+  })
+  .partial()
+  .passthrough();
 export type TipoIdentificativiModel = z.infer<typeof TipoIdentificativiModel>;
 
 export const TipoAttoModel = z
-.object({
-  comuneRegistrazione: TipoComuneModel,
-  ufficioMunicipio: z.string(),
-  anno: z.string(),
-  parte: z.string(),
-  serie: z.string(),
-  numeroAtto: z.string(),
-  volume: z.string(),
-  dataFormazioneAtto: z.string(),
-  trascritto: z.string(),
-})
-.partial()
-.passthrough();
+  .object({
+    comuneRegistrazione: TipoComuneModel,
+    ufficioMunicipio: z.string(),
+    anno: z.string(),
+    parte: z.string(),
+    serie: z.string(),
+    numeroAtto: z.string(),
+    volume: z.string(),
+    dataFormazioneAtto: z.string(),
+    trascritto: z.string(),
+  })
+  .partial()
+  .passthrough();
 export type TipoAttoModel = z.infer<typeof TipoAttoModel>;
 
-
-
 export const TipoAttoANSCModel = z
-.object({
-  idANSC: z.string(),
-  comuneRegistrazione: TipoComuneModel,
-  anno: z.string(),
-  ufficioMunicipio: z.string(),
-  numeroComunale: z.string(),
-  dataFormazioneAtto: z.string(),
-  trascritto: z.string(),
-})
-.partial()
-.passthrough();
+  .object({
+    idANSC: z.string(),
+    comuneRegistrazione: TipoComuneModel,
+    anno: z.string(),
+    ufficioMunicipio: z.string(),
+    numeroComunale: z.string(),
+    dataFormazioneAtto: z.string(),
+    trascritto: z.string(),
+  })
+  .partial()
+  .passthrough();
 export type TipoAttoANSCModel = z.infer<typeof TipoAttoANSCModel>;
 
-
 export const TipoAttoEventoModel = z
-.object({
-  atto: TipoAttoModel,
-  attoANSC: TipoAttoANSCModel
-})
-.partial()
-.passthrough();
+  .object({
+    atto: TipoAttoModel,
+    attoANSC: TipoAttoANSCModel,
+  })
+  .partial()
+  .passthrough();
 export type TipoAttoEventoModel = z.infer<typeof TipoAttoEventoModel>;
 
-
-
-
 export const TipoDatiEventoModel = z
-.object({
-  dataEvento: z.string(),
-  senzaGiorno: z.string(),
-  senzaGiornoMese: z.string(),
-  luogoEvento: TipoLuogoEventoModel,
-  attoEvento: TipoAttoEventoModel,
-})
-.partial()
-.passthrough();
+  .object({
+    dataEvento: z.string(),
+    senzaGiorno: z.string(),
+    senzaGiornoMese: z.string(),
+    luogoEvento: TipoLuogoEventoModel,
+    attoEvento: TipoAttoEventoModel,
+  })
+  .partial()
+  .passthrough();
 export type TipoDatiEventoModel = z.infer<typeof TipoDatiEventoModel>;
 
 export const TipoDatiSoggettiEnteModel = z
-.object({
-  generalita: TipoGeneralitaModel,
-  residenza: z.array(TipoResidenzaModel),
-  identificativi: TipoIdentificativiModel,
-  datiDecesso: TipoDatiEventoModel,
-})
-.partial()
-.passthrough();
-export type TipoDatiSoggettiEnteModel = z.infer<typeof TipoDatiSoggettiEnteModel>;
+  .object({
+    generalita: TipoGeneralitaModel,
+    residenza: z.array(TipoResidenzaModel),
+    identificativi: TipoIdentificativiModel,
+    datiDecesso: TipoDatiEventoModel,
+  })
+  .partial()
+  .passthrough();
+export type TipoDatiSoggettiEnteModel = z.infer<
+  typeof TipoDatiSoggettiEnteModel
+>;
 
 export const TipoListaSoggettiModel = z
-.object({
-  soggetto: z.array(TipoDatiSoggettiEnteModel)
-})
-.partial()
-.passthrough();
+  .object({
+    soggetto: z.array(TipoDatiSoggettiEnteModel),
+  })
+  .partial()
+  .passthrough();
 export type TipoListaSoggettiModel = z.infer<typeof TipoListaSoggettiModel>;
 
 export const TipoErroriAnomaliaModel = z
-.object({
-  codiceErroreAnomalia: z.string(),
+  .object({
+    codiceErroreAnomalia: z.string(),
     tipoErroreAnomalia: z.string(),
     testoErroreAnomalia: z.string(),
     oggettoErroreAnomalia: z.string(),
     campoErroreAnomalia: z.string(),
-    valoreErroreAnomalia: z.string(),})
-.partial()
-.passthrough();
+    valoreErroreAnomalia: z.string(),
+  })
+  .partial()
+  .passthrough();
 export type TipoErroriAnomaliaModel = z.infer<typeof TipoErroriAnomaliaModel>;
 
 export const RispostaAR001Model = z
@@ -361,28 +359,25 @@ export const RispostaAR001Model = z
 export type RispostaAR001Model = z.infer<typeof RispostaAR001Model>;
 
 export const ProblemErrorModel = z
-.object({
-  code: z.string(), detail: z.string()
-})
-.partial()
-.passthrough();
+  .object({
+    code: z.string(),
+    detail: z.string(),
+  })
+  .partial()
+  .passthrough();
 export type ProblemErrorModel = z.infer<typeof ProblemErrorModel>;
 
 export const ProblemModel = z
-.object({
-  type: z.string(),
-  status: z.number().int(),
-  title: z.string(),
-  correlationId: z.string().optional(),
-  detail: z.string().optional(),
-  errors: z.array(ProblemErrorModel).min(1),
-})
-.passthrough();
+  .object({
+    type: z.string(),
+    status: z.number().int(),
+    title: z.string(),
+    correlationId: z.string().optional(),
+    detail: z.string().optional(),
+    errors: z.array(ProblemErrorModel).min(1),
+  })
+  .passthrough();
 export type ProblemModel = z.infer<typeof ProblemModel>;
-
-
-
-
 
 /*
 export const schemas = {
@@ -426,5 +421,3 @@ export const schemas = {
   Problem,
 };
 */
-
-

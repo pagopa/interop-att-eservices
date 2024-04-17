@@ -7,7 +7,7 @@ import { makeApiProblemBuilder } from "pdnd-models";
 import { match } from "ts-pattern";
 import { logger } from "pdnd-common";
 import { ExpressContext } from "pdnd-common";
-import { validate as tokenValidation} from "./interoperabilityValidationMiddleware.js";
+import { validate as tokenValidation } from "./interoperabilityValidationMiddleware.js";
 
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 
@@ -18,9 +18,15 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
     > = async (req, res, next): Promise<unknown> => {
       try {
         console.log("[START] auditValidationMiddleware");
-        const trackingEvidenceToken = Array.isArray(req.headers['agid-jwt-trackingevidence']) ? req.headers['agid-jwt-trackingevidence'][0] : req.headers['agid-jwt-trackingevidence'];
+        const trackingEvidenceToken = Array.isArray(
+          req.headers["agid-jwt-trackingevidence"]
+        )
+          ? req.headers["agid-jwt-trackingevidence"][0]
+          : req.headers["agid-jwt-trackingevidence"];
         if (!trackingEvidenceToken) {
-          logger.error(`auditValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`);
+          logger.error(
+            `auditValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`
+          );
           throw ErrorHandling.missingBearer();
         }
         if (!tokenValidation(trackingEvidenceToken)) {
@@ -46,7 +52,6 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
   };
 
 const verifyJwtPayload = (jwtToken: string): void => {
-
   const decodedToken = jwt.decode(jwtToken, { complete: true }) as {
     header: JwtHeader;
     payload: JwtPayload;
@@ -68,7 +73,10 @@ const verifyJwtPayload = (jwtToken: string): void => {
     throw ErrorHandling.tokenExpired();
   }
 
-  if (!decodedToken.payload.aud || decodedToken.payload.aud != process.env.TOKEN_AUD) {
+  if (
+    !decodedToken.payload.aud ||
+    decodedToken.payload.aud != process.env.TOKEN_AUD
+  ) {
     logger.error(`Request header 'aud' is incorrect`);
     throw ErrorHandling.tokenNotValid();
   }
@@ -97,7 +105,4 @@ const verifyJwtPayload = (jwtToken: string): void => {
     logger.error(`Request header 'purposeId' not present`);
     throw ErrorHandling.tokenNotValid();
   }
-
-
-
 };

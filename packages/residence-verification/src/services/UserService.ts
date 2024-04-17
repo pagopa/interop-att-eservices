@@ -5,7 +5,7 @@ import dataPreparationRepository from "../repository/dataPreparationRepository.j
 import generateHash from "../utilities/hashUtilities.js";
 import {
   findUserModelByFiscalCode,
-  findUserModelById
+  findUserModelById,
 } from "../utilities/userUtilities.js";
 
 class UserService {
@@ -26,7 +26,6 @@ class UserService {
     }
   }
 
-  
   public async getById(id: string): Promise<UserModel | null> {
     try {
       const hash = generateHash([this.appContext.authData.purposeId]);
@@ -41,7 +40,6 @@ class UserService {
       throw error;
     }
   }
-
 }
 
 export default new UserService();

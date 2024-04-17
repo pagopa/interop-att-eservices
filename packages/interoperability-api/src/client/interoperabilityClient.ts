@@ -1,21 +1,24 @@
-//import { ByKid } from "../model/types.js";
-import axios, { AxiosResponse } from "axios";
-import { JWK } from "../model/domain/models.js";
-import { InteroperabilityConfig } from "pdnd-common";
+// import { ByKid } from "../model/types.js";
 import path from "path";
+import { InteroperabilityConfig } from "pdnd-common";
+import axios, { AxiosResponse } from "axios";
 import { ErrorHandling } from "pdnd-models";
+import { logger } from "pdnd-common";
+import { JWK } from "../model/domain/models.js";
 
 export async function getkeyClient(
   token: string,
   kid: string
 ): Promise<JWK | undefined> {
-  console.log("call getKeyData:");
+  logger.info("[START] Interoperability client: getkey ");
+
   const config = InteroperabilityConfig.parse(process.env);
 
   // Definisci l'URL dell'API utilizzando il token fornito e il kid specificato
   if (!config.skipInteroperabilityVerification) {
     const apiUrl = path.join(config.host, "keys", kid);
-    console.log("api url ", apiUrl);
+    logger.info(`Interoperability client: url ${apiUrl}`);
+
     // Configura gli header della richiesta
     const headers = {
       Accept: "application/json",
@@ -25,11 +28,15 @@ export async function getkeyClient(
     try {
       // Effettua la chiamata usando axios
       const response: AxiosResponse<JWK> = await axios.get(apiUrl, { headers });
-      console.log("Risposta:", response.data);
+      logger.info(`Interoperability client: Response: ${response.data}`);
+      logger.info("[END] Interoperability client:");
       return response.data;
     } catch (error) {
-      console.error("Unexpected error during token generation:", error);
-      throw ErrorHandling.tokenGenerationError("Errore durante la generazione del token");
+      logger.error(`Interoperability client: 
+      Unexpected error while retrieving the key: ${error}`);
+      throw ErrorHandling.tokenGenerationError(
+        "Unexpected error while retrieving the key"
+      );
     }
   }
   return undefined;
