@@ -19,7 +19,7 @@ spec:
       containers:
         - name: interop-att-residence-verification
 #          image: ghcr.io/pagopa/interop-att-residence-verification:{{RESIDENCEVERIFICATIONIMAGEDIGEST}}
-          image: interop-att-residence-verification:{{RESIDENCEVERIFICATIONIMAGEDIGEST}}
+          image: {{RESIDENCEVERIFICATIONIMAGE}}
           imagePullPolicy: Always
           ports:
             - name: http
