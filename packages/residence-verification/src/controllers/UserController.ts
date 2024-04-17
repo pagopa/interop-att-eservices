@@ -11,27 +11,22 @@ class UserController {
   public async findUser(request: RichiestaAR001): Promise<RispostaAR001 | null | undefined> {
     try {
       console.log("post request: " + request);
-      var  resultSoggetti : TipoListaSoggetti[] = []; //array di TipoDatiSoggettiEnte
+      var  resultSoggetti : TipoListaSoggetti[] = [];
       if (request.parametriRicerca.codiceFiscale) {
         const data = await UserService.getByFiscalCode(request.parametriRicerca.codiceFiscale);
         var list: UserModel[] = [];
         if (data) {
           list.push(data);
-        
-          /* const result = UserModelToApiRispostaAR001(
-            request.parametriRicerca.codiceFiscale,
-            request.idOperazioneClient,
-          ); */
         }
         list.forEach(element => {
           resultSoggetti.push(UserModelToApiTipoDatiSoggettiEnte(element))
         });
+
         let result: RispostaAR001 = {
           idOperazione:  request.idOperazioneClient, 
           soggetto: resultSoggetti,
         };
         
-
         return result;
       } else {
         if (request.parametriRicerca.id) {

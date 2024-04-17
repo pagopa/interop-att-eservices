@@ -35,7 +35,7 @@ import {
   TipoErroriAnomaliaModel,
   RispostaAR001Model,
   ProblemErrorModel,
-  //ProblemModel,
+  ProblemModel,
 } from "pdnd-models";
 import { getUserModelByCodiceFiscale } from "../../utilities/userUtilities.js";
 import {
@@ -81,7 +81,7 @@ import {
   TipoErroriAnomalia,
   RispostaAR001,
   ProblemError,
-  //Problem,  
+  Problem,  
 } from "./models.js";
 
 export const apiTipoComuneToTipoComuneModel = (
@@ -640,14 +640,7 @@ export const TipoErroriAnomaliaModelToApiTipoErroriAnomalia = (
 });
 
 
-export const RispostaAR001ModelToApiRispostaAR001 = (
-  rispostaAR001Model: RispostaAR001Model
-): RispostaAR001 => ({
-  idOperazione: rispostaAR001Model?.idOperazione,
-  //soggetti: rispostaAR001Model?.soggetti,
-  listaAnomalie: rispostaAR001Model?.listaAnomalie,
-});
-
+ 
 /***************************************** */
 
 export const codiceFiscaleToApiTipoCodiceFiscale = (
@@ -729,18 +722,18 @@ export const ProblemErrorModelToApiProblemError = (
   detail: problemErrorModel?.detail || ""
 });
 
-/* 
+
 export const ProblemModelToApiProblem= (
-  problemModel: ProblemModel
+  problemModel: ProblemModel,  problemError : ProblemError[]
 ): Problem => ({
   type: problemModel?.type,
   status: problemModel?.status,
   title: problemModel?.title,
   correlationId: problemModel?.correlationId,
   detail: problemModel?.detail,
-  errors: problemModel?.errors
+  errors: problemError
 });
- */
+ 
 
 
 
