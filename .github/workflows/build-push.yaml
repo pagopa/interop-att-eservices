@@ -59,7 +59,6 @@ jobs:
             prefix=
             suffix=
           tags: |
-#            type=raw,value=2.x-latest
              type=raw,value=${{ github.head_ref || github.ref_name }}
 
       - name: (tag) Docker metadata
