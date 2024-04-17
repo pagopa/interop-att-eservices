@@ -1,5 +1,4 @@
 import { JwtPayload } from "jsonwebtoken";
-//import { TenantId } from "pdnd-model";
 import { z } from "zod";
 
 export const userRoles = {
@@ -27,40 +26,4 @@ export const AuthData = z.object({
   purposeId: z.string(),
   clientId: z.string(),
 });
-export type AuthData = z.infer<typeof AuthData>; 
-
-/* export const AuthJWTToken = z.object({
-  organizationId: TenantId,
-  "user-roles": z
-    .string()
-    .optional()
-    .transform((val) => val?.split(",")),
-  role: z
-    .string()
-    .optional()
-    .transform((val) => val?.split(",")),
-  uid: z.string().uuid().optional(),
-  organization: z.object({
-    roles: z.array(
-      z.object({
-        role: z.string(),
-      })
-    ),
-  }),
-  externalId: z.object({
-    origin: z.string(),
-    value: z.string(),
-  }),
-});
-export type AuthJWTToken = z.infer<typeof AuthJWTToken> & JwtPayload;
-
-export const AuthData = z.object({
-  organizationId: TenantId,
-  userId: z.string().uuid(),
-  userRoles: z.array(z.string()),
-  externalId: z.object({
-    origin: z.string(),
-    value: z.string(),
-  }),
-});
-export type AuthData = z.infer<typeof AuthData>; */
+export type AuthData = z.infer<typeof AuthData>;

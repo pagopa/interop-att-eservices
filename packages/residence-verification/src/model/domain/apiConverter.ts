@@ -15,8 +15,6 @@ import {
   TipoConsolatoModel,
   TipoLocalitaEsteraModel,
   TipoResidenzaModel,
-
-  
   TipoDatiNascitaModel,
   TipoParametriRicercaModel,
   TipoRichiestaModel,
@@ -33,7 +31,7 @@ import {
   TipoDatiSoggettiEnteModel,
   TipoListaSoggettiModel,
   TipoErroriAnomaliaModel,
-  //RispostaAR001Model,
+  // RispostaAR001Model,
   ProblemErrorModel,
   ProblemModel,
 } from "pdnd-models";
@@ -69,7 +67,6 @@ import {
   TipoCodiceFiscale,
   TipoLuogoEvento,
   TipoIdSchedaSoggettoComune,
-
   TipoGeneralita,
   TipoIdentificativi,
   TipoAtto,
@@ -79,9 +76,9 @@ import {
   TipoDatiSoggettiEnte,
   TipoListaSoggetti,
   TipoErroriAnomalia,
-  //RispostaAR001,
+  // RispostaAR001,
   ProblemError,
-  Problem,  
+  Problem,
 } from "./models.js";
 
 export const apiTipoComuneToTipoComuneModel = (
@@ -447,14 +444,15 @@ export const tipoResidenzaModelToApiTipoResidenza = (
 ): TipoResidenza => ({
   tipoIndirizzo: tipoResidenzaModel?.tipoIndirizzo,
   noteIndirizzo: tipoResidenzaModel?.noteIndirizzo,
-  indirizzo: tipoIndirizzoModelToApiTipoIndirizzo(tipoResidenzaModel?.indirizzo),
+  indirizzo: tipoIndirizzoModelToApiTipoIndirizzo(
+    tipoResidenzaModel?.indirizzo
+  ),
   localitaEstera: tipoLocalitaEsteraModelToApiTipoLocalitaEstera1(
     tipoResidenzaModel?.localitaEstera
   ),
   presso: tipoResidenzaModel?.presso,
   dataDecorrenzaResidenza: tipoResidenzaModel?.dataDecorrenzaResidenza,
 });
-
 
 export const userModelToApiDataPreparationTemplate = (
   userModel: UserModel
@@ -475,31 +473,28 @@ export const userModelToApiDataPreparationTemplateResponse = (
   residenza: tipoResidenzaModelToApiTipoResidenza(userModel?.residenza),
 });
 
-
 //* ********************************************************************************************************** */
-
 
 export const TipoDatiNascitaModelToApiTipoDatiNascita = (
   tipoDatiNascitaModel: TipoDatiNascitaModel
 ): TipoDatiNascitaE000 => ({
   dataEvento: tipoDatiNascitaModel?.dataEvento,
-  senzaGiorno:  tipoDatiNascitaModel?.senzaGiorno,
-  senzaGiornoMese:  tipoDatiNascitaModel?.senzaGiornoMese,
-  luogoNascita: tipoDatiNascitaModel?.luogoNascita
+  senzaGiorno: tipoDatiNascitaModel?.senzaGiorno,
+  senzaGiornoMese: tipoDatiNascitaModel?.senzaGiornoMese,
+  luogoNascita: tipoDatiNascitaModel?.luogoNascita,
 });
-
 
 export const TipoParametriRicercaModelToApiTipoParametriRicerca = (
   tipoParametriRicercaModel: TipoParametriRicercaModel
 ): TipoParametriRicercaAR001 => ({
-  codiceFiscale: tipoParametriRicercaModel?.codiceFiscale ,
-  id: tipoParametriRicercaModel?.id ,
-  cognome: tipoParametriRicercaModel?.cognome ,
-  senzaCognome: tipoParametriRicercaModel?.senzaCognome ,
-  nome: tipoParametriRicercaModel?.nome ,
-  senzaNome: tipoParametriRicercaModel?.senzaNome ,
-  sesso: tipoParametriRicercaModel?.sesso ,
-  datiNascita: tipoParametriRicercaModel?.datiNascita ,
+  codiceFiscale: tipoParametriRicercaModel?.codiceFiscale,
+  id: tipoParametriRicercaModel?.id,
+  cognome: tipoParametriRicercaModel?.cognome,
+  senzaCognome: tipoParametriRicercaModel?.senzaCognome,
+  nome: tipoParametriRicercaModel?.nome,
+  senzaNome: tipoParametriRicercaModel?.senzaNome,
+  sesso: tipoParametriRicercaModel?.sesso,
+  datiNascita: tipoParametriRicercaModel?.datiNascita,
 });
 
 export const TipoRichiestaModelModelToApiTipoRichiesta = (
@@ -521,9 +516,9 @@ export const RichiestaModelToApiRichiestaAR001 = (
 export const TipoCodiceFiscaleModelToApiTipoCodiceFiscale = (
   tipoCodiceFiscaleModel: TipoCodiceFiscaleModel
 ): TipoCodiceFiscale => ({
-    codFiscale: tipoCodiceFiscaleModel?.codFiscale,
-    validitaCF: tipoCodiceFiscaleModel?.validitaCF,
-    dataAttribuzioneValidita:tipoCodiceFiscaleModel?.dataAttribuzioneValidita
+  codFiscale: tipoCodiceFiscaleModel?.codFiscale,
+  validitaCF: tipoCodiceFiscaleModel?.validitaCF,
+  dataAttribuzioneValidita: tipoCodiceFiscaleModel?.dataAttribuzioneValidita,
 });
 
 export const TipoLuogoEventoModelToApiTipoLuogoEvento = (
@@ -531,13 +526,14 @@ export const TipoLuogoEventoModelToApiTipoLuogoEvento = (
 ): TipoLuogoEvento => ({
   luogoEccezionale: tipoLuogoEventoModel?.luogoEccezionale,
   comune: tipoLuogoEventoModel?.comune,
-  localita:tipoLuogoEventoModel?.localita
+  localita: tipoLuogoEventoModel?.localita,
 });
 
 export const TipoIdSchedaSoggettoComuneModelToApiTipoIdSchedaSoggettoComune = (
   tipoLuogoEventoModel: TipoIdSchedaSoggettoComuneModel
 ): TipoIdSchedaSoggettoComune => ({
-  idSchedaSoggettoComuneIstat: tipoLuogoEventoModel?.idSchedaSoggettoComuneIstat,
+  idSchedaSoggettoComuneIstat:
+    tipoLuogoEventoModel?.idSchedaSoggettoComuneIstat,
   idSchedaSoggetto: tipoLuogoEventoModel?.idSchedaSoggetto,
 });
 
@@ -561,11 +557,10 @@ export const TipoGeneralitaModelToApiTipoGeneralita = (
   note: tipoGeneralitaModel?.note,
 });
 
-
 export const TipoIdentificativiModelToApiTipoIdentificativi = (
   tipoIdentificativiModel: TipoIdentificativiModel
 ): TipoIdentificativi => ({
-  id: tipoIdentificativiModel?.id
+  id: tipoIdentificativiModel?.id,
 });
 
 export const TipoAttoModelToApiTipoAtto = (
@@ -601,7 +596,6 @@ export const TipoAttoEventoModelToApiTipoAttoEvento = (
   attoANSC: tipoDatiEvento?.attoANSC,
 });
 
-
 export const TipoDatiEventoModelToApiTipoDatiEvento = (
   tipoDatiEvento: TipoDatiEventoModel
 ): TipoDatiEvento => ({
@@ -624,9 +618,8 @@ export const TipoDatiSoggettiEnteModelToApiTipoDatiSoggettiEnte = (
 export const TipoListaSoggettiModelToApiTipoListaSoggetti = (
   tipoListaSoggettiModel: TipoListaSoggettiModel
 ): TipoListaSoggetti => ({
-  soggetto: tipoListaSoggettiModel?.soggetto
+  soggetto: tipoListaSoggettiModel?.soggetto,
 });
-
 
 export const TipoErroriAnomaliaModelToApiTipoErroriAnomalia = (
   tipoErroriAnomaliaModel: TipoErroriAnomaliaModel
@@ -639,102 +632,105 @@ export const TipoErroriAnomaliaModelToApiTipoErroriAnomalia = (
   valoreErroreAnomalia: tipoErroriAnomaliaModel?.valoreErroreAnomalia,
 });
 
-
- 
-/***************************************** */
+/** *************************************** */
 
 export const codiceFiscaleToApiTipoCodiceFiscale = (
   codiceFiscale: string
 ): TipoGeneralita => ({
-    codFiscale: codiceFiscale,
-    validitaCF: "",
-    dataAttribuzioneValidita: "", 
+  codFiscale: codiceFiscale,
+  validitaCF: "",
+  dataAttribuzioneValidita: "",
 });
-
-
 
 export const TipoDataNascitaModelToApiTipoLuogoEvento = (
   tipoDataNascitaModel: TipoDataNascitaModel
 ): TipoLuogoEvento => ({
   luogoEccezionale: tipoDataNascitaModel.luogoNascita.luogoEccezionale,
-  comune:  tipoComuneModelToApiTipoComune(tipoDataNascitaModel.luogoNascita.comune),
-  localita: tipoLocalitaModelToApiTipoLocalita(tipoDataNascitaModel.luogoNascita.localita),
+  comune: tipoComuneModelToApiTipoComune(
+    tipoDataNascitaModel.luogoNascita.comune
+  ),
+  localita: tipoLocalitaModelToApiTipoLocalita(
+    tipoDataNascitaModel.luogoNascita.localita
+  ),
 });
-
 
 export const SoggettoModelToApiTipoGeneralita = (
   soggettoModel: SoggettoModel
 ): TipoGeneralita => ({
-  codiceFiscale:  codiceFiscaleToApiTipoCodiceFiscale(soggettoModel.codiceFiscale),
+  codiceFiscale: codiceFiscaleToApiTipoCodiceFiscale(
+    soggettoModel.codiceFiscale
+  ),
   cognome: soggettoModel.cognome,
-  senzaCognome: soggettoModel.cognome == null ? 'true' : 'false',
+  senzaCognome: soggettoModel.cognome == null ? "true" : "false",
   nome: soggettoModel.nome,
-  senzaNome:  soggettoModel.nome == null ? 'true' : 'false', 
+  senzaNome: soggettoModel.nome == null ? "true" : "false",
   sesso: soggettoModel.sesso,
-  dataNascita: soggettoModel?.datiNascita.dataEvento, 
+  dataNascita: soggettoModel?.datiNascita.dataEvento,
   senzaGiorno: "",
   senzaGiornoMese: "",
-  luogoNascita: TipoDataNascitaModelToApiTipoLuogoEvento(soggettoModel.datiNascita),
-  soggettoAIRE: "", 
-  annoEspatrio: "", 
-  //idSchedaSoggettoComune: TipoIdSchedaSoggettoComuneModelToApiTipoIdSchedaSoggettoComune()), 
-  idSchedaSoggetto: "", 
-  note: "", 
+  luogoNascita: TipoDataNascitaModelToApiTipoLuogoEvento(
+    soggettoModel.datiNascita
+  ),
+  soggettoAIRE: "",
+  annoEspatrio: "",
+  // idSchedaSoggettoComune: TipoIdSchedaSoggettoComuneModelToApiTipoIdSchedaSoggettoComune()),
+  idSchedaSoggetto: "",
+  note: "",
 });
 
 export const TipoIndirizzoModelToApiTipoIndirizzo = (
   tipoIndirizzoModel: TipoIndirizzoModel
 ): TipoIndirizzo => ({
-    cap: tipoIndirizzoModel?.cap,
-    comune: tipoComuneModelToApiTipoComune(tipoIndirizzoModel.comune),
-    frazione: tipoIndirizzoModel?.frazione,
-    toponimo: tipoToponimoModelToApiTipoToponimo(tipoIndirizzoModel.toponimo),
-    numeroCivico: tipoNumeroCivicoModelToApiTipoNumeroCivico(tipoIndirizzoModel.numeroCivico),
+  cap: tipoIndirizzoModel?.cap,
+  comune: tipoComuneModelToApiTipoComune(tipoIndirizzoModel.comune),
+  frazione: tipoIndirizzoModel?.frazione,
+  toponimo: tipoToponimoModelToApiTipoToponimo(tipoIndirizzoModel.toponimo),
+  numeroCivico: tipoNumeroCivicoModelToApiTipoNumeroCivico(
+    tipoIndirizzoModel.numeroCivico
+  ),
 });
 
 export const TipoResidenzaModelToApiTipoResidenza = (
   tipoResidenzaModel: TipoResidenzaModel
-): TipoResidenza[] => {
-  return [{
+): TipoResidenza[] => [
+  {
     tipoIndirizzo: tipoResidenzaModel?.tipoIndirizzo,
     noteIndirizzo: tipoResidenzaModel?.noteIndirizzo,
-    indirizzo: TipoIndirizzoModelToApiTipoIndirizzo(tipoResidenzaModel?.indirizzo),
-    localitaEstera: tipoLocalitaEsteraModelToApiTipoLocalitaEstera1(tipoResidenzaModel.localitaEstera),
+    indirizzo: TipoIndirizzoModelToApiTipoIndirizzo(
+      tipoResidenzaModel?.indirizzo
+    ),
+    localitaEstera: tipoLocalitaEsteraModelToApiTipoLocalitaEstera1(
+      tipoResidenzaModel.localitaEstera
+    ),
     presso: tipoResidenzaModel?.presso,
     dataDecorrenzaResidenza: tipoResidenzaModel?.dataDecorrenzaResidenza,
-  }];
-};
-
+  },
+];
 
 export const UserModelToApiTipoDatiSoggettiEnte = (
   userModel: UserModel
 ): TipoDatiSoggettiEnte => ({
-    generalita: SoggettoModelToApiTipoGeneralita(userModel.soggetto),
-    residenza: TipoResidenzaModelToApiTipoResidenza(userModel.residenza),
-    //identificativi: TipoIdentificativi,
-    //datiDecesso: TipoDatiEvento, 
+  generalita: SoggettoModelToApiTipoGeneralita(userModel.soggetto),
+  residenza: TipoResidenzaModelToApiTipoResidenza(userModel.residenza),
+  // identificativi: TipoIdentificativi,
+  // datiDecesso: TipoDatiEvento,
 });
 
 export const ProblemErrorModelToApiProblemError = (
   problemErrorModel: ProblemErrorModel
 ): ProblemError => ({
   code: problemErrorModel?.code || "",
-  detail: problemErrorModel?.detail || ""
+  detail: problemErrorModel?.detail || "",
 });
 
-
-export const ProblemModelToApiProblem= (
-  problemModel: ProblemModel,  problemError : ProblemError[]
+export const ProblemModelToApiProblem = (
+  problemModel: ProblemModel,
+  problemError: ProblemError[]
 ): Problem => ({
   type: problemModel?.type,
   status: problemModel?.status,
   title: problemModel?.title,
   correlationId: problemModel?.correlationId,
   detail: problemModel?.detail,
-  errors: problemError
+  errors: problemError,
 });
- 
-
-
-
- 

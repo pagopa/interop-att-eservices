@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { ZodiosRouterContextRequestHandler } from "@zodios/express";
 import { ErrorHandling, makeApiProblemBuilder } from "pdnd-models";
 import { P, match } from "ts-pattern";
@@ -56,7 +55,6 @@ export const authenticationMiddleware: () => ZodiosRouterContextRequestHandler<E
             throw ErrorHandling.genericError("Invalid claims");
           })
           .otherwise((claimsRes: AuthData) => {
-            // eslint-disable-next-line functional/immutable-data
             req.ctx = {
               authData: { ...claimsRes },
               correlationId,

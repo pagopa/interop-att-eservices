@@ -4,18 +4,18 @@ import {
   buildPublicKeyService,
   getKidFromJWTToken,
   getOauth2Token,
-  generateAndLogInternalAccessCode
+  generateAndLogInternalAccessCode,
 } from "pdnd-common";
 import { getkeyClient } from "interoperability";
+import { ErrorHandling } from "pdnd-models";
 import {
   decodePublicKey,
   generateRSAPublicKey,
   verify,
 } from "../utilities/rsaUtility.js";
-import { ErrorHandling } from "pdnd-models";
 
-export const validate = (jwtToken: string): Promise<boolean> => {
-  return new Promise(async (resolve, reject) => {
+export const validate = (jwtToken: string): Promise<boolean> =>
+  new Promise(async (resolve, reject) => {
     try {
       logger.info("validate token");
       /* const config = signerConfig.parse(process.env); */
@@ -25,21 +25,23 @@ export const validate = (jwtToken: string): Promise<boolean> => {
       // Recupera il kid dal token JWT
       const pk = await signerService.getRSAPublicKey(config.kmsKeyId);
 
-      var pkDecoded = await decodePublicKey(pk);
+      const pkDecoded = await decodePublicKey(pk);
 
-      const accessCodeSigned = await generateAndLogInternalAccessCode(pkDecoded.kid);
+      const accessCodeSigned = await generateAndLogInternalAccessCode(
+        pkDecoded.kid
+      );
 
       if (accessCodeSigned == null) {
         logger.error(`Unexpected error parsing token`);
         throw ErrorHandling.tokenNotValid();
       }
 
-      var tokenGenerated = await getOauth2Token(accessCodeSigned.serialized);
-      var kid = await getKidFromJWTToken(jwtToken);
+      const tokenGenerated = await getOauth2Token(accessCodeSigned.serialized);
+      const kid = await getKidFromJWTToken(jwtToken);
 
       if (tokenGenerated != undefined) {
         // Chiamata a getKeyData utilizzando l'internalToken appena generato e il kid
-        const result = await getkeyClient(tokenGenerated, kid); //chiave pubblica agid
+        const result = await getkeyClient(tokenGenerated, kid); // chiave pubblica agid
 
         if (!result) {
           logger.error(`Unexpected error during token generation`);
@@ -57,10 +59,9 @@ export const validate = (jwtToken: string): Promise<boolean> => {
           resolve(false);
         }
       }
-      //resolve(false);
+      // resolve(false);
     } catch (err) {
       console.error(`Unexpected error parsing token: ${err}`);
       reject(err);
     }
   });
-};

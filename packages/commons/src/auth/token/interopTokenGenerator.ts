@@ -6,10 +6,18 @@ import { signerConfig } from "../../config/index.js";
 import { logger } from "../../logging/index.js";
 import { userRoles } from "../authData.js";
 import { buildSignerService } from "../../aws-kms/signerService.js";
-import { InternalToken, TokenPayload, TokenPayloadInternal, TokenHeader} from "./token.js";
+import {
+  InternalToken,
+  TokenPayload,
+  TokenPayloadInternal,
+  TokenHeader,
+} from "./token.js";
 
 export type InteropTokenGenerator = {
-  generateInternalToken: (seed: TokenPayloadInternal, header: TokenHeader) => Promise<InternalToken>;
+  generateInternalToken: (
+    seed: TokenPayloadInternal,
+    header: TokenHeader
+  ) => Promise<InternalToken>;
 };
 
 const createInternalToken = (
@@ -33,7 +41,7 @@ const createInternalToken = (
     nbf: issuedAt,
     expireAt,
     audience,
-    customClaims: new Map([["role", userRoles.INTERNAL_ROLE]])
+    customClaims: new Map([["role", userRoles.INTERNAL_ROLE]]),
   };
 };
 
@@ -49,7 +57,7 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
     const customHeaders = {
       // use: "sig"
     };
- 
+
     const headers = { ...jwtHeaders, ...customHeaders };
 
     const payload: JwtPayload = {
@@ -60,7 +68,7 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
       sub: seed.subject,
       iat: seed.issuedAt,
       nbf: seed.nbf,
-      exp: seed.expireAt
+      exp: seed.expireAt,
     };
 
     const encodedHeader = Buffer.from(JSON.stringify(headers)).toString(
@@ -70,7 +78,10 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
       "base64url"
     );
     const serializedToken = `${encodedHeader}.${encodedPayload}`;
-    const signature = await signerService.signWithRSA256(config.kmsKeyId, serializedToken);
+    const signature = await signerService.signWithRSA256(
+      config.kmsKeyId,
+      serializedToken
+    );
 
     logger.info(`Interop internal Token generated`);
     return `${serializedToken}.${signature}`;
@@ -81,9 +92,8 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
     tokenHeader: TokenHeader
   ): Promise<InternalToken> => {
     try {
-    
       const tokenSeed = createInternalToken(
-        tokenHeader.alg,//"RS256",
+        tokenHeader.alg, // "RS256",
         tokenHeader.kid,
         tokenPayloadSeed.subject,
         tokenPayloadSeed.audience,
@@ -104,7 +114,7 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
         kid: tokenHeader.kid,
         aud: tokenSeed.audience,
         sub: tokenSeed.subject,
-        iss: tokenSeed.issuer
+        iss: tokenSeed.issuer,
       };
     } catch (error) {
       throw ErrorHandling.tokenGenerationError(error);

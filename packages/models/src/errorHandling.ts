@@ -60,11 +60,9 @@ const errorCodes = {
   missingHeader: "9022",
   missingClaims: "9023",
   missingBearer: "9024",
-  tokenGenerationError:"9995",
+  tokenGenerationError: "9995",
   thirdPartyCallError: "9992",
   genericInternalError: "9991",
-
-
 } as const;
 
 export type CommonErrorCodes = keyof typeof errorCodes;
@@ -185,32 +183,34 @@ export class ErrorHandling {
     });
   }
 
-  public static tokenGenerationError(error: unknown): ApiError<CommonErrorCodes> {
+  public static tokenGenerationError(
+    error: unknown
+  ): ApiError<CommonErrorCodes> {
     return new ApiError({
       code: "tokenGenerationError",
       detail: `Error during token generation: ${parseErrorMessage(error)}`,
       title: "Error token generated",
     });
   }
- 
-  public static thirdPartyCallError(serviceName: string,
-    errorMessage: string): ApiError<CommonErrorCodes> {
+
+  public static thirdPartyCallError(
+    serviceName: string,
+    errorMessage: string
+  ): ApiError<CommonErrorCodes> {
     return new ApiError({
       code: "thirdPartyCallError",
       detail: `Error while invoking ${serviceName} external service -> ${errorMessage}`,
       title: "Error token generated",
-
     });
   }
 
-  public static genericInternalError( message: string): ApiError<CommonErrorCodes> {
+  public static genericInternalError(
+    message: string
+  ): ApiError<CommonErrorCodes> {
     return new ApiError({
       code: "genericInternalError",
       detail: message,
       title: "Error token generated",
-
     });
   }
-
-
 }

@@ -39,7 +39,10 @@ class dataPreparationRepository {
     }
   }
 
-  public async findAllByUuid(key: string, uuid: string): Promise<UserModel[] | null> {
+  public async findAllByUuid(
+    key: string,
+    uuid: string
+  ): Promise<UserModel[] | null> {
     try {
       logger.info(uuid);
       const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato

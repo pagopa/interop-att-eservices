@@ -1,9 +1,9 @@
 import { ErrorHandling } from "pdnd-models";
-import {JWK} from "interoperability"
+import { JWK } from "interoperability";
 import { logger } from "pdnd-common";
-//import { signerConfig } from "../index.js";
+// import { signerConfig } from "../index.js";
 import jose from "node-jose";
-//import { JWS, JWK } from 'node-jose';
+// import { JWS, JWK } from 'node-jose';
 
 export async function decodePublicKey(
   publicKey: Uint8Array
@@ -18,42 +18,27 @@ export async function decodePublicKey(
     const publicKeyString = publicKeyBuffer.toString("base64");
     console.log("publicKeyString: " + publicKeyString);
 
-    let _publicKey = `-----BEGIN PUBLIC KEY-----
+    const _publicKey = `-----BEGIN PUBLIC KEY-----
         ${publicKeyString}
         -----END PUBLIC KEY-----`;
 
     console.log("_publicKey: " + _publicKey);
 
-    let publicKeyDecoded = await jose.JWK.asKey(_publicKey, "pem");
-
-    return publicKeyDecoded;
+    return await jose.JWK.asKey(_publicKey, "pem");
   } catch (err) {
     console.log("err_pem   " + err);
-    const internalError = ErrorHandling.thirdPartyCallError(
-      "PK_DECODE",
-      JSON.stringify(err)
-    );
-    throw internalError;
+    throw ErrorHandling.thirdPartyCallError("PK_DECODE", JSON.stringify(err));
   }
 }
-//rs256
-export async function generateRSAPublicKey(
-  jwk: JWK,
-): Promise<jose.JWK.Key> {
-
+// rs256
+export async function generateRSAPublicKey(jwk: JWK): Promise<jose.JWK.Key> {
   try {
-    let publicKeyDecoded = await jose.JWK.asKey(jwk, 'json');
-    return publicKeyDecoded;
+    return await jose.JWK.asKey(jwk, "json");
   } catch (err) {
     console.log("err_pem   " + err);
-    const internalError = ErrorHandling.thirdPartyCallError(
-      "PK_DECODE",
-      JSON.stringify(err)
-    );
-    throw internalError;
+    throw ErrorHandling.thirdPartyCallError("PK_DECODE", JSON.stringify(err));
   }
 }
-
 
 export async function verify(
   key: jose.JWK.Key,
@@ -65,10 +50,10 @@ export async function verify(
 
     // Verifica il token JWT
     const result = await verifier.verify(token);
-    console.log('La firma del token è valida:', result);
+    console.log("La firma del token è valida:", result);
     return true;
   } catch (error) {
-    console.error('Errore durante la verifica del token:', error);
+    console.error("Errore durante la verifica del token:", error);
     return false;
   }
 }

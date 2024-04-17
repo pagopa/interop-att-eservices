@@ -38,7 +38,9 @@ export type DataPreparationTemplateResponse = z.infer<
   typeof api.schemas.DataPreparationTemplateResponse
 >;
 
-export type TipoDatiNascitaE000 = z.infer<typeof api.schemas.TipoDatiNascitaE000>;
+export type TipoDatiNascitaE000 = z.infer<
+  typeof api.schemas.TipoDatiNascitaE000
+>;
 export type TipoParametriRicercaAR001 = z.infer<
   typeof api.schemas.TipoParametriRicercaAR001
 >;
@@ -47,14 +49,18 @@ export type TipoRichiestaAR001 = z.infer<typeof api.schemas.TipoRichiestaAR001>;
 export type RichiestaAR001 = z.infer<typeof api.schemas.RichiestaAR001>;
 export type TipoCodiceFiscale = z.infer<typeof api.schemas.TipoCodiceFiscale>;
 export type TipoLuogoEvento = z.infer<typeof api.schemas.TipoLuogoEvento>;
-export type TipoIdSchedaSoggettoComune = z.infer<typeof api.schemas.TipoIdSchedaSoggettoComune>;
+export type TipoIdSchedaSoggettoComune = z.infer<
+  typeof api.schemas.TipoIdSchedaSoggettoComune
+>;
 export type TipoGeneralita = z.infer<typeof api.schemas.TipoGeneralita>;
 export type TipoIdentificativi = z.infer<typeof api.schemas.TipoIdentificativi>;
 export type TipoAtto = z.infer<typeof api.schemas.TipoAtto>;
 export type TipoAttoANSC = z.infer<typeof api.schemas.TipoAttoANSC>;
 export type TipoAttoEvento = z.infer<typeof api.schemas.TipoAttoEvento>;
 export type TipoDatiEvento = z.infer<typeof api.schemas.TipoDatiEvento>;
-export type TipoDatiSoggettiEnte = z.infer<typeof api.schemas.TipoDatiSoggettiEnte>;
+export type TipoDatiSoggettiEnte = z.infer<
+  typeof api.schemas.TipoDatiSoggettiEnte
+>;
 export type TipoListaSoggetti = z.infer<typeof api.schemas.TipoListaSoggetti>;
 export type TipoErroriAnomalia = z.infer<typeof api.schemas.TipoErroriAnomalia>;
 export type RispostaAR001 = z.infer<typeof api.schemas.RispostaAR001>;
@@ -102,4 +108,3 @@ export type Problem = z.infer<typeof api.schemas.Problem>;
     Problem,
 };
  */
-

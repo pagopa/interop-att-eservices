@@ -88,7 +88,7 @@ dataPreparationRouter.delete(
     try {
       if (!req) {
         throw ErrorHandling.invalidApiRequest();
-      } 
+      }
       const data = await DataPreparationService.deleteAllByKey();
       logger.info("data " + data);
       if (data == 0) {

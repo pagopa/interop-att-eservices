@@ -1,13 +1,14 @@
 import { z } from "zod";
 
-export const OtherPrimeInfoModel = z
-  .object({
-     r: z.string(), d: z.string(), t: z.string() 
-    });
+export const OtherPrimeInfoModel = z.object({
+  r: z.string(),
+  d: z.string(),
+  t: z.string(),
+});
 export type OtherPrimeInfoModel = z.infer<typeof OtherPrimeInfoModel>;
 
 export const JWTModel = z.object({
-   kty: z.string(),
+  kty: z.string(),
   key_ops: z.array(z.string()).optional(),
   use: z.string().optional(),
   alg: z.string().optional(),
@@ -20,7 +21,7 @@ export const JWTModel = z.object({
   x: z.string().optional(),
   y: z.string().optional(),
   d: z.string().optional(),
-  k: z.string().optional(), 
+  k: z.string().optional(),
   n: z.string().optional(),
   e: z.string().optional(),
   p: z.string().optional(),
@@ -28,6 +29,6 @@ export const JWTModel = z.object({
   dp: z.string().optional(),
   dq: z.string().optional(),
   qi: z.string().optional(),
-  oth: z.array(OtherPrimeInfoModel).min(1).optional(), 
+  oth: z.array(OtherPrimeInfoModel).min(1).optional(),
 });
 export type JWTModel = z.infer<typeof JWTModel>;
