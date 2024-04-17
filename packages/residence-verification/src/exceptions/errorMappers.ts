@@ -5,7 +5,7 @@ import { ErrorCodes as LocalErrorCodes } from "./errors.js";
 
 type ErrorCodes = LocalErrorCodes | CommonErrorCodes;
 
-const { HTTP_STATUS_INTERNAL_SERVER_ERROR, HTTP_STATUS_BAD_REQUEST } =
+const { HTTP_STATUS_INTERNAL_SERVER_ERROR, HTTP_STATUS_BAD_REQUEST, HTTP_STATUS_NOT_FOUND } =
   constants;
 
 export const createEserviceDataPreparation = (
@@ -13,4 +13,5 @@ export const createEserviceDataPreparation = (
 ): number =>
   match(error.code)
     .with("eServiceNotFound", () => HTTP_STATUS_BAD_REQUEST)
+    .with("userModelNotFound", () => HTTP_STATUS_NOT_FOUND)
     .otherwise(() => HTTP_STATUS_INTERNAL_SERVER_ERROR);
