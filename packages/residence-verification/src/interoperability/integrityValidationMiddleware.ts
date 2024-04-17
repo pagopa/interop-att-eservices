@@ -17,7 +17,7 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
       ExpressContext
     > = async (req, res, next): Promise<unknown> => {
       try {
-        console.log("[START] integrityValidationMiddleware");
+        logger.info(`[START] integrityValidationMiddleware`);
         const signatureToken = Array.isArray(req.headers["agid-jwt-signature"])
           ? req.headers["agid-jwt-signature"][0]
           : req.headers["agid-jwt-signature"];
@@ -32,7 +32,7 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
           throw ErrorHandling.tokenNotValid();
         }
         verifyJwtPayload(signatureToken, req);
-        console.log("[END] integrityValidationMiddleware");
+        logger.info(`[END] integrityValidationMiddleware`);
         return next();
       } catch (error) {
         const problem = makeApiProblem(error, (err) =>

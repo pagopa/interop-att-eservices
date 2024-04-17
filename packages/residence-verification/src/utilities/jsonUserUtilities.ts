@@ -1,5 +1,6 @@
 import { UserModel } from "pdnd-models";
 import { classToPlain } from "class-transformer";
+import { logger } from "pdnd-common";
 
 // Funzione che converte una stringa JSON in un oggetto della struttura specificata
 export function parseJsonToUser(inputString: string | null): UserModel | null {
@@ -13,7 +14,7 @@ export function parseJsonToUser(inputString: string | null): UserModel | null {
     // Usa plainToClass per convertire l'oggetto JavaScript in un'istanza della classe UserModel
     return classToPlain(parsedObject) as UserModel;
   } catch (error) {
-    console.error("Errore durante il parsing della stringa JSON:", error);
+    logger.error(`Errore durante il parsing della stringa JSON: ${error}`);
     return null; // Restituisci null se si verifica un errore durante il parsing
   }
 }
@@ -36,7 +37,7 @@ export function parseJsonToUserArray(
     // Mappa ogni elemento dell'array e lo converte in un'istanza della classe UserModel
     return parsedArray.map((item: any) => classToPlain(item) as UserModel);
   } catch (error) {
-    console.error("Errore durante il parsing della stringa JSON:", error);
+    logger.error(`Errore durante il parsing della stringa JSON: ${error}`);
     return null; // Restituisci null se si verifica un errore durante il parsing
   }
 }

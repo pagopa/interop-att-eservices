@@ -17,7 +17,8 @@ import {
 export const validate = (jwtToken: string): Promise<boolean> =>
   new Promise(async (resolve, reject) => {
     try {
-      logger.info("validate token");
+      logger.info(`[START] validate interoperability token`);
+
       /* const config = signerConfig.parse(process.env); */
       const config = signerConfig();
       const signerService = buildPublicKeyService();
@@ -52,16 +53,16 @@ export const validate = (jwtToken: string): Promise<boolean> =>
         // Verifica il token JWT utilizzando la chiave ottenuta da getKeyData
         try {
           const isValid = await verify(publicKey, jwtToken);
-          console.log("isValid: " + isValid);
+          logger.info(`[END] interoperability token valid: ${isValid}`);
           resolve(isValid);
         } catch (err) {
-          console.error(`Unexpected error parsing token: ${err}`);
+          logger.error(`Unexpected error parsing token: ${err}`);
           resolve(false);
         }
       }
       // resolve(false);
     } catch (err) {
-      console.error(`Unexpected error parsing token: ${err}`);
+      logger.error(`Unexpected error parsing token: ${err}`);
       reject(err);
     }
   });

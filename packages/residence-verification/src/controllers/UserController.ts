@@ -11,15 +11,15 @@ import {
   userModelToApiDataPreparationResponseCf,
   UserModelToApiTipoDatiSoggettiEnte,
 } from "../model/domain/apiConverter.js";
-
+import { logger } from "pdnd-common";
 class UserController {
   appContext = getContext();
 
   public async findUser(
     request: RichiestaAR001
   ): Promise<RispostaAR001 | null | undefined> {
-    try {
-      console.log("post request: " + request);
+    try { 
+      logger.info(`post request: ${request}`);
       const resultSoggetti: TipoListaSoggetti[] = [];
       if (request.parametriRicerca.codiceFiscale) {
         const data = await UserService.getByFiscalCode(
