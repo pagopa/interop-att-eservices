@@ -19,6 +19,8 @@ class DataPreparationService {
     genericRequest: DataPreparationTemplate
   ): Promise<UserModel[] | null> {
     try {
+      if(genericRequest.soggetto?.id)
+      logger.info("ID::".concat(genericRequest.soggetto?.id))
       const userData: UserModel[] = [];
       userData.push(
         apiDataPreparationTemplateToUserModel(genericRequest, uuidv4())

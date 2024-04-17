@@ -8,7 +8,6 @@ import {
   TipoListaSoggetti,
 } from "../model/domain/models.js";
 import {
-  userModelToApiDataPreparationResponseCf,
   UserModelToApiTipoDatiSoggettiEnte,
 } from "../model/domain/apiConverter.js";
 
@@ -57,16 +56,16 @@ class UserController {
           var list: UserModel[] = [];
           if (data) {
             list.push(data);
-            const result = userModelToApiDataPreparationResponseCf(
-              list,
-              request.parametriRicerca.codiceFiscale
-            );
-            if (result) {
-              return result;
-            } else {
-              return null;
-            }
           }
+          list.forEach((element) => {
+            resultSoggetti.push(UserModelToApiTipoDatiSoggettiEnte(element));
+          });
+  
+          const result: RispostaAR001 = {
+            idOperazione: request.idOperazioneClient,
+            soggetto: resultSoggetti,
+          };
+          return result;
         }
         return null;
       } else {
