@@ -13,9 +13,8 @@ import {
   generateRSAPublicKey,
   verify,
 } from "../utilities/rsaUtility.js";
-
-export const validate = (jwtToken: string): Promise<boolean> =>
-  new Promise(async (resolve, reject) => {
+export const validate = async (jwtToken: string): Promise<boolean> => {
+  return new Promise(async (resolve, reject) => {
     try {
       logger.info(`[START] validate interoperability token`);
 
@@ -66,3 +65,4 @@ export const validate = (jwtToken: string): Promise<boolean> =>
       reject(err);
     }
   });
+};
