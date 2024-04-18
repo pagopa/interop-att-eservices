@@ -3,8 +3,8 @@ import {
   signerConfig,
   buildPublicKeyService,
   getKidFromJWTToken,
-/*   getOauth2Token,
- */  generateInternalAccessCode,
+  getOauth2Token,
+  generateInternalAccessCode,
 } from "pdnd-common";
 import { getkeyClient } from "interoperability";
 import { ErrorHandling } from "pdnd-models";
@@ -13,7 +13,6 @@ import {
   generateRSAPublicKey,
   verify,
 } from "../utilities/rsaUtility.js";
-import {getOauth2Token} from "../controllers/jwtTokenInteroperabilityMiddleware.js"
 export const validate = async (jwtToken: string): Promise<boolean> => {
   return new Promise(async (resolve, reject) => {
     try {

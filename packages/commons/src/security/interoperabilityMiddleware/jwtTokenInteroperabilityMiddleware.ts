@@ -1,8 +1,9 @@
-/* // import { signerConfig } from "../index.js";
+// import { signerConfig } from "../index.js";
 import axios, { AxiosResponse } from "axios";
 import { TokenResponse } from "pdnd-models";
 import { InteroperabilityConfig } from "../../config/index.js";
 import {logger} from "../../logging/index.js"
+
 export async function getOauth2Token(
   assertion: string
 ): Promise<string | undefined> {
@@ -40,4 +41,3 @@ export async function getOauth2Token(
     throw error;
   }
 }
- */
