@@ -16,7 +16,6 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
       ExpressContext
     > = async (req, res, next): Promise<unknown> => {
       try {
-        logger.info(`[START] auditValidationMiddleware`);
         const trackingEvidenceToken = Array.isArray(
           req.headers["agid-jwt-trackingevidence"]
         )
@@ -33,7 +32,7 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
           throw ErrorHandling.tokenNotValid();
         }
         verifyJwtPayload(trackingEvidenceToken);
-        logger.info(`[END] auditValidationMiddleware`);
+        logger.info(`auditValidationMiddleware - token valid `);
         return next();
       } catch (error) {
         const problem = makeApiProblem(error, (err) =>

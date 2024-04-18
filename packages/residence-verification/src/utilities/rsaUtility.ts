@@ -8,8 +8,6 @@ export async function decodePublicKey(
   publicKey: Uint8Array
 ): Promise<jose.JWK.Key> {
   try {
-    logger.info(`[START] decode public key`);
-
     if (!publicKey) {
       throw ErrorHandling.genericInternalError("Error: public key not valid");
     }
@@ -20,8 +18,11 @@ export async function decodePublicKey(
         ${publicKeyString}
         -----END PUBLIC KEY-----`;
 
-    return await jose.JWK.asKey(_publicKey, "pem");
+    var result = await jose.JWK.asKey(_publicKey, "pem");
 
+    logger.info(`publicKeyService: decodePublicKey done`);
+
+    return result;
   } catch (err) {
     logger.error(`Error decode public key: ${err}`);
     throw ErrorHandling.thirdPartyCallError("PK_DECODE", JSON.stringify(err));
@@ -30,7 +31,9 @@ export async function decodePublicKey(
 // rs256
 export async function generateRSAPublicKey(jwk: JWK): Promise<jose.JWK.Key> {
   try {
-    return await jose.JWK.asKey(jwk, "json");
+    var result =  await jose.JWK.asKey(jwk, "json");
+    logger.info(`generateRSAPublicKey: done`);
+    return result
   } catch (err) {
     logger.error(`Error decode public key: ${err}`);
     throw ErrorHandling.thirdPartyCallError("PK_DECODE", JSON.stringify(err));

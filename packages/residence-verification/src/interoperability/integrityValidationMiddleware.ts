@@ -31,7 +31,7 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
           throw ErrorHandling.tokenNotValid();
         }
         verifyJwtPayload(signatureToken, req);
-        logger.info(`integrityValidationMiddleware is valid`);
+        logger.info(`integrityValidationMiddleware - token valid`);
         return next();
       } catch (error) {
         const problem = makeApiProblem(error, (err) =>

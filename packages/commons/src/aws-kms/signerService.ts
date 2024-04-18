@@ -29,8 +29,7 @@ export type SignerService = {
 
 export const buildSignerService = (): SignerService => {
   const config = signerConfig();
-  logger.info(`[START] aws-kms buildSigner`);
-  logger.info(`aws-kms url: ${config.kmsEndpoint}`);
+  logger.info(`signerService: aws-kms url: ${config.kmsEndpoint}`);
   
   const kmsClient = config.kmsEndpoint
     ? new KMSClient({
@@ -58,7 +57,7 @@ export const buildSignerService = (): SignerService => {
         }
 
         const base64JWS = Buffer.from(res.Signature).toString("base64");
-        logger.info(`[END] aws-kms buildSigner`);
+        logger.info(`signerService: buildSigner done`);
         return base64JWS
           .replaceAll("=", "")
           .replaceAll("+", "-")

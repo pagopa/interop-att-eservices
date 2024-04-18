@@ -10,8 +10,6 @@ export async function getkeyClient(
   token: string,
   kid: string
 ): Promise<JWK | undefined> {
-  logger.info("[START] Interoperability client: getkey ");
-
   const config = InteroperabilityConfig.parse(process.env);
 
   // Definisci l'URL dell'API utilizzando il token fornito e il kid specificato
@@ -29,7 +27,7 @@ export async function getkeyClient(
       // Effettua la chiamata usando axios
       const response: AxiosResponse<JWK> = await axios.get(apiUrl, { headers });
       logger.info(`Interoperability client: Response: ${response.data}`);
-      logger.info("[END] Interoperability client:");
+      logger.info("Interoperability client: get key from Interoperability client: done");
       return response.data;
     } catch (error) {
       logger.error(`Interoperability client: 

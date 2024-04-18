@@ -3,8 +3,8 @@ import {
   signerConfig,
   buildPublicKeyService,
   getKidFromJWTToken,
-  getOauth2Token,
-  generateAndLogInternalAccessCode,
+/*   getOauth2Token,
+ */  generateInternalAccessCode,
 } from "pdnd-common";
 import { getkeyClient } from "interoperability";
 import { ErrorHandling } from "pdnd-models";
@@ -13,10 +13,10 @@ import {
   generateRSAPublicKey,
   verify,
 } from "../utilities/rsaUtility.js";
+import {getOauth2Token} from "../controllers/jwtTokenInteroperabilityMiddleware.js"
 export const validate = async (jwtToken: string): Promise<boolean> => {
   return new Promise(async (resolve, reject) => {
     try {
-      logger.info(`[START] validate interoperability token`);
 
       /* const config = signerConfig.parse(process.env); */
       const config = signerConfig();
@@ -27,7 +27,7 @@ export const validate = async (jwtToken: string): Promise<boolean> => {
 
       const pkDecoded = await decodePublicKey(pk);
 
-      const accessCodeSigned = await generateAndLogInternalAccessCode(
+      const accessCodeSigned = await generateInternalAccessCode(
         pkDecoded.kid
       );
 
@@ -52,7 +52,7 @@ export const validate = async (jwtToken: string): Promise<boolean> => {
         // Verifica il token JWT utilizzando la chiave ottenuta da getKeyData
         try {
           const isValid = await verify(publicKey, jwtToken);
-          logger.info(`[END] interoperability token valid: ${isValid}`);
+          logger.info(`interoperability  - token valid: ${isValid}`);
           resolve(isValid);
         } catch (err) {
           logger.error(`Unexpected error parsing token: ${err}`);
