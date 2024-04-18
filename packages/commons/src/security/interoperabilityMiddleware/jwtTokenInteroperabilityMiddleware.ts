@@ -3,10 +3,10 @@ import axios, { AxiosResponse } from "axios";
 import { TokenResponse } from "pdnd-models";
 import { InteroperabilityConfig } from "../../config/index.js";
 import {logger} from "../../logging/index.js"
+
 export async function getOauth2Token(
   assertion: string
 ): Promise<string | undefined> {
-  logger.info(`[START] generateAndLog oauth2Token`);
   const config = InteroperabilityConfig.parse(process.env);
 
   if (!config.issuer || !config.tokenGenerateHost) {
@@ -33,11 +33,11 @@ export async function getOauth2Token(
       }
     );
     logger.info(`access token: ${response.data.access_token}`);
-    logger.info(`[END] generateAndLog oauth2Token`);
+    logger.info(`generate oauth2Token: done`);
 
     return response.data.access_token;
   } catch (error) {
-    logger.error(`[Error] generateAndLog oauth2Token: ${error} `);
+    logger.error(`[Error] generate oauth2Token: ${error} `);
     throw error;
   }
 }

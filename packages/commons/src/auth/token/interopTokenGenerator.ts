@@ -3,7 +3,7 @@ import { Algorithm, JwtPayload } from "jsonwebtoken";
 import { ErrorHandling } from "pdnd-models";
 import { v4 as uuidv4 } from "uuid";
 import { signerConfig } from "../../config/index.js";
-import { logger } from "../../logging/index.js";
+//import { logger } from "../../logging/index.js";
 import { userRoles } from "../authData.js";
 import { buildSignerService } from "../../aws-kms/signerService.js";
 import {
@@ -83,7 +83,6 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
       serializedToken
     );
 
-    logger.info(`Interop internal Token generated`);
     return `${serializedToken}.${signature}`;
   };
 

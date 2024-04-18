@@ -8,7 +8,7 @@ export type PublicKeyService = {
 
 export const buildPublicKeyService = (): PublicKeyService => {
   const config = signerConfig();
-  logger.info(`aws-kms url: ${config.kmsEndpoint}`);
+  logger.info(`publicKeyService: aws-kms url: ${config.kmsEndpoint}`);
 
   const kmsClient = config.kmsEndpoint
     ? new KMSClient({
@@ -29,12 +29,12 @@ export const buildPublicKeyService = (): PublicKeyService => {
         const res = await kmsClient.send(command);
 
         if (!res.PublicKey) {
-          logger.info(`aws-kms genericInternalError`);
+          logger.info(`KMS response does not contain a public key`);
           throw ErrorHandling.genericInternalError(
             `KMS response does not contain a public key`
           );
         }
-        logger.info(`aws-kms buildPublicKey done`);
+        logger.info(`publicKeyService: buildPublicKey done`);
         return res.PublicKey;
       } catch (err) {
         const internalError = ErrorHandling.thirdPartyCallError(
