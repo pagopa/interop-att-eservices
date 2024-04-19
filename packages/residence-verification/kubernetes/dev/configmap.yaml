@@ -19,8 +19,6 @@ data:
   TOKEN_INTEROPERABILITY_HOST: 'https://api.uat.interop.pagopa.it/1.0'
   TOKEN_INTEROPERABILITY_KID: 'reL0Wknim2oVgiVuJIDhhzweGXRmp508D18fVR8NVJ8'
   TOKEN_FROM_ACCESS_CODE: 'https://auth.uat.interop.pagopa.it/token.oauth2'
-  KMS_LOCAL_CONFIG: false
-  AWS_CONFIG_FILE: 'aws.config.local'
   KMS_MAX_ACQUISITION_TIMEOUT_SECONDS: 60
 
 
