@@ -34,16 +34,16 @@ spec:
               memory: 2Gi
           livenessProbe:
             httpGet:
-              path: /status
+              path: /residence-verification/status
               port: http
             initialDelaySeconds: 15
             periodSeconds: 5
           readinessProbe:
             httpGet:
-              path: /status
+              path: /residence-verification/status
               port: http
             initialDelaySeconds: 15
-            periodSeconds: 5
+            periodSeconds: 120
           env:
             - name: PORT
               value: "3000"
