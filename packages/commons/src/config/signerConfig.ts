@@ -4,7 +4,7 @@ export const SignerConfig = z.preprocess(
   (c) =>
     (c as { KMS_LOCAL_CONFIG: string | undefined }).KMS_LOCAL_CONFIG ===
     undefined
-      ? { ...(c as object), KMS_LOCAL_CONFIG: false }
+      ? { ...(c as object), KMS_LOCAL_CONFIG: "false" }
       : c,
 
   z
