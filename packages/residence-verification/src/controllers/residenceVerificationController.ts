@@ -34,7 +34,9 @@ class ResidenceVerificationController {
 
         const result: RispostaAR001 = {
           idOperazione: request.idOperazioneClient,
-          soggetto: resultSoggetti,
+          soggetti: {
+            soggetto: resultSoggetti
+          },
         };
 
         return result;
@@ -44,9 +46,11 @@ class ResidenceVerificationController {
           resultSoggetti.push(UserModelToApiTipoDatiSoggettiEnte(element))
         });
 
-        let result: RispostaAR001 = {
-          idOperazione:  request.idOperazioneClient,
-          soggetto: resultSoggetti,
+        const result: RispostaAR001 = {
+          idOperazione: request.idOperazioneClient,
+          soggetti: {
+            soggetto: resultSoggetti
+          },
         };
 
         return result;
@@ -63,7 +67,9 @@ class ResidenceVerificationController {
   
           const result: RispostaAR001 = {
             idOperazione: request.idOperazioneClient,
-            soggetto: resultSoggetti,
+            soggetti: {
+              soggetto: resultSoggetti
+            },
           };
           return result;
         }
