@@ -31,7 +31,11 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
           logger.error(`auditValidationMiddleware - token not valid`);
           throw ErrorHandling.tokenNotValid();
         }
-        verifyJwtPayload(trackingEvidenceToken);
+        
+        if ( process.env.SKIP_AGID_PAYLOAD_VERIFICATION != 'true' ) {
+          verifyJwtPayload(trackingEvidenceToken);
+        }
+        
         logger.info(`auditValidationMiddleware - token valid `);
         return next();
       } catch (error) {
