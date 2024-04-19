@@ -4,6 +4,7 @@ import { logger, signerConfig } from "../index.js";
 
 export type PublicKeyService = {
   getRSAPublicKey: (keyId: string) => Promise<Uint8Array>;
+  KMSAvailability: (keyId: string) => Promise<Boolean>;
 };
 
 export const buildPublicKeyService = (): PublicKeyService => {
@@ -45,5 +46,25 @@ export const buildPublicKeyService = (): PublicKeyService => {
         throw internalError;
       }
     },
-  };
+
+
+    KMSAvailability : async (keyId: string) :  Promise<Boolean>=>  {
+      try {
+        // Effettua una richiesta di test al servizio KMS
+        const command = new GetPublicKeyCommand({ KeyId: keyId });
+        await kmsClient.send(command);
+    
+        // Se la richiesta ha avuto successo, il servizio KMS è raggiungibile
+        console.log("KMS service: publicKey is ok.");
+        return true;
+      } catch (error) {
+        // Se si verifica un errore, gestiscilo di conseguenza
+        console.error("Error reaching KMS service:", error);
+        return false;
+      }
+    },
+  }
+  
+  
+  ;
 };

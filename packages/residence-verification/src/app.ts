@@ -1,8 +1,6 @@
 import express from "express";
-import { InteroperabilityConfig, authenticationMiddleware } from "pdnd-common";
+import { InteroperabilityConfig } from "pdnd-common";
 import { zodiosCtx, contextDataMiddleware } from "pdnd-common";
-import { integrityValidationMiddleware } from "./interoperability/integrityValidationMiddleware.js";
-import { auditValidationMiddleware } from "./interoperability/auditValidationMiddleware.js";
 
 import { logger } from "pdnd-common";
 const app = zodiosCtx.app();
@@ -17,15 +15,14 @@ logger.info(
   `config.skipInteroperabilityVerification  ${config.skipInteroperabilityVerification}`
 );
 
+/* if (!config.skipInteroperabilityVerification) {
+  //app.use(authenticationMiddleware(),integrityValidationMiddleware(), auditValidationMiddleware() );
+  app.use("/residence-verification/data-preparation", authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware());
+} */
 
-if (!config.skipInteroperabilityVerification) {
-  app.use(authenticationMiddleware(),integrityValidationMiddleware(), auditValidationMiddleware()
- );
-}
-
+app.use("/", healthRouter(zodiosCtx));
 app.use("/", dataPreparationRouter(zodiosCtx));
 app.use("/", residenceVerificationRouter(zodiosCtx));
-app.use("/", healthRouter(zodiosCtx));
 
 
 export default app;

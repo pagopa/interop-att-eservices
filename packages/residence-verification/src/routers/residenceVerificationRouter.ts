@@ -6,10 +6,14 @@ import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
+import {  authenticationMiddleware } from "pdnd-common";
+import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
+import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
 
 const residenceVerificationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const residenceVerificationRouter = ctx.router(api.api);
 
+  residenceVerificationRouter.use(authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware());
 
   residenceVerificationRouter.post("/residence-verification", async (req, res) => {
   try {

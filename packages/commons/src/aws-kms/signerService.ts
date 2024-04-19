@@ -25,6 +25,8 @@ import { logger, signerConfig } from "../index.js";
  */
 export type SignerService = {
   signWithRSA256: (keyId: string, data: string) => Promise<string>;
+  KMSAvailability: (keyId: string, data: string) => Promise<Boolean>;
+
 };
 
 export const buildSignerService = (): SignerService => {
@@ -69,6 +71,29 @@ export const buildSignerService = (): SignerService => {
         );
         logger.error(internalError);
         throw internalError;
+      }
+    },
+
+    KMSAvailability : async (keyId: string, data: string) :  Promise<Boolean>=>  {
+      try {
+        const input: SignCommandInput = {
+          KeyId: keyId,
+          Message: Buffer.from(data),
+          MessageType: "RAW",
+          SigningAlgorithm: SigningAlgorithmSpec.RSASSA_PKCS1_V1_5_SHA_256,
+        };
+  
+        // Effettua una richiesta di test al servizio KMS
+        const command = new SignCommand(input);
+        await kmsClient.send(command);
+    
+        // Se la richiesta ha avuto successo, il servizio KMS è raggiungibile
+        console.log("KMS service: signer is ok.");
+        return true;
+      } catch (error) {
+        // Se si verifica un errore, gestiscilo di conseguenza
+        console.error("Error reaching KMS service:", error);
+        return false;
       }
     },
   };
