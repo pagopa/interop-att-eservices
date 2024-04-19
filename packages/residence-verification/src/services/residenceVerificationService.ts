@@ -11,7 +11,7 @@ import {
 import { TipoParametriRicercaAR001 } from "../model/domain/models.js";
 import { userModelNotFound } from "../exceptions/errors.js";
 
-class UserService {
+class ResidenceVerificationService {
   appContext = getContext();
 
   public async getByFiscalCode(fiscalCode: string): Promise<UserModel | null> {
@@ -62,4 +62,4 @@ class UserService {
 
 }
 
-export default new UserService();
+export default new ResidenceVerificationService();

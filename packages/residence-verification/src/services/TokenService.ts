@@ -4,8 +4,8 @@ import { validate } from "../interoperability/interoperabilityValidationMiddlewa
 class tokenService {
   appContext = getContext();
 
-  public async validate(token: string): Promise<void | null> {
-    validate(token); // kid agid nel token
+  public async validate(token: string): Promise<boolean | null> {
+    return validate(token); // kid agid nel token
   }
 }
 

@@ -6,12 +6,10 @@ import { InternalToken, TokenHeader } from "../../auth/index.js";
 import { InteroperabilityConfig } from "../../config/index.js";
 import {logger } from "../../logging/index.js"
 
-export const generateAndLogInternalAccessCode = async (
+export const generateInternalAccessCode = async (
   kid: string
 ): Promise<InternalToken | null> => {
   try {
-    logger.info(`[START] generateAndLog InternalAccessCode`);
-
     const tokenGenerator = buildInteropAccessCodeGenerator();
     const config = InteroperabilityConfig.parse(process.env);
 
@@ -32,8 +30,7 @@ export const generateAndLogInternalAccessCode = async (
           tokenPayloadSeed,
           jwtHeaders
         );
-        logger.info(`Access code: ${internalToken}`);
-        logger.info(`[END] generateAndLog InternalAccessCode`);
+        logger.info(`generate InternalAccessCode: done`);
 
         return internalToken; // Restituisce il token interno generato
       }

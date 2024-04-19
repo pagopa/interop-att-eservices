@@ -1,6 +1,6 @@
 import { UserModel } from "pdnd-models";
 import { logger, getContext } from "pdnd-common";
-import UserService from "../services/UserService.js";
+import ResidenceVerificationService from "../services/residenceVerificationService.js";
 import { requestParamNotValid } from "../exceptions/errors.js";
 import {
   RichiestaAR001,
@@ -11,7 +11,7 @@ import {
   UserModelToApiTipoDatiSoggettiEnte,
 } from "../model/domain/apiConverter.js";
 
-class UserController {
+class ResidenceVerificationController {
   appContext = getContext();
 
   public async findUser(
@@ -21,7 +21,7 @@ class UserController {
       logger.info(`post request: ${request}`);
       const resultSoggetti: TipoListaSoggetti[] = [];
       if (request.parametriRicerca.codiceFiscale) {
-        const data = await UserService.getByFiscalCode(
+        const data = await ResidenceVerificationService.getByFiscalCode(
           request.parametriRicerca.codiceFiscale
         );
         var list: UserModel[] = [];
@@ -39,7 +39,7 @@ class UserController {
 
         return result;
       } else if (checkPersonalInfo(request)) {
-        const data = await UserService.getByPersonalInfo(request.parametriRicerca);
+        const data = await ResidenceVerificationService.getByPersonalInfo(request.parametriRicerca);
         data.forEach(element => {
           resultSoggetti.push(UserModelToApiTipoDatiSoggettiEnte(element))
         });
@@ -52,7 +52,7 @@ class UserController {
         return result;
       } else if (request.parametriRicerca.id) {
         if (request.parametriRicerca.id) {
-          const data = await UserService.getById(request.parametriRicerca.id);
+          const data = await ResidenceVerificationService.getById(request.parametriRicerca.id);
           var list: UserModel[] = [];
           if (data) {
             list.push(data);
@@ -105,4 +105,4 @@ const checkPersonalInfo = (request: RichiestaAR001): boolean => {
 };
 
 
-export default new UserController();
+export default new ResidenceVerificationController();

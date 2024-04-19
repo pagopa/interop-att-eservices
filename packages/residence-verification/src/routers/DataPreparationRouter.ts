@@ -1,7 +1,10 @@
-import { zodiosRouter } from "@zodios/express";
+//import { zodiosRouter } from "@zodios/express";
+import { ZodiosRouter } from "@zodios/express";
+import { ZodiosEndpointDefinitions } from "@zodios/core";
+
 import { ErrorHandling, UserModel } from "pdnd-models";
-import { logger } from "pdnd-common";
-import DataPreparationService from "../services/DataPreparationService.js";
+import { ExpressContext, ZodiosContext, logger } from "pdnd-common";
+import DataPreparationService from "../services/dataPreparationService.js";
 import {
   userModelToApiDataPreparationResponseCf,
   userModelToApiDataPreparationTemplateResponse,
@@ -11,10 +14,11 @@ import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem } from "../exceptions/errors.js";
 import { DataPreparationTemplateResponse } from "../model/domain/models.js";
 
-const dataPreparationRouter = zodiosRouter(api.api);
+const dataPreparationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
+  const dataPreparationRouter = ctx.router(api.api);
 
 dataPreparationRouter.post(
-  "/ar-service-001/data-preparation",
+  "/residence-verification/data-preparation",
   async (req, res) => {
     try {
       const data = await DataPreparationService.saveList(req.body);
@@ -35,7 +39,7 @@ dataPreparationRouter.post(
 );
 
 dataPreparationRouter.get(
-  "/ar-service-001/data-preparation",
+  "/residence-verification/data-preparation",
   async (req, res) => {
     try {
       if (!req) {
@@ -61,7 +65,7 @@ dataPreparationRouter.get(
 );
 
 dataPreparationRouter.get(
-  "/ar-service-001/data-preparation/:uuid",
+  "/residence-verification/data-preparation/:uuid",
   async (req, res) => {
     try {
       if (!req) {
@@ -83,7 +87,7 @@ dataPreparationRouter.get(
 );
 
 dataPreparationRouter.delete(
-  "/ar-service-001/data-preparation",
+  "/residence-verification/data-preparation",
   async (req, res) => {
     try {
       if (!req) {
@@ -104,7 +108,7 @@ dataPreparationRouter.delete(
 );
 
 dataPreparationRouter.delete(
-  "/ar-service-001/data-preparation/:uuid",
+  "/residence-verification/data-preparation/:uuid",
   async (req, res) => {
     try {
       if (!req) {
@@ -117,6 +121,9 @@ dataPreparationRouter.delete(
       return res.status(errorRes.status).json(errorRes).end();
     }
   }
+  
 );
+return dataPreparationRouter;
 
+}
 export default dataPreparationRouter;

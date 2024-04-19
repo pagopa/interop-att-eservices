@@ -14,7 +14,7 @@ servers:
 tags:
   - name: DataPreparation
     description: Configurazione Data Preparation
-  - name: ARService001
+  - name: ResidenceVerification
     description: Consultazione enti
   - name: Health
     description: Verifica stato applicativo
@@ -22,12 +22,12 @@ security:
   - bearerAuth: []
     Agid-JWT-Signature: []
 paths:
-  /ar-service-001/data-preparation:
+  /residence-verification/data-preparation:
     post:
       tags:
         - DataPreparation
-      summary: Insert data preparation ar-service-001
-      description: Insert data preparation ar-service-001
+      summary: Insert data preparation residence-verification
+      description: Insert data preparation residence-verification
       operationId: InsertAR001
       security:
         - bearerAuth: []
@@ -147,14 +147,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/GeneralError'
                 
-  /ar-service-001/data-preparation/{uuid}:
+  /residence-verification/data-preparation/{uuid}:
     parameters:
       - $ref: '#/components/parameters/pathUUID'
     get:
       tags:
         - DataPreparation
-      summary: Insert data preparation ar-service-001
-      description: Insert data preparation ar-service-001
+      summary: Insert data preparation residence-verification
+      description: Insert data preparation residence-verification
       operationId: GetByIdAR001
       security:
         - bearerAuth: []
@@ -225,7 +225,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/GeneralError'
                 
-  /ar-service-001:
+  /residence-verification:
     post:
       tags:
         - ARService001
@@ -271,7 +271,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/GeneralError'
-  /status:
+  /residence-verification/status:
     get:
       tags:
         - Health

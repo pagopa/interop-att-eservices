@@ -48,6 +48,8 @@ export const authenticationMiddleware: () => ZodiosRouterContextRequestHandler<E
           logger.warn(`The jwt token is not valid`);
           throw ErrorHandling.tokenNotValid();
         }
+        logger.info(`Bearer Token: isValid: ${valid}` );
+
         const authData = readAuthDataFromJwtToken(jwtToken);
         match(authData)
           .with(P.instanceOf(Error), (err) => {
