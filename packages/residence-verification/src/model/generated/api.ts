@@ -358,7 +358,7 @@ export const schemas = {
 const endpoints = makeApi([
   {
     method: "post",
-    path: "/ar-service-001",
+    path: "/residence-verification",
     alias: "AR001",
     description: `Consultazione di un caso d&#x27;uso dell&#x27;ente`,
     requestFormat: "json",
@@ -395,9 +395,9 @@ const endpoints = makeApi([
   },
   {
     method: "post",
-    path: "/ar-service-001/data-preparation",
+    path: "/residence-verification/data-preparation",
     alias: "InsertAR001",
-    description: `Insert data preparation ar-service-001`,
+    description: `Insert data preparation residence-verification`,
     requestFormat: "json",
     parameters: [
       {
@@ -432,7 +432,7 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/ar-service-001/data-preparation",
+    path: "/residence-verification/data-preparation",
     alias: "GetAllAR001",
     description: `Lista di tutti i casi d&#x27;uso dell&#x27;ente`,
     requestFormat: "json",
@@ -462,7 +462,7 @@ const endpoints = makeApi([
   },
   {
     method: "delete",
-    path: "/ar-service-001/data-preparation",
+    path: "/residence-verification/data-preparation",
     alias: "DeleteAR001",
     description: `Eliminazione di un insieme di casi d&#x27;uso dell&#x27;ente`,
     requestFormat: "json",
@@ -492,9 +492,9 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/ar-service-001/data-preparation/:uuid",
+    path: "/residence-verification/data-preparation/:uuid",
     alias: "GetByIdAR001",
-    description: `Insert data preparation ar-service-001`,
+    description: `Insert data preparation residence-verification`,
     requestFormat: "json",
     parameters: [
       {
@@ -529,7 +529,7 @@ const endpoints = makeApi([
   },
   {
     method: "delete",
-    path: "/ar-service-001/data-preparation/:uuid",
+    path: "/residence-verification/data-preparation/:uuid",
     alias: "DeleteByIdAR001",
     description: `Eliminazione di un singolo caso d&#x27;uso dell&#x27;ente`,
     requestFormat: "json",
@@ -566,7 +566,7 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/status",
+    path: "/residence-verification/status",
     alias: "getStatus",
     description: `Return ok`,
     requestFormat: "json",

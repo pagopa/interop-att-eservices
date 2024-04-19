@@ -11,7 +11,7 @@ const residenceVerificationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEnd
   const residenceVerificationRouter = ctx.router(api.api);
 
 
-  residenceVerificationRouter.post("/ar-service-001", async (req, res) => {
+  residenceVerificationRouter.post("/residence-verification", async (req, res) => {
   try {
     logger.info(`post request: ${req.body}`);
     // RispostaAR001

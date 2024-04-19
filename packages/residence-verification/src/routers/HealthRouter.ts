@@ -8,7 +8,7 @@ const healthRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEndpointDefinition
     const healthRouter = ctx.router(api.api);
 
 
-healthRouter.get("/status", async (_, res) => res.status(200).end());
+healthRouter.get("/residence-verification/status", async (_, res) => res.status(200).end());
 
 return healthRouter;
 

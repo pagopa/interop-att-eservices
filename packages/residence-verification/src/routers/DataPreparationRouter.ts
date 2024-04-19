@@ -18,7 +18,7 @@ const dataPreparationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEndpointD
   const dataPreparationRouter = ctx.router(api.api);
 
 dataPreparationRouter.post(
-  "/ar-service-001/data-preparation",
+  "/residence-verification/data-preparation",
   async (req, res) => {
     try {
       const data = await DataPreparationService.saveList(req.body);
@@ -39,7 +39,7 @@ dataPreparationRouter.post(
 );
 
 dataPreparationRouter.get(
-  "/ar-service-001/data-preparation",
+  "/residence-verification/data-preparation",
   async (req, res) => {
     try {
       if (!req) {
@@ -65,7 +65,7 @@ dataPreparationRouter.get(
 );
 
 dataPreparationRouter.get(
-  "/ar-service-001/data-preparation/:uuid",
+  "/residence-verification/data-preparation/:uuid",
   async (req, res) => {
     try {
       if (!req) {
@@ -87,7 +87,7 @@ dataPreparationRouter.get(
 );
 
 dataPreparationRouter.delete(
-  "/ar-service-001/data-preparation",
+  "/residence-verification/data-preparation",
   async (req, res) => {
     try {
       if (!req) {
@@ -108,7 +108,7 @@ dataPreparationRouter.delete(
 );
 
 dataPreparationRouter.delete(
-  "/ar-service-001/data-preparation/:uuid",
+  "/residence-verification/data-preparation/:uuid",
   async (req, res) => {
     try {
       if (!req) {
