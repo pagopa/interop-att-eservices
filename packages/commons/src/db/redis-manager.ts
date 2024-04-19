@@ -29,7 +29,7 @@ export class CacheManager {
   public async checkConnection(): Promise<boolean> {
     try {
       if (await this.isHealthy()) {
-        logger.error(`Redis client ok`);
+        logger.info(`Redis client ok`);
         return true;
       }
     } catch (error) {
