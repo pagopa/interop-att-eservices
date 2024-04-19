@@ -37,13 +37,13 @@ spec:
               path: /residence-verification/status
               port: http
             initialDelaySeconds: 15
-            periodSeconds: 5
+            periodSeconds: 120
           readinessProbe:
             httpGet:
               path: /residence-verification/status
               port: http
             initialDelaySeconds: 15
-            periodSeconds: 120
+            periodSeconds: 5
           env:
             - name: PORT
               value: "3000"
