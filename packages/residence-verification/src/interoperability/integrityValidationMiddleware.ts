@@ -30,7 +30,10 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
           logger.error(`integrityValidationMiddleware - token not valid`);
           throw ErrorHandling.tokenNotValid();
         }
-        verifyJwtPayload(signatureToken, req);
+        if ( process.env.SKIP_AGID_PAYLOAD_VERIFICATION != "true" ) {
+          verifyJwtPayload(signatureToken, req);
+        }
+        
         logger.info(`integrityValidationMiddleware - token valid`);
         return next();
       } catch (error) {
