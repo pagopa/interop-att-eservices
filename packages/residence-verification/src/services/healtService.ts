@@ -3,7 +3,8 @@ import healtRepository from "../repository/healtRepository.js";
 import {
     signerConfig,
     buildPublicKeyService,
-    buildSignerService
+    buildSignerService, 
+    logger
   } from "pdnd-common";
 class healtService {
     appContext = getContext();
@@ -25,6 +26,7 @@ class healtService {
         if (! await signerService.KMSAvailability(config.kmsKeyId, "token")) {
             return false;
         }
+        logger.info("status: OK")
         return true;
     }
   }

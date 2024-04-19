@@ -9,7 +9,6 @@ export type PublicKeyService = {
 
 export const buildPublicKeyService = (): PublicKeyService => {
   const config = signerConfig();
-  logger.info(`publicKeyService: aws-kms url: ${config.kmsEndpoint}`);
 
   const kmsClient = config.kmsEndpoint
     ? new KMSClient({
@@ -55,7 +54,6 @@ export const buildPublicKeyService = (): PublicKeyService => {
         await kmsClient.send(command);
     
         // Se la richiesta ha avuto successo, il servizio KMS è raggiungibile
-        console.log("KMS service: publicKey is ok.");
         return true;
       } catch (error) {
         // Se si verifica un errore, gestiscilo di conseguenza

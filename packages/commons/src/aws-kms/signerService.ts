@@ -31,7 +31,6 @@ export type SignerService = {
 
 export const buildSignerService = (): SignerService => {
   const config = signerConfig();
-  logger.info(`signerService: aws-kms url: ${config.kmsEndpoint}`);
   
   const kmsClient = config.kmsEndpoint
     ? new KMSClient({
@@ -88,7 +87,6 @@ export const buildSignerService = (): SignerService => {
         await kmsClient.send(command);
     
         // Se la richiesta ha avuto successo, il servizio KMS è raggiungibile
-        console.log("KMS service: signer is ok.");
         return true;
       } catch (error) {
         // Se si verifica un errore, gestiscilo di conseguenza
