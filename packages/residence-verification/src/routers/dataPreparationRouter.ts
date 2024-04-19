@@ -13,9 +13,14 @@ import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, userModelNotFound } from "../exceptions/errors.js";
 import { DataPreparationTemplateResponse } from "../model/domain/models.js";
+import {  authenticationMiddleware } from "pdnd-common";
+import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
+import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
 
 const dataPreparationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const dataPreparationRouter = ctx.router(api.api);
+
+dataPreparationRouter.use(authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware());
 
 dataPreparationRouter.post(
   "/residence-verification/data-preparation",
