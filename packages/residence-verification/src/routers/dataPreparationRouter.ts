@@ -11,7 +11,7 @@ import {
 } from "../model/domain/apiConverter.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
-import { makeApiProblem } from "../exceptions/errors.js";
+import { makeApiProblem, userModelNotFound } from "../exceptions/errors.js";
 import { DataPreparationTemplateResponse } from "../model/domain/models.js";
 import {  authenticationMiddleware } from "pdnd-common";
 import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
@@ -31,11 +31,10 @@ dataPreparationRouter.post(
         data,
         req.body.soggetto?.codiceFiscale
       );
-      if (result) {
-        return res.status(200).json(result).end();
-      } else {
-        return res.status(500);
+      if (!result) {
+        throw userModelNotFound(`Data with fiscal code '${req.body.soggetto?.codiceFiscale}' not found`);
       }
+      return res.status(200).json(result).end();
     } catch (error) {
       const errorRes = makeApiProblem(error, createEserviceDataPreparation);
       return res.status(errorRes.status).json(errorRes).end();
@@ -51,7 +50,6 @@ dataPreparationRouter.get(
         throw ErrorHandling.invalidApiRequest();
       }
       const result: DataPreparationTemplateResponse[] = [];
-
       const data = await DataPreparationService.getAll();
 
       if (data != null) {
@@ -61,10 +59,8 @@ dataPreparationRouter.get(
       }
       return res.status(200).json(result).end();
     } catch (error) {
-      logger.error(error);
-      return res.status(500);
-      // const errorRes = makeApiProblem(error, createEServiceErrorMapper);
-      // return res.status(errorRes.status).json(errorRes).end();
+      const errorRes = makeApiProblem(error, createEserviceDataPreparation);
+      return res.status(errorRes.status).json(errorRes).end();
     }
   }
 );
@@ -77,8 +73,8 @@ dataPreparationRouter.get(
         return res.status(500);
       }
       let result: DataPreparationTemplateResponse | null = null;
-
       const data = await DataPreparationService.getByUUID(req.params.uuid);
+
       if (data) {
         result = userModelToApiDataPreparationTemplateResponse(data);
         return res.status(200).json(result).end();
@@ -100,11 +96,10 @@ dataPreparationRouter.delete(
       }
       const data = await DataPreparationService.deleteAllByKey();
       logger.info("data " + data);
-      if (data == 0) {
-        return res.status(200).end();
-      } else {
-        return res.status(500).end();
+      if (data !== 0) {
+        throw ErrorHandling.genericError(`Not all data could be deleted. Remaining: ${data}`);
       }
+      return res.status(200).end();
     } catch (error) {
       const errorRes = makeApiProblem(error, createEserviceDataPreparation);
       return res.status(errorRes.status).json(errorRes).end();

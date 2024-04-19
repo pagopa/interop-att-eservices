@@ -19,6 +19,7 @@ class DataPreparationService {
     genericRequest: DataPreparationTemplate
   ): Promise<UserModel[] | null> {
     try {
+      logger.info(`[START] saveList`);
       const userData: UserModel[] = [];
       userData.push(
         apiDataPreparationTemplateToUserModel(genericRequest, uuidv4())
@@ -36,10 +37,12 @@ class DataPreparationService {
         );
         await dataPreparationRepository.saveList(allUser, hash);
       }
-      return await dataPreparationRepository.findAllByKey(hash);
+      const response = await dataPreparationRepository.findAllByKey(hash);
+      logger.info(`[END] saveList`);
+      return response;
     } catch (error) {
       logger.error(
-        `UserService: Errore durante il salvataggio della lista. `,
+        `saveList - Errore durante il salvataggio della lista.`,
         error
       );
       throw error;
@@ -48,11 +51,14 @@ class DataPreparationService {
 
   public async getAll(): Promise<UserModel[] | null> {
     try {
+      logger.info(`[START] getAll`);
       const hash = generateHash([this.appContext.authData.purposeId]);
-      return await dataPreparationRepository.findAllByKey(hash);
+      const response = await dataPreparationRepository.findAllByKey(hash);
+      logger.info(`[END] getAll`);
+      return response;
     } catch (error) {
       logger.error(
-        `UserService: Errore durante il recupero della lista. `,
+        `getAll: Errore durante il recupero della lista.`,
         error
       );
       throw error;
@@ -61,9 +67,12 @@ class DataPreparationService {
 
   public async getByUUID(uuid: string): Promise<UserModel | null> {
     try {
+      logger.info(`[START] getByUUID`);
       const hash = generateHash([this.appContext.authData.purposeId]);
       const result = await dataPreparationRepository.findAllByUuid(hash, uuid);
-      return findUserModelByUUID(result, uuid);
+      const response = findUserModelByUUID(result, uuid);
+      logger.info(`[START] getByUUID`);
+      return response;
     } catch (error) {
       logger.error(
         `UserService: Errore durante il salvataggio della lista. `,
@@ -75,8 +84,11 @@ class DataPreparationService {
 
   public async deleteAllByKey(): Promise<number | null> {
     try {
+      logger.info(`[START] deleteAllByKey`);
       const hash = generateHash([this.appContext.authData.purposeId]);
-      return await dataPreparationRepository.deleteAllByKey(hash);
+      const response = await dataPreparationRepository.deleteAllByKey(hash);
+      logger.info(`[END] deleteAllByKey`);
+      return response
     } catch (error) {
       logger.error(
         `UserService: Errore durante la cancellazione della lista. `,
@@ -88,6 +100,7 @@ class DataPreparationService {
 
   public async deleteByUUID(uuid: string): Promise<UserModel[] | null> {
     try {
+      logger.info(`[START] deleteByUUID`);
       const hash = generateHash([this.appContext.authData.purposeId]);
       const allSaved = await dataPreparationRepository.findAllByKey(hash);
       const user = deleteUserModelByUUID(allSaved, uuid);
@@ -95,10 +108,11 @@ class DataPreparationService {
       if (user) {
         dataPreparationRepository.saveList(user, hash);
       }
+      logger.info(`[END] deleteByUUID`);
       return user;
     } catch (error) {
       logger.error(
-        `UserService: Errore durante l'aggiornamento della lista. `,
+        `deleteByUUID - Errore durante l'aggiornamento della lista.`,
         error
       );
       throw error;
