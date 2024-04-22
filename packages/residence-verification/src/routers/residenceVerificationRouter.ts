@@ -13,11 +13,12 @@ import {  contextDataMiddleware } from "pdnd-common";
 
 const residenceVerificationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const residenceVerificationRouter = ctx.router(api.api);
-  residenceVerificationRouter.use(contextDataMiddleware);
+/*   residenceVerificationRouter.use(contextDataMiddleware);
 
-  residenceVerificationRouter.use(authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware());
+  residenceVerificationRouter.use(authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware()); */
 
-  residenceVerificationRouter.post("/residence-verification", async (req, res) => {
+  residenceVerificationRouter.post("/residence-verification", contextDataMiddleware, authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware(),
+   async (req, res) => {
   try {
     logger.info(`[START] Post - '/ar-service-001' : ${req.body}`);
     const data = await ResidenceVerificationController.findUser(req.body);
