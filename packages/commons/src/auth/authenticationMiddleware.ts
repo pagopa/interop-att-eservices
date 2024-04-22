@@ -91,18 +91,18 @@ export const authenticationMiddleware: () => ZodiosRouterContextRequestHandler<E
     console.log("No matching headers found");
     if (headers.data["x-correlation-id"] === null || headers.data["x-correlation-id"] === undefined) {
       console.log("No matching headers found: x-correlation-id");
-      throw ErrorHandling.missingHeader("Header error ", "authenticationMiddleware");
+      throw ErrorHandling.missingHeader("Header error ");
     } 
     if (headers.data["agid-jwt-signature"] === null || headers.data["agid-jwt-signature"] === undefined) {
       console.log("No matching headers found: agid-jwt-signature");
-      throw ErrorHandling.missingHeader("Header error ", "authenticationMiddleware");
+      throw ErrorHandling.missingHeader("Header error ");
     } 
     if (headers.data["agid-jwt-trackingevidence"] === null || headers.data["agid-jwt-trackingevidence"] === undefined) {
       console.log("No matching headers found: agid-jwt-trackingevidence");
-      throw ErrorHandling.missingHeader("Header error ", "authenticationMiddleware");
+      throw ErrorHandling.missingHeader("Header error ");
     } 
     else {
-      throw ErrorHandling.missingHeader("other", "authenticationMiddleware");
+      throw ErrorHandling.missingHeader("other");
     }
   });
       } catch (error) {
