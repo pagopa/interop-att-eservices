@@ -22,10 +22,8 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
           ? req.headers["agid-jwt-trackingevidence"][0]
           : req.headers["agid-jwt-trackingevidence"];
         if (!trackingEvidenceToken) {
-          logger.error(
-            `auditValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`
-          );
-          throw ErrorHandling.missingBearer();
+          logger.error(`auditValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`);
+          throw ErrorHandling.missingHeader();
         }
         if (! await tokenValidation(trackingEvidenceToken)) {
           logger.error(`auditValidationMiddleware - token not valid`);
