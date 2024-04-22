@@ -9,7 +9,6 @@ export type PublicKeyService = {
 
 export const buildPublicKeyService = (): PublicKeyService => {
   const config = signerConfig();
-
   const kmsClient = config.kmsEndpoint
     ? new KMSClient({
         endpoint: config.kmsEndpoint,
@@ -25,6 +24,10 @@ export const buildPublicKeyService = (): PublicKeyService => {
 
       
       try {
+
+        logger.info ("config.kmsEndpoint: " + config.kmsEndpoint);
+        logger.info ("input: " + input);
+
         const command = new GetPublicKeyCommand(input);
         const res = await kmsClient.send(command);
 
@@ -41,11 +44,11 @@ export const buildPublicKeyService = (): PublicKeyService => {
           "KMS",
           JSON.stringify(err)
         );
-        logger.error(internalError);
+        logger.error(`buildPublicKeyService: ${internalError}`);
         throw internalError;
       }
     },
-
+    
 
     KMSAvailability : async (keyId: string) :  Promise<Boolean>=>  {
       try {

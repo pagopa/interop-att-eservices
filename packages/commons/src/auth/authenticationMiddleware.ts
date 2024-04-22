@@ -72,42 +72,39 @@ export const authenticationMiddleware: () => ZodiosRouterContextRequestHandler<E
         }
 
         return await match(headers.data)
-          .with(
-            {
-              authorization: P.string,
-              "x-correlation-id": P.string,
-            },
-            async (headers) =>
-              await addCtxAuthData(
-                headers.authorization,
-                headers["x-correlation-id"]
-              )
-          )
-          .with(
-            {
-              authorization: P.nullish,
-              "x-correlation-id": P._,
-            },
-            () => {
-              logger.warn(
-                `No authentication has been provided for this call ${req.method} ${req.url}`
-              );
-
-              throw ErrorHandling.missingBearer();
-            }
-          )
-          .with(
-            {
-              authorization: P.string,
-              "x-correlation-id": P.nullish,
-            },
-            () => {
-              throw ErrorHandling.missingHeader("x-correlation-id not present");
-            }
-          )
-          .otherwise(() => {
-            throw ErrorHandling.missingHeader();
-          });
+  .with(
+    {
+      authorization: P.string,
+      "x-correlation-id": P.string,
+      "agid-jwt-signature": P.string,
+      "agid-jwt-trackingevidence": P.string,
+    },
+    async (headers) => {
+      console.log("Matching headers with authorization, correlation ID, agid-jwt-signature, agid-jwt-trackingevidence");
+      await addCtxAuthData(
+        headers.authorization,
+        headers["x-correlation-id"]
+      );
+    }
+  )
+  .otherwise(() => {
+    console.log("No matching headers found");
+    if (headers.data["x-correlation-id"] === null || headers.data["x-correlation-id"] === undefined) {
+      console.log("No matching headers found: x-correlation-id");
+      throw ErrorHandling.missingHeader("Header error ", "authenticationMiddleware");
+    } 
+    if (headers.data["agid-jwt-signature"] === null || headers.data["agid-jwt-signature"] === undefined) {
+      console.log("No matching headers found: agid-jwt-signature");
+      throw ErrorHandling.missingHeader("Header error ", "authenticationMiddleware");
+    } 
+    if (headers.data["agid-jwt-trackingevidence"] === null || headers.data["agid-jwt-trackingevidence"] === undefined) {
+      console.log("No matching headers found: agid-jwt-trackingevidence");
+      throw ErrorHandling.missingHeader("Header error ", "authenticationMiddleware");
+    } 
+    else {
+      throw ErrorHandling.missingHeader("other", "authenticationMiddleware");
+    }
+  });
       } catch (error) {
         const problem = makeApiProblem(error, (err) =>
           match(err.code)

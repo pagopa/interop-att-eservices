@@ -68,7 +68,7 @@ export const buildSignerService = (): SignerService => {
           "KMS",
           JSON.stringify(err)
         );
-        logger.error(internalError);
+        logger.error(`buildSignerService: ${internalError}`);
         throw internalError;
       }
     },

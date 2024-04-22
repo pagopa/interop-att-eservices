@@ -7,6 +7,8 @@ import { readAuthDataFromJwtToken } from "./jwt.js";
 export const Headers = z.object({
   authorization: z.string().nullish(),
   "x-correlation-id": z.string().nullish(),
+  "agid-jwt-signature": z.string().nullish(),
+  "agid-jwt-trackingevidence": z.string().nullish(),
 });
 
 export type Headers = z.infer<typeof Headers>;
@@ -14,6 +16,8 @@ export type Headers = z.infer<typeof Headers>;
 export const ParsedHeaders = z
   .object({
     correlationId: z.string().uuid(),
+    agidJtSignature: z.string(),
+    agidJwtTrackingevidence: z.string(),
   })
   .and(AuthData);
 export type ParsedHeaders = z.infer<typeof ParsedHeaders>;
@@ -26,6 +30,8 @@ export const readHeaders = (req: Request): ParsedHeaders | undefined => {
         {
           authorization: P.string,
           "x-correlation-id": P.string,
+          "agid-jwt-signature": P.string,
+          "agid-jwt-trackingevidence": P.string,
         },
         (headers) => {
           const authorizationHeader = headers.authorization.split(" ");
@@ -44,6 +50,8 @@ export const readHeaders = (req: Request): ParsedHeaders | undefined => {
             .otherwise((authData: AuthData) => ({
               ...authData,
               correlationId: headers["x-correlation-id"],
+              agidJtSignature: headers["agid-jwt-signature"],
+              agidJwtTrackingevidence: headers["agid-jwt-trackingevidence"],
             }));
         }
       )
