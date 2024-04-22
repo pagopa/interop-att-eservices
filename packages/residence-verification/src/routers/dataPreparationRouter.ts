@@ -16,9 +16,11 @@ import { DataPreparationTemplateResponse } from "../model/domain/models.js";
 import {  authenticationMiddleware } from "pdnd-common";
 import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
 import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
+import {  contextDataMiddleware } from "pdnd-common";
 
 const dataPreparationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const dataPreparationRouter = ctx.router(api.api);
+dataPreparationRouter.use(contextDataMiddleware);
 
 dataPreparationRouter.use(authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware());
 
