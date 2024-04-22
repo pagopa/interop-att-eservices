@@ -5,7 +5,7 @@ import { zodiosCtx } from "pdnd-common";
 import { logger } from "pdnd-common";
 const app = zodiosCtx.app();
 import dataPreparationRouter from "./routers/dataPreparationRouter.js";
- import residenceVerificationRouter from "./routers/residenceVerificationRouter.js";
+import residenceVerificationRouter from "./routers/residenceVerificationRouter.js";
 import healthRouter from "./routers/healthRouter.js";
 
 app.use(express.json());
