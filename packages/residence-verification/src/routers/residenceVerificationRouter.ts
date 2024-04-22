@@ -9,9 +9,11 @@ import { ExpressContext, ZodiosContext } from "pdnd-common";
 import {  authenticationMiddleware } from "pdnd-common";
 import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
 import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
+import {  contextDataMiddleware } from "pdnd-common";
 
 const residenceVerificationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const residenceVerificationRouter = ctx.router(api.api);
+  residenceVerificationRouter.use(contextDataMiddleware);
 
   residenceVerificationRouter.use(authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware());
 
