@@ -14,8 +14,6 @@ import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, userModelNotFound } from "../exceptions/errors.js";
 import { DataPreparationTemplateResponse } from "../model/domain/models.js";
 import {  authenticationMiddleware } from "pdnd-common";
-import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
-import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
 import {  contextDataMiddleware } from "pdnd-common";
 
 const dataPreparationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
@@ -24,7 +22,7 @@ const dataPreparationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEndpointD
 /* dataPreparationRouter.use(contextDataMiddleware, authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware());
  */
 dataPreparationRouter.post(
-  "/residence-verification/data-preparation",contextDataMiddleware, authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware(),
+  "/residence-verification/data-preparation",contextDataMiddleware, authenticationMiddleware(), 
   async (req, res) => {
     try {
       const data = await DataPreparationService.saveList(req.body);
@@ -44,7 +42,7 @@ dataPreparationRouter.post(
 );
 
 dataPreparationRouter.get(
-  "/residence-verification/data-preparation", contextDataMiddleware, authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware(),
+  "/residence-verification/data-preparation", contextDataMiddleware, authenticationMiddleware(),
   async (req, res) => {
     try {
       if (!req) {
@@ -67,7 +65,7 @@ dataPreparationRouter.get(
 );
 
 dataPreparationRouter.get(
-  "/residence-verification/data-preparation/:uuid", contextDataMiddleware, authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware(),
+  "/residence-verification/data-preparation/:uuid", contextDataMiddleware, authenticationMiddleware(), 
   async (req, res) => {
     try {
       if (!req) {
@@ -89,7 +87,7 @@ dataPreparationRouter.get(
 );
 
 dataPreparationRouter.delete(
-  "/residence-verification/data-preparation", contextDataMiddleware, authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware(),
+  "/residence-verification/data-preparation", contextDataMiddleware, authenticationMiddleware(), 
   async (req, res) => {
     try {
       if (!req) {
@@ -109,7 +107,7 @@ dataPreparationRouter.delete(
 );
 
 dataPreparationRouter.delete(
-  "/residence-verification/data-preparation/:uuid", contextDataMiddleware, authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware(),
+  "/residence-verification/data-preparation/:uuid", contextDataMiddleware, authenticationMiddleware(), 
   async (req, res) => {
     try {
       if (!req) {
