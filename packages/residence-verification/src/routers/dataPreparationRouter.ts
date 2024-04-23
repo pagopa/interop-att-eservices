@@ -24,7 +24,7 @@ const dataPreparationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEndpointD
 /* dataPreparationRouter.use(contextDataMiddleware, authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware());
  */
 dataPreparationRouter.post(
-  "/residence-verification/data-preparation",contextDataMiddleware, authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware(),
+  "/residence-verification/data-preparation",contextDataMiddleware, authenticationMiddleware(), 
   async (req, res) => {
     try {
       const data = await DataPreparationService.saveList(req.body);
@@ -44,7 +44,7 @@ dataPreparationRouter.post(
 );
 
 dataPreparationRouter.get(
-  "/residence-verification/data-preparation", contextDataMiddleware, authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware(),
+  "/residence-verification/data-preparation", contextDataMiddleware, authenticationMiddleware(),
   async (req, res) => {
     try {
       if (!req) {
@@ -67,7 +67,7 @@ dataPreparationRouter.get(
 );
 
 dataPreparationRouter.get(
-  "/residence-verification/data-preparation/:uuid", contextDataMiddleware, authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware(),
+  "/residence-verification/data-preparation/:uuid", contextDataMiddleware, authenticationMiddleware(), 
   async (req, res) => {
     try {
       if (!req) {
@@ -89,7 +89,7 @@ dataPreparationRouter.get(
 );
 
 dataPreparationRouter.delete(
-  "/residence-verification/data-preparation", contextDataMiddleware, authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware(),
+  "/residence-verification/data-preparation", contextDataMiddleware, authenticationMiddleware(), 
   async (req, res) => {
     try {
       if (!req) {
@@ -109,7 +109,7 @@ dataPreparationRouter.delete(
 );
 
 dataPreparationRouter.delete(
-  "/residence-verification/data-preparation/:uuid", contextDataMiddleware, authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware(),
+  "/residence-verification/data-preparation/:uuid", contextDataMiddleware, authenticationMiddleware(), 
   async (req, res) => {
     try {
       if (!req) {
