@@ -14,8 +14,6 @@ import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, userModelNotFound } from "../exceptions/errors.js";
 import { DataPreparationTemplateResponse } from "../model/domain/models.js";
 import {  authenticationMiddleware } from "pdnd-common";
-import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
-import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
 import {  contextDataMiddleware } from "pdnd-common";
 
 const dataPreparationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
