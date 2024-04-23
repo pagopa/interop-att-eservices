@@ -1,5 +1,5 @@
 // import { signerConfig } from "../index.js";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosResponse, AxiosError  } from "axios";
 import { TokenResponse } from "pdnd-models";
 import { InteroperabilityConfig } from "../../config/index.js";
 import {logger} from "../../logging/index.js"
@@ -37,7 +37,17 @@ export async function getOauth2Token(
 
     return response.data.access_token;
   } catch (error) {
-    logger.error(`[Error] generate oauth2Token: ${error} `);
+    if (axios.isAxiosError(error)) {
+      const axiosError: AxiosError = error;
+      logger.error(`[Error] generate oauth2Token: ${axiosError.message}`);
+      if (axiosError.response) {
+        // Stampiamo il codice di stato e il messaggio di errore della risposta
+        logger.error(`Response status: ${axiosError.response.status}`);
+        logger.error(`Response data: ${JSON.stringify(axiosError.response.data)}`);
+      }
+    } else {
+      logger.error(`[Error] generate oauth2Token: ${error}`);
+    }
     throw error;
   }
 }
