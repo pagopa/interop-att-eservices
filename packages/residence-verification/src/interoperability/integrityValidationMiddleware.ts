@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { ZodiosRouterContextRequestHandler } from "@zodios/express";
 import { ErrorHandling } from "pdnd-models";
-// import { JWTConfig } from "../index.js";
 import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
 import { makeApiProblemBuilder } from "pdnd-models";
 import { match } from "ts-pattern";
 import { logger } from "pdnd-common";
 import { ExpressContext } from "pdnd-common";
 import { validate as tokenValidation } from "./interoperabilityValidationMiddleware.js";
+import { generateHashFromString } from "../utilities/hashUtilities.js";
 
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 
@@ -31,10 +31,13 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
         if ( process.env.SKIP_AGID_PAYLOAD_VERIFICATION != "true" ) {
           verifyJwtPayload(signatureToken, req);
         }
-        
-        logger.info(`integrityValidationMiddleware - token valid`);
+        logger.info(`[COMPLETED] integrityValidationMiddleware`);
         return next();
       } catch (error) {
+        if (error instanceof Object && !('code' in error)) {
+          if ('message' in error) logger.error(`integrityValidationMiddleware - error not managed with message: ${error.message}`);
+          return res.status(500).json().end();
+        }
         const problem = makeApiProblem(error, (err) =>
           match(err.code)
             .with("unauthorizedError", () => 401)
@@ -144,12 +147,19 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     throw ErrorHandling.tokenNotValid();
   }
 
-  if (!req.headers.digest || !req.headers.digest.startsWith("SHA-256")) {
+  const hashBody = generateHashFromString(JSON.stringify(req.body));
+  if (hashBody !== signedDigest.digest.substring(8)) {
+    logger.error(`Request body digest does not match the signed digest`);
+    throw ErrorHandling.tokenNotValid();
+  }
+
+  if (!req.headers.digest || !req.headers.digest.startsWith("SHA-256=")) {
     logger.error(
       `The digest '${req.headers.digest}' value in token payload is invalid`
     );
     throw ErrorHandling.tokenNotValid();
   }
+
 };
 
 interface SignedHeader {

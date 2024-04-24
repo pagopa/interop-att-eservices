@@ -13,3 +13,14 @@ export default function generateHash(strings: string[]): string {
   // Restituisci l'hash in formato esadecimale
   return hash.digest("hex");
 }
+
+export function generateHashFromString(string: string): string {
+  // Crea un hash SHA-256
+  const hash = crypto.createHash("sha256");
+
+  // Aggiunge la stringa concatenata come input per l'hash
+  hash.update(string);
+
+  // Restituisci l'hash in formato esadecimale
+  return hash.digest("hex");
+}

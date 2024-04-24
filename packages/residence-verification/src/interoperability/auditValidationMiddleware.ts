@@ -33,10 +33,13 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
         if ( process.env.SKIP_AGID_PAYLOAD_VERIFICATION != 'true' ) {
           verifyJwtPayload(trackingEvidenceToken);
         }
-        
-        logger.info(`auditValidationMiddleware - token valid `);
+        logger.info(`[COMPLETED] auditValidationMiddleware`);
         return next();
       } catch (error) {
+        if (error instanceof Object && !('code' in error)) {
+          if ('message' in error) logger.error(`auditValidationMiddleware - error not managed with message: ${error.message}`);
+          return res.status(500).json().end();
+        }
         const problem = makeApiProblem(error, (err) =>
           match(err.code)
             .with("unauthorizedError", () => 401)

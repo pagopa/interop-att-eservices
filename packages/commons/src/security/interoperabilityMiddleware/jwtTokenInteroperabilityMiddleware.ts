@@ -1,6 +1,6 @@
 // import { signerConfig } from "../index.js";
 import axios, { AxiosResponse, AxiosError  } from "axios";
-import { TokenResponse } from "pdnd-models";
+import { ErrorHandling, TokenResponse } from "pdnd-models";
 import { InteroperabilityConfig } from "../../config/index.js";
 import {logger} from "../../logging/index.js"
 
@@ -48,6 +48,6 @@ export async function getOauth2Token(
     } else {
       logger.error(`[Error] generate oauth2Token: ${error}`);
     }
-    throw error;
+    throw ErrorHandling.genericError();
   }
 }
