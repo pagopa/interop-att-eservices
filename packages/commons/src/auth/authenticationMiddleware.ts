@@ -115,6 +115,7 @@ export const authenticationMiddleware: () => ZodiosRouterContextRequestHandler<E
             .with("operationForbidden", () => 403)
             .with("missingHeader", () => 400)
             .with("genericError", () => 400)
+            .with("tokenNotValid", () => 401)
             .otherwise(() => 500)
         );
         return res.status(problem.status).json(problem).end();

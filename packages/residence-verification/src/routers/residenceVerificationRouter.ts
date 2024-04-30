@@ -6,6 +6,10 @@ import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
+import {  authenticationMiddleware } from "pdnd-common";
+import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
+import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
+import {  contextDataMiddleware } from "pdnd-common";
 
 const residenceVerificationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const residenceVerificationRouter = ctx.router(api.api);
@@ -13,7 +17,7 @@ const residenceVerificationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEnd
 
   residenceVerificationRouter.use(authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware()); */
 
-  residenceVerificationRouter.post("/residence-verification",
+  residenceVerificationRouter.post("/residence-verification", contextDataMiddleware, authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware(),
    async (req, res) => {
   try {
     logger.info(`[START] Post - '/ar-service-001' : ${req.body}`);
@@ -25,7 +29,8 @@ const residenceVerificationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEnd
     return res.status(200).json(data).end();
   } catch (error) {
     const errorRes = makeApiProblem(error, createEserviceDataPreparation);
-    const generalErrorResponse = mapGeneralErrorModel("prova", errorRes);
+    const correlationId = req.headers["x-correlation-id"] as string;
+    const generalErrorResponse = mapGeneralErrorModel(correlationId, errorRes);
     logger.error(generalErrorResponse);
     return res.status(errorRes.status).json(generalErrorResponse).end();
   }
