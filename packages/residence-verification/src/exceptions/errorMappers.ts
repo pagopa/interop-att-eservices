@@ -14,4 +14,5 @@ export const createEserviceDataPreparation = (
   match(error.code)
     .with("eServiceNotFound", () => HTTP_STATUS_BAD_REQUEST)
     .with("userModelNotFound", () => HTTP_STATUS_NOT_FOUND)
+    .with("requestParamNotValid", () => HTTP_STATUS_BAD_REQUEST)
     .otherwise(() => HTTP_STATUS_INTERNAL_SERVER_ERROR);
