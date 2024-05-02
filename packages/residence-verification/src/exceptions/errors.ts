@@ -1,13 +1,14 @@
 import { logger } from "pdnd-common";
 import { makeApiProblemBuilder, ApiError, Problem } from "pdnd-models";
+import * as http from 'http';
 
 export type ErrorModel = {
   codiceErroreAnomalia: string,
   tipoErroreAnomalia: number,
+  oggettoErroreAnomalia?: string,
   testoErroreAnomalia: string,
-  oggettoErroreAnomalia: string,
-  campoErroreAnomalia: string,
-  valoreErroreAnomalia: string,
+  campoErroreAnomalia?: string,
+  valoreErroreAnomalia?: string,
 };
 
 export type GeneralErrorModel = {
@@ -57,10 +58,10 @@ export function mapGeneralErrorModel(idOperazione: string, error: Problem): any 
     {
       codiceErroreAnomalia: problemError.code,
       tipoErroreAnomalia: error.status,
+      oggettoErroreAnomalia: http.STATUS_CODES[error.status],
       testoErroreAnomalia: problemError.detail,
-      oggettoErroreAnomalia: "",
-      campoErroreAnomalia: "",
-      valoreErroreAnomalia: "",
+      campoErroreAnomalia: undefined,
+      valoreErroreAnomalia: undefined,
     };
 
 

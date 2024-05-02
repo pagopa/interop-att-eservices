@@ -31,7 +31,6 @@ const residenceVerificationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEnd
     const errorRes = makeApiProblem(error, createEserviceDataPreparation);
     const correlationId = req.headers["x-correlation-id"] as string;
     const generalErrorResponse = mapGeneralErrorModel(correlationId, errorRes);
-    logger.error(generalErrorResponse);
     return res.status(errorRes.status).json(generalErrorResponse).end();
   }
 });
