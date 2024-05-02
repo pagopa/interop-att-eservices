@@ -1,7 +1,7 @@
 import ResidenceVerificationController from "../controllers/residenceVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
-import { makeApiProblem, userModelNotFound } from "../exceptions/errors.js";
+import { makeApiProblem, mapGeneralErrorModel, userModelNotFound } from "../exceptions/errors.js";
 import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
@@ -29,7 +29,9 @@ const residenceVerificationRouter = (ctx: ZodiosContext): ZodiosRouter<ZodiosEnd
     return res.status(200).json(data).end();
   } catch (error) {
     const errorRes = makeApiProblem(error, createEserviceDataPreparation);
-    return res.status(errorRes.status).json(errorRes).end();
+    const correlationId = req.headers["x-correlation-id"] as string;
+    const generalErrorResponse = mapGeneralErrorModel(correlationId, errorRes);
+    return res.status(errorRes.status).json(generalErrorResponse).end();
   }
 });
 return residenceVerificationRouter;

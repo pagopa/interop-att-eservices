@@ -106,15 +106,17 @@ export function makeApiProblemBuilder<T extends string>(
         },
       ],
     });
-
     const problem = match<unknown, Problem>(error)
       .with(P.instanceOf(ApiError<T | CommonErrorCodes>), (error) =>
         makeProblem(httpMapper(error), error)
       )
       .otherwise(() =>
-        makeProblem(500, ErrorHandling.genericError("Unexpected error"))
+        makeProblem(500, new ApiError({
+          code: "genericError",
+          title: "Generic Error",
+          detail: "generic error",
+        }))
       );
-
     logger.error(
       `- ${problem.title} - ${problem.detail} - orignal error: ${error}`
     );

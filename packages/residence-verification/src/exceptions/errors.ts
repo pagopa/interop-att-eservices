@@ -1,5 +1,20 @@
 import { logger } from "pdnd-common";
-import { makeApiProblemBuilder, ApiError } from "pdnd-models";
+import { makeApiProblemBuilder, ApiError, Problem } from "pdnd-models";
+import * as http from 'http';
+
+export type ErrorModel = {
+  codiceErroreAnomalia: string,
+  tipoErroreAnomalia: number,
+  oggettoErroreAnomalia?: string,
+  testoErroreAnomalia: string,
+  campoErroreAnomalia?: string,
+  valoreErroreAnomalia?: string,
+};
+
+export type GeneralErrorModel = {
+  idOperazione: string,
+  errors: ErrorModel[],
+};
 
 const errorCodes = {
   eServiceNotFound: "0001",
@@ -34,3 +49,29 @@ export function requestParamNotValid(details: string): ApiError<ErrorCodes> {
     title: "Request param not valid",
   });
 }
+
+export function mapGeneralErrorModel(idOperazione: string, error: Problem): any {
+  const errorsModel: ErrorModel[] = [];
+
+  error.errors.forEach(problemError => {
+    const errorTemp: ErrorModel =
+    {
+      codiceErroreAnomalia: problemError.code,
+      tipoErroreAnomalia: error.status,
+      oggettoErroreAnomalia: http.STATUS_CODES[error.status],
+      testoErroreAnomalia: problemError.detail,
+      campoErroreAnomalia: undefined,
+      valoreErroreAnomalia: undefined,
+    };
+
+
+    errorsModel.push(errorTemp);
+  });
+
+  const data: GeneralErrorModel = {
+    idOperazione: idOperazione,
+    errors: errorsModel,
+  };
+
+  return data;
+} 
