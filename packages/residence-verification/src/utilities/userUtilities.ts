@@ -1,5 +1,6 @@
 import { ErrorHandling, UserModel } from "pdnd-models";
 import { TipoParametriRicercaAR001 } from "../model/domain/models.js";
+import { userModelNotFound } from "../exceptions/errors.js";
 
 // Funzione che aggiunge una lista di UserModel a un array esistente solo se non esistono già, sostituendo eventuali duplicati
 export function appendUniqueUserModelsToArray(
@@ -63,7 +64,7 @@ export function findUserModelByFiscalCode(
 ): UserModel | null {
   // Verifica se l'array esistente è nullo o undefined
   if (!existingArray) {
-    throw new Error("L'array esistente deve essere definito.");
+    throw userModelNotFound();
   }
 
   let userModelFound: UserModel | null = null; // Inizializza la variabile per memorizzare l'oggetto UserModel trovato
