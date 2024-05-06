@@ -26,7 +26,7 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
           );
           throw ErrorHandling.missingHeader();
         }
-        if (!(await tokenValidation(signatureToken,"signatureToken"))) {
+        if (!(await tokenValidation(signatureToken, "signatureToken"))) {
           logger.error(`integrityValidationMiddleware - token not valid`);
           throw ErrorHandling.tokenNotValid();
         }

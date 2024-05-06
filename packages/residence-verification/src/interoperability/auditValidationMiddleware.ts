@@ -27,7 +27,12 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
           );
           throw ErrorHandling.missingHeader();
         }
-        if (!(await tokenValidation(trackingEvidenceToken, "trackingEvidenceToken"))) {
+        if (
+          !(await tokenValidation(
+            trackingEvidenceToken,
+            "trackingEvidenceToken"
+          ))
+        ) {
           logger.error(`auditValidationMiddleware - token not valid`);
           throw ErrorHandling.tokenNotValid();
         }
