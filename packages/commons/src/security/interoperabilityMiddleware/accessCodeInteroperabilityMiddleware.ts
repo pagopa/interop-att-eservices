@@ -33,9 +33,8 @@ export const generateInternalAccessCode = async (
         return internalToken; // Restituisce il token interno generato
       }
       return null;
-    } 
+    }
     return null;
-
   } catch (error) {
     logger.error(`
     An error occurred while generating the access token: ${error}`);

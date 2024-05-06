@@ -5,7 +5,7 @@ import { ErrorHandling } from "pdnd-models";
 import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
 import { makeApiProblemBuilder } from "pdnd-models";
 import { match } from "ts-pattern";
-import { logger } from "pdnd-common";
+import { logger, InteroperabilityConfig } from "pdnd-common";
 import { ExpressContext } from "pdnd-common";
 import { validate as tokenValidation } from "./interoperabilityValidationMiddleware.js";
 const makeApiProblem = makeApiProblemBuilder(logger, {});
@@ -16,6 +16,10 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
       ExpressContext
     > = async (req, res, next): Promise<unknown> => {
       try {
+        const config = InteroperabilityConfig.parse(process.env);
+        if (config.skipInteroperabilityVerification) {
+          return next();
+        }
         const trackingEvidenceToken = Array.isArray(
           req.headers["agid-jwt-trackingevidence"]
         )
@@ -27,7 +31,12 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
           );
           throw ErrorHandling.missingHeader();
         }
-        if (!(await tokenValidation(trackingEvidenceToken, "trackingEvidenceToken"))) {
+        if (
+          !(await tokenValidation(
+            trackingEvidenceToken,
+            "trackingEvidenceToken"
+          ))
+        ) {
           logger.error(`auditValidationMiddleware - token not valid`);
           throw ErrorHandling.tokenNotValid();
         }

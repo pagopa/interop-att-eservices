@@ -5,7 +5,7 @@ import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
 import { makeApiProblemBuilder } from "pdnd-models";
 import { match } from "ts-pattern";
 import { logger } from "pdnd-common";
-import { ExpressContext } from "pdnd-common";
+import { ExpressContext, InteroperabilityConfig } from "pdnd-common";
 import { generateHashFromString } from "../utilities/hashUtilities.js";
 import { validate as tokenValidation } from "./interoperabilityValidationMiddleware.js";
 
@@ -17,6 +17,10 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
       ExpressContext
     > = async (req, res, next): Promise<unknown> => {
       try {
+        const config = InteroperabilityConfig.parse(process.env);
+        if (config.skipInteroperabilityVerification) {
+          return next();
+        }
         const signatureToken = Array.isArray(req.headers["agid-jwt-signature"])
           ? req.headers["agid-jwt-signature"][0]
           : req.headers["agid-jwt-signature"];
@@ -26,7 +30,7 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
           );
           throw ErrorHandling.missingHeader();
         }
-        if (!(await tokenValidation(signatureToken,"signatureToken"))) {
+        if (!(await tokenValidation(signatureToken, "signatureToken"))) {
           logger.error(`integrityValidationMiddleware - token not valid`);
           throw ErrorHandling.tokenNotValid();
         }

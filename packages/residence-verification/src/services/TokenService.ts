@@ -5,7 +5,7 @@ class tokenService {
   public appContext = getContext();
 
   public async validate(token: string): Promise<boolean | null> {
-    return validate(token,"voucher"); // kid agid nel token
+    return validate(token, "voucher"); // kid agid nel token
   }
 }
 

@@ -52,7 +52,7 @@ export function requestParamNotValid(details: string): ApiError<ErrorCodes> {
   });
 }
 
- /* eslint-disable */
+/* eslint-disable */
 export function mapGeneralErrorModel(
   idOperazione: string,
   error: Problem

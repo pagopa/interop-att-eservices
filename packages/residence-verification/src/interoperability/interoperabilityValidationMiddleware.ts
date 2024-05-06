@@ -27,7 +27,9 @@ export const validate = (jwtToken: string, source: string): Promise<boolean> =>
         .then((pkDecoded) => generateInternalAccessCode(pkDecoded.kid))
         .then((accessCodeSigned) => {
           if (accessCodeSigned == null) {
-            logger.error(`${source}-publicKeyService: Unexpected error parsing token`);
+            logger.error(
+              `${source}-publicKeyService: accessCodeSigned is null`
+            );
             throw ErrorHandling.tokenNotValid();
           }
           return getOauth2Token(accessCodeSigned.serialized);
@@ -44,7 +46,9 @@ export const validate = (jwtToken: string, source: string): Promise<boolean> =>
         })
         .then((result) => {
           if (!result) {
-            logger.error(`${source}-publicKeyService: Unexpected error during token generation`);
+            logger.error(
+              `${source}-publicKeyService: Unexpected error during token generation`
+            );
             throw ErrorHandling.tokenNotValid();
           }
           return generateRSAPublicKey(result);
