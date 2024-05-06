@@ -1,5 +1,6 @@
 import { createClient } from "redis";
 import { logger } from "../logging/index.js";
+import { ErrorHandling } from "pdnd-models";
 
 export class CacheManager {
   private readonly client;
@@ -13,16 +14,16 @@ export class CacheManager {
       this.client.on("error", (error: Error) => {
         // eslint-disable-next-line no-console
         logger.error(`Redis client error: ${error}`);
-        throw new Error("Redis client error");
+        ErrorHandling.genericError();
       });
 
       if (!this.isHealthy) {
         logger.error(`Redis client error`);
-        throw new Error("Redis client error");
+        ErrorHandling.genericError();
       }
     } catch (error) {
       logger.error(`Error creating Redis client: ${error}`);
-      throw new Error("Error creating Redis client");
+      throw error;
     }
   }
 
