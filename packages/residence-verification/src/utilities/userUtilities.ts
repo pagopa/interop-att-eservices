@@ -1,4 +1,4 @@
-import { ErrorHandling, UserModel } from "pdnd-models";
+import { UserModel } from "pdnd-models";
 import { TipoParametriRicercaAR001 } from "../model/domain/models.js";
 import { userModelNotFound } from "../exceptions/errors.js";
 
@@ -85,7 +85,7 @@ export function findUserModelByPersonalInfo(
 ): UserModel[] {
   // Verifica se l'array esistente è nullo o undefined
   if (!existingArray) {
-    throw new Error("L'array esistente deve essere definito.");
+    throw userModelNotFound();
   }
 
   const userModelFound: UserModel[] = [];
@@ -118,7 +118,7 @@ export function findUserModelById(
 ): UserModel | null {
   // Verifica se l'array esistente è nullo o undefined
   if (!existingArray) {
-    throw new Error("L'array esistente deve essere definito.");
+    throw userModelNotFound();
   }
 
   let userModelFound: UserModel | null = null; // Inizializza la variabile per memorizzare l'oggetto UserModel trovato
@@ -140,7 +140,7 @@ export function findUserModelByUUID(
   uuid: string
 ): UserModel | null {
   if (!existingArray) {
-    throw ErrorHandling.genericError();
+    throw userModelNotFound();
   }
 
   for (const userModel of existingArray) {
@@ -159,7 +159,7 @@ export function findUserModelByFiscalCodeOrUUID(
 ): UserModel | null {
   // Verifica se l'array esistente è nullo o undefined
   if (!existingArray) {
-    throw new Error("L'array esistente deve essere definito.");
+    throw userModelNotFound();
   }
 
   let userModelFound: UserModel | null = null; // Inizializza la variabile per memorizzare l'oggetto UserModel trovato
@@ -185,7 +185,7 @@ export function deleteUserModelByUUID(
 ): UserModel[] | null {
   // Verifica se l'array esistente è nullo o undefined
   if (!existingArray) {
-    throw new Error("L'array esistente deve essere definito.");
+    throw userModelNotFound();
   }
   const result: UserModel[] = [];
 
