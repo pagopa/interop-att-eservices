@@ -12,7 +12,7 @@ import {
 } from "./jwt.js";
 
 const makeApiProblem = makeApiProblemBuilder(logger, {});
-
+/* eslint-disable */
 export const authenticationMiddleware: () => ZodiosRouterContextRequestHandler<ExpressContext> =
   () => {
     const authMiddleware: ZodiosRouterContextRequestHandler<
@@ -33,24 +33,26 @@ export const authenticationMiddleware: () => ZodiosRouterContextRequestHandler<E
             );
             throw ErrorHandling.missingBearer();
           }
-  
+
           const jwtToken = authorizationHeader[1];
-  
-          const validPayloadAndHeader = await verifyJwtPayloadAndHeader(jwtToken);
+
+          const validPayloadAndHeader = await verifyJwtPayloadAndHeader(
+            jwtToken
+          );
           if (!validPayloadAndHeader) {
             logger.warn(`The jwt token header or payload is not valid`);
             throw ErrorHandling.genericError(
               "The jwt token header or payload is not valid"
             );
           }
-  
+
           const valid = await verifyJwtToken(jwtToken);
           if (!valid) {
             logger.warn(`The jwt token is not valid`);
             throw ErrorHandling.tokenNotValid();
           }
           logger.info(`Bearer Token: isValid: ${valid}`);
-  
+
           const authData = readAuthDataFromJwtToken(jwtToken);
           match(authData)
             .with(P.instanceOf(Error), (err) => {
@@ -58,10 +60,12 @@ export const authenticationMiddleware: () => ZodiosRouterContextRequestHandler<E
               throw ErrorHandling.genericError("Invalid claims");
             })
             .otherwise((claimsRes: AuthData) => {
+             /* eslint-disable */
               req.ctx = {
                 authData: { ...claimsRes },
                 correlationId,
               };
+              /* eslint-enable */
               next();
             });
         };
@@ -79,7 +83,9 @@ export const authenticationMiddleware: () => ZodiosRouterContextRequestHandler<E
               "agid-jwt-trackingevidence": P.string,
             },
             async (headers) => {
-              console.log("Matching headers with authorization, correlation ID, agid-jwt-signature, agid-jwt-trackingevidence");
+              logger.info(
+                `Matching headers with authorization, correlation ID, agid-jwt-signature, agid-jwt-trackingevidence`
+              );
               await addCtxAuthData(
                 headers.authorization,
                 headers["x-correlation-id"]
@@ -87,26 +93,40 @@ export const authenticationMiddleware: () => ZodiosRouterContextRequestHandler<E
             }
           )
           .otherwise(() => {
-            console.log("No matching headers found");
-            if (headers.data["x-correlation-id"] === null || headers.data["x-correlation-id"] === undefined) {
-              console.log("No matching headers found: x-correlation-id");
+            logger.info(`No matching headers found`);
+            if (
+              headers.data["x-correlation-id"] === null ||
+              headers.data["x-correlation-id"] === undefined
+            ) {
+              logger.error(`No matching headers found: x-correlation-id`);
               throw ErrorHandling.missingHeader("Header error ");
             }
-            if (headers.data["agid-jwt-signature"] === null || headers.data["agid-jwt-signature"] === undefined) {
-              console.log("No matching headers found: agid-jwt-signature");
+            if (
+              headers.data["agid-jwt-signature"] === null ||
+              headers.data["agid-jwt-signature"] === undefined
+            ) {
+              logger.error(`No matching headers found: agid-jwt-signature`);
               throw ErrorHandling.missingHeader("Header error ");
             }
-            if (headers.data["agid-jwt-trackingevidence"] === null || headers.data["agid-jwt-trackingevidence"] === undefined) {
-              console.log("No matching headers found: agid-jwt-trackingevidence");
+            if (
+              headers.data["agid-jwt-trackingevidence"] === null ||
+              headers.data["agid-jwt-trackingevidence"] === undefined
+            ) {
+              logger.error(
+                `No matching headers found: agid-jwt-trackingevidence`
+              );
               throw ErrorHandling.missingHeader("Header error ");
-            }
-            else {
+            } else {
               throw ErrorHandling.missingHeader("other");
             }
           });
       } catch (error) {
-        if (error instanceof Object && !('code' in error)) {
-          if ('message' in error) logger.error(`authenticationMiddleware - error not managed with message: ${error.message}`);
+        if (error instanceof Object && !("code" in error)) {
+          if ("message" in error) {
+            logger.error(
+              `authenticationMiddleware - error not managed with message: ${error.message}`
+            );
+          }
           return res.status(500).json().end();
         }
         const problem = makeApiProblem(error, (err) =>
@@ -124,3 +144,4 @@ export const authenticationMiddleware: () => ZodiosRouterContextRequestHandler<E
 
     return authMiddleware;
   };
+/* eslint-enable */

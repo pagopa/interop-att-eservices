@@ -2,6 +2,7 @@ import { ErrorHandling, UserModel } from "pdnd-models";
 import { TipoParametriRicercaAR001 } from "../model/domain/models.js";
 import { userModelNotFound } from "../exceptions/errors.js";
 
+/* eslint-disable */
 // Funzione che aggiunge una lista di UserModel a un array esistente solo se non esistono già, sostituendo eventuali duplicati
 export function appendUniqueUserModelsToArray(
   existingArray: UserModel[] | null,
@@ -14,24 +15,21 @@ export function appendUniqueUserModelsToArray(
     );
   }
 
-  // Copia l'array esistente per non modificarlo direttamente
+  // Creiamo una nuova copia dell'array esistente
   const newArray = existingArray.slice();
 
-  // Aggiunge solo i nuovi UserModel che non esistono già nell'array esistente
+  // Creiamo un set per tenere traccia degli UUID dei modelli esistenti
+  const uuidSet = new Set(
+    newArray.map((model) => model.soggetto.codiceFiscale)
+  );
+
+  // Aggiungiamo solo i nuovi UserModel che non esistono già nell'array esistente
   for (const modelToAdd of modelsToAdd) {
-    // Cerca se esiste già un UserModel con lo stesso codice fiscale nell'array esistente
-    const existingModelIndex = newArray.findIndex(
-      (model) =>
-        model.soggetto.codiceFiscale === modelToAdd.soggetto.codiceFiscale
-    );
-    if (existingModelIndex !== -1) {
-      // Se esiste già un UserModel con lo stesso codice fiscale, aggiorna l'UUID dell'elemento da sostituire
-      modelToAdd.uuid = newArray[existingModelIndex].uuid;
-      // Sostituisci l'elemento esistente con il nuovo UserModel
-      newArray.splice(existingModelIndex, 1, modelToAdd);
-    } else {
-      // Se non esiste già un UserModel con lo stesso codice fiscale, aggiungi il nuovo UserModel
+    // Verifichiamo se il UserModel è già presente nell'array esistente
+    if (!uuidSet.has(modelToAdd.soggetto.codiceFiscale)) {
+      // Se non esiste, lo aggiungiamo all'array e aggiorniamo il set degli UUID
       newArray.push(modelToAdd);
+      uuidSet.add(modelToAdd.soggetto.codiceFiscale);
     }
   }
 
@@ -90,21 +88,24 @@ export function findUserModelByPersonalInfo(
     throw new Error("L'array esistente deve essere definito.");
   }
 
-  var userModelFound: UserModel[] = [];
-  
+  const userModelFound: UserModel[] = [];
+
   // Cerca UserModel con lo stesso codice fiscale all'interno dell'array esistente
   for (const userModel of existingArray) {
     if (
       userModel.soggetto.nome !== pm.nome ||
       userModel.soggetto.cognome !== pm.cognome ||
       userModel.soggetto.sesso !== pm.sesso ||
-      userModel.soggetto.datiNascita.dataEvento !== pm.datiNascita?.dataEvento ||
-      userModel.soggetto.datiNascita.luogoNascita.comune.nomeComune !== pm.datiNascita?.luogoNascita?.comune?.nomeComune ||
-      userModel.soggetto.datiNascita.luogoNascita.localita.codiceStato !== pm.datiNascita?.luogoNascita?.localita?.codiceStato
-      ) {
+      userModel.soggetto.datiNascita.dataEvento !==
+        pm.datiNascita?.dataEvento ||
+      userModel.soggetto.datiNascita.luogoNascita.comune.nomeComune !==
+        pm.datiNascita?.luogoNascita?.comune?.nomeComune ||
+      userModel.soggetto.datiNascita.luogoNascita.localita.codiceStato !==
+        pm.datiNascita?.luogoNascita?.localita?.codiceStato
+    ) {
       continue;
     }
-    
+
     userModelFound.push(userModel);
   }
 
@@ -197,3 +198,4 @@ export function deleteUserModelByUUID(
 
   return result; // Restituisci l'oggetto UserModel trovato, se presente
 }
+

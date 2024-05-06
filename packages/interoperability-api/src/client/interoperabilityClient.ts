@@ -27,7 +27,9 @@ export async function getkeyClient(
       // Effettua la chiamata usando axios
       const response: AxiosResponse<JWK> = await axios.get(apiUrl, { headers });
       logger.info(`Interoperability client: Response: ${response.data}`);
-      logger.info("Interoperability client: get key from Interoperability client: done");
+      logger.info(
+        "Interoperability client: get key from Interoperability client: done"
+      );
       return response.data;
     } catch (error) {
       logger.error(`Interoperability client: 

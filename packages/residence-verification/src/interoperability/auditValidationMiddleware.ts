@@ -22,22 +22,29 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
           ? req.headers["agid-jwt-trackingevidence"][0]
           : req.headers["agid-jwt-trackingevidence"];
         if (!trackingEvidenceToken) {
-          logger.error(`auditValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`);
+          logger.error(
+            `auditValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`
+          );
           throw ErrorHandling.missingHeader();
         }
-        if (! await tokenValidation(trackingEvidenceToken)) {
+        if (!(await tokenValidation(trackingEvidenceToken, "trackingEvidenceToken"))) {
           logger.error(`auditValidationMiddleware - token not valid`);
           throw ErrorHandling.tokenNotValid();
         }
-        
-        if ( process.env.SKIP_AGID_PAYLOAD_VERIFICATION != 'true' ) {
+        /* eslint-disable */
+        if (process.env.SKIP_AGID_PAYLOAD_VERIFICATION != "true") {
           verifyJwtPayload(trackingEvidenceToken);
         }
+         /* eslint-enable */
         logger.info(`[COMPLETED] auditValidationMiddleware`);
         return next();
       } catch (error) {
-        if (error instanceof Object && !('code' in error)) {
-          if ('message' in error) logger.error(`auditValidationMiddleware - error not managed with message: ${error.message}`);
+        if (error instanceof Object && !("code" in error)) {
+          if ("message" in error) {
+            logger.error(
+              `auditValidationMiddleware - error not managed with message: ${error.message}`
+            );
+          }
           return res.status(500).json().end();
         }
         const problem = makeApiProblem(error, (err) =>
@@ -78,7 +85,7 @@ const verifyJwtPayload = (jwtToken: string): void => {
 
   if (
     !decodedToken.payload.aud ||
-    decodedToken.payload.aud != process.env.TOKEN_AUD
+    decodedToken.payload.aud !== process.env.TOKEN_AUD
   ) {
     logger.error(`Request header 'aud' is incorrect`);
     throw ErrorHandling.tokenNotValid();

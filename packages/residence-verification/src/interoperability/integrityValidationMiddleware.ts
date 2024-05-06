@@ -6,8 +6,8 @@ import { makeApiProblemBuilder } from "pdnd-models";
 import { match } from "ts-pattern";
 import { logger } from "pdnd-common";
 import { ExpressContext } from "pdnd-common";
-import { validate as tokenValidation } from "./interoperabilityValidationMiddleware.js";
 import { generateHashFromString } from "../utilities/hashUtilities.js";
+import { validate as tokenValidation } from "./interoperabilityValidationMiddleware.js";
 
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 
@@ -21,21 +21,27 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
           ? req.headers["agid-jwt-signature"][0]
           : req.headers["agid-jwt-signature"];
         if (!signatureToken) {
-          logger.error(`integrityValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`);
+          logger.error(
+            `integrityValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`
+          );
           throw ErrorHandling.missingHeader();
         }
-        if ( ! await tokenValidation(signatureToken)) {
+        if (!(await tokenValidation(signatureToken,"signatureToken"))) {
           logger.error(`integrityValidationMiddleware - token not valid`);
           throw ErrorHandling.tokenNotValid();
         }
-        if ( process.env.SKIP_AGID_PAYLOAD_VERIFICATION != "true" ) {
+        if (process.env.SKIP_AGID_PAYLOAD_VERIFICATION !== "true") {
           verifyJwtPayload(signatureToken, req);
         }
         logger.info(`[COMPLETED] integrityValidationMiddleware`);
         return next();
       } catch (error) {
-        if (error instanceof Object && !('code' in error)) {
-          if ('message' in error) logger.error(`integrityValidationMiddleware - error not managed with message: ${error.message}`);
+        if (error instanceof Object && !("code" in error)) {
+          if ("message" in error) {
+            logger.error(
+              `integrityValidationMiddleware - error not managed with message: ${error.message}`
+            );
+          }
           return res.status(500).json().end();
         }
         const problem = makeApiProblem(error, (err) =>
@@ -56,7 +62,9 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
     return integrityMiddleware;
   };
 
+/* eslint-disable */
 export const verifyJwtPayload = (jwtToken: string, req: any): void => {
+  /* eslint-enable */
   const decodedToken = jwt.decode(jwtToken, { complete: true }) as {
     header: JwtHeader;
     payload: JwtPayload;
@@ -80,7 +88,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
 
   if (
     !decodedToken.payload.aud ||
-    decodedToken.payload.aud != process.env.TOKEN_AUD
+    decodedToken.payload.aud !== process.env.TOKEN_AUD
   ) {
     logger.error(`Request header aud is incorrect`);
     throw ErrorHandling.tokenNotValid();
@@ -106,7 +114,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
   ];
   for (const headerName of requiredSignatureHeaders) {
     const signedHeaderExists = signedHeaders.some(
-      (header: SignedHeader) => header && header[headerName]
+      (header: SignedHeader) => header?.[headerName]
     );
     if (!signedHeaderExists) {
       logger.error(`The '${headerName}' value in token payload is required`);
@@ -115,7 +123,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
   }
 
   const signedContentType = signedHeaders.find(
-    (header: SignedHeader) => header && header["content-type"]
+    (header: SignedHeader) => header?.["content-type"]
   );
   if (signedContentType["content-type"] !== req.headers["content-type"]) {
     logger.error(
@@ -125,7 +133,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
   }
 
   const signedContentEncoding = signedHeaders.find(
-    (header: SignedHeader) => header && header["content-encoding"]
+    (header: SignedHeader) => header?.["content-encoding"]
   );
   if (
     signedContentEncoding["content-encoding"] !==
@@ -138,7 +146,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
   }
 
   const signedDigest = signedHeaders.find(
-    (header: SignedHeader) => header && header.digest
+    (header: SignedHeader) => header?.digest
   );
   if (!signedDigest.digest.startsWith("SHA-256")) {
     logger.error(
@@ -153,13 +161,12 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     throw ErrorHandling.tokenNotValid();
   }
 
-  if (!req.headers.digest || !req.headers.digest.startsWith("SHA-256=")) {
+  if (!req.headers.digest?.startsWith("SHA-256=")) {
     logger.error(
-      `The digest '${req.headers.digest}' value in token payload is invalid`
+      `The digest '${req.headers.digest}' value in token payload is  invalid`
     );
     throw ErrorHandling.tokenNotValid();
   }
-
 };
 
 interface SignedHeader {

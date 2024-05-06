@@ -6,13 +6,13 @@ import generateHash from "../utilities/hashUtilities.js";
 import {
   findUserModelByFiscalCode,
   findUserModelById,
-  findUserModelByPersonalInfo
+  findUserModelByPersonalInfo,
 } from "../utilities/userUtilities.js";
 import { TipoParametriRicercaAR001 } from "../model/domain/models.js";
 import { userModelNotFound } from "../exceptions/errors.js";
 
 class ResidenceVerificationService {
-  appContext = getContext();
+  public appContext = getContext();
 
   public async getByFiscalCode(fiscalCode: string): Promise<UserModel | null> {
     try {
@@ -44,22 +44,29 @@ class ResidenceVerificationService {
     }
   }
 
-  public async getByPersonalInfo(parametriRicerca: TipoParametriRicercaAR001): Promise<UserModel[]> {
+  public async getByPersonalInfo(
+    parametriRicerca: TipoParametriRicercaAR001
+  ): Promise<UserModel[]> {
     try {
       const hash = generateHash([this.appContext.authData.purposeId]);
       const result = await dataPreparationRepository.findAllByKey(hash);
       const users = result;
-      const userModelFound = findUserModelByPersonalInfo(users, parametriRicerca);
+      const userModelFound = findUserModelByPersonalInfo(
+        users,
+        parametriRicerca
+      );
       if (!userModelFound) {
         throw userModelNotFound("Not found");
       }
       return userModelFound;
     } catch (error) {
-      logger.error(`UserService: Errore durante il salvataggio della lista. `, error);
+      logger.error(
+        `UserService: Errore durante il salvataggio della lista. `,
+        error
+      );
       throw error;
     }
   }
-
 }
 
 export default new ResidenceVerificationService();

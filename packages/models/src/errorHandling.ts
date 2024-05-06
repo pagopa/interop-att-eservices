@@ -1,40 +1,5 @@
 import { P, match } from "ts-pattern";
-
-export class ApiError<T> extends Error {
-  public code: T;
-  public title: string;
-  public detail: string;
-  public correlationId?: string;
-
-  constructor({
-    code,
-    title,
-    detail,
-    correlationId,
-  }: {
-    code: T;
-    title: string;
-    detail: string;
-    correlationId?: string;
-  }) {
-    super(detail);
-    this.code = code;
-    this.title = title;
-    this.detail = detail;
-    this.correlationId = correlationId;
-  }
-}
-
-export class InternalError<T> extends Error {
-  public code: T;
-  public detail: string;
-
-  constructor({ code, detail }: { code: T; detail: string }) {
-    super(detail);
-    this.code = code;
-    this.detail = detail;
-  }
-}
+import { ApiError } from "./error/apiError.js";
 
 export type ProblemError = {
   code: string;
@@ -111,11 +76,14 @@ export function makeApiProblemBuilder<T extends string>(
         makeProblem(httpMapper(error), error)
       )
       .otherwise(() =>
-        makeProblem(500, new ApiError({
-          code: "genericError",
-          title: "Generic Error",
-          detail: "generic error",
-        }))
+        makeProblem(
+          500,
+          new ApiError({
+            code: "genericError",
+            title: "Generic Error",
+            detail: "generic error",
+          })
+        )
       );
     logger.error(
       `- ${problem.title} - ${problem.detail} - orignal error: ${error}`

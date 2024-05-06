@@ -4,7 +4,7 @@ import { logger, signerConfig } from "../index.js";
 
 export type PublicKeyService = {
   getRSAPublicKey: (keyId: string) => Promise<Uint8Array>;
-  KMSAvailability: (keyId: string) => Promise<Boolean>;
+  KMSAvailability: (keyId: string) => Promise<boolean>;
 };
 
 export const buildPublicKeyService = (): PublicKeyService => {
@@ -15,18 +15,15 @@ export const buildPublicKeyService = (): PublicKeyService => {
       })
     : new KMSClient();
 
-    
   return {
     getRSAPublicKey: async (keyId: string): Promise<Uint8Array> => {
       const input = {
         KeyId: keyId,
       };
 
-      
       try {
-
-        logger.info ("config.kmsEndpoint: " + config.kmsEndpoint);
-        logger.info ("input: " + input);
+        logger.info(`config.kmsEndpoint: ${config.kmsEndpoint}`);
+        logger.info(`input: ${input}`);
 
         const command = new GetPublicKeyCommand(input);
         const res = await kmsClient.send(command);
@@ -48,24 +45,20 @@ export const buildPublicKeyService = (): PublicKeyService => {
         throw internalError;
       }
     },
-    
 
-    KMSAvailability : async (keyId: string) :  Promise<Boolean>=>  {
+    KMSAvailability: async (keyId: string): Promise<boolean> => {
       try {
         // Effettua una richiesta di test al servizio KMS
         const command = new GetPublicKeyCommand({ KeyId: keyId });
         await kmsClient.send(command);
-    
+
         // Se la richiesta ha avuto successo, il servizio KMS è raggiungibile
         return true;
       } catch (error) {
         // Se si verifica un errore, gestiscilo di conseguenza
-        console.error("Error reaching KMS service:", error);
+        logger.error(`Error reaching KMS service: ${error}`);
         return false;
       }
     },
-  }
-  
-  
-  ;
+  };
 };
