@@ -1,6 +1,6 @@
 import { createClient } from "redis";
-import { logger } from "../logging/index.js";
 import { ErrorHandling } from "pdnd-models";
+import { logger } from "../logging/index.js";
 
 export class CacheManager {
   private readonly client;

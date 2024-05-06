@@ -81,7 +81,9 @@ export const authenticationMiddleware: () => ZodiosRouterContextRequestHandler<E
               "agid-jwt-trackingevidence": P.string,
             },
             async (headers) => {
-              logger.info(`Matching headers with authorization, correlation ID, agid-jwt-signature, agid-jwt-trackingevidence`);
+              logger.info(
+                `Matching headers with authorization, correlation ID, agid-jwt-signature, agid-jwt-trackingevidence`
+              );
               await addCtxAuthData(
                 headers.authorization,
                 headers["x-correlation-id"]
@@ -119,7 +121,9 @@ export const authenticationMiddleware: () => ZodiosRouterContextRequestHandler<E
       } catch (error) {
         if (error instanceof Object && !("code" in error)) {
           if ("message" in error) {
-            logger.error(`authenticationMiddleware - error not managed with message: ${error.message}`);
+            logger.error(
+              `authenticationMiddleware - error not managed with message: ${error.message}`
+            );
           }
           return res.status(500).json().end();
         }
