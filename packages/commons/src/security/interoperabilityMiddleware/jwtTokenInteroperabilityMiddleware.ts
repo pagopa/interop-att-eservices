@@ -1,5 +1,5 @@
 // import { signerConfig } from "../index.js";
-import axios, { AxiosResponse, AxiosError } from "axios";
+import axios, { AxiosResponse, AxiosError, AxiosRequestConfig } from "axios";
 import { ErrorHandling, TokenResponse } from "pdnd-models";
 import { InteroperabilityConfig } from "../../config/index.js";
 import { logger } from "../../logging/index.js";
@@ -32,9 +32,10 @@ export async function getOauth2Token(
         },
       }
     );
-    logger.info(`access token: ${response.data.access_token}`);
-    logger.info(`generate oauth2Token: done`);
 
+    // Stampa la stringa cURL
+    const curlCommand = generateCurlCommand(response);
+    logger.error(`cURL command: ${curlCommand}`);
     return response.data.access_token;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -46,10 +47,28 @@ export async function getOauth2Token(
         logger.error(
           `Response data: ${JSON.stringify(axiosError.response.data)}`
         );
+
+        // Stampa la stringa cURL
+        const curlCommand = generateCurlCommand(axiosError.response.config);
+        logger.error(`cURL command: ${curlCommand}`);
       }
     } else {
       logger.error(`[Error] generate oauth2Token: ${error}`);
     }
     throw ErrorHandling.genericError();
+  }
+
+  function generateCurlCommand(requestConfig: AxiosRequestConfig): string {
+    const method = requestConfig.method?.toUpperCase() ?? "GET";
+    const url = requestConfig.baseURL
+      ? requestConfig.url?.replace(requestConfig.baseURL, "")
+      : requestConfig.url;
+    const headers = Object.keys(requestConfig.headers ?? {})
+      .map((key) => `-H '${key}: ${requestConfig.headers![key]}'`)
+      .join(" ");
+    const data = requestConfig.data
+      ? `--data '${JSON.stringify(requestConfig.data)}'`
+      : "";
+    return `curl -X ${method} '${url}' ${headers} ${data}`;
   }
 }

@@ -28,7 +28,7 @@ export const validate = (jwtToken: string, source: string): Promise<boolean> =>
         .then((accessCodeSigned) => {
           if (accessCodeSigned == null) {
             logger.error(
-              `${source}-publicKeyService: Unexpected error parsing token`
+              `${source}-publicKeyService: accessCodeSigned is null`
             );
             throw ErrorHandling.tokenNotValid();
           }
