@@ -13,22 +13,21 @@ import {
 } from "../utilities/userUtilities.js";
 
 class DataPreparationService {
-  appContext = getContext();
+  public appContext = getContext();
 
   public async saveList(
     genericRequest: DataPreparationTemplate
   ): Promise<UserModel[] | null> {
     try {
       logger.info(`[START] saveList`);
-      const userData: UserModel[] = [];
-      userData.push(
-        apiDataPreparationTemplateToUserModel(genericRequest, uuidv4())
-      );
+      const userData: UserModel[] = [
+        apiDataPreparationTemplateToUserModel(genericRequest, uuidv4()),
+      ];
       const hash = generateHash([this.appContext.authData.purposeId]);
       const persistedUserData = await dataPreparationRepository.findAllByKey(
         hash
       );
-      if (persistedUserData == null || persistedUserData.length == 0) {
+      if (persistedUserData == null || persistedUserData.length === 0) {
         await dataPreparationRepository.saveList(userData, hash);
       } else {
         const allUser = appendUniqueUserModelsToArray(
@@ -57,10 +56,7 @@ class DataPreparationService {
       logger.info(`[END] getAll`);
       return response;
     } catch (error) {
-      logger.error(
-        `getAll: Errore durante il recupero della lista.`,
-        error
-      );
+      logger.error(`getAll: Errore durante il recupero della lista.`, error);
       throw error;
     }
   }
@@ -88,7 +84,7 @@ class DataPreparationService {
       const hash = generateHash([this.appContext.authData.purposeId]);
       const response = await dataPreparationRepository.deleteAllByKey(hash);
       logger.info(`[END] deleteAllByKey`);
-      return response
+      return response;
     } catch (error) {
       logger.error(
         `UserService: Errore durante la cancellazione della lista. `,
@@ -104,9 +100,9 @@ class DataPreparationService {
       const hash = generateHash([this.appContext.authData.purposeId]);
       const allSaved = await dataPreparationRepository.findAllByKey(hash);
       const user = deleteUserModelByUUID(allSaved, uuid);
-      this.deleteAllByKey();
+      await this.deleteAllByKey();
       if (user) {
-        dataPreparationRepository.saveList(user, hash);
+        await dataPreparationRepository.saveList(user, hash);
       }
       logger.info(`[END] deleteByUUID`);
       return user;

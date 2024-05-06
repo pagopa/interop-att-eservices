@@ -13,16 +13,16 @@ export class CacheManager {
       this.client.on("error", (error: Error) => {
         // eslint-disable-next-line no-console
         logger.error(`Redis client error: ${error}`);
-        throw new Error("Redis client error"); 
+        throw new Error("Redis client error");
       });
 
       if (!this.isHealthy) {
         logger.error(`Redis client error`);
-        throw new Error("Redis client error"); 
+        throw new Error("Redis client error");
       }
     } catch (error) {
       logger.error(`Error creating Redis client: ${error}`);
-      throw new Error("Error creating Redis client"); 
+      throw new Error("Error creating Redis client");
     }
   }
 
@@ -67,7 +67,7 @@ export class CacheManager {
     await this.client.del(key);
   }
 
-/*   private async connectIfNecessary(): Promise<void> {
+  /*   private async connectIfNecessary(): Promise<void> {
     if (this.client.isReady) {
       return;
     }
@@ -86,7 +86,7 @@ export class CacheManager {
         this.client.on("error", (error) => {
           reject(error);
         });
-        this.client.connect();
+        void this.client.connect();
       }
     });
   }

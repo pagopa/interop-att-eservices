@@ -28,9 +28,11 @@ export const getKidFromJWTToken = (token: string): Promise<string> =>
   new Promise((resolve, reject) => {
     try {
       // Decodifica il token JWT
-      const decodedToken: any = jwt.decode(token, { complete: true });
+      const decodedToken: jwt.Jwt | null = jwt.decode(token, {
+        complete: true,
+      });
       // Controlla se il token è stato decodificato correttamente e se l'header contiene il "kid"
-      if (decodedToken && decodedToken.header && decodedToken.header.kid) {
+      if (decodedToken?.header?.kid) {
         resolve(decodedToken.header.kid);
       }
     } catch (error) {

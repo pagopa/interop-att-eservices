@@ -41,7 +41,6 @@ export const JWTConfig = z.preprocess(
 );
 export type JWTConfig = z.infer<typeof JWTConfig>;
 
-
 export const InteroperabilityConfig = z.preprocess(
   (c) =>
     (c as { SKIP_INTEROPERABILITY_VERIFICATION: string | undefined })

@@ -2,7 +2,7 @@ import { UserModel } from "pdnd-models";
 import DataPreparationService from "../../src/services/DataPreparationService";
 import { expect, test } from "vitest";
 import dataPreparationRepository from "../../src/repository/dataPreparationRepository";
-
+/* eslint-disable */
 test('POST Data Preparation API', async () => {
     const testResponse: UserModel[] | null = await DataPreparationService.saveList(requestPostDataPreparation);
     let hasUuidProperty = false;

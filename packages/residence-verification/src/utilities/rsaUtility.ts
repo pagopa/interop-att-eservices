@@ -14,11 +14,11 @@ export async function decodePublicKey(
     const publicKeyBuffer = Buffer.from(publicKey);
     const publicKeyString = publicKeyBuffer.toString("base64");
 
-    const _publicKey = `-----BEGIN PUBLIC KEY-----
+    const tmpPublicKey = `-----BEGIN PUBLIC KEY-----
         ${publicKeyString}
         -----END PUBLIC KEY-----`;
 
-    var result = await jose.JWK.asKey(_publicKey, "pem");
+    const result = await jose.JWK.asKey(tmpPublicKey, "pem");
 
     logger.info(`publicKeyService: decodePublicKey done`);
 
@@ -31,9 +31,9 @@ export async function decodePublicKey(
 // rs256
 export async function generateRSAPublicKey(jwk: JWK): Promise<jose.JWK.Key> {
   try {
-    var result =  await jose.JWK.asKey(jwk, "json");
+    const result = await jose.JWK.asKey(jwk, "json");
     logger.info(`generateRSAPublicKey: done`);
-    return result
+    return result;
   } catch (err) {
     logger.error(`Error decode public key: ${err}`);
     throw ErrorHandling.thirdPartyCallError("PK_DECODE", JSON.stringify(err));

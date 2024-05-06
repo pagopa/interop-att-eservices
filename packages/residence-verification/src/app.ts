@@ -23,5 +23,4 @@ app.use("/", healthRouter(zodiosCtx));
 app.use("/", dataPreparationRouter(zodiosCtx));
 app.use("/", residenceVerificationRouter(zodiosCtx));
 
-
 export default app;

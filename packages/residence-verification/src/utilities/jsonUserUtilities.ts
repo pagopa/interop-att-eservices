@@ -35,7 +35,9 @@ export function parseJsonToUserArray(
     }
 
     // Mappa ogni elemento dell'array e lo converte in un'istanza della classe UserModel
-    return parsedArray.map((item: any) => classToPlain(item) as UserModel);
+    return parsedArray.map(
+      (item: UserModel) => classToPlain(item) as UserModel
+    );
   } catch (error) {
     logger.error(`Errore durante il parsing della stringa JSON: ${error}`);
     return null; // Restituisci null se si verifica un errore durante il parsing

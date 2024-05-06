@@ -2,10 +2,10 @@ import { getContext } from "pdnd-common";
 import { validate } from "../interoperability/interoperabilityValidationMiddleware.js";
 
 class tokenService {
-  appContext = getContext();
+  public appContext = getContext();
 
   public async validate(token: string): Promise<boolean | null> {
-    return validate(token); // kid agid nel token
+    return validate(token,"voucher"); // kid agid nel token
   }
 }
 

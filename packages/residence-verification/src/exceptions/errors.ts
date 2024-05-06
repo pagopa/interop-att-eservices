@@ -1,19 +1,19 @@
+import * as http from "http";
 import { logger } from "pdnd-common";
 import { makeApiProblemBuilder, ApiError, Problem } from "pdnd-models";
-import * as http from 'http';
 
 export type ErrorModel = {
-  codiceErroreAnomalia: string,
-  tipoErroreAnomalia: number,
-  oggettoErroreAnomalia?: string,
-  testoErroreAnomalia: string,
-  campoErroreAnomalia?: string,
-  valoreErroreAnomalia?: string,
+  codiceErroreAnomalia: string;
+  tipoErroreAnomalia: number;
+  oggettoErroreAnomalia?: string;
+  testoErroreAnomalia: string;
+  campoErroreAnomalia?: string;
+  valoreErroreAnomalia?: string;
 };
 
 export type GeneralErrorModel = {
-  idOperazione: string,
-  errors: ErrorModel[],
+  idOperazione: string;
+  errors: ErrorModel[];
 };
 
 const errorCodes = {
@@ -24,7 +24,9 @@ const errorCodes = {
 
 export type ErrorCodes = keyof typeof errorCodes;
 
+/* eslint-disable */
 export const makeApiProblem: any = makeApiProblemBuilder(logger, errorCodes);
+/* eslint-enable */
 
 export function eServiceNotFound(eserviceId: string): ApiError<ErrorCodes> {
   return new ApiError({
@@ -36,7 +38,7 @@ export function eServiceNotFound(eserviceId: string): ApiError<ErrorCodes> {
 
 export function userModelNotFound(details?: string): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: details!=null ? details : "Data not found",
+    detail: details != null ? details : "Data not found",
     code: "userModelNotFound",
     title: "Not found",
   });
@@ -50,28 +52,25 @@ export function requestParamNotValid(details: string): ApiError<ErrorCodes> {
   });
 }
 
-export function mapGeneralErrorModel(idOperazione: string, error: Problem): any {
-  const errorsModel: ErrorModel[] = [];
-
-  error.errors.forEach(problemError => {
-    const errorTemp: ErrorModel =
-    {
-      codiceErroreAnomalia: problemError.code,
-      tipoErroreAnomalia: error.status,
-      oggettoErroreAnomalia: http.STATUS_CODES[error.status],
-      testoErroreAnomalia: problemError.detail,
-      campoErroreAnomalia: undefined,
-      valoreErroreAnomalia: undefined,
-    };
-
-
-    errorsModel.push(errorTemp);
-  });
+ /* eslint-disable */
+export function mapGeneralErrorModel(
+  idOperazione: string,
+  error: Problem
+): any {
+  const errorsModel: ErrorModel[] = error.errors.map((problemError) => ({
+    codiceErroreAnomalia: problemError.code,
+    tipoErroreAnomalia: error.status,
+    oggettoErroreAnomalia: http.STATUS_CODES[error.status],
+    testoErroreAnomalia: problemError.detail,
+    campoErroreAnomalia: undefined,
+    valoreErroreAnomalia: undefined,
+  }));
 
   const data: GeneralErrorModel = {
-    idOperazione: idOperazione,
+    idOperazione,
     errors: errorsModel,
   };
 
   return data;
-} 
+}
+/* eslint-enable */
