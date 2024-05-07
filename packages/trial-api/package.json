@@ -57,6 +57,8 @@
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "jwks-rsa": "^3.1.0",
+    "liquibase": "^4.27.0",
+    "liquibase-node": "^1.0.7",
     "openapi-zod-client": "1.15.1",
     "pdnd-common": "workspace:*",
     "pdnd-models": "workspace:*",
