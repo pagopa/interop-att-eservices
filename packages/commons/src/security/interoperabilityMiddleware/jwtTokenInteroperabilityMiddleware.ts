@@ -64,7 +64,14 @@ export async function getOauth2Token(
       ? requestConfig.url?.replace(requestConfig.baseURL, "")
       : requestConfig.url;
     const headers = Object.keys(requestConfig.headers ?? {})
-      .map((key) => `-H '${key}: ${requestConfig.headers![key]}'`)
+      .map((key) => {
+        if (requestConfig.headers) {
+          return `-H '${key}: ${requestConfig.headers[key]}'`;
+        } else {
+          // Se requestConfig.headers è undefined, restituisci una stringa vuota
+          return "";
+        }
+      })
       .join(" ");
     const data = requestConfig.data
       ? `--data '${JSON.stringify(requestConfig.data)}'`

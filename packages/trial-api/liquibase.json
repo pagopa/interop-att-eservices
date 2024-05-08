@@ -1,0 +1,7 @@
+{
+    "url": "jdbc:postgresql://localhost:5432/postgres?currentSchema=public",
+    "username": "postgres",
+    "password": "admin",
+    "changeLogFile": "../trial-api/migrations/changelog.xml"
+  }
+  

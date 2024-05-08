@@ -94,7 +94,7 @@ export function makeApiProblemBuilder<T extends string>(
 
 export class ErrorHandling {
   public static genericError(details?: string): ApiError<CommonErrorCodes> {
-    throw new ApiError({
+    return new ApiError({
       code: "genericError",
       title: "Generic Error",
       detail: details ?? "generic error",
@@ -102,7 +102,7 @@ export class ErrorHandling {
   }
 
   public static tokenNotValid(): ApiError<CommonErrorCodes> {
-    throw new ApiError({
+    return new ApiError({
       code: "tokenNotValid",
       title: "Token Not Valid",
       detail: "Request Token is not valid",
@@ -110,7 +110,7 @@ export class ErrorHandling {
   }
 
   public static tokenExpired(): ApiError<CommonErrorCodes> {
-    throw new ApiError({
+    return new ApiError({
       code: "tokenNotValid",
       title: "Token Expired",
       detail: "Request has expired",
@@ -118,7 +118,7 @@ export class ErrorHandling {
   }
 
   public static invalidApiRequest(name?: string): ApiError<CommonErrorCodes> {
-    throw new ApiError({
+    return new ApiError({
       code: "genericBadRequest",
       title: "Request body not valid",
       detail: name

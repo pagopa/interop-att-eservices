@@ -6,6 +6,7 @@ metadata:
 data:
   KMS_KEYID: {{KMS_KEYID}}
   REDIS_ENDPOINT: {{REDIS_ENDPOINT}}
+  DATABASE_URL: {{DATABASE_URL}}
   SKIP_JWT_VERIFICATION: false
   WELL_KNOWN_URLS: 'https://www.uat.interop.pagopa.it/.well-known/jwks.json'
   TOKEN_ISS: 'uat.interop.pagopa.it'

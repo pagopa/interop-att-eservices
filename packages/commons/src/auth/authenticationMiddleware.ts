@@ -36,9 +36,7 @@ export const authenticationMiddleware: () => ZodiosRouterContextRequestHandler<E
 
           const jwtToken = authorizationHeader[1];
 
-          const validPayloadAndHeader = await verifyJwtPayloadAndHeader(
-            jwtToken
-          );
+          const validPayloadAndHeader = await verifyJwtPayloadAndHeader(jwtToken);
           if (!validPayloadAndHeader) {
             logger.warn(`The jwt token header or payload is not valid`);
             throw ErrorHandling.genericError(
