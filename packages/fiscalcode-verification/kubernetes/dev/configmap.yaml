@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fiscalcode-verification-configmap
+  namespace: {{NAMESPACE}}
+data:
+  KMS_KEYID: {{KMS_KEYID}}
+  REDIS_ENDPOINT: {{REDIS_ENDPOINT}}
+  SKIP_JWT_VERIFICATION: false
+  WELL_KNOWN_URLS: 'https://www.uat.interop.pagopa.it/.well-known/jwks.json'
+  TOKEN_ISS: 'uat.interop.pagopa.it'
+  TOKEN_AUD: 'interop-signalhub-push-signal'
+  TOKEN_TYP: 'at+jwt'
+  SKIP_INTEROPERABILITY_VERIFICATION: false
+  TOKEN_INTEROPERABILITY_SUBJECT: '11368527-494b-4244-9706-b782b5443831'
+  TOKEN_INTEROPERABILITY_AUDIENCE: 'auth.uat.interop.pagopa.it/client-assertion'
+  TOKEN_INTEROPERABILITY_ISSUER: '11368527-494b-4244-9706-b782b5443831'
+  TOKEN_INTEROPERABILITY_EXPIRATION_SECONDS: '3600'
+  TOKEN_INTEROPERABILITY_HOST: 'https://api.uat.interop.pagopa.it/1.0'
+  TOKEN_INTEROPERABILITY_KID: 'reL0Wknim2oVgiVuJIDhhzweGXRmp508D18fVR8NVJ8'
+  TOKEN_FROM_ACCESS_CODE: 'https://auth.uat.interop.pagopa.it/token.oauth2'
+  KMS_MAX_ACQUISITION_TIMEOUT_SECONDS: 60
+
+

@@ -4,3 +4,4 @@ export * from "./residenceVerification/residenceVerification.js";
 export * from "./interoperability/index.js";
 export * from "./error/apiError.js";
 export * from "./error/interalError.js";
+export * from "./fiscalcodeVerification/fiscalcodeVerification.js";

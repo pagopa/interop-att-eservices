@@ -1,6 +1,6 @@
 import jwt, { JwtHeader, JwtPayload, SigningKeyCallback } from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
-import { JWTConfig, logger } from "../index.js";
+import { JWTConfig, eventManager, logger, sendCustomEvent } from "../index.js";
 import { AuthData, AuthJWTToken } from "./authData.js";
 
 export const readAuthDataFromJwtToken = (
@@ -71,7 +71,7 @@ export const verifyJwtToken = (jwtToken: string): Promise<boolean> => {
       });
 };
 
-export const verifyJwtPayloadAndHeader = (jwtToken: string): Promise<boolean> =>
+export const verifyJwtPayloadAndHeader = (jwtToken: string, operationName: string): Promise<boolean> =>
   new Promise((resolve, reject) => {
     const config = JWTConfig.parse(process.env);
     const decodedToken = jwt.decode(jwtToken, { complete: true }) as {
@@ -81,11 +81,14 @@ export const verifyJwtPayloadAndHeader = (jwtToken: string): Promise<boolean> =>
 
     if (!decodedToken?.header || !decodedToken?.payload) {
       logger.error(`Error decoding token`);
+      sendCustomEvent('customEvent', { data: 'Dati correlati all\'evento' }); //operation name, checkid
       return reject(false);
     }
 
     if (decodedToken.header.typ !== config.typValue) {
       logger.error(`Error parsing token typ not valid`);
+      sendCustomEvent('customEvent', { data: operationName }); //operation name, checkid
+
       return reject(false);
     }
 

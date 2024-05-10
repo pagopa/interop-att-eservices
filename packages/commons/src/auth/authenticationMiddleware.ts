@@ -13,7 +13,7 @@ import {
 
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 /* eslint-disable */
-export const authenticationMiddleware: () => ZodiosRouterContextRequestHandler<ExpressContext> =
+export const authenticationMiddleware: (operationName : string) => ZodiosRouterContextRequestHandler<ExpressContext> =
   () => {
     const authMiddleware: ZodiosRouterContextRequestHandler<
       ExpressContext
