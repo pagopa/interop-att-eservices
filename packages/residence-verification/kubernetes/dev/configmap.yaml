@@ -4,9 +4,9 @@ metadata:
   name: residence-verification-configmap
   namespace: {{NAMESPACE}}
 data:
-  KMS_KEYID: {{KMS_KEYID}}
-  REDIS_ENDPOINT: {{REDIS_ENDPOINT}}
-  DATABASE_URL: {{DATABASE_URL}}
+  KMS_KEYID: '{{KMS_KEYID}}'
+  REDIS_ENDPOINT: '{{REDIS_ENDPOINT}}'
+  DATABASE_URL: '{{DATABASE_URL}}'
   SKIP_JWT_VERIFICATION: false
   WELL_KNOWN_URLS: 'https://att.interop.pagopa.it/.well-known/jwks.json'
   TOKEN_ISS: 'att.interop.pagopa.it'
