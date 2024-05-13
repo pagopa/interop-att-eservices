@@ -1,7 +1,6 @@
 {
-    "url": "jdbc:postgresql://localhost:5432/postgres?currentSchema=public",
-    "username": "postgres",
-    "password": "admin",
+    "url": "jdbc:postgresql://interop-att-eservices-dev-postgresql.cluster-ci5nksqtybl9.eu-south-1.rds.amazonaws.com:5432/interop",
+    "username": "root",
+    "password": "mYWOEG0gSWrYg04cU1h2",
     "changeLogFile": "../trial-api/migrations/changelog.xml"
   }
-  
