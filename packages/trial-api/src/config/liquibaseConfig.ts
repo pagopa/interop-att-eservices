@@ -1,28 +1,32 @@
-import * as fs from "fs";
 import { Liquibase, LiquibaseConfig } from "liquibase";
 import { logger } from "pdnd-common";
+import dotenv from "dotenv";
 
-const configPath = "../../packages/trial-api/liquibase.json"; // Percorso del file di configurazione Liquibase
+// Carica le variabili di ambiente da .env
+dotenv.config();
 
-// Leggi il file di configurazione come stringa
-const configString = fs.readFileSync(configPath, "utf-8");
-
-// Converti la stringa JSON in un oggetto JavaScript
-const configData = JSON.parse(configString);
-
+// Verifica se le variabili d'ambiente necessarie sono definite
+if (!process.env.LIQUIBASE_DATABASE_URL || !process.env.LIQUIBASE_DATABASE_USERNAME || !process.env.LIQUIBASE_DATABASE_PASSWORD) {
+  throw new Error("Una o più variabili d'ambiente necessarie non sono definite.");
+}
 // Crea un oggetto di configurazione Liquibase
 const liquibaseConfig: LiquibaseConfig = {
-  ...configData, // Assicurati che il formato di liquibase.json sia corretto
+  url: process.env.LIQUIBASE_DATABASE_URL, 
+  username: process.env.LIQUIBASE_DATABASE_USERNAME, 
+  password: process.env.LIQUIBASE_DATABASE_PASSWORD, 
+  changeLogFile: "../trial-api/migrations/changelog.xml", 
 };
 
 // Crea un'istanza di Liquibase con l'oggetto di configurazione
 const liquibase = new Liquibase(liquibaseConfig);
 
 export async function runLiquibase(): Promise<void> {
+
   try {
     await liquibase.update({}); // Passa un oggetto di configurazione vuoto
     logger.info("Modifiche al database applicate con successo.");
   } catch (error) {
     logger.error("Errore nell'applicare le modifiche al database:", error);
+    throw new Error("Errore nell'applicare le modifiche al database");
   }
 }
