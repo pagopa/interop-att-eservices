@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Verifica se le variabili d'ambiente necessarie sono definite
-if (!process.env.LIQUIBASE_DATABASE_URL || !process.env.LIQUIBASE_DATABASE_USERNAME || !process.env.LIQUIBASE_DATABASE_PASSWORD || !process.env.LIQUIBASE_CHANGELOG_FILE) {
+if (!process.env.LIQUIBASE_DATABASE_URL || !process.env.LIQUIBASE_DATABASE_USERNAME || !process.env.LIQUIBASE_DATABASE_PASSWORD) {
   throw new Error("Una o più variabili d'ambiente necessarie non sono definite.");
 }
 // Crea un oggetto di configurazione Liquibase
@@ -14,7 +14,7 @@ const liquibaseConfig: LiquibaseConfig = {
   url: process.env.LIQUIBASE_DATABASE_URL, 
   username: process.env.LIQUIBASE_DATABASE_USERNAME, 
   password: process.env.LIQUIBASE_DATABASE_PASSWORD, 
-  changeLogFile: process.env.LIQUIBASE_CHANGELOG_FILE, 
+  changeLogFile: "../trial-api/migrations/changelog.xml", 
 };
 
 // Crea un'istanza di Liquibase con l'oggetto di configurazione
@@ -27,5 +27,6 @@ export async function runLiquibase(): Promise<void> {
     logger.info("Modifiche al database applicate con successo.");
   } catch (error) {
     logger.error("Errore nell'applicare le modifiche al database:", error);
+    throw new Error("Errore nell'applicare le modifiche al database");
   }
 }
