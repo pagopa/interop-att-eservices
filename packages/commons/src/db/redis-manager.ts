@@ -38,6 +38,7 @@ export class CacheManager {
     }
     return false;
   }
+
   public async setObject(
     key: string,
     value: string,

@@ -1,6 +1,6 @@
 import jwt, { JwtHeader, JwtPayload, SigningKeyCallback } from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
-import { JWTConfig, logger } from "../index.js";
+import { JWTConfig, logger, sendCustomEvent } from "../index.js";
 import { AuthData, AuthJWTToken } from "./authData.js";
 
 export const readAuthDataFromJwtToken = (
@@ -81,6 +81,7 @@ export const verifyJwtPayloadAndHeader = (jwtToken: string): Promise<boolean> =>
 
     if (!decodedToken?.header || !decodedToken?.payload) {
       logger.error(`Error decoding token`);
+      sendCustomEvent('customEvent', { data: 'Dati correlati all\'evento' }); //operation name, checkid
       return reject(false);
     }
 

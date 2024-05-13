@@ -6,6 +6,7 @@
   },
   "scripts": {
     "start:residence-verification": "turbo start --filter residence-verification",
+    "start:fiscalcode-verification": "turbo start --filter fiscalcode-verification",
     "test": "turbo test",
     "test:it": "turbo test:it",
     "build": "turbo build",
