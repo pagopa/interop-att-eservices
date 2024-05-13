@@ -219,7 +219,7 @@ paths:
         per manutenzione o per un problema tecnico.
       operationId: reset
       tags:
-        - infrastructure
+        - datapreparation
       responses:
         <<: *common-responses
         '200':
@@ -279,7 +279,7 @@ paths:
           $ref: '#/components/responses/400BadRequest'
       tags:
         - datapreparation
-  /status:
+  /fiscalcode-verification/status:
     get:
       summary: Ritorna lo stato dell'applicazione.
       description: |
@@ -301,7 +301,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-  /verifica:
+  /fiscalcode-verification/verifica:
     post:
       summary: Effettua una validazione del codice fiscale in input.
       operationId: post_verifica_codiceFiscale

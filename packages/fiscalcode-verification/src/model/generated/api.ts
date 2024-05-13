@@ -212,7 +212,7 @@ per manutenzione o per un problema tecnico.
   },
   {
     method: "get",
-    path: "/status",
+    path: "/fiscalcode-verification/status",
     alias: "get_status",
     description: `Ritorna lo stato dell&#x27;applicazione: 200 se funziona correttamente
 o un errore se l&#x27;applicazione è temporaneamente indisponibile
@@ -245,7 +245,7 @@ per manutenzione o per un problema tecnico.
   },
   {
     method: "post",
-    path: "/verifica",
+    path: "/fiscalcode-verification/verifica",
     alias: "post_verifica_codiceFiscale",
     description: `Ritorna informazioni circa la validità del codice fiscale in input
 `,
