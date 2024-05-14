@@ -32,6 +32,8 @@ jobs:
         include:
           - image_name: residence-verification
             dockerfile_path: packages/residence-verification
+          - image_name: fiscalcode-verification
+            dockerfile_path: packages/fiscalcode-verification
 
     steps:
       - name: Checkout repository

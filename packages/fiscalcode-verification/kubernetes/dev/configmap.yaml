@@ -4,21 +4,23 @@ metadata:
   name: fiscalcode-verification-configmap
   namespace: {{NAMESPACE}}
 data:
-  KMS_KEYID: {{KMS_KEYID}}
-  REDIS_ENDPOINT: {{REDIS_ENDPOINT}}
+  KMS_KEYID: '{{KMS_KEYID}}'
+  REDIS_ENDPOINT: '{{REDIS_ENDPOINT}}'
+  DATABASE_URL: '{{DATABASE_URL}}'
   SKIP_JWT_VERIFICATION: false
-  WELL_KNOWN_URLS: 'https://www.uat.interop.pagopa.it/.well-known/jwks.json'
-  TOKEN_ISS: 'uat.interop.pagopa.it'
-  TOKEN_AUD: 'interop-signalhub-push-signal'
+  WELL_KNOWN_URLS: 'https://att.interop.pagopa.it/.well-known/jwks.json'
+  TOKEN_ISS: 'att.interop.pagopa.it'
+  TOKEN_AUD: 'interop-att-eservices-fis-code-ver'
   TOKEN_TYP: 'at+jwt'
   SKIP_INTEROPERABILITY_VERIFICATION: false
   TOKEN_INTEROPERABILITY_SUBJECT: '11368527-494b-4244-9706-b782b5443831'
-  TOKEN_INTEROPERABILITY_AUDIENCE: 'auth.uat.interop.pagopa.it/client-assertion'
-  TOKEN_INTEROPERABILITY_ISSUER: '11368527-494b-4244-9706-b782b5443831'
+  TOKEN_INTEROPERABILITY_AUDIENCE: 'auth.att.interop.pagopa.it/client-assertion'
+  TOKEN_INTEROPERABILITY_ISSUER: 'a0bf7d01-81a5-4271-b54e-7b699fc016f8'
   TOKEN_INTEROPERABILITY_EXPIRATION_SECONDS: '3600'
-  TOKEN_INTEROPERABILITY_HOST: 'https://api.uat.interop.pagopa.it/1.0'
-  TOKEN_INTEROPERABILITY_KID: 'reL0Wknim2oVgiVuJIDhhzweGXRmp508D18fVR8NVJ8'
-  TOKEN_FROM_ACCESS_CODE: 'https://auth.uat.interop.pagopa.it/token.oauth2'
+  TOKEN_INTEROPERABILITY_HOST: 'https://api.att.interop.pagopa.it/1.0'
+  TOKEN_INTEROPERABILITY_KID: '7NBMMA2c6zA4nF-5djwhEhi1ZvzgXWWir6PRj1qpEMc'
+  TOKEN_FROM_ACCESS_CODE: 'https://auth.att.interop.pagopa.it/token.oauth2'
   KMS_MAX_ACQUISITION_TIMEOUT_SECONDS: 60
-
-
+  LIQUIBASE_DATABASE_URL: '{{LIQUIBASE_DATABASE_URL}}'
+  LIQUIBASE_DATABASE_USERNAME: '{{LIQUIBASE_DATABASE_USERNAME}}'
+  LIQUIBASE_DATABASE_PASSWORD : '{{LIQUIBASE_DATABASE_PASSWORD}}'
