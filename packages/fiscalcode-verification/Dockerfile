@@ -34,6 +34,7 @@ RUN pnpm build && \
       packages/commons/ \
       packages/models/ \
       packages/interoperability-api/ \
+      packages/trial-api/ \
       packages/residence-verification/dist && \
     find /out -exec touch -h --date=@0 {} \;
 
