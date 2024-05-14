@@ -7,7 +7,7 @@ const app = zodiosCtx.app();
 import dataPreparationHandshakeRouter from "./routers/dataPreparationHandshakeRouter.js";
 import dataPreparationRouter from "./routers/dataPreparationRouter.js";
 
-import fiscalcodeVerificationRouter from "./routers/fiscalcodeVerificationRouter.js"
+import fiscalcodeVerificationRouter from "./routers/fiscalcodeVerificationRouter.js";
 
 import healthRouter from "./routers/healthRouter.js";
 
@@ -16,7 +16,6 @@ const config = InteroperabilityConfig.parse(process.env);
 logger.info(
   `config.skipInteroperabilityVerification  ${config.skipInteroperabilityVerification}`
 );
-
 
 app.use("/", healthRouter(zodiosCtx));
 app.use("/", dataPreparationHandshakeRouter(zodiosCtx));

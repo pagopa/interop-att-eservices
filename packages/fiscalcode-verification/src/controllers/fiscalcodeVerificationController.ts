@@ -15,8 +15,8 @@ class FiscalcodeVerificationController {
           request.codiceFiscale
         );
         const result: VerificaCodiceFiscale = {
-          //idOperazione: request.idOperazioneClient,
-          data
+          // idOperazione: request.idOperazioneClient,
+          data,
         };
         return result;
       } else {
@@ -30,6 +30,5 @@ class FiscalcodeVerificationController {
     }
   }
 }
-
 
 export default new FiscalcodeVerificationController();

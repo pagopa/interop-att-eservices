@@ -3,7 +3,9 @@ import { classToPlain } from "class-transformer";
 import { logger } from "pdnd-common";
 
 // Funzione che converte una stringa JSON in un oggetto della struttura specificata
-export function parseJsonToHandshake(inputString: string | null): HandshakeModel | null {
+export function parseJsonToHandshake(
+  inputString: string | null
+): HandshakeModel | null {
   try {
     if (inputString == null) {
       return null;

@@ -4,7 +4,7 @@ import {
   buildPublicKeyService,
   buildSignerService,
   logger,
-  sendCustomEvent
+  sendCustomEvent,
 } from "pdnd-common";
 import axios, { AxiosResponse } from "axios";
 import { sequelize } from "trial";
@@ -49,7 +49,7 @@ class healtService {
     // Utilizzo della funzione sendCustomEvent
     logger.info("send event");
 
-    sendCustomEvent('customEvent', { data: 'Dati correlati all\'evento' });
+    sendCustomEvent("customEvent", { data: "Dati correlati all'evento" });
     logger.info("donedone");
 
     return true;
