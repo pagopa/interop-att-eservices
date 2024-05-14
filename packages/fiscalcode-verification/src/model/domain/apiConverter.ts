@@ -1,5 +1,5 @@
 import { FiscalcodeModel } from "pdnd-models";
-import { DataPreparationResponse, DatapreparationTemplate } from "./models.js";
+import { DataPreparationResponse, DatapreparationTemplate, VerificaCodiceFiscale } from "./models.js";
 
 
 export const apiDatapreparationTemplateToFiscalcodeModel = (
@@ -22,8 +22,23 @@ export const apiDatapreparationTemplateToFiscalcodeModel = (
     return response;
   };
   
+  export const fiscalcodeModelToVerificaCodiceFiscale = (
+    fiscalCode: FiscalcodeModel | undefined | null, isValid: boolean, message: string, fiscalCodeNotFound?: string
+  ): VerificaCodiceFiscale | null => {
+    if (fiscalCode !== undefined && fiscalCode !== null) {
+      return {
+        fiscalCode: fiscalCode.fiscalCode || "",
+        valido: isValid,
+        messaggio: message
+      };
+    } else {
+      return {
+        fiscalCode: fiscalCodeNotFound,
+        valido: isValid,
+        messaggio: message
+      };
+    }
+  };
   
-
-
 
   

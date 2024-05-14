@@ -3,20 +3,14 @@ import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext, logger } from "pdnd-common";
 import multer from 'multer';
 import { api } from "../model/generated/api.js";
-import crypto from 'crypto';
 import dataPreparationHandshakeService from "../services/dataPreparationHandshakeService.js";
 import { getContext } from "pdnd-common";
 import { contextDataMiddleware } from "pdnd-common";
 import { authenticationMiddleware } from "pdnd-common";
 import { certNotValidError, makeApiProblem, requestParamNotValid } from "../exceptions/errors.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
+import { createCertificateHash } from "../utilities/certificateUtility.js";
 
-// Funzione per creare un hash SHA-256 del certificato
-function createCertificateHash(buffer: Buffer): string {
-  const hash = crypto.createHash('sha256');
-  hash.update(buffer);
-  return hash.digest('hex');
-}
 
 
 const dataPreparationHandshakeRouter = (

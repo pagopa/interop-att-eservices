@@ -7,7 +7,7 @@ const app = zodiosCtx.app();
 import dataPreparationHandshakeRouter from "./routers/dataPreparationHandshakeRouter.js";
 import dataPreparationRouter from "./routers/dataPreparationRouter.js";
 
-//import residenceVerificationRouter from "./routers/residenceVerificationRouter.js";
+import fiscalcodeVerificationRouter from "./routers/fiscalcodeVerificationRouter.js"
 
 import healthRouter from "./routers/healthRouter.js";
 
@@ -21,5 +21,5 @@ logger.info(
 app.use("/", healthRouter(zodiosCtx));
 app.use("/", dataPreparationHandshakeRouter(zodiosCtx));
 app.use("/", dataPreparationRouter(zodiosCtx));
-
+app.use("/", fiscalcodeVerificationRouter(zodiosCtx));
 export default app;

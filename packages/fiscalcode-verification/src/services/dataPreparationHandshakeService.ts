@@ -82,6 +82,21 @@ class DataPreparationHandshakeService {
     }
   }
 
+  public async getByPurposeId(purposeId: string): Promise<HandshakeModel | null> {
+    try {
+      logger.info(`[START] handshake-getByPurposeId`);
+      //const hash = generateHash([this.appContext.authData.purposeId]);
+      const response = await dataPreparationHandshakeRepository.findByPurposeId(this.key, purposeId );
+      logger.info(`[END] handshake-getByPurposeId`);
+      return response;
+    } catch (error) {
+      logger.error(
+        `UserService [HANDSHAKE]: Errore durante la cancellazione della lista. `,
+        error
+      );
+      throw error;
+    }
+  }
 }
 
 export default new DataPreparationHandshakeService();

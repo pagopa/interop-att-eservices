@@ -312,18 +312,27 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Richiesta'
-            examples:
-              codiceFiscaleAlfanumerico:
-                value:
-                  codiceFiscale: 'AAAZZZ00H00T000Z'
-              codiceFiscaleNumerico:
-                value:
-                  codiceFiscale: '06363391001'
-              
-          
+              type: object
+              properties:
+                certificate:
+                  type: string
+                  format: binary
+                  description: Certificato dell'utente.
+                content:
+                  type: object
+                  properties:
+                    content:
+                      schema:
+                        $ref: '#/components/schemas/Richiesta'
+                      examples:
+                        codiceFiscaleAlfanumerico:
+                          value:
+                            codiceFiscale: 'AAAZZZ00H00T000Z'
+                        codiceFiscaleNumerico:
+                          value:
+                            codiceFiscale: '06363391001'
       responses:
         <<: *common-responses
         '200':
