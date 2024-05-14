@@ -1,19 +1,21 @@
 import { Liquibase, LiquibaseConfig } from "liquibase";
 import { logger } from "pdnd-common";
 import dotenv from "dotenv";
-
+import  {liquibaseConfigEnv } from "pdnd-common"
 // Carica le variabili di ambiente da .env
 dotenv.config();
+const config = liquibaseConfigEnv();
 
 // Verifica se le variabili d'ambiente necessarie sono definite
-if (!process.env.LIQUIBASE_DATABASE_URL || !process.env.LIQUIBASE_DATABASE_USERNAME || !process.env.LIQUIBASE_DATABASE_PASSWORD) {
+if (!config) {
   throw new Error("Una o più variabili d'ambiente necessarie non sono definite.");
+
 }
 // Crea un oggetto di configurazione Liquibase
 const liquibaseConfig: LiquibaseConfig = {
-  url: process.env.LIQUIBASE_DATABASE_URL, 
-  username: process.env.LIQUIBASE_DATABASE_USERNAME, 
-  password: process.env.LIQUIBASE_DATABASE_PASSWORD, 
+  url: config.databaseUrl,
+  username: config.username, 
+  password: config.password,
   changeLogFile: "../trial-api/migrations/changelog.xml", 
 };
 

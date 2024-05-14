@@ -1,10 +1,18 @@
+import { databaseConfig } from "pdnd-common";
 import { Sequelize } from "sequelize";
+
+const config = databaseConfig();
+
 // Verifica se le variabili d'ambiente necessarie sono definite
-if (!process.env.DATABASE_URL) {
-  throw new Error("Una o più variabili d'ambiente necessarie non sono definite: DATABASE_URL");
+if (!config) {
+  throw new Error("Una o più variabili d'ambiente necessarie non sono definite.");
 }
+
+// Log del database URL
+console.log("Database URL:", config.databaseUrl);
+
 const sequelize = new Sequelize(
-  process.env.DATABASE_URL ?? ""
+  config.databaseUrl ?? ""
 );
 
 export { sequelize };
