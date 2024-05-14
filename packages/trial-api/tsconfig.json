@@ -2,11 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "types": ["jsonwebtoken"],
-    "declaration": true,
-    "declarationMap": true,
-    "resolveJsonModule": true,
-    "module": "nodenext"
+    "types": ["jsonwebtoken"]
   },
   "include": ["src"]
 }
