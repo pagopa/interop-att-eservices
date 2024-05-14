@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: residence-verification-configmap
+  name: fiscalcode-verification-configmap
   namespace: {{NAMESPACE}}
 data:
   KMS_KEYID: '{{KMS_KEYID}}'
