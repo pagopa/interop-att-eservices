@@ -6,7 +6,7 @@ metadata:
 data:
   KMS_KEYID: '{{KMS_KEYID}}'
   REDIS_ENDPOINT: '{{REDIS_ENDPOINT}}'
-  DATABASE_URL: '{{DATABASE_URL}}'
+  DATABASE_URL: 'interop-att-eservices-dev-postgresql.cluster-ci5nksqtybl9.eu-south-1.rds.amazonaws.com'
   SKIP_JWT_VERIFICATION: false
   WELL_KNOWN_URLS: 'https://att.interop.pagopa.it/.well-known/jwks.json'
   TOKEN_ISS: 'att.interop.pagopa.it'
@@ -21,6 +21,7 @@ data:
   TOKEN_INTEROPERABILITY_KID: '7NBMMA2c6zA4nF-5djwhEhi1ZvzgXWWir6PRj1qpEMc'
   TOKEN_FROM_ACCESS_CODE: 'https://auth.att.interop.pagopa.it/token.oauth2'
   KMS_MAX_ACQUISITION_TIMEOUT_SECONDS: 60
-  LIQUIBASE_DATABASE_URL: '{{LIQUIBASE_DATABASE_URL}}'
-  LIQUIBASE_DATABASE_USERNAME: '{{LIQUIBASE_DATABASE_USERNAME}}'
-  LIQUIBASE_DATABASE_PASSWORD : '{{LIQUIBASE_DATABASE_PASSWORD}}'
+  DATABASE_USERNAME: 'root'
+  DATABASE_PASSWORD: 'mYWOEG0gSWrYg04cU1h2'
+  DATABASE_NAME : 'interop'
+  DATABASE_SCHEMA: 'root'
