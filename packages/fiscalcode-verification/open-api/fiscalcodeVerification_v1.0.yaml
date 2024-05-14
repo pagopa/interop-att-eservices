@@ -219,7 +219,7 @@ paths:
         per manutenzione o per un problema tecnico.
       operationId: reset
       tags:
-        - infrastructure
+        - datapreparation
       responses:
         <<: *common-responses
         '200':
@@ -279,7 +279,7 @@ paths:
           $ref: '#/components/responses/400BadRequest'
       tags:
         - datapreparation
-  /status:
+  /fiscalcode-verification/status:
     get:
       summary: Ritorna lo stato dell'applicazione.
       description: |
@@ -301,7 +301,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-  /verifica:
+  /fiscalcode-verification/verifica:
     post:
       summary: Effettua una validazione del codice fiscale in input.
       operationId: post_verifica_codiceFiscale
@@ -312,18 +312,26 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Richiesta'
-            examples:
-              codiceFiscaleAlfanumerico:
-                value:
-                  codiceFiscale: 'AAAZZZ00H00T000Z'
-              codiceFiscaleNumerico:
-                value:
-                  codiceFiscale: '06363391001'
-              
-          
+              type: object
+              properties:
+                certificate:
+                  type: string
+                  format: binary
+                  description: Certificato dell'utente.
+                content:
+                  type: object
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/Richiesta'  
+                      examples:
+                        codiceFiscaleAlfanumerico:
+                          value:
+                            codiceFiscale: 'AAAZZZ00H00T000Z'
+                        codiceFiscaleNumerico:
+                          value:
+                            codiceFiscale: '06363391001'
       responses:
         <<: *common-responses
         '200':

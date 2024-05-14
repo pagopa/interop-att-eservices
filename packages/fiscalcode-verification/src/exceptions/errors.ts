@@ -21,7 +21,6 @@ const errorCodes = {
   certNotValid: "0002",
   requestParamNotValid: "0003",
   fiscalcodeNotFoud: "0004",
-
 };
 
 export type ErrorCodes = keyof typeof errorCodes;
