@@ -324,8 +324,7 @@ paths:
                   type: object
                   properties:
                     content:
-                      schema:
-                        $ref: '#/components/schemas/Richiesta'
+                      $ref: '#/components/schemas/Richiesta'  
                       examples:
                         codiceFiscaleAlfanumerico:
                           value:

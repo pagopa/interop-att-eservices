@@ -36,7 +36,7 @@ const fiscalcodeVerificationRouter = (
         logger.info(`[START] Post - '/verifica' : ${req.body.codiceFiscale}`);
         const richiesta = convertStringToRichiesta(req.body.content);
         const data = await FiscalcodeVerificationController.findFiscalcode(
-          richiesta.codiceFiscale
+          richiesta
         );
         logger.info(`[END] Post - '/verifica'`);
         return res.status(200).json(data).end();
