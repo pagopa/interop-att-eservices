@@ -43,6 +43,6 @@ FROM node:18.17.1-slim as final
 COPY --from=build /out /app
 
 WORKDIR /app/packages/fiscalcode-verification
-EXPOSE 3001
+EXPOSE 3000
 
 CMD [ "node", "." ]
