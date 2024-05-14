@@ -22,7 +22,7 @@ COPY ./packages/fiscalcode-verification /app/packages/fiscalcode-verification
 COPY ./packages/commons /app/packages/commons
 COPY ./packages/models /app/packages/models
 COPY ./packages/interoperability-api /app/packages/interoperability-api
-COPY ./packages/trial-api/package.json /app/packages/trial-api/package.json
+COPY ./packages/trial-api /app/packages/trial-api
 
 RUN pnpm build && \
     rm -rf /app/node_modules/.modules.yaml && \
