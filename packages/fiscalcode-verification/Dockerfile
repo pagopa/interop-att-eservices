@@ -1,4 +1,4 @@
-FROM node:18.17.1-slim as build
+FROM node:22.1.0-slim as build
 
 RUN corepack enable
 
