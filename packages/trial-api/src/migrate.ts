@@ -1,11 +1,7 @@
 import { runMigrations } from './config/umzug.js';
 
-import { register } from 'node:module';
-import { pathToFileURL } from 'node:url';
-
 // Funzione per eseguire le migrazioni del database
 export async function executeDatabaseMigrations(): Promise<void> {
-    register('ts-node/esm', pathToFileURL('./'));
 
     try {
         console.log('Starting migrations...');
