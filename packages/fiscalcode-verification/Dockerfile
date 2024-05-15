@@ -38,7 +38,7 @@ RUN pnpm build && \
       packages/fiscalcode-verification/dist && \
     find /out -exec touch -h --date=@0 {} \;
 
-FROM node:18.17.1-slim as final
+FROM node:22.1.0-slim as final
 
 COPY --from=build /out /app
 
