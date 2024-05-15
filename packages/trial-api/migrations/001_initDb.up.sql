@@ -1,18 +1,5 @@
-<databaseChangeLog
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
-    
-    <changeSet id="1" author="technical_user" runOnChange="true">
-        <!-- Controllo condizionale per verificare se esiste già una transazione con id 1 -->
-        <preConditions onFail="WARN">
-            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM  databasechangelog WHERE id::int = 1</sqlCheck>
-        </preConditions>
-        
-        <!-- Se la transazione con id 1 non esiste, esegui le modifiche -->
-        <sql>
-            CREATE TABLE category (
+-- up.sql: Migrazione per creare la tabella 'Users'
+CREATE TABLE category (
                 id bigserial NOT NULL,
                 code varchar NOT NULL,
                 eservice varchar NOT NULL,
@@ -34,18 +21,16 @@
             
             CREATE TABLE trial (
                 id bigserial NOT NULL,
-                execution_date timestamp NULL,
-                check_id int8 NOT NULL,
                 purpose_id varchar NOT NULL,
+                correlation_id varchar NOT NULL,
+                operation_path varchar NOT NULL,
+                check_id int8 NOT NULL,
                 response bool DEFAULT false NULL,
                 message varchar NULL,
-                "order" int8 NOT NULL,
-                CONSTRAINT trial_pk PRIMARY KEY (id),
-                CONSTRAINT trial_check_fk FOREIGN KEY (check_id) REFERENCES "check"(id)
+                CONSTRAINT trial_pk PRIMARY KEY (id)
             );
-
+            CREATE INDEX trial_correlation_id_idx ON trial USING btree (correlation_id);
+            CREATE INDEX trial_operation_path_idx ON trial USING btree (operation_path);
             CREATE INDEX trial_purpose_id_idx ON trial USING btree (purpose_id);
-        </sql>
-    </changeSet>
-
-</databaseChangeLog>
+            
+            ALTER TABLE trial ADD CONSTRAINT trial_check_fk FOREIGN KEY (check_id) REFERENCES "check"(id);

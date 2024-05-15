@@ -1,5 +1,5 @@
 import { logger } from "pdnd-common";
-import { sequelize, runLiquibase } from "trial";
+import { sequelize, executeDatabaseMigrations } from "trial";
 import app from "./app.js";
 
 const port = process.env.PORT || 3002;
@@ -8,7 +8,7 @@ const startServer = async (): Promise<void> => {
   try {
     await sequelize.authenticate();
 
-    await runLiquibase();
+    await executeDatabaseMigrations();
 
     logger.info("Connection to Database has been established.");
     app.listen(port, () => {

@@ -1,6 +1,8 @@
 export * from "./client.js";
 export * from "./model/trial.js";
-export * from "./config/liquibaseConfig.js";
+export * from "./migrate.js"
+
+
 import { logger } from "pdnd-common";
  
 // receiver.ts (pacchetto ricevente)
