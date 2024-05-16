@@ -69,7 +69,7 @@ export function convertStringToRichiesta(jsonString: any): Richiesta {
       throw new Error("Invalid codiceFiscale length");
     }
 
-    return  { codiceFiscale: codiceFiscale ? String(codiceFiscale) : undefined  };
+    return { codiceFiscale: codiceFiscale ? String(codiceFiscale) : undefined };
   } catch (error) {
     logger.error(`Error parsing JSON string: ${error}`);
     throw error;
