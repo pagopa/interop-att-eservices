@@ -23,7 +23,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.post(
     "/fiscalcode-verification/data-preparation",
     contextDataMiddleware,
-    authenticationMiddleware(),
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         await DataPreparationService.saveList(
@@ -40,7 +40,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.get(
     "/fiscalcode-verification/data-preparation/all",
     contextDataMiddleware,
-    authenticationMiddleware(),
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {
@@ -61,7 +61,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.delete(
     "/fiscalcode-verification/data-preparation/reset",
     contextDataMiddleware,
-    authenticationMiddleware(),
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {
@@ -84,7 +84,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.post(
     "/fiscalcode-verification/data-preparation/remove",
     contextDataMiddleware,
-    authenticationMiddleware(),
+    authenticationMiddleware(false),
     async (req, res) => {
       /* eslint-enable */
       try {

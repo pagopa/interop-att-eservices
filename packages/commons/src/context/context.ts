@@ -58,6 +58,11 @@ export const contextDataMiddleware = (
     };
 
     context.correlationId = headers?.correlationId;
+  } else {
+    const context = getContext();
+    context.correlationId = Array.isArray(req.headers["x-correlation-id"])
+      ? req.headers["x-correlation-id"][0]
+      : req.headers["x-correlation-id"] ?? "";
   }
   next();
 };
