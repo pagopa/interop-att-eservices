@@ -26,7 +26,7 @@ const residenceVerificationRouter = (
   residenceVerificationRouter.post(
     "/residence-verification",
     contextDataMiddleware,
-    authenticationMiddleware(),
+    authenticationMiddleware(true),
     integrityValidationMiddleware(),
     auditValidationMiddleware(),
     async (req, res) => {

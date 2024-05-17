@@ -6,6 +6,7 @@ import { makeApiProblemBuilder } from "pdnd-models";
 import { match } from "ts-pattern";
 import { logger } from "pdnd-common";
 import { ExpressContext, InteroperabilityConfig } from "pdnd-common";
+import { TrialRepository } from "trial";
 import { generateHashFromString } from "../utilities/hashUtilities.js";
 import { validate as tokenValidation } from "./interoperabilityValidationMiddleware.js";
 
@@ -21,6 +22,16 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
         if (config.skipInteroperabilityVerification) {
           return next();
         }
+        if (
+          req.headers["agid-jwt-signature"] === null ||
+          req.headers["agid-jwt-signature"] === undefined
+        ) {
+          logger.error(
+            `integrityValidationMiddleware - No matching headers found: agid-jwt-signature`
+          );
+          TrialRepository.insert(req.url, "SIGNATURE_NOT_PRESENT");
+          throw ErrorHandling.missingHeader("Header attribute not found");
+        }
         const signatureToken = Array.isArray(req.headers["agid-jwt-signature"])
           ? req.headers["agid-jwt-signature"][0]
           : req.headers["agid-jwt-signature"];
@@ -28,15 +39,19 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
           logger.error(
             `integrityValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`
           );
+          TrialRepository.insert(req.url, "SIGNATURE_NOT_VALID");
           throw ErrorHandling.missingHeader();
         }
         if (!(await tokenValidation(signatureToken, "signatureToken"))) {
           logger.error(`integrityValidationMiddleware - token not valid`);
+          TrialRepository.insert(req.url, "SIGNATURE_PUBLIC_KEY_NOT_VALID");
           throw ErrorHandling.tokenNotValid();
         }
         if (process.env.SKIP_AGID_PAYLOAD_VERIFICATION !== "true") {
           verifyJwtPayload(signatureToken, req);
         }
+
+        TrialRepository.insert(req.url, "SIGNATURE_OK");
         logger.info(`[COMPLETED] integrityValidationMiddleware`);
         return next();
       } catch (error) {
@@ -75,38 +90,64 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
   };
 
   if (!decodedToken.payload) {
-    logger.error(`Token not valid`);
+    logger.error(`verifyJwtPayload - Token not valid`);
+    TrialRepository.insert(req.url, "SIGNATURE_PAYLOAD_NOT_PRESENT");
     throw ErrorHandling.tokenNotValid();
   }
 
   const dateNowSeconds = Math.floor(Date.now() / 1000);
-  if (
-    !decodedToken.payload.exp ||
-    !decodedToken.payload.iat ||
-    dateNowSeconds > decodedToken.payload.exp ||
-    dateNowSeconds < decodedToken.payload.iat
-  ) {
-    logger.error(`Request Token has expired`);
+  if (!decodedToken.payload.exp) {
+    logger.error(`verifyJwtPayload - "exp" in payload is required`);
+    TrialRepository.insert(req.url, "SIGNATURE_EXP_NOT_PRESENT");
+    throw ErrorHandling.tokenNotValid();
+  }
+  if (dateNowSeconds > decodedToken.payload.exp) {
+    logger.error(`verifyJwtPayload - Request Token has expired`);
+    TrialRepository.insert(req.url, "SIGNATURE_EXP_IS_EXPIRED");
     throw ErrorHandling.tokenExpired();
   }
 
-  if (
-    !decodedToken.payload.aud ||
-    decodedToken.payload.aud !== process.env.TOKEN_AUD
-  ) {
-    logger.error(`Request header aud is incorrect`);
+  if (!decodedToken.payload.iat) {
+    logger.error(`verifyJwtPayload - "iat" in payload is required`);
+    TrialRepository.insert(req.url, "SIGNATURE_IAT_NOT_PRESENT");
+    throw ErrorHandling.tokenNotValid();
+  }
+  if (dateNowSeconds < decodedToken.payload.iat) {
+    logger.error(`verifyJwtPayload - Request Token has an invalid issue time`);
+    TrialRepository.insert(req.url, "SIGNATURE_IAT_IS_EXPIRED");
+    throw ErrorHandling.tokenExpired();
+  }
+
+  if (!decodedToken.payload.aud) {
+    logger.error(`verifyJwtPayload - "aud" in payload is required`);
+    TrialRepository.insert(req.url, "SIGNATURE_AUD_NOT_PRESENT");
+    throw ErrorHandling.tokenNotValid();
+  }
+  if (decodedToken.payload.aud !== process.env.TOKEN_AUD) {
+    logger.error(`verifyJwtPayload - Request header aud is not valid`);
+    TrialRepository.insert(req.url, "SIGNATURE_AUD_NOT_VALID");
     throw ErrorHandling.tokenNotValid();
   }
 
-  if (!req.headers["content-type"] || !req.headers["content-encoding"]) {
+  if (!req.headers["content-type"]) {
     logger.error(
-      `The "content-type" or "content-encoding" value in header is required`
+      `verifyJwtPayload - "content-type" value in header is required`
     );
+    TrialRepository.insert(req.url, "SIGNATURE_CONTENT_TYPE_NOT_PRESENT");
     throw ErrorHandling.tokenNotValid();
   }
-
+  if (!req.headers["content-encoding"]) {
+    logger.error(
+      `verifyJwtPayload - "content-encoding" value in header is required`
+    );
+    TrialRepository.insert(req.url, "SIGNATURE_CONTENT_ENCODING_NOT_PRESENT");
+    throw ErrorHandling.tokenNotValid();
+  }
   if (!decodedToken.payload.signed_headers) {
-    logger.error(`The "signed_headers" value in token payload is required`);
+    logger.error(
+      `verifyJwtPayload - "signed_headers" value in token payload is required`
+    );
+    TrialRepository.insert(req.url, "SIGNATURE_SIGNED_NOT_PRESENT");
     throw ErrorHandling.tokenNotValid();
   }
 
@@ -121,7 +162,10 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
       (header: SignedHeader) => header?.[headerName]
     );
     if (!signedHeaderExists) {
-      logger.error(`The '${headerName}' value in token payload is required`);
+      logger.error(
+        `verifyJwtPayload - The '${headerName}' value in token payload is required`
+      );
+      checkValueTrial(req.url, headerName);
       throw ErrorHandling.tokenNotValid();
     }
   }
@@ -131,8 +175,9 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
   );
   if (signedContentType["content-type"] !== req.headers["content-type"]) {
     logger.error(
-      `The content-type '${req.headers["content-type"]}' value in request header is different from the value in payload ${signedContentType["content-encoding"]}`
+      `verifyJwtPayload - The content-type '${req.headers["content-type"]}' value in request header is different from the value in payload ${signedContentType["content-encoding"]}`
     );
+    TrialRepository.insert(req.url, "SIGNATURE_SIGNED_CONTENT_TYPE_NOT_MATCH");
     throw ErrorHandling.tokenNotValid();
   }
 
@@ -144,32 +189,75 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     req.headers["content-encoding"]
   ) {
     logger.error(
-      `The content-encoding '${req.headers["content-encoding"]}' value in request header is different from the value in payload ${signedContentEncoding["content-encoding"]}`
+      `verifyJwtPayload - The content-encoding '${req.headers["content-encoding"]}' value in request header is different from the value in payload ${signedContentEncoding["content-encoding"]}`
+    );
+    TrialRepository.insert(
+      req.url,
+      "SIGNATURE_SIGNED_CONTENT_ENCODING_NOT_MATCH"
     );
     throw ErrorHandling.tokenNotValid();
   }
 
   const signedDigest = signedHeaders.find(
-    (header: SignedHeader) => header?.digest
+    (header: SignedHeader) => header?.["content-encoding"]
   );
   if (!signedDigest.digest.startsWith("SHA-256")) {
     logger.error(
-      `The digest '${signedDigest.digest}' value in token payload is invalid`
+      `verifyJwtPayload - The digest '${signedDigest.digest}' value in token payload is invalid`
     );
-    throw ErrorHandling.tokenNotValid();
-  }
-
-  const hashBody = generateHashFromString(JSON.stringify(req.body));
-  if (hashBody !== signedDigest.digest.substring(8)) {
-    logger.error(`Request body digest does not match the signed digest`);
+    TrialRepository.insert(req.url, "SIGNATURE_SIGNED_DIGEST_NOT_VALID");
     throw ErrorHandling.tokenNotValid();
   }
 
   if (!req.headers.digest?.startsWith("SHA-256=")) {
     logger.error(
-      `The digest '${req.headers.digest}' value in token payload is  invalid`
+      `verifyJwtPayload - The digest '${req.headers.digest}' value in token payload is  invalid`
+    );
+    TrialRepository.insert(req.url, "SIGNATURE_DIGEST_NOT_VALID");
+    throw ErrorHandling.tokenNotValid();
+  }
+
+  if (signedDigest.digest !== req.headers.digest) {
+    logger.error(
+      `verifyJwtPayload - The digest '${req.headers.digest}' value in request header is different from the value in payload ${signedDigest.digest}`
+    );
+    TrialRepository.insert(req.url, "SIGNATURE_DIGEST_NOT_MATCH_SIGNED_DIGEST");
+    throw ErrorHandling.tokenNotValid();
+  }
+
+  const hashBody = generateHashFromString(JSON.stringify(req.body));
+  if (hashBody !== signedDigest.digest.substring(8)) {
+    logger.error(
+      `verifyJwtPayload - Request body digest does not match the signed digest`
+    );
+    TrialRepository.insert(
+      req.url,
+      "SIGNATURE_DIGEST_BODY_NOT_MATCH_SIGNED_DIGEST"
     );
     throw ErrorHandling.tokenNotValid();
+  }
+};
+
+export const checkValueTrial = (
+  operationPath: string,
+  signedHeaderName: string
+): void => {
+  // Aggiunto export
+  if (signedHeaderName === "content-type") {
+    TrialRepository.insert(
+      operationPath,
+      "SIGNATURE_SIGNED_CONTENT_TYPE_NOT_PRESENT"
+    );
+  } else if (signedHeaderName === "content-encoding") {
+    TrialRepository.insert(
+      operationPath,
+      "SIGNATURE_CONTENT_ENCODING_NOT_PRESENT"
+    );
+  } else {
+    TrialRepository.insert(
+      operationPath,
+      "SIGNATURE_SIGNED_DIGEST_NOT_PRESENT"
+    );
   }
 };
 

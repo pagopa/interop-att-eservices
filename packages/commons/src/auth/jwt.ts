@@ -71,7 +71,11 @@ export const verifyJwtToken = (jwtToken: string): Promise<boolean> => {
       });
 };
 
-export const verifyJwtPayloadAndHeader = (jwtToken: string): Promise<boolean> =>
+export const verifyJwtPayloadAndHeader = (
+  jwtToken: string,
+  operationPath: string,
+  isEnableTrial: boolean
+): Promise<boolean> =>
   new Promise((resolve, reject) => {
     const config = JWTConfig.parse(process.env);
     const decodedToken = jwt.decode(jwtToken, { complete: true }) as {
@@ -79,24 +83,68 @@ export const verifyJwtPayloadAndHeader = (jwtToken: string): Promise<boolean> =>
       payload: JwtPayload;
     };
 
-    if (!decodedToken?.header || !decodedToken?.payload) {
-      logger.error(`Error decoding token`);
-      sendCustomEvent('customEvent', { data: 'Dati correlati all\'evento' }); //operation name, checkid
+    if (!decodedToken?.header) {
+      logger.error(
+        `verifyJwtPayloadAndHeader - Header in bearer token not present`
+      );
+      if (isEnableTrial) {
+        sendCustomEvent("customEvent", {
+          operationPath,
+          checkName: "VOUCHER_HEADER_NOT_PRESENT",
+        });
+      }
+      return reject(false);
+    }
+
+    if (!decodedToken?.payload) {
+      logger.error(
+        `verifyJwtPayloadAndHeader - Payload in bearer token not present`
+      );
+      if (isEnableTrial) {
+        sendCustomEvent("customEvent", {
+          operationPath,
+          checkName: "VOUCHER_PAYLOAD_NOT_PRESENT",
+        });
+      }
       return reject(false);
     }
 
     if (decodedToken.header.typ !== config.typValue) {
-      logger.error(`Error parsing token typ not valid`);
+      logger.error(
+        `verifyJwtPayloadAndHeader - Error parsing token typ not valid`
+      );
+      if (isEnableTrial) {
+        sendCustomEvent("customEvent", {
+          operationPath,
+          checkName: "VOUCHER_TYP_NOT_VALID",
+        });
+      }
       return reject(false);
     }
 
     if (decodedToken.payload.iss !== config.issValue) {
-      logger.error(`Error parsing token iss not valid`);
+      logger.error(
+        `verifyJwtPayloadAndHeader - Error parsing token iss not valid`
+      );
+      if (isEnableTrial) {
+        sendCustomEvent("customEvent", {
+          operationPath,
+          checkName: "VOUCHER_ISS_NOT_VALID",
+        });
+      }
       return reject(false);
     }
 
     if (decodedToken.payload.aud !== config.audValue) {
-      logger.error(`Error parsing token aud not valid`);
+      logger.error(
+        `verifyJwtPayloadAndHeader - Error parsing token aud not valid`
+      );
+      if (isEnableTrial) {
+        sendCustomEvent("customEvent", {
+          operationPath,
+          checkName: "VOUCHER_AUD_NOT_VALID",
+        });
+      }
       return reject(false);
     }
 

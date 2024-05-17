@@ -25,7 +25,7 @@ const dataPreparationHandshakeRouter = (
   dataPreparationHandshakeRouter.post(
     "/fiscalcode-verification/data-preparation/handshake",
     contextDataMiddleware,
-    authenticationMiddleware(),
+    authenticationMiddleware(false),
     upload.single("certificate"),
     async (req, res) => {
       try {

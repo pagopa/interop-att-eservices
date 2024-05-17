@@ -101,11 +101,11 @@ export class ErrorHandling {
     });
   }
 
-  public static tokenNotValid(): ApiError<CommonErrorCodes> {
+  public static tokenNotValid(message?: string): ApiError<CommonErrorCodes> {
     return new ApiError({
       code: "tokenNotValid",
       title: "Token Not Valid",
-      detail: "Request Token is not valid",
+      detail: message ?? "Request Token is not valid",
     });
   }
 
@@ -131,7 +131,7 @@ export class ErrorHandling {
     return new ApiError({
       code: "missingBearer",
       title: "Bearer token has not been passed",
-      detail: `Authorization Illegal header key`,
+      detail: `Authorization bearer token has not been passed`,
     });
   }
 

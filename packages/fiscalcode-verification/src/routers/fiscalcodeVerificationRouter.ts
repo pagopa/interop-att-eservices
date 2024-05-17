@@ -29,7 +29,7 @@ const fiscalcodeVerificationRouter = (
     "/fiscalcode-verification/verifica",
     upload.single("certificate"),
     contextDataMiddleware,
-    authenticationMiddleware(),
+    authenticationMiddleware(true),
     verifyCertValidity,
     async (req, res) => {
       try {
