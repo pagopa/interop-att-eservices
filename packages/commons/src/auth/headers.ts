@@ -44,7 +44,6 @@ export const readHeaders = (req: Request): ParsedHeaders | undefined => {
 
           const jwtToken = authorizationHeader[1];
           const authData = readAuthDataFromJwtToken(jwtToken);
-
           return match(authData)
             .with(P.instanceOf(Error), () => undefined)
             .otherwise((authData: AuthData) => ({

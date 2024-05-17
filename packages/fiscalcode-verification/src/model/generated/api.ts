@@ -34,13 +34,6 @@ const Richiesta = z
   })
   .partial()
   .passthrough();
-const post_verifica_codiceFiscale_Body = z
-  .object({
-    certificate: z.instanceof(File),
-    content: z.object({ content: Richiesta }).partial().passthrough(),
-  })
-  .partial()
-  .passthrough();
 const VerificaCodiceFiscale = z
   .object({
     codiceFiscale: CodiceFiscale.min(11)
@@ -59,7 +52,6 @@ export const schemas = {
   DatapreparationTemplate,
   DataPreparationResponse,
   Richiesta,
-  post_verifica_codiceFiscale_Body,
   VerificaCodiceFiscale,
 };
 
@@ -257,12 +249,12 @@ per manutenzione o per un problema tecnico.
     alias: "post_verifica_codiceFiscale",
     description: `Ritorna informazioni circa la validità del codice fiscale in input
 `,
-    requestFormat: "form-data",
+    requestFormat: "json",
     parameters: [
       {
         name: "body",
         type: "Body",
-        schema: post_verifica_codiceFiscale_Body,
+        schema: Richiesta,
       },
     ],
     response: VerificaCodiceFiscale,

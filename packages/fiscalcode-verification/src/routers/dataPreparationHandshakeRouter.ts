@@ -13,7 +13,7 @@ import {
   requestParamNotValid,
 } from "../exceptions/errors.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
-import { createCertificateHash } from "../utilities/certificateUtility.js";
+import { getCertificateFingerprintFromBuffer } from "../utilities/certificateUtility.js";
 
 const dataPreparationHandshakeRouter = (
   ctx: ZodiosContext
@@ -45,7 +45,7 @@ const dataPreparationHandshakeRouter = (
         // Il certificato sarà accessibile tramite req.file.buffer
         const certificateData: Buffer = req.file.buffer;
 
-        const serialNumber = createCertificateHash(certificateData);
+        const serialNumber = getCertificateFingerprintFromBuffer(certificateData);
         const handshakeData = {
           pourposeId: getContext().authData.purposeId,
           apikey: apiKey,

@@ -4,7 +4,6 @@ import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
 import { authenticationMiddleware , uniquexCorrelationIdMiddleware } from "pdnd-common";
 import { contextDataMiddleware } from "pdnd-common";
-import multer from "multer";
 import FiscalcodeVerificationController from "../controllers/fiscalcodeVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -20,13 +19,11 @@ const fiscalcodeVerificationRouter = (
   const upload = multer({ storage: multer.memoryStorage() });
 
   fiscalcodeVerificationRouter.use(authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware()); */
-  const upload = multer({ storage: multer.memoryStorage() });
 
   // Middleware per il parsing del corpo della richiesta multipart/form-data
   // Endpoint per gestire il caricamento del file e il corpo della richiesta
   fiscalcodeVerificationRouter.post(
     "/fiscalcode-verification/verifica",
-    upload.single("certificate"),
     contextDataMiddleware,
     uniquexCorrelationIdMiddleware(true),
     authenticationMiddleware(true),
