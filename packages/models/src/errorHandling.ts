@@ -28,6 +28,8 @@ const errorCodes = {
   tokenGenerationError: "9995",
   thirdPartyCallError: "9992",
   genericInternalError: "9991",
+  xCorrelationIdNotValid: "9025",
+
 } as const;
 
 export type CommonErrorCodes = keyof typeof errorCodes;
@@ -183,4 +185,14 @@ export class ErrorHandling {
       title: "Error token generated",
     });
   }
+
+
+public static xCorrelationIdNotValidError(details?: string) {
+  return new ApiError({
+    detail: details != null ? details : "x-correlation-id not valid",
+    code: "xCorrelationIdNotValid",
+    title: "Error token generated",
+  });
+}
+
 }
