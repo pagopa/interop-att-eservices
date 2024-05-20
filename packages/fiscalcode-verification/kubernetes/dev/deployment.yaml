@@ -67,11 +67,11 @@ spec:
         - name: cert-pem
           configMap:
             defaultMode: 256
-            name: fiscalcode-verification-configmap
+            name: https-configmap
             optional: false
         - name: key-pem
           configMap:
             defaultMode: 256
-            name: fiscalcode-verification-configmap
+            name: https-configmap
             optional: false
 
