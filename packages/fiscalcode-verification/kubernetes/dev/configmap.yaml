@@ -27,7 +27,5 @@ data:
   DATABASE_SCHEMA: '{{DATABASE_SCHEMA}}'
   HTTPS_CERT_PATH: '{{HTTPS_CERT_PATH}}'
   HTTPS_KEY_PATH: '{{HTTPS_KEY_PATH}}'
-  key.pem: |
-    {{HTTPS_KEY_PEM}}
   cert.pem: |
     {{HTTPS_CERT_PEM}}
