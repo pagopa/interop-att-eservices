@@ -28,6 +28,6 @@ data:
   HTTPS_CERT_PATH: '{{HTTPS_CERT_PATH}}'
   HTTPS_KEY_PATH: '{{HTTPS_KEY_PATH}}'
   key.pem: |
-    {{HTTPS_KEY_PEM}}
+    '{{HTTPS_KEY_PEM}}'
   cert.pem: |
-    {{HTTPS_CERT_PEM}}
+    '{{HTTPS_CERT_PEM}}'
