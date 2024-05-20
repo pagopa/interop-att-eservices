@@ -5,13 +5,17 @@ import {
   certNotValidError,
   requestParamNotValid,
 } from "../exceptions/errors.js";
-import { createCertificateHash } from "../utilities/certificateUtility.js";
+import { getCertificateFingerprintFromString } from "../utilities/certificateUtility.js";
 
 export const verifyCertValidity: ZodiosRouterContextRequestHandler<
   ExpressContext
 > = async (req, res, next) => {
   // Verifica se è stato caricato un file
-  if (!req.file) {
+  const headerCert = Array.isArray(req.headers["x-amzn-mtls-clientcert"])
+  ? req.headers["x-amzn-mtls-clientcert"][0]
+  : req.headers["x-amzn-mtls-clientcert"] ?? null
+
+  if (!headerCert) {
     logger.error("Nessun certificato caricato");
     throw certNotValidError(`mandatory certificate`);
   }
@@ -21,10 +25,8 @@ export const verifyCertValidity: ZodiosRouterContextRequestHandler<
     logger.error("'Header apikey mandatory.'");
     throw requestParamNotValid(`missing header`);
   }
-  // Il certificato sarà accessibile tramite req.file.buffer
-  const certificateData: Buffer = req.file.buffer;
 
-  const serialNumber = createCertificateHash(certificateData);
+  const serialNumber = getCertificateFingerprintFromString(headerCert);
   try {
     const appContext = getContext();
     const handshake = await DataPreparationHandshakeService.getByPurposeId(

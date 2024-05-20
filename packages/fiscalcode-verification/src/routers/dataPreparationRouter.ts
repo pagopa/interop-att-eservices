@@ -1,7 +1,6 @@
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext, logger } from "pdnd-common";
-import { contextDataMiddleware } from "pdnd-common";
 import { authenticationMiddleware } from "pdnd-common";
 import { ErrorHandling } from "pdnd-models";
 import { api } from "../model/generated/api.js";
@@ -13,6 +12,7 @@ import {
   apiFiscalcodeModelToDataPreparationResponse,
   apiDatapreparationTemplateToFiscalcodeModel,
 } from "../model/domain/apiConverter.js";
+import { contextDataFiscalCodeMiddleware } from "../context/context.js";
 // import { ErrorHandling } from "pdnd-models";
 
 const dataPreparationRouter = (
@@ -22,8 +22,8 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.post(
     "/fiscalcode-verification/data-preparation",
-    contextDataMiddleware,
-    authenticationMiddleware(),
+    contextDataFiscalCodeMiddleware,
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         await DataPreparationService.saveList(
@@ -39,8 +39,8 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.get(
     "/fiscalcode-verification/data-preparation/all",
-    contextDataMiddleware,
-    authenticationMiddleware(),
+    contextDataFiscalCodeMiddleware,
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {
@@ -60,8 +60,8 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.delete(
     "/fiscalcode-verification/data-preparation/reset",
-    contextDataMiddleware,
-    authenticationMiddleware(),
+    contextDataFiscalCodeMiddleware,
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {
@@ -83,8 +83,8 @@ const dataPreparationRouter = (
 /* eslint-disable */
   dataPreparationRouter.post(
     "/fiscalcode-verification/data-preparation/remove",
-    contextDataMiddleware,
-    authenticationMiddleware(),
+    contextDataFiscalCodeMiddleware,
+    authenticationMiddleware(false),
     async (req, res) => {
       /* eslint-enable */
       try {

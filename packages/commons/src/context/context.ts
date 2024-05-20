@@ -4,7 +4,6 @@ import { NextFunction, Request, Response } from "express";
 import { zodiosContext } from "@zodios/express";
 import { z } from "zod";
 import { AuthData } from "../auth/authData.js";
-import { readHeaders } from "../auth/headers.js";
 
 export type AppContext = z.infer<typeof ctx>;
 export type ZodiosContext = NonNullable<typeof zodiosCtx>;
@@ -44,20 +43,3 @@ export const globalContextMiddleware = (
   next();
 };
 
-export const contextDataMiddleware = (
-  req: Request,
-  _res: Response,
-  next: NextFunction
-): void => {
-  const headers = readHeaders(req);
-  if (headers) {
-    const context = getContext();
-    context.authData = {
-      purposeId: headers.purposeId,
-      clientId: headers.clientId,
-    };
-
-    context.correlationId = headers?.correlationId;
-  }
-  next();
-};

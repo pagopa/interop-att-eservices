@@ -28,6 +28,8 @@ const errorCodes = {
   tokenGenerationError: "9995",
   thirdPartyCallError: "9992",
   genericInternalError: "9991",
+  xCorrelationIdNotValid: "9025",
+
 } as const;
 
 export type CommonErrorCodes = keyof typeof errorCodes;
@@ -101,11 +103,11 @@ export class ErrorHandling {
     });
   }
 
-  public static tokenNotValid(): ApiError<CommonErrorCodes> {
+  public static tokenNotValid(message?: string): ApiError<CommonErrorCodes> {
     return new ApiError({
       code: "tokenNotValid",
       title: "Token Not Valid",
-      detail: "Request Token is not valid",
+      detail: message ?? "Request Token is not valid",
     });
   }
 
@@ -131,7 +133,7 @@ export class ErrorHandling {
     return new ApiError({
       code: "missingBearer",
       title: "Bearer token has not been passed",
-      detail: `Authorization Illegal header key`,
+      detail: `Authorization bearer token has not been passed`,
     });
   }
 
@@ -183,4 +185,14 @@ export class ErrorHandling {
       title: "Error token generated",
     });
   }
+
+
+public static xCorrelationIdNotValidError(details?: string) {
+  return new ApiError({
+    detail: details != null ? details : "x-correlation-id not valid",
+    code: "xCorrelationIdNotValid",
+    title: "Error token generated",
+  });
+}
+
 }

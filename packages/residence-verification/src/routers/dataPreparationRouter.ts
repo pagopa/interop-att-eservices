@@ -4,7 +4,6 @@ import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ErrorHandling, UserModel } from "pdnd-models";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
 import { authenticationMiddleware } from "pdnd-common";
-import { contextDataMiddleware } from "pdnd-common";
 import DataPreparationService from "../services/dataPreparationService.js";
 import {
   userModelToApiDataPreparationResponseCf,
@@ -14,18 +13,18 @@ import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, userModelNotFound } from "../exceptions/errors.js";
 import { DataPreparationTemplateResponse } from "../model/domain/models.js";
+import { contextDataResidenceMiddleware } from "../context/context.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const dataPreparationRouter = ctx.router(api.api);
 
-  /* dataPreparationRouter.use(contextDataMiddleware, authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware());
-   */
+
   dataPreparationRouter.post(
     "/residence-verification/data-preparation",
-    contextDataMiddleware,
-    authenticationMiddleware(),
+    contextDataResidenceMiddleware,
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         const data = await DataPreparationService.saveList(req.body);
@@ -48,8 +47,8 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.get(
     "/residence-verification/data-preparation",
-    contextDataMiddleware,
-    authenticationMiddleware(),
+    contextDataResidenceMiddleware,
+    authenticationMiddleware(true),
     async (req, res) => {
       try {
         if (!req) {
@@ -72,8 +71,8 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.get(
     "/residence-verification/data-preparation/:uuid",
-    contextDataMiddleware,
-    authenticationMiddleware(),
+    contextDataResidenceMiddleware,
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {
@@ -95,8 +94,8 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.delete(
     "/residence-verification/data-preparation",
-    contextDataMiddleware,
-    authenticationMiddleware(),
+    contextDataResidenceMiddleware,
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {
@@ -118,8 +117,8 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.delete(
     "/residence-verification/data-preparation/:uuid",
-    contextDataMiddleware,
-    authenticationMiddleware(),
+    contextDataResidenceMiddleware,
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {

@@ -3,7 +3,6 @@ import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
 import { authenticationMiddleware } from "pdnd-common";
-import { contextDataMiddleware } from "pdnd-common";
 import ResidenceVerificationController from "../controllers/residenceVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -14,6 +13,7 @@ import {
 } from "../exceptions/errors.js";
 import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
 import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
+import { contextDataResidenceMiddleware } from "../context/context.js";
 
 const residenceVerificationRouter = (
   ctx: ZodiosContext
@@ -25,8 +25,8 @@ const residenceVerificationRouter = (
 
   residenceVerificationRouter.post(
     "/residence-verification",
-    contextDataMiddleware,
-    authenticationMiddleware(),
+    contextDataResidenceMiddleware,
+    authenticationMiddleware(true),
     integrityValidationMiddleware(),
     auditValidationMiddleware(),
     async (req, res) => {

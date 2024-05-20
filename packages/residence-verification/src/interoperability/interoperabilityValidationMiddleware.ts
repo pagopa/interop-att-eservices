@@ -59,11 +59,11 @@ export const validate = (jwtToken: string, source: string): Promise<boolean> =>
           resolve(isValid);
         })
         .catch((err) => {
-          logger.error(`${source}:Unexpected error parsing token: ${err}`);
+          logger.error(`${source} - Unexpected error parsing token: ${err}`);
           resolve(false);
         });
     } catch (err) {
-      logger.error(`${source}:Unexpected error parsing token: ${err}`);
+      logger.error(`${source} - Unexpected error parsing token: ${err}`);
       reject(err);
     }
   });
