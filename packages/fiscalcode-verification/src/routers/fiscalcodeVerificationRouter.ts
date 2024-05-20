@@ -3,13 +3,13 @@ import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
 import { authenticationMiddleware , uniquexCorrelationIdMiddleware } from "pdnd-common";
-import { contextDataMiddleware } from "pdnd-common";
 import FiscalcodeVerificationController from "../controllers/fiscalcodeVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { verifyCertValidity } from "../security/certValidityMiddleware.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { convertStringToRichiesta } from "../utilities/jsonFiscalcodeUtilities.js";
+import { contextDataFiscalCodeMiddleware } from "../context/context.js";
 
 const fiscalcodeVerificationRouter = (
   ctx: ZodiosContext
@@ -24,7 +24,7 @@ const fiscalcodeVerificationRouter = (
   // Endpoint per gestire il caricamento del file e il corpo della richiesta
   fiscalcodeVerificationRouter.post(
     "/fiscalcode-verification/verifica",
-    contextDataMiddleware,
+    contextDataFiscalCodeMiddleware,
     uniquexCorrelationIdMiddleware(true),
     authenticationMiddleware(true),
     verifyCertValidity,
