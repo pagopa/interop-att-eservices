@@ -73,7 +73,9 @@ export const authenticationMiddleware: (isEnableTrial: boolean) => ZodiosRouterC
         if (isEnableTrial) {
           sendCustomEvent("trialEvent", {
             operationPath: req.url,
+            operationMethod: req.method,
             checkName: "VOUCHER_OK",
+            response: "OK"
           });
         }
         return next();

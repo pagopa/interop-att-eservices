@@ -7,9 +7,10 @@ interface TrialAttributes {
   purpose_id: string;
   correlation_id: string;
   operation_path: string;
+  operation_method: string | null;
   check_id: number;
-  response: boolean | null;
-  message: string | null;
+  response: string | null;
+  created_date: Date | null;
 }
 
 class Trial extends Model<TrialAttributes> implements TrialAttributes {
@@ -17,9 +18,10 @@ class Trial extends Model<TrialAttributes> implements TrialAttributes {
   public purpose_id!: string;
   public correlation_id!: string;
   public operation_path!: string;
+  public operation_method!: string | null;
   public check_id!: number;
-  public response!: boolean | null;
-  public message!: string | null;
+  public response!: string | null;
+  public created_date!: Date | null;
 }
 
 Trial.init(
@@ -41,6 +43,10 @@ Trial.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    operation_method: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     check_id: {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -50,12 +56,11 @@ Trial.init(
       },
     },
     response: {
-      type: DataTypes.BOOLEAN,
-      allowNull: true,
-      defaultValue: false,
-    },
-    message: {
       type: DataTypes.STRING,
+      allowNull: true,
+    },
+    created_date: {
+      type: DataTypes.DATE,
       allowNull: true,
     },
   },

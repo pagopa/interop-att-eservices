@@ -15,7 +15,7 @@ const startlistner = async (): Promise<void> => {
         logger.error("trialEvent - data.checkName cannot be null");
         return;
       }
-      await TrialRepository.insert(data.operationPath, data.checkName);
+      await TrialRepository.insert(data.operationPath, data.operationMethod, data.checkName, data.response);
       logger.info(`[END] trialEvent`);
     });
   } catch (error) {
