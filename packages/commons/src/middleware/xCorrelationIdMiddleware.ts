@@ -45,7 +45,6 @@ export const uniquexCorrelationIdMiddleware: (isEnableTrial: boolean) => ZodiosR
             .with("genericBadRequest", () => 400)
             .with("genericError", () => 500)
             .with("xCorrelationIdNotValid", () => 500)
-
             .otherwise(() => 500)
         );
         return res.status(problem.status).json(problem).end();

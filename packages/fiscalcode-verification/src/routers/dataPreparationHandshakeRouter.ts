@@ -51,6 +51,7 @@ const dataPreparationHandshakeRouter = (
           apikey: apiKey,
           cert: serialNumber,
         };
+        logger.info (`cert: ${handshakeData.cert}`) 
 
         await dataPreparationHandshakeService.saveList(handshakeData);
         logger.info("certificato salvato con successo");
