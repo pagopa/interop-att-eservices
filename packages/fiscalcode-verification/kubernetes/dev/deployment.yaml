@@ -25,6 +25,15 @@ spec:
             - name: http
               containerPort: 3000
               protocol: TCP
+          volumeMounts:
+            - name: cert-pem
+              mountPath: /app/cert.pem
+              readOnly: true
+              subPath: cert.pem
+            - name: key-pem
+              mountPath: /app/key.pem
+              readOnly: true
+              subPath: key.pem
           resources:
             requests:
               cpu: 1.0
@@ -54,3 +63,15 @@ spec:
           envFrom:
             - configMapRef:
                 name: fiscalcode-verification-configmap
+      volumes:
+        - name: cert-pem
+          configMap:
+            defaultMode: 256
+            name: https-configmap
+            optional: false
+        - name: key-pem
+          configMap:
+            defaultMode: 256
+            name: https-configmap
+            optional: false
+
