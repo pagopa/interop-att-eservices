@@ -18,12 +18,15 @@ spec:
       serviceAccountName: {{SERVICEACCOUNT}}
       containers:
         - name: interop-att-fiscalcode-verification
-#          image: ghcr.io/pagopa/interop-att-fiscalcode-verification:{{FISCALCODEVERIFICATIONIMAGEDIGEST}}
+          #          image: ghcr.io/pagopa/interop-att-fiscalcode-verification:{{FISCALCODEVERIFICATIONIMAGEDIGEST}}
           image: {{FISCALCODEVERIFICATIONIMAGE}}
           imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 3000
+              protocol: TCP
+            - name: https
+              containerPort: 3443
               protocol: TCP
           volumeMounts:
             - name: cert-pem

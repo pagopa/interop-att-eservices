@@ -8,7 +8,11 @@ spec:
   ports:
     - port: 3000
       name: http
-      targetPort: http
+      targetPort: 3000
+      protocol: TCP
+    - port: 3443
+      name: https
+      targetPort: 3443
       protocol: TCP
   selector:
     app: interop-att-fiscalcode-verification
