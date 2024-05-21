@@ -5,6 +5,7 @@ import fs from "fs";
 import https from "https";
 
 const port = process.env.PORT || 3002;
+const portHttps =  Number(port) + 443;
 
 const startServer = async (): Promise<void> => {
   try {
@@ -21,8 +22,8 @@ const startServer = async (): Promise<void> => {
       const credentials = { key: privateKey, cert: certificate };
       // Crea il server HTTPS
       const httpsServer = https.createServer(credentials, app);
-      httpsServer.listen(port, () => {
-      logger.info(`Server running on https://localhost:${port}`);
+      httpsServer.listen(portHttps, () => {
+      logger.info(`Server running on https://localhost:${portHttps}`);
     });
     } else {
       app.listen(port, () => {
