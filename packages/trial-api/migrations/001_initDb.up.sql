@@ -40,7 +40,8 @@ CREATE INDEX trial_purpose_id_idx ON trial USING btree (purpose_id);
 INSERT INTO category (id,code,eservice,description,"order") VALUES
     (1,'VOUCHER','residence-verification,fiscal-code','bearer token',1),
     (2,'Agid-JWT-Signature','residence-verification','token in Headers',2),
-    (3,'Agid-JWT-TrackingEvidence','residence-verification','token in Headers',3);
+    (3,'Agid-JWT-TrackingEvidence','residence-verification','token in Headers',3),
+    (4,'e-service','residence-verification,fiscalcode-verification','e-services exposed by the application',4);
 
 INSERT INTO "check" (id,code,description,"order",category_id) VALUES
     (1,'authData','Bearer token can not be parsed',1,1),
@@ -92,4 +93,6 @@ INSERT INTO "check" (id,code,description,"order",category_id) VALUES
     (43,'LoA','"LoA" not valid in agid-jwt-trackingevidence payload token',15,3),
     (44,'VOUCHER','OK',1,1),
     (45,'Agid-JWT-Signature','OK',2,2),
-    (46,'Agid-JWT-TrackingEvidence','OK',3,3);
+    (46,'Agid-JWT-TrackingEvidence','OK',3,3),
+    (47,'residence-verification-001','OK',4,4),
+    (48,'residence-verification-001','KO',4,4);
