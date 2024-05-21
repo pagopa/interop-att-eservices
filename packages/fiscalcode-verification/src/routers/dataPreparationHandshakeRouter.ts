@@ -3,7 +3,6 @@ import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext, logger } from "pdnd-common";
 import multer from "multer";
 import { getContext } from "pdnd-common";
-import { contextDataMiddleware } from "pdnd-common";
 import { authenticationMiddleware } from "pdnd-common";
 import dataPreparationHandshakeService from "../services/dataPreparationHandshakeService.js";
 import { api } from "../model/generated/api.js";
@@ -13,7 +12,8 @@ import {
   requestParamNotValid,
 } from "../exceptions/errors.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
-import { createCertificateHash } from "../utilities/certificateUtility.js";
+import { getCertificateFingerprintFromBuffer } from "../utilities/certificateUtility.js";
+import { contextDataFiscalCodeMiddleware } from "../context/context.js";
 
 const dataPreparationHandshakeRouter = (
   ctx: ZodiosContext
@@ -24,7 +24,7 @@ const dataPreparationHandshakeRouter = (
 
   dataPreparationHandshakeRouter.post(
     "/fiscalcode-verification/data-preparation/handshake",
-    contextDataMiddleware,
+    contextDataFiscalCodeMiddleware,
     authenticationMiddleware(false),
     upload.single("certificate"),
     async (req, res) => {
@@ -45,12 +45,13 @@ const dataPreparationHandshakeRouter = (
         // Il certificato sarà accessibile tramite req.file.buffer
         const certificateData: Buffer = req.file.buffer;
 
-        const serialNumber = createCertificateHash(certificateData);
+        const serialNumber = getCertificateFingerprintFromBuffer(certificateData);
         const handshakeData = {
           pourposeId: getContext().authData.purposeId,
           apikey: apiKey,
           cert: serialNumber,
         };
+        logger.info (`cert: ${handshakeData.cert}`) 
 
         await dataPreparationHandshakeService.saveList(handshakeData);
         logger.info("certificato salvato con successo");

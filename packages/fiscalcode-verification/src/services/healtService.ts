@@ -56,7 +56,7 @@ class healtService {
   }
 }
 
-async function checkStatusInteropAuth(): Promise<boolean> {
+export async function checkStatusInteropAuth(): Promise<boolean> {
   try {
     /* eslint-disable */
     const response: AxiosResponse<any> = await axios.get(
@@ -70,7 +70,7 @@ async function checkStatusInteropAuth(): Promise<boolean> {
   }
 }
 
-async function checkStatusinterop(): Promise<boolean> {
+export async function checkStatusinterop(): Promise<boolean> {
   try {
     /* eslint-disable */
     const response: AxiosResponse<any> = await axios.get(

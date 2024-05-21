@@ -40,4 +40,25 @@ export class TrialRepository {
       );
     }
   }
+
+  public static async findByCorrelationId(correlationId: string) {
+    try {
+      const trials = await Trial.findAll({
+        where: {
+          correlation_id: correlationId,
+        },
+      });
+
+      logger.info(
+        `TrialRepository - Trovati ${trials.length} record(s) Trial con correlationId: ${correlationId}`
+      );
+
+      return trials;
+    } catch (error) {
+      logger.error(
+        `Errore durante la ricerca dei record Trial con correlationId '${correlationId}' con errore: ${error}`
+      );
+      throw error; // Rilancia l'errore per una gestione esterna se necessario
+    }
+  }
 }

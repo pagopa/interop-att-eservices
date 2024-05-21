@@ -1,7 +1,6 @@
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext, logger } from "pdnd-common";
-import { contextDataMiddleware } from "pdnd-common";
 import { authenticationMiddleware } from "pdnd-common";
 import { ErrorHandling } from "pdnd-models";
 import { api } from "../model/generated/api.js";
@@ -13,6 +12,7 @@ import {
   apiFiscalcodeModelToDataPreparationResponse,
   apiDatapreparationTemplateToFiscalcodeModel,
 } from "../model/domain/apiConverter.js";
+import { contextDataFiscalCodeMiddleware } from "../context/context.js";
 // import { ErrorHandling } from "pdnd-models";
 
 const dataPreparationRouter = (
@@ -22,7 +22,7 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.post(
     "/fiscalcode-verification/data-preparation",
-    contextDataMiddleware,
+    contextDataFiscalCodeMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
@@ -39,7 +39,7 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.get(
     "/fiscalcode-verification/data-preparation/all",
-    contextDataMiddleware,
+    contextDataFiscalCodeMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
@@ -60,7 +60,7 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.delete(
     "/fiscalcode-verification/data-preparation/reset",
-    contextDataMiddleware,
+    contextDataFiscalCodeMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
@@ -83,7 +83,7 @@ const dataPreparationRouter = (
 /* eslint-disable */
   dataPreparationRouter.post(
     "/fiscalcode-verification/data-preparation/remove",
-    contextDataMiddleware,
+    contextDataFiscalCodeMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       /* eslint-enable */

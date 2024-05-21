@@ -18,13 +18,25 @@ spec:
       serviceAccountName: {{SERVICEACCOUNT}}
       containers:
         - name: interop-att-fiscalcode-verification
-#          image: ghcr.io/pagopa/interop-att-fiscalcode-verification:{{FISCALCODEVERIFICATIONIMAGEDIGEST}}
+          #          image: ghcr.io/pagopa/interop-att-fiscalcode-verification:{{FISCALCODEVERIFICATIONIMAGEDIGEST}}
           image: {{FISCALCODEVERIFICATIONIMAGE}}
           imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 3000
               protocol: TCP
+            - name: https
+              containerPort: 3443
+              protocol: TCP
+          volumeMounts:
+            - name: cert-pem
+              mountPath: /app/cert.pem
+              readOnly: true
+              subPath: cert.pem
+            - name: key-pem
+              mountPath: /app/key.pem
+              readOnly: true
+              subPath: key.pem
           resources:
             requests:
               cpu: 1.0
@@ -54,3 +66,15 @@ spec:
           envFrom:
             - configMapRef:
                 name: fiscalcode-verification-configmap
+      volumes:
+        - name: cert-pem
+          configMap:
+            defaultMode: 256
+            name: https-configmap
+            optional: false
+        - name: key-pem
+          configMap:
+            defaultMode: 256
+            name: https-configmap
+            optional: false
+

@@ -1,10 +1,10 @@
 // import { logger } from "pdnd-common";
 import { cacheManager } from "pdnd-common";
 
-class dataPreparationRepository {
+class healtRepository {
   public async checkConnection(): Promise<boolean | null> {
     return await cacheManager.checkConnection();
   }
 }
 
-export default new dataPreparationRepository();
+export default new healtRepository();
