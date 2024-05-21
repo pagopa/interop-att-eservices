@@ -1,14 +1,12 @@
 import crypto from "crypto";
 
 export function getCertificateFingerprintFromBuffer(buffer: Buffer): string {
-  const cert: string = buffer.toString('base64');
+  const cert: string = buffer.toString('utf8');
 
   // Converte il certificato pulito in formato URL-encoded
   const encodedCert = encodeURIComponent(cert);
 
-  // Aggiunge i delimitatori e le nuove linee formattate correttamente
-  const encode: string =  `-----BEGIN%20CERTIFICATE-----%0A${encodedCert}%0A-----END%20CERTIFICATE-----%0A`;
-  return getCertificateFingerprintFromString(encode)
+  return getCertificateFingerprintFromString(encodedCert)
 }
 
 export function getCertificateFingerprintFromString(certString: string): string {
@@ -20,7 +18,7 @@ export function getCertificateFingerprintFromString(certString: string): string 
     .trim();
 
   // Converte il certificato in un Buffer
-  const certBuffer = Buffer.from(certBody, 'base64');
+  const certBuffer = Buffer.from(certBody, 'utf8');
 
   // Calcola l'hash SHA-256 del Buffer
   const hash = crypto.createHash('sha256');
