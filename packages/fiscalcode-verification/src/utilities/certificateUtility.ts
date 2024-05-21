@@ -1,11 +1,12 @@
 import crypto from "crypto";
+import { logger } from "pdnd-common";
 
 export function getCertificateFingerprintFromBuffer(buffer: Buffer): string {
   const cert: string = buffer.toString('utf8');
 
   // Converte il certificato pulito in formato URL-encoded
   const encodedCert = encodeURIComponent(cert);
-
+  logger.info ("encodedCert: " + encodedCert);
   return getCertificateFingerprintFromString(encodedCert)
 }
 
