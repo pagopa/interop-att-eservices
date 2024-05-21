@@ -11,24 +11,24 @@ const startServer = async (): Promise<void> => {
     await sequelize.authenticate();
 
     await executeDatabaseMigrations();
-
     logger.info("Connection to Database has been established.");
-    app.listen(port, () => {
-      logger.info(`Server is running on http://localhost:${port}`);
-    });
 
-    if (process.env.ENABLE_HTTPS && process.env.HTTPS_KEY_PATH && process.env.HTTPS_CERT_PATH) {
-      // Avvia il server HTTPS sulla porta 443
-      const portHttps = 443;
+   
+    if (process.env.HTTPS_KEY_PATH && process.env.HTTPS_CERT_PATH) {
       // Leggi i certificati SSL dai file montati
       const privateKey = fs.readFileSync(process.env.HTTPS_KEY_PATH, 'utf8');
       const certificate = fs.readFileSync(process.env.HTTPS_CERT_PATH, 'utf8');
       const credentials = { key: privateKey, cert: certificate };
       // Crea il server HTTPS
       const httpsServer = https.createServer(credentials, app);
-      httpsServer.listen(portHttps, () => {
-      logger.info(`Server running on https://localhost:${portHttps}`);
+      httpsServer.listen(port, () => {
+      logger.info(`Server running on https://localhost:${port}`);
     });
+    } else {
+      app.listen(port, () => {
+        logger.info(`Server is running on http://localhost:${port}`);
+      });
+  
     }
     
   } catch (error) {
