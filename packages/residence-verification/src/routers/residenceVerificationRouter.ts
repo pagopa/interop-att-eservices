@@ -14,6 +14,7 @@ import {
 import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
 import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
 import { contextDataResidenceMiddleware } from "../context/context.js";
+import { TrialRepository } from "trial";
 
 const residenceVerificationRouter = (
   ctx: ZodiosContext
@@ -36,6 +37,7 @@ const residenceVerificationRouter = (
         if (!data || data.soggetti?.soggetto?.length === 0) {
           throw userModelNotFound();
         }
+        TrialRepository.insert(req.url, req.method, "RESIDENCE_VERIFICATION_001_OK", "OK");
         logger.info(`[END] Post - '/ar-service-001'`);
         return res.status(200).json(data).end();
       } catch (error) {
@@ -45,6 +47,7 @@ const residenceVerificationRouter = (
           correlationId,
           errorRes
         );
+        TrialRepository.insert(req.url, req.method, "RESIDENCE_VERIFICATION_001_KO");
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }
     }

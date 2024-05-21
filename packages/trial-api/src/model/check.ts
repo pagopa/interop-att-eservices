@@ -101,6 +101,8 @@ export const checkValuesMap: { [key: string]: number } = {
   VOUCHER_OK: 44,
   SIGNATURE_OK: 45,
   TRACKING_EVIDENCE_OK: 46,
+  RESIDENCE_VERIFICATION_001_OK: 47,
+  RESIDENCE_VERIFICATION_001_KO: 48
 };
 
 const getCheckValue = (key: string): number | undefined => checkValuesMap[key];

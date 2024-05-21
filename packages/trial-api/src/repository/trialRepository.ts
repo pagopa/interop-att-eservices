@@ -6,9 +6,9 @@ import { getCheckValue } from "../model/check.js";
 export class TrialRepository {
   public static async insert(
     operationPath: string,
+    operationMethod: string,
     checkName: string,
-    response?: boolean,
-    message?: string
+    response?: string,
   ) {
     try {
       const context = getContext();
@@ -25,9 +25,9 @@ export class TrialRepository {
         purpose_id: context.authData.purposeId,
         correlation_id: context.correlationId,
         operation_path: operationPath,
+        operation_method: operationMethod,
         check_id: checkId,
         response,
-        message,
       });
 
       // Output del record creato
