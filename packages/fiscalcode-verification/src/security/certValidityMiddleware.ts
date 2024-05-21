@@ -4,7 +4,7 @@ import DataPreparationHandshakeService from "../services/dataPreparationHandshak
 import {
   makeApiProblem,
 } from "../exceptions/errors.js";
-import { getCertificateFingerprintFromString } from "../utilities/certificateUtility.js";
+import { getSerialNumberFromUrlEncodedCert } from "../utilities/certificateUtility.js";
 import { match } from "ts-pattern";
 import { ErrorHandling } from "../../../models/dist/errorHandling.js";
 
@@ -22,24 +22,19 @@ export const verifyCertValidity: ZodiosRouterContextRequestHandler<
     throw ErrorHandling.certificateNotValidError();  
   }
   
-  logger.info (`verifyCertValidity: x-amzn-mtls-clientcert: ${headerCert}`) 
   const apiKey: string | undefined = req.headers.apikey as string | undefined;
   if (!apiKey) {
     logger.error('Header apikey mandatory.');
     throw ErrorHandling.apikeyNotValidError();
   }
 
-  const serialNumber = getCertificateFingerprintFromString(headerCert);
+  const serialNumber = getSerialNumberFromUrlEncodedCert(headerCert);
   
-    const appContext = getContext();
+  const appContext = getContext();
     const handshake = await DataPreparationHandshakeService.getByPurposeId(
       appContext.authData.purposeId
     );
 
-    logger.info(`handshake.cert ${handshake?.cert}`);    
-    logger.info(`serialNumber ${serialNumber}`);    
-
-    
     if (handshake?.cert !== serialNumber) {
       logger.error(
         `Certificato non valido`

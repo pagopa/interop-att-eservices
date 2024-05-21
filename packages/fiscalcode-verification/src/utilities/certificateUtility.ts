@@ -13,25 +13,6 @@ export function getCertificateFingerprintFromBuffer(buffer: Buffer): string {
   //return getCertificateFingerprintFromString(encodedCert)
 }
 
-export function getCertificateFingerprintFromString(certString: string): string {
-  logger.info ("encodedCert: " + certString);
-  logger.info ("serial number: " + getSerialNumber(certString));
-  // Rimuovi i delimitatori e unisci le linee del certificato
-  return getSerialNumber(certString);
-  /*const certBody = certString
-    .replace(/-----BEGIN CERTIFICATE-----/, '')
-    .replace(/-----END CERTIFICATE-----/, '')
-    .replace(/\s+/g, '') // Rimuove gli spazi bianchi e le nuove linee
-    .trim();
-
-  // Converte il certificato in un Buffer
-  const certBuffer = Buffer.from(certBody, 'utf8');
-
-  // Calcola l'hash SHA-256 del Buffer
-  const hash = crypto.createHash('sha256');
-  hash.update(certBuffer);
-  return hash.digest('hex');*/
-}
 
 
 // Funzione per estrarre il numero di serie di un certificato
@@ -41,3 +22,30 @@ export function getSerialNumber(cert: string): string {
   return x509.getSerialNumberHex();
 }
 
+/**
+ * Converte un certificato URL-encoded in formato PEM e ne estrae il numero di serie.
+ * @param {string} urlEncodedCert - Il certificato URL-encoded.
+ * @returns {string} - Il numero di serie del certificato.
+ */
+export function getSerialNumberFromUrlEncodedCert(urlEncodedCert: string): string {
+  // Decodifica il certificato URL-encoded
+  const decodedCert = decodeURIComponent(urlEncodedCert);
+  
+  // Estrae il contenuto del certificato rimuovendo i delimitatori PEM
+  const pemCert = decodedCert
+    .replace('-----BEGIN CERTIFICATE-----', '')
+    .replace('-----END CERTIFICATE-----', '')
+    .replace(/\s+/g, ''); // Rimuove spazi e line breaks
+
+  // Aggiunge i delimitatori PEM con ritorni a capo corretti
+  const formattedPemCert = `-----BEGIN CERTIFICATE-----\n${pemCert.match(/.{1,64}/g)?.join('\n')}\n-----END CERTIFICATE-----`;
+
+  // Crea un oggetto X509 dalla stringa PEM
+  const x509 = new X509();
+  x509.readCertPEM(formattedPemCert);
+
+  // Ottiene il numero di serie del certificato
+  const serialNumber = x509.getSerialNumberHex();
+
+  return serialNumber;
+}

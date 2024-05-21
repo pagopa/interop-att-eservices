@@ -8,9 +8,8 @@ import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { verifyCertValidity } from "../security/certValidityMiddleware.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
-import { convertStringToRichiesta } from "../utilities/jsonFiscalcodeUtilities.js";
 import { contextDataFiscalCodeMiddleware } from "../context/context.js";
-import logHeadersMiddleware from "../middlewares/logHeaderMiddleware.js";
+//import logHeadersMiddleware from "../middlewares/logHeaderMiddleware.js";
 
 const fiscalcodeVerificationRouter = (
   ctx: ZodiosContext
@@ -25,7 +24,7 @@ const fiscalcodeVerificationRouter = (
   // Endpoint per gestire il caricamento del file e il corpo della richiesta
   fiscalcodeVerificationRouter.post(
     "/fiscalcode-verification/verifica",
-    logHeadersMiddleware,
+    //logHeadersMiddleware,
     contextDataFiscalCodeMiddleware,
     uniquexCorrelationIdMiddleware(true),
     authenticationMiddleware(true),
@@ -36,9 +35,8 @@ const fiscalcodeVerificationRouter = (
      console.log('Request Headers:', req.headers);
 
         logger.info(`[START] Post - '/verifica' : ${req.body.codiceFiscale}`);
-        const richiesta = convertStringToRichiesta(req.body.content);
         const data = await FiscalcodeVerificationController.findFiscalcode(
-          richiesta
+          req.body
         );
         logger.info(`[END] Post - '/verifica'`);
         return res.status(200).json(data).end();
