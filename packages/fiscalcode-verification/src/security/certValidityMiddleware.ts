@@ -19,9 +19,10 @@ export const verifyCertValidity: ZodiosRouterContextRequestHandler<
 
   if (!headerCert) {
     logger.error("Nessun certificato caricato");
-    throw ErrorHandling.certificateNotValidError();  }
+    throw ErrorHandling.certificateNotValidError();  
+  }
   
-    logger.info (`x-amzn-mtls-clientcert: ${headerCert}`) 
+  logger.info (`verifyCertValidity: x-amzn-mtls-clientcert: ${headerCert}`) 
   const apiKey: string | undefined = req.headers.apikey as string | undefined;
   if (!apiKey) {
     logger.error('Header apikey mandatory.');
@@ -34,6 +35,11 @@ export const verifyCertValidity: ZodiosRouterContextRequestHandler<
     const handshake = await DataPreparationHandshakeService.getByPurposeId(
       appContext.authData.purposeId
     );
+
+    logger.info(`handshake.cert ${handshake?.cert}`);    
+    logger.info(`serialNumber ${serialNumber}`);    
+
+    
     if (handshake?.cert !== serialNumber) {
       logger.error(
         `Certificato non valido`
