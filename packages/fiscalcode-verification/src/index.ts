@@ -23,14 +23,12 @@ const startServer = async (): Promise<void> => {
       // Crea il server HTTPS
       const httpsServer = https.createServer(credentials, app);
       httpsServer.listen(portHttps, () => {
-      logger.info(`Server running on https://localhost:${portHttps}`);
-    });
-    } else {
-      app.listen(port, () => {
-        logger.info(`Server is running on http://localhost:${port}`);
+        logger.info(`Server running on https://localhost:${portHttps}`);
       });
-  
-    }
+    } 
+    app.listen(port, () => {
+      logger.info(`Server is running on http://localhost:${port}`);
+    });
     
   } catch (error) {
     logger.error("SERVER NOT STARTED: ", error);
