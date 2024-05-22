@@ -20,7 +20,6 @@ const dataPreparationRouter = (
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const dataPreparationRouter = ctx.router(api.api);
 
-
   dataPreparationRouter.post(
     "/residence-verification/data-preparation",
     contextDataResidenceMiddleware,

@@ -11,7 +11,9 @@ export const HeadersResidenceVerification = z.object({
   "agid-jwt-trackingevidence": z.string().nullish(),
 });
 
-export type HeadersResidenceVerification = z.infer<typeof HeadersResidenceVerification>;
+export type HeadersResidenceVerification = z.infer<
+  typeof HeadersResidenceVerification
+>;
 
 export const ParsedHeadersResidenceVerification = z
   .object({
@@ -20,9 +22,13 @@ export const ParsedHeadersResidenceVerification = z
     agidJwtTrackingevidence: z.string(),
   })
   .and(AuthData);
-export type ParsedHeadersResidenceVerification = z.infer<typeof ParsedHeadersResidenceVerification>;
+export type ParsedHeadersResidenceVerification = z.infer<
+  typeof ParsedHeadersResidenceVerification
+>;
 
-export const readHeadersResidenceVerification = (req: Request): ParsedHeadersResidenceVerification | undefined => {
+export const readHeadersResidenceVerification = (
+  req: Request
+): ParsedHeadersResidenceVerification | undefined => {
   try {
     const headers = HeadersResidenceVerification.parse(req.headers);
     return match(headers)

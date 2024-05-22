@@ -42,4 +42,3 @@ export const globalContextMiddleware = (
   globalStore.run(defaultAppContext, () => defaultAppContext);
   next();
 };
-

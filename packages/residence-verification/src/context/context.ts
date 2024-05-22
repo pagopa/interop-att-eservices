@@ -1,8 +1,7 @@
 /* eslint-disable functional/immutable-data */
 import { NextFunction, Request, Response } from "express";
-import { readHeadersResidenceVerification } from "./headers.js";
 import { getContext } from "pdnd-common";
-
+import { readHeadersResidenceVerification } from "./headers.js";
 
 export const contextDataResidenceMiddleware = (
   req: Request,

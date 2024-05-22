@@ -2,14 +2,17 @@ import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
-import { authenticationMiddleware , uniquexCorrelationIdMiddleware } from "pdnd-common";
+import {
+  authenticationMiddleware,
+  uniquexCorrelationIdMiddleware,
+} from "pdnd-common";
+import { TrialRepository } from "trial";
 import FiscalcodeVerificationController from "../controllers/fiscalcodeVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { verifyCertValidity } from "../security/certValidityMiddleware.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataFiscalCodeMiddleware } from "../context/context.js";
-import { TrialRepository } from "trial";
 
 const fiscalcodeVerificationRouter = (
   ctx: ZodiosContext
@@ -18,21 +21,23 @@ const fiscalcodeVerificationRouter = (
 
   fiscalcodeVerificationRouter.post(
     "/fiscalcode-verification/verifica",
-    //logHeadersMiddleware,
+    // logHeadersMiddleware,
     contextDataFiscalCodeMiddleware,
     uniquexCorrelationIdMiddleware(true),
     authenticationMiddleware(true),
     verifyCertValidity,
     async (req, res) => {
       try {
-
-        console.log('Request Headers:', req.headers);
-
         logger.info(`[START] Post - '/verifica' : ${req.body.codiceFiscale}`);
         const data = await FiscalcodeVerificationController.findFiscalcode(
           req.body
         );
-        TrialRepository.insert(req.url, req.method, "FISCALCODE_VERIFICATION_OK", "OK");
+        void TrialRepository.insert(
+          req.url,
+          req.method,
+          "FISCALCODE_VERIFICATION_OK",
+          "OK"
+        );
         logger.info(`[END] Post - '/verifica'`);
         return res.status(200).json(data).end();
       } catch (error) {
@@ -42,7 +47,13 @@ const fiscalcodeVerificationRouter = (
           correlationId,
           errorRes
         );
-        TrialRepository.insert(req.url, req.method, "FISCALCODE_VERIFICATION_KO", "KO", JSON.stringify(generalErrorResponse));
+        void TrialRepository.insert(
+          req.url,
+          req.method,
+          "FISCALCODE_VERIFICATION_KO",
+          "KO",
+          JSON.stringify(generalErrorResponse)
+        );
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }
     }
