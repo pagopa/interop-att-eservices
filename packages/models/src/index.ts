@@ -5,3 +5,5 @@ export * from "./interoperability/index.js";
 export * from "./error/apiError.js";
 export * from "./error/interalError.js";
 export * from "./fiscalcodeVerification/fiscalcodeVerification.js";
+export * from "./pivaVerification/pivaVerification.js";
+export * from "./handshake/handshake.js";
