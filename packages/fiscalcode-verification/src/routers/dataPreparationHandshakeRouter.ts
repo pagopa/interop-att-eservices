@@ -59,7 +59,7 @@ const dataPreparationHandshakeRouter = (
       } catch (error) {
         // Gestione dell'errore
         logger.error(
-          `i è verificato un errore durante l upload dell handshake: ${error}`
+          `si è verificato un errore durante l upload dell certificato: ${error}`
         );
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();

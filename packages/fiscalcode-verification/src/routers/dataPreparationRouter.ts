@@ -5,7 +5,6 @@ import { authenticationMiddleware } from "pdnd-common";
 import { ErrorHandling } from "pdnd-models";
 import { api } from "../model/generated/api.js";
 import DataPreparationService from "../services/dataPreparationService.js";
-// import { getContext } from "pdnd-common";
 import { makeApiProblem } from "../exceptions/errors.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import {
@@ -13,7 +12,6 @@ import {
   apiDatapreparationTemplateToFiscalcodeModel,
 } from "../model/domain/apiConverter.js";
 import { contextDataFiscalCodeMiddleware } from "../context/context.js";
-// import { ErrorHandling } from "pdnd-models";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
