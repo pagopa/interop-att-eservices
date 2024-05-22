@@ -11,6 +11,7 @@ interface TrialAttributes {
   check_id: number;
   response: string | null;
   created_date: Date | null;
+  message: string | null;
 }
 
 class Trial extends Model<TrialAttributes> implements TrialAttributes {
@@ -22,6 +23,7 @@ class Trial extends Model<TrialAttributes> implements TrialAttributes {
   public check_id!: number;
   public response!: string | null;
   public created_date!: Date | null;
+  public message!: string | null;
 }
 
 Trial.init(
@@ -61,6 +63,10 @@ Trial.init(
     },
     created_date: {
       type: DataTypes.DATE,
+      allowNull: true,
+    },
+    message: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
   },

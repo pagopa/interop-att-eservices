@@ -9,6 +9,7 @@ import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { verifyCertValidity } from "../security/certValidityMiddleware.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataFiscalCodeMiddleware } from "../context/context.js";
+import { TrialRepository } from "trial";
 
 const fiscalcodeVerificationRouter = (
   ctx: ZodiosContext
@@ -31,6 +32,7 @@ const fiscalcodeVerificationRouter = (
         const data = await FiscalcodeVerificationController.findFiscalcode(
           req.body
         );
+        TrialRepository.insert(req.url, req.method, "FISCALCODE_VERIFICATION_OK", "OK");
         logger.info(`[END] Post - '/verifica'`);
         return res.status(200).json(data).end();
       } catch (error) {
@@ -40,6 +42,7 @@ const fiscalcodeVerificationRouter = (
           correlationId,
           errorRes
         );
+        TrialRepository.insert(req.url, req.method, "FISCALCODE_VERIFICATION_KO", "KO", JSON.stringify(generalErrorResponse));
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }
     }

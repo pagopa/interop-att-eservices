@@ -48,7 +48,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.get(
     "/residence-verification/data-preparation",
     contextDataResidenceMiddleware,
-    authenticationMiddleware(true),
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {

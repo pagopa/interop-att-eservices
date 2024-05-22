@@ -9,6 +9,7 @@ export class TrialRepository {
     operationMethod: string,
     checkName: string,
     response?: string,
+    message?: string,
   ) {
     try {
       const context = getContext();
@@ -28,6 +29,7 @@ export class TrialRepository {
         operation_method: operationMethod,
         check_id: checkId,
         response,
+        message,
       });
 
       // Output del record creato
@@ -61,4 +63,6 @@ export class TrialRepository {
       throw error; // Rilancia l'errore per una gestione esterna se necessario
     }
   }
+
+ 
 }
