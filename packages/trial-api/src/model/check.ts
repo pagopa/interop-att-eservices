@@ -102,7 +102,11 @@ export const checkValuesMap: { [key: string]: number } = {
   SIGNATURE_OK: 45,
   TRACKING_EVIDENCE_OK: 46,
   RESIDENCE_VERIFICATION_001_OK: 47,
-  RESIDENCE_VERIFICATION_001_KO: 48
+  RESIDENCE_VERIFICATION_001_KO: 48,
+  FISCALCODE_VERIFICATION_OK: 49,
+  FISCALCODE_VERIFICATION_KO: 50,
+  CERT_VERIFICATION_OK: 51,
+  CERT_VERIFICATION_NOT_VALID: 52,
 };
 
 const getCheckValue = (key: string): number | undefined => checkValuesMap[key];

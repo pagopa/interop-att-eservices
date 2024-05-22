@@ -27,6 +27,7 @@ CREATE TABLE trial (
 	operation_method varchar NOT NULL,
 	check_id int8 NULL,
 	response varchar DEFAULT 'KO'::character varying NOT NULL,
+	message varchar NULL,
 	created_date timestamp DEFAULT timezone('UTC'::text, now()) NOT NULL,
 	CONSTRAINT trial_pk PRIMARY KEY (id),
 	CONSTRAINT trial_check_fk FOREIGN KEY (check_id) REFERENCES public."check"(id)
@@ -41,7 +42,8 @@ INSERT INTO category (id,code,eservice,description,"order") VALUES
     (1,'VOUCHER','residence-verification,fiscal-code','bearer token',1),
     (2,'Agid-JWT-Signature','residence-verification','token in Headers',2),
     (3,'Agid-JWT-TrackingEvidence','residence-verification','token in Headers',3),
-    (4,'e-service','residence-verification,fiscalcode-verification','e-services exposed by the application',4);
+    (4,'e-service','residence-verification,fiscalcode-verification','e-services exposed by the application',4),
+    (5,'cert','fiscalcode-verification','Verify certificate validity',2);
 
 INSERT INTO "check" (id,code,description,"order",category_id) VALUES
     (1,'authData','Bearer token can not be parsed',1,1),
@@ -95,4 +97,9 @@ INSERT INTO "check" (id,code,description,"order",category_id) VALUES
     (45,'Agid-JWT-Signature','OK',2,2),
     (46,'Agid-JWT-TrackingEvidence','OK',3,3),
     (47,'residence-verification-001','OK',4,4),
-    (48,'residence-verification-001','KO',4,4);
+    (48,'residence-verification-001','KO',4,4),
+    (49,'fiscalcode-verification','OK',3,4),
+    (50,'fiscalcode-verification','KO',3,4);
+INSERT INTO "check" (id,code,description,"order",category_id) VALUES
+    (51,'cert','OK',3,3),
+    (52,'cert','Not Valid',3,3);

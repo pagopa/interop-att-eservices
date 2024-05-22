@@ -7,6 +7,7 @@ import {
 import { getSerialNumberFromUrlEncodedCert } from "../utilities/certificateUtility.js";
 import { match } from "ts-pattern";
 import { ErrorHandling } from "../../../models/dist/errorHandling.js";
+import { TrialRepository } from "trial";
 
 export const verifyCertValidity: ZodiosRouterContextRequestHandler<
   ExpressContext
@@ -47,6 +48,7 @@ export const verifyCertValidity: ZodiosRouterContextRequestHandler<
       );
       throw ErrorHandling.apikeyNotValidError();
     }
+    TrialRepository.insert(req.url, req.method, "CERT_VERIFICATION_OK", "OK");
     next(); // Chiamare next solo se il certificato è valido
   } catch (error) {
     logger.error(
@@ -61,6 +63,7 @@ export const verifyCertValidity: ZodiosRouterContextRequestHandler<
         .with("apikeyNotValid", () => 500)
         .otherwise(() => 500)
     );
+    TrialRepository.insert(req.url, req.method, "CERT_VERIFICATION_NOT_VALID", "KO", JSON.stringify(problem));
     res.status(problem.status).json(problem).end();
 
   }
