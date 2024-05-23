@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: interop-att-piva-verification
+  namespace: {{NAMESPACE}}
+  labels:
+    app: interop-att-piva-verification
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: interop-att-piva-verification
+  template:
+    metadata:
+      labels:
+        app: interop-att-piva-verification
+    spec:
+      serviceAccountName: {{SERVICEACCOUNT}}
+      containers:
+        - name: interop-att-piva-verification
+          #          image: ghcr.io/pagopa/interop-att-piva-verification:{{PIVAVERIFICATIONIMAGEDIGEST}}
+          image: {{PIVAVERIFICATIONIMAGE}}
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+            - name: https
+              containerPort: 3443
+              protocol: TCP
+          volumeMounts:
+            - name: cert-pem
+              mountPath: /app/cert.pem
+              readOnly: true
+              subPath: cert.pem
+            - name: key-pem
+              mountPath: /app/key.pem
+              readOnly: true
+              subPath: key.pem
+          resources:
+            requests:
+              cpu: 1.0
+              memory: 2Gi
+            limits:
+              cpu: 1.0
+              memory: 2Gi
+          livenessProbe:
+            httpGet:
+              path: /piva-verification/status
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 120
+          readinessProbe:
+            httpGet:
+              path: /piva-verification/status
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          env:
+            - name: PORT
+              value: "3000"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: LOG_LEVEL
+              value: info
+          envFrom:
+            - configMapRef:
+                name: piva-verification-configmap
+      volumes:
+        - name: cert-pem
+          configMap:
+            defaultMode: 256
+            name: https-configmap
+            optional: false
+        - name: key-pem
+          configMap:
+            defaultMode: 256
+            name: https-configmap
+            optional: false
+
