@@ -86,8 +86,8 @@ const dataPreparationRouter = (
     async (req, res) => {
       /* eslint-enable */
       try {
-        await DataPreparationService.saveList(
-          apiDatapreparationTemplateToFiscalcodeModel(req.body)
+        await DataPreparationService.deleteByFiscalCode(
+          apiDatapreparationTemplateToFiscalcodeModel(req.body).fiscalCode
         );
         return res.status(200).end();
       } catch (error) {

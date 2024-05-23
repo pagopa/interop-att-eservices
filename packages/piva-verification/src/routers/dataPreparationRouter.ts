@@ -86,8 +86,8 @@ const dataPreparationRouter = (
     async (req, res) => {
       /* eslint-enable */
       try {
-        await DataPreparationService.saveList(
-          apiDatapreparationTemplateToPivaModel(req.body)
+        await DataPreparationService.deleteByPiva(
+          apiDatapreparationTemplateToPivaModel(req.body).partitaIva
         );
         return res.status(200).end();
       } catch (error) {
