@@ -34,6 +34,8 @@ jobs:
             dockerfile_path: packages/residence-verification
           - image_name: fiscalcode-verification
             dockerfile_path: packages/fiscalcode-verification
+          - image_name: piva-verification
+            dockerfile_path: packages/piva-verification
 
     steps:
       - name: Checkout repository
