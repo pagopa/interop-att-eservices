@@ -11,7 +11,6 @@ export const apiDatapreparationTemplateToPivaModel = (
   partitaIva: template?.partitaIva || "",
 });
 
-
 export const apiPartitaIvaModelToDataPreparationResponse = (
   partitaIvas: PartitaIvaModel[] | undefined
 ): DataPreparationResponse =>
@@ -20,12 +19,12 @@ export const apiPartitaIvaModelToDataPreparationResponse = (
   })) || [];
 
 export const partitaIvaModelToVerificaPartitaIva = (
-  partitaIva : PartitaIvaModel | undefined | null,
+  partitaIva: PartitaIvaModel | undefined | null,
   isValid: boolean,
   message: string,
   partitaIvaNotFound?: string
 ): VerificaPartitaIva | null => {
-  if (partitaIva  !== undefined && partitaIva  !== null) {
+  if (partitaIva !== undefined && partitaIva !== null) {
     return {
       partitaIva: partitaIva.partitaIva || "",
       valido: isValid,

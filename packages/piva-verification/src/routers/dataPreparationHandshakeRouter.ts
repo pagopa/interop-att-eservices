@@ -45,13 +45,14 @@ const dataPreparationHandshakeRouter = (
         // Il certificato sarà accessibile tramite req.file.buffer
         const certificateData: Buffer = req.file.buffer;
 
-        const serialNumber = getCertificateFingerprintFromBuffer(certificateData);
+        const serialNumber =
+          getCertificateFingerprintFromBuffer(certificateData);
         const handshakeData = {
           pourposeId: getContext().authData.purposeId,
           apikey: apiKey,
           cert: serialNumber,
         };
-        logger.info (`cert: ${handshakeData.cert}`) 
+        logger.info(`cert: ${handshakeData.cert}`);
 
         await dataPreparationHandshakeService.saveList(handshakeData);
         logger.info("certificato salvato con successo");

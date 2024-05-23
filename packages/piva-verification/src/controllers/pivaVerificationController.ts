@@ -6,9 +6,7 @@ import { requestParamNotValid } from "../exceptions/errors.js";
 class PivaVerificationController {
   public appContext = getContext();
 
-  public async findPiva(
-    request: Richiesta
-  ): Promise<VerificaPartitaIva> {
+  public async findPiva(request: Richiesta): Promise<VerificaPartitaIva> {
     try {
       if (request.partitaIva) {
         const data = await PivaVerificationService.getByPiva(

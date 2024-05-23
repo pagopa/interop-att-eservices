@@ -1,7 +1,7 @@
 /* eslint-disable functional/immutable-data */
 import { NextFunction, Request, Response } from "express";
-import { readHeadersPiva } from "./headers.js";
 import { getContext } from "pdnd-common";
+import { readHeadersPiva } from "./headers.js";
 
 export const contextDataPivaMiddleware = (
   req: Request,
@@ -16,7 +16,7 @@ export const contextDataPivaMiddleware = (
       clientId: headers.clientId,
     };
 
-   context.correlationId = headers?.correlationId;
+    context.correlationId = headers?.correlationId;
   } else {
     const context = getContext();
     context.correlationId = Array.isArray(req.headers["x-correlation-id"])

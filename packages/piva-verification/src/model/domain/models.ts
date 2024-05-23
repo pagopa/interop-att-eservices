@@ -10,6 +10,4 @@ export type DataPreparationResponse = z.infer<
 >;
 export type PartitaIva = z.infer<typeof api.schemas.PartitaIva>;
 export type Richiesta = z.infer<typeof api.schemas.Richiesta>;
-export type VerificaPartitaIva = z.infer<
-  typeof api.schemas.VerificaPartitaIva
->;
+export type VerificaPartitaIva = z.infer<typeof api.schemas.VerificaPartitaIva>;
