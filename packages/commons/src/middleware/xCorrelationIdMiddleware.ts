@@ -1,8 +1,8 @@
 import { ZodiosRouterContextRequestHandler } from "@zodios/express";
 import { ErrorHandling, makeApiProblemBuilder } from "pdnd-models";
-import { ExpressContext,  getContext,  syncEventEmitter } from "../index.js";
-import { logger } from "../logging/index.js";
 import { match } from "ts-pattern";
+import { ExpressContext, getContext, syncEventEmitter } from "../index.js";
+import { logger } from "../logging/index.js";
 
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 /* eslint-disable */

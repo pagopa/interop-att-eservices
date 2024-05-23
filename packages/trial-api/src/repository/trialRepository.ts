@@ -9,7 +9,8 @@ export class TrialRepository {
     operationMethod: string,
     checkName: string,
     response?: string,
-  ) {
+    message?: string
+  ): Promise<void> {
     try {
       const context = getContext();
 
@@ -28,6 +29,7 @@ export class TrialRepository {
         operation_method: operationMethod,
         check_id: checkId,
         response,
+        message,
       });
 
       // Output del record creato
@@ -41,7 +43,9 @@ export class TrialRepository {
     }
   }
 
-  public static async findByCorrelationId(correlationId: string) {
+  public static async findByCorrelationId(
+    correlationId: string
+  ): Promise<Trial[]> {
     try {
       const trials = await Trial.findAll({
         where: {

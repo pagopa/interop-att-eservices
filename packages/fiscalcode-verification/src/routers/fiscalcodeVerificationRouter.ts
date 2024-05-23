@@ -2,7 +2,11 @@ import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
-import { authenticationMiddleware , uniquexCorrelationIdMiddleware } from "pdnd-common";
+import {
+  authenticationMiddleware,
+  uniquexCorrelationIdMiddleware,
+} from "pdnd-common";
+import { TrialRepository } from "trial";
 import FiscalcodeVerificationController from "../controllers/fiscalcodeVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -17,19 +21,22 @@ const fiscalcodeVerificationRouter = (
 
   fiscalcodeVerificationRouter.post(
     "/fiscalcode-verification/verifica",
-    //logHeadersMiddleware,
+    // logHeadersMiddleware,
     contextDataFiscalCodeMiddleware,
     uniquexCorrelationIdMiddleware(true),
     authenticationMiddleware(true),
     verifyCertValidity,
     async (req, res) => {
       try {
-
-        console.log('Request Headers:', req.headers);
-
         logger.info(`[START] Post - '/verifica' : ${req.body.codiceFiscale}`);
         const data = await FiscalcodeVerificationController.findFiscalcode(
           req.body
+        );
+        void TrialRepository.insert(
+          req.url,
+          req.method,
+          "FISCALCODE_VERIFICATION_OK",
+          "OK"
         );
         logger.info(`[END] Post - '/verifica'`);
         return res.status(200).json(data).end();
@@ -39,6 +46,13 @@ const fiscalcodeVerificationRouter = (
         const generalErrorResponse = mapGeneralErrorModel(
           correlationId,
           errorRes
+        );
+        void TrialRepository.insert(
+          req.url,
+          req.method,
+          "FISCALCODE_VERIFICATION_KO",
+          "KO",
+          JSON.stringify(generalErrorResponse)
         );
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }

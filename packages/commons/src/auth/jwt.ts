@@ -74,6 +74,7 @@ export const verifyJwtToken = (jwtToken: string): Promise<boolean> => {
 export const verifyJwtPayloadAndHeader = (
   jwtToken: string,
   operationPath: string,
+  operationMethod: string,
   isEnableTrial: boolean
 ): Promise<boolean> =>
   new Promise((resolve, reject) => {
@@ -88,8 +89,9 @@ export const verifyJwtPayloadAndHeader = (
         `verifyJwtPayloadAndHeader - Header in bearer token not present`
       );
       if (isEnableTrial) {
-        sendCustomEvent("customEvent", {
+        sendCustomEvent("trialEvent", {
           operationPath,
+          operationMethod,
           checkName: "VOUCHER_HEADER_NOT_PRESENT",
         });
       }
@@ -101,8 +103,9 @@ export const verifyJwtPayloadAndHeader = (
         `verifyJwtPayloadAndHeader - Payload in bearer token not present`
       );
       if (isEnableTrial) {
-        sendCustomEvent("customEvent", {
+        sendCustomEvent("trialEvent", {
           operationPath,
+          operationMethod,
           checkName: "VOUCHER_PAYLOAD_NOT_PRESENT",
         });
       }
@@ -114,8 +117,9 @@ export const verifyJwtPayloadAndHeader = (
         `verifyJwtPayloadAndHeader - Error parsing token typ not valid`
       );
       if (isEnableTrial) {
-        sendCustomEvent("customEvent", {
+        sendCustomEvent("trialEvent", {
           operationPath,
+          operationMethod,
           checkName: "VOUCHER_TYP_NOT_VALID",
         });
       }
@@ -127,8 +131,9 @@ export const verifyJwtPayloadAndHeader = (
         `verifyJwtPayloadAndHeader - Error parsing token iss not valid`
       );
       if (isEnableTrial) {
-        sendCustomEvent("customEvent", {
+        sendCustomEvent("trialEvent", {
           operationPath,
+          operationMethod,
           checkName: "VOUCHER_ISS_NOT_VALID",
         });
       }
@@ -140,8 +145,9 @@ export const verifyJwtPayloadAndHeader = (
         `verifyJwtPayloadAndHeader - Error parsing token aud not valid`
       );
       if (isEnableTrial) {
-        sendCustomEvent("customEvent", {
+        sendCustomEvent("trialEvent", {
           operationPath,
+          operationMethod,
           checkName: "VOUCHER_AUD_NOT_VALID",
         });
       }

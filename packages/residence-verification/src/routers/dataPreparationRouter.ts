@@ -20,7 +20,6 @@ const dataPreparationRouter = (
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const dataPreparationRouter = ctx.router(api.api);
 
-
   dataPreparationRouter.post(
     "/residence-verification/data-preparation",
     contextDataResidenceMiddleware,
@@ -48,7 +47,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.get(
     "/residence-verification/data-preparation",
     contextDataResidenceMiddleware,
-    authenticationMiddleware(true),
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {

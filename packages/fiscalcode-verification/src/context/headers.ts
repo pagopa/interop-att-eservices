@@ -6,26 +6,28 @@ import { readAuthDataFromJwtToken } from "pdnd-common";
 
 export const HeadersFiscalCode = z.object({
   authorization: z.string().nullish(),
-  "x-correlation-id": z.string().nullish()
+  "x-correlation-id": z.string().nullish(),
 });
 
 export type HeadersFiscalCode = z.infer<typeof HeadersFiscalCode>;
 
 export const ParsedHeadersFiscalCode = z
   .object({
-    correlationId: z.string().uuid()
+    correlationId: z.string().uuid(),
   })
   .and(AuthData);
 export type ParsedHeadersFiscalCode = z.infer<typeof ParsedHeadersFiscalCode>;
 
-export const readHeadersFiscalCode = (req: Request): ParsedHeadersFiscalCode | undefined => {
+export const readHeadersFiscalCode = (
+  req: Request
+): ParsedHeadersFiscalCode | undefined => {
   try {
     const headers = HeadersFiscalCode.parse(req.headers);
     return match(headers)
       .with(
         {
           authorization: P.string,
-          "x-correlation-id": P.string
+          "x-correlation-id": P.string,
         },
         (headers) => {
           const authorizationHeader = headers.authorization.split(" ");
@@ -42,7 +44,7 @@ export const readHeadersFiscalCode = (req: Request): ParsedHeadersFiscalCode | u
             .with(P.instanceOf(Error), () => undefined)
             .otherwise((authData: AuthData) => ({
               ...authData,
-              correlationId: headers["x-correlation-id"]
+              correlationId: headers["x-correlation-id"],
             }));
         }
       )

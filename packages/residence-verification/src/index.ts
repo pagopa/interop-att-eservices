@@ -8,7 +8,7 @@ const startServer = async (): Promise<void> => {
   try {
     await sequelize.authenticate();
 
-    //await runLiquibase();
+    // await runLiquibase();
     await executeDatabaseMigrations();
 
     logger.info("Connection to Database has been established.");

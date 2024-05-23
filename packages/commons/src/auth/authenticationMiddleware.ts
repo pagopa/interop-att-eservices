@@ -59,15 +59,14 @@ export const authenticationMiddleware: (isEnableTrial: boolean) => ZodiosRouterC
         const validPayloadAndHeader = await verifyJwtPayloadAndHeader(
           jwtToken,
           req.path,
+          req.method,
           isEnableTrial
         );
         if (!validPayloadAndHeader) {
           logger.error(
-            `authenticationMiddleware - The jwt token header or payload is not valid`
+            `authenticationMiddleware - The jwt bearer token header or payload is not valid`
           );
-          throw ErrorHandling.genericError(
-            "The jwt token header or payload is not valid"
-          );
+          throw ErrorHandling.genericError("The jwt bearer token not valid");
         }
 
         if (isEnableTrial) {
@@ -75,7 +74,7 @@ export const authenticationMiddleware: (isEnableTrial: boolean) => ZodiosRouterC
             operationPath: req.url,
             operationMethod: req.method,
             checkName: "VOUCHER_OK",
-            response: "OK"
+            response: "OK",
           });
         }
         return next();

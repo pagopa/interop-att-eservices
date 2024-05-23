@@ -1,15 +1,17 @@
-import { runMigrations } from './config/umzug.js';
+import { logger } from "pdnd-common";
+import { runMigrations } from "./config/umzug.js";
 
 // Funzione per eseguire le migrazioni del database
 export async function executeDatabaseMigrations(): Promise<void> {
-
-    try {
-        console.log('Starting migrations...');
-        await runMigrations();
-        console.log('Migrations completed successfully.');
-        //process.exit(0);
-      } catch (error) {
-        console.error('Migration failed:', error);
-        //process.exit(1);
-      }
+  try {
+    logger.info("executeDatabaseMigrations - Starting migrations...");
+    await runMigrations();
+    logger.info(
+      "executeDatabaseMigrations - Migrations completed successfully."
+    );
+    // process.exit(0);
+  } catch (error) {
+    logger.info("executeDatabaseMigrations - Migration failed:", error);
+    // process.exit(1);
+  }
 }

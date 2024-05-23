@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { logger } from "../index.js";
 
 export const DatabaseConfig = z
   .object({
@@ -30,7 +31,7 @@ export const databaseConfig: () => DatabaseConfig | null = () => {
   );
 
   if (!allVariablesDefined) {
-    console.error("Non tutte le variabili di ambiente sono definite.");
+    logger.error("Non tutte le variabili di ambiente sono definite.");
     return null;
   }
 
