@@ -9,6 +9,7 @@ const portHttps = Number(port) + 443;
 
 const startServer = async (): Promise<void> => {
   try {
+    logger.info(`Piva verficiation`);
     await sequelize.authenticate();
 
     await executeDatabaseMigrations();
