@@ -3,7 +3,7 @@ import {
   signerConfig,
   buildPublicKeyService,
   buildSignerService,
-  logger
+  logger,
 } from "pdnd-common";
 import { sequelize } from "trial";
 import healtRepository from "../repository/healtRepository.js";
@@ -42,6 +42,5 @@ class healtService {
     return true;
   }
 }
-
 
 export default new healtService();

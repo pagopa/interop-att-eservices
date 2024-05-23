@@ -6,14 +6,14 @@ import { readAuthDataFromJwtToken } from "./jwt.js";
 
 export const Headers = z.object({
   authorization: z.string().nullish(),
-  "x-correlation-id": z.string().nullish()
+  "x-correlation-id": z.string().nullish(),
 });
 
 export type Headers = z.infer<typeof Headers>;
 
 export const ParsedHeaders = z
   .object({
-    correlationId: z.string().uuid()
+    correlationId: z.string().uuid(),
   })
   .and(AuthData);
 export type ParsedHeaders = z.infer<typeof ParsedHeaders>;
@@ -25,7 +25,7 @@ export const readHeaders = (req: Request): ParsedHeaders | undefined => {
       .with(
         {
           authorization: P.string,
-          "x-correlation-id": P.string
+          "x-correlation-id": P.string,
         },
         (headers) => {
           const authorizationHeader = headers.authorization.split(" ");
@@ -42,7 +42,7 @@ export const readHeaders = (req: Request): ParsedHeaders | undefined => {
             .with(P.instanceOf(Error), () => undefined)
             .otherwise((authData: AuthData) => ({
               ...authData,
-              correlationId: headers["x-correlation-id"]
+              correlationId: headers["x-correlation-id"],
             }));
         }
       )
