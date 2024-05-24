@@ -2,7 +2,7 @@ import { FiscalcodeModel } from "pdnd-models";
 import { fiscalcodeNotFound } from "../exceptions/errors.js";
 
 /* eslint-disable */
-// Funzione che aggiunge una lista di UserModel a un array esistente solo se non esistono già, sostituendo eventuali duplicati
+// Funzione che aggiunge una lista di FiscalcodeModel a un array esistente solo se non esistono già, sostituendo eventuali duplicati
 export function appendUniqueFiscalcodeModelsToArray(
   existingArray: FiscalcodeModel[] | null,
   modelsToAdd: FiscalcodeModel[] | null
@@ -47,7 +47,7 @@ export function findFiscalcodeModelByFiscalcode(fiscalCodes: FiscalcodeModel[] |
   return null; // Se non viene trovato nessun oggetto corrispondente
 }
 
-// Funzione che cerca un UserModel all'interno di un array esistente utilizzando il codice fiscale come criterio di ricerca
+// Funzione che cerca un FiscalcodeModel all'interno di un array esistente utilizzando il codice fiscale come criterio di ricerca
 export function deleteFiscalcodeModelByFiscaldode(
   existingArray: FiscalcodeModel[] | null,
   fiscalCode: string
@@ -58,12 +58,12 @@ export function deleteFiscalcodeModelByFiscaldode(
   }
   const result: FiscalcodeModel[] = [];
 
-  // Cerca UserModel con lo stesso codice fiscale all'interno dell'array esistente
+  // Cerca FiscalcodeModel con lo stesso codice fiscale all'interno dell'array esistente
   for (const fiscalCodeM of existingArray) {
     if (fiscalCodeM.fiscalCode !== fiscalCode) {
       result.push(fiscalCodeM);
     }
   }
 
-  return result; // Restituisci l'oggetto UserModel trovato, se presente
+  return result; // Restituisci l'oggetto FiscalcodeModel trovato, se presente
 }

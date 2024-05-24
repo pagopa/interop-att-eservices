@@ -19,8 +19,8 @@ class PivaVerificationService {
         this.appContext.authData.purposeId,
       ]);
       const result = await dataPreparationRepository.findAllByKey(hash);
-      const users = result;
-      const found = findPivaModelByPiva(users, partitaIva);
+      const pivas = result;
+      const found = findPivaModelByPiva(pivas, partitaIva);
       if (found) {
         return partitaIvaModelToVerificaPartitaIva(
           found,

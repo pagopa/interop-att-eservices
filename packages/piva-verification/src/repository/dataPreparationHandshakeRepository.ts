@@ -27,14 +27,13 @@ class dataPreparationHandshakeRepository {
     // pourposeId
     try {
       const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
-      const arrayUser = parseJsonToHandshakeArray(dataSaved);
       logger.info(
         `dataPreparationRepository: Elemento recuperato con successo.`
       );
-      return arrayUser;
+      return parseJsonToHandshakeArray(dataSaved);
     } catch (error) {
       logger.error(
-        `userRepository: Errore durante il recupero dell'elemento: `,
+        `HandshakeRepository: Errore durante il recupero dell'elemento: `,
         error
       );
       throw error; // Rilancia l'errore per gestione superiore
@@ -55,7 +54,7 @@ class dataPreparationHandshakeRepository {
       return findHandshakeModelByPourposeId(datas, pourposeId);
     } catch (error) {
       logger.error(
-        `userRepository: Errore durante il recupero dell'elemento: `,
+        `HandshakeRepository: Errore durante il recupero dell'elemento: `,
         error
       );
       throw error; // Rilancia l'errore per gestione superiore
@@ -67,15 +66,15 @@ class dataPreparationHandshakeRepository {
       await cacheManager.deleteAllObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
 
       const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
-      const arrayUser = parseJsonToHandshakeArray(dataSaved);
-      if (arrayUser == null) {
+      const arrayHandshake = parseJsonToHandshakeArray(dataSaved);
+      if (arrayHandshake == null) {
         return 0;
       } else {
-        return arrayUser?.length;
+        return arrayHandshake?.length;
       }
     } catch (error) {
       logger.error(
-        `userRepository: Errore durante il recupero dell'elemento: `,
+        `HandshakeRepository: Errore durante il recupero dell'elemento: `,
         error
       );
       throw error; // Rilancia l'errore per gestione superiore
