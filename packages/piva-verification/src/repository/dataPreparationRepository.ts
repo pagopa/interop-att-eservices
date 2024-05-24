@@ -27,14 +27,13 @@ class dataPreparationRepository {
     // pourposeId
     try {
       const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
-      const arrayUser = parseJsonToPivaArray(dataSaved);
       logger.info(
         `dataPreparationRepository: Elemento recuperato con successo.`
       );
-      return arrayUser;
+      return parseJsonToPivaArray(dataSaved);
     } catch (error) {
       logger.error(
-        `userRepository: Errore durante il recupero dell'elemento: `,
+        `dataPreparationRepository: Errore durante il recupero dell'elemento: `,
         error
       );
       throw error; // Rilancia l'errore per gestione superiore
@@ -55,7 +54,7 @@ class dataPreparationRepository {
       return findPivaModelByPiva(datas, partitaIva);
     } catch (error) {
       logger.error(
-        `userRepository: Errore durante il recupero dell'elemento: `,
+        `dataPreparationRepository: Errore durante il recupero dell'elemento: `,
         error
       );
       throw error; // Rilancia l'errore per gestione superiore
@@ -67,15 +66,15 @@ class dataPreparationRepository {
       await cacheManager.deleteAllObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
 
       const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
-      const arrayUser = parseJsonToPivaArray(dataSaved);
-      if (arrayUser == null) {
+      const arrayDataPreparation = parseJsonToPivaArray(dataSaved);
+      if (arrayDataPreparation == null) {
         return 0;
       } else {
-        return arrayUser?.length;
+        return arrayDataPreparation?.length;
       }
     } catch (error) {
       logger.error(
-        `userRepository: Errore durante il recupero dell'elemento: `,
+        `DataPreparationRepository: Errore durante il recupero dell'elemento: `,
         error
       );
       throw error; // Rilancia l'errore per gestione superiore

@@ -27,14 +27,13 @@ class dataPreparationRepository {
     // pourposeId
     try {
       const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
-      const arrayUser = parseJsonToFiscalcodeArray(dataSaved);
       logger.info(
         `dataPreparationRepository: Elemento recuperato con successo.`
       );
-      return arrayUser;
+      return parseJsonToFiscalcodeArray(dataSaved);
     } catch (error) {
       logger.error(
-        `userRepository: Errore durante il recupero dell'elemento: `,
+        `dataPreparationRepository: Errore durante il recupero dell'elemento: `,
         error
       );
       throw error; // Rilancia l'errore per gestione superiore
@@ -55,7 +54,7 @@ class dataPreparationRepository {
       return findFiscalcodeModelByFiscalcode(datas, fiscalCode);
     } catch (error) {
       logger.error(
-        `userRepository: Errore durante il recupero dell'elemento: `,
+        `dataPreparationRepository: Errore durante il recupero dell'elemento: `,
         error
       );
       throw error; // Rilancia l'errore per gestione superiore
@@ -67,15 +66,15 @@ class dataPreparationRepository {
       await cacheManager.deleteAllObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
 
       const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
-      const arrayUser = parseJsonToFiscalcodeArray(dataSaved);
-      if (arrayUser == null) {
+      const arrayDataSaved = parseJsonToFiscalcodeArray(dataSaved);
+      if (arrayDataSaved == null) {
         return 0;
       } else {
-        return arrayUser?.length;
+        return arrayDataSaved?.length;
       }
     } catch (error) {
       logger.error(
-        `userRepository: Errore durante il recupero dell'elemento: `,
+        `dataPreparationRepository: Errore durante il recupero dell'elemento: `,
         error
       );
       throw error; // Rilancia l'errore per gestione superiore

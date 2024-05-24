@@ -81,7 +81,7 @@ class DataPreparationService {
       return response;
     } catch (error) {
       logger.error(
-        `UserService [DATA-PREPARATION]: Errore durante la cancellazione della lista. `,
+        `datapreparationService [DATA-PREPARATION]: Errore durante la cancellazione della lista. `,
         error
       );
       throw error;
@@ -95,13 +95,13 @@ class DataPreparationService {
         this.appContext.authData.purposeId,
       ]);
       const allSaved = await dataPreparationRepository.findAllByKey(hash);
-      const user = deletePivaModelByPiva(allSaved, uuid);
+      const datapreparation = deletePivaModelByPiva(allSaved, uuid);
       await this.deleteAllByKey();
-      if (user) {
-        await dataPreparationRepository.saveList(user, hash);
+      if (datapreparation) {
+        await dataPreparationRepository.saveList(datapreparation, hash);
       }
       logger.info(`[END] deleteByPiva`);
-      return user;
+      return datapreparation;
     } catch (error) {
       logger.error(
         `deleteByPiva - Errore durante l'aggiornamento della lista.`,

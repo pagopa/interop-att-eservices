@@ -83,7 +83,7 @@ class DataPreparationService {
       return response;
     } catch (error) {
       logger.error(
-        `UserService [DATA-PREPARATION]: Errore durante la cancellazione della lista. `,
+        `datapreparationService [DATA-PREPARATION]: Errore durante la cancellazione della lista. `,
         error
       );
       throw error;
@@ -99,13 +99,13 @@ class DataPreparationService {
         this.appContext.authData.purposeId,
       ]);
       const allSaved = await dataPreparationRepository.findAllByKey(hash);
-      const user = deleteFiscalcodeModelByFiscaldode(allSaved, uuid);
+      const fiscaldode = deleteFiscalcodeModelByFiscaldode(allSaved, uuid);
       await this.deleteAllByKey();
-      if (user) {
-        await dataPreparationRepository.saveList(user, hash);
+      if (fiscaldode) {
+        await dataPreparationRepository.saveList(fiscaldode, hash);
       }
       logger.info(`[END] deleteByFiscalcode`);
-      return user;
+      return fiscaldode;
     } catch (error) {
       logger.error(
         `deleteByFiscalcode - Errore durante l'aggiornamento della lista.`,

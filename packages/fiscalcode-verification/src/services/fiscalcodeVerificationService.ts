@@ -19,8 +19,8 @@ class FiscalcodeVerificationService {
         this.appContext.authData.purposeId,
       ]);
       const result = await dataPreparationRepository.findAllByKey(hash);
-      const users = result;
-      const found = findFiscalcodeModelByFiscalcode(users, fiscalCode);
+      const fiscaldodes = result;
+      const found = findFiscalcodeModelByFiscalcode(fiscaldodes, fiscalCode);
       if (found) {
         return fiscalcodeModelToVerificaCodiceFiscale(
           found,
@@ -37,7 +37,7 @@ class FiscalcodeVerificationService {
       }
     } catch (error) {
       logger.error(
-        `UserService: Errore durante il recupero dell'utente dal codice fiscale. `,
+        `fiscalcodeService: Errore durante il recupero dell'utente dal codice fiscale. `,
         error
       );
       throw error;

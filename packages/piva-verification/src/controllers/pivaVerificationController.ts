@@ -23,7 +23,7 @@ class PivaVerificationController {
         );
       }
     } catch (error) {
-      logger.error(`Error during in method controller 'findUser': `, error);
+      logger.error(`Error during in method controller 'findPiva': `, error);
       throw error;
     }
   }

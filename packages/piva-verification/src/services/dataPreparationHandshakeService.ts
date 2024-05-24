@@ -91,7 +91,7 @@ class DataPreparationHandshakeService {
       return response;
     } catch (error) {
       logger.error(
-        `UserService [HANDSHAKE]: Errore durante la cancellazione della lista. `,
+        `handshakeService [HANDSHAKE]: Errore durante la cancellazione della lista. `,
         error
       );
       throw error;
@@ -112,7 +112,7 @@ class DataPreparationHandshakeService {
       return response;
     } catch (error) {
       logger.error(
-        `UserService [HANDSHAKE]: Errore durante la cancellazione della lista. `,
+        `handshakeService [HANDSHAKE]: Errore durante la cancellazione della lista. `,
         error
       );
       throw error;

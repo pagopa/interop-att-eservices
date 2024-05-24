@@ -2,7 +2,7 @@ import { PartitaIvaModel } from "pdnd-models";
 import { pivaNotFound } from "../exceptions/errors.js";
 
 /* eslint-disable */
-// Funzione che aggiunge una lista di UserModel a un array esistente solo se non esistono già, sostituendo eventuali duplicati
+// Funzione che aggiunge una lista di HandshakeModel a un array esistente solo se non esistono già, sostituendo eventuali duplicati
 export function appendUniquePivaModelsToArray(
   existingArray: PartitaIvaModel[] | null,
   modelsToAdd: PartitaIvaModel[] | null
@@ -47,7 +47,7 @@ export function findPivaModelByPiva(pivas: PartitaIvaModel[] | null, piva: strin
   return null; // Se non viene trovato nessun oggetto corrispondente
 }
 
-// Funzione che cerca un UserModel all'interno di un array esistente utilizzando il codice piva come criterio di ricerca
+// Funzione che cerca un HandshakeModel all'interno di un array esistente utilizzando il codice piva come criterio di ricerca
 export function deletePivaModelByPiva(
   existingArray: PartitaIvaModel[] | null,
   piva: string
@@ -58,12 +58,12 @@ export function deletePivaModelByPiva(
   }
   const result: PartitaIvaModel[] = [];
 
-  // Cerca UserModel con lo stesso codice piva all'interno dell'array esistente
+  // Cerca HandshakeModel con lo stesso codice piva all'interno dell'array esistente
   for (const pivaM of existingArray) {
     if (pivaM.partitaIva !== piva) {
       result.push(pivaM);
     }
   }
 
-  return result; // Restituisci l'oggetto UserModel trovato, se presente
+  return result; // Restituisci l'oggetto HandshakeModel trovato, se presente
 }

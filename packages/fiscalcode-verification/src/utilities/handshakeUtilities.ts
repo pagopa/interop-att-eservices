@@ -1,7 +1,7 @@
 import { HandshakeModel } from "pdnd-models";
 
 /* eslint-disable */
-// Funzione che aggiunge una lista di UserModel a un array esistente solo se non esistono già, sostituendo eventuali duplicati
+// Funzione che aggiunge una lista di FiscalcodeModel a un array esistente solo se non esistono già, sostituendo eventuali duplicati
 export function appendUniqueHandshakeModelsToArray(
   existingArray: HandshakeModel[] | null,
   modelsToAdd: HandshakeModel[] | null
