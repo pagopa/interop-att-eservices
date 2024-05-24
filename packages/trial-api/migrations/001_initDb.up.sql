@@ -101,5 +101,5 @@ INSERT INTO "check" (id,code,description,"order",category_id) VALUES
     (49,'fiscalcode-verification','OK',3,4),
     (50,'fiscalcode-verification','KO',3,4);
 INSERT INTO "check" (id,code,description,"order",category_id) VALUES
-    (51,'cert','OK',3,3),
-    (52,'cert','Not Valid',3,3);
+    (51,'cert','OK',3,5),
+    (52,'cert','Not Valid',3,5);
