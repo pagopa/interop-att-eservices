@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
-import { logger } from "pdnd-common";
+import { logger } from "../logging/index.js";
 
 const validateParamsMiddleware = (
   req: Request,
