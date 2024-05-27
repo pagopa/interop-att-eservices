@@ -83,7 +83,7 @@ const dataPreparationRouter = (
     "/fiscalcode-verification/data-preparation/remove",
     contextDataFiscalCodeMiddleware,
     authenticationMiddleware(false),
-    async (req, res) => {
+    async (req, res) => {     
       /* eslint-enable */
       try {
         await DataPreparationService.deleteByFiscalCode(

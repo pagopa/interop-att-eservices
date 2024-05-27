@@ -1,10 +1,11 @@
 import { logger } from "pdnd-common";
-import { PartitaIvaModel } from "pdnd-models";
+import { ErrorHandling, PartitaIvaModel } from "pdnd-models";
 import { getContext } from "pdnd-common";
 import dataPreparationRepository from "../repository/dataPreparationRepository.js";
 import generateHash from "../utilities/hashUtilities.js";
 import {
   appendUniquePivaModelsToArray,
+  arePartitaIvasValid,
   deletePivaModelByPiva,
 } from "../utilities/pivaUtilities.js";
 
@@ -32,11 +33,15 @@ class DataPreparationService {
         await dataPreparationRepository.saveList(pivaData, hash);
       } else {
         // esistono già chiavi, devo aggiungere la nuova, o sostituirla nel caso esista
-        const allHandshake = appendUniquePivaModelsToArray(
+        const allPiva = appendUniquePivaModelsToArray(
           persistedPivaData,
           pivaData
         );
-        await dataPreparationRepository.saveList(allHandshake, hash);
+        if(arePartitaIvasValid(allPiva)) {
+          await dataPreparationRepository.saveList(allPiva, hash);
+        } else {
+          throw ErrorHandling.invalidApiRequest();
+        }
       }
       const response = await dataPreparationRepository.findAllByKey(hash);
       logger.info(`[END] datapreparation-saveList`);
