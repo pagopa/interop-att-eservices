@@ -1,10 +1,11 @@
 import { logger } from "pdnd-common";
-import { FiscalcodeModel } from "pdnd-models";
+import { ErrorHandling, FiscalcodeModel } from "pdnd-models";
 import { getContext } from "pdnd-common";
 import dataPreparationRepository from "../repository/dataPreparationRepository.js";
 import generateHash from "../utilities/hashUtilities.js";
 import {
   appendUniqueFiscalcodeModelsToArray,
+  areFiscalCodesValid,
   deleteFiscalcodeModelByFiscaldode,
 } from "../utilities/fiscalcodeUtilities.js";
 
@@ -34,11 +35,15 @@ class DataPreparationService {
         await dataPreparationRepository.saveList(fiscalCodeData, hash);
       } else {
         // esistono già chiavi, devo aggiungere la nuova, o sostituirla nel caso esista
-        const allHandshake = appendUniqueFiscalcodeModelsToArray(
+        const allFiscalcode = appendUniqueFiscalcodeModelsToArray(
           persistedFiscalcodeData,
           fiscalCodeData
         );
-        await dataPreparationRepository.saveList(allHandshake, hash);
+        if (areFiscalCodesValid(allFiscalcode)) {
+        await dataPreparationRepository.saveList(allFiscalcode, hash);
+       } else {
+        throw ErrorHandling.invalidApiRequest();
+       }
       }
       const response = await dataPreparationRepository.findAllByKey(hash);
       logger.info(`[END] datapreparation-saveList`);

@@ -67,3 +67,11 @@ export function deleteFiscalcodeModelByFiscaldode(
 
   return result; // Restituisci l'oggetto FiscalcodeModel trovato, se presente
 }
+
+// Funzione per validare una lista di FiscalcodeModel
+export const areFiscalCodesValid = (fiscalCodeList: FiscalcodeModel[]): boolean => {
+  return fiscalCodeList.every((item) => {
+    const parsedItem = FiscalcodeModel.safeParse(item);
+    return parsedItem.success && parsedItem.data.fiscalCode.length > 5;
+  });
+};

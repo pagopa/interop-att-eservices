@@ -67,3 +67,11 @@ export function deletePivaModelByPiva(
 
   return result; // Restituisci l'oggetto HandshakeModel trovato, se presente
 }
+
+// Funzione per validare una lista di FiscalcodeModel
+export const arePartitaIvasValid = (partitaIvaList: PartitaIvaModel[]): boolean => {
+  return partitaIvaList.every((item) => {
+    const parsedItem = PartitaIvaModel.safeParse(item);
+    return parsedItem.success && parsedItem.data.partitaIva.length > 5;
+  });
+};
