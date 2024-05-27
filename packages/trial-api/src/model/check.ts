@@ -1,6 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../client.js";
-import { Category } from "./category.js"; // Assumendo che tu abbia già definito la classe Category
+import { Category } from "./category.js";
 
 interface CheckAttributes {
   id: number;
@@ -8,6 +8,7 @@ interface CheckAttributes {
   description: string | null;
   order: number;
   category_id: number | null;
+  category?: Category;
 }
 
 class Check extends Model<CheckAttributes> implements CheckAttributes {
@@ -16,6 +17,7 @@ class Check extends Model<CheckAttributes> implements CheckAttributes {
   public description!: string | null;
   public order!: number;
   public category_id!: number | null;
+  public category?: Category;
 }
 
 Check.init(
@@ -53,6 +55,12 @@ Check.init(
     timestamps: false,
   }
 );
+
+// Definisci l'associazione
+Check.belongsTo(Category, {
+  foreignKey: "category_id",
+  as: "category",
+});
 
 export const checkValuesMap: { [key: string]: number } = {
   VOUCHER_AUTH_DATA_CANNOT_BE_PARSED: 1,
