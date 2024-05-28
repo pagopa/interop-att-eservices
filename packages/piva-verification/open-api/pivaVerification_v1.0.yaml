@@ -131,7 +131,7 @@ paths:
   /piva-verification/data-preparation:
     post:
       summary: data preparation api.
-      description: carica il codice fiscale valido
+      description: Carica i casi d'uso dell'ente
       security:
         - bearerAuth: []
       requestBody:
@@ -175,10 +175,9 @@ paths:
           $ref: '#/components/responses/400BadRequest'
       tags:
         - datapreparation
-  /piva-verification/data-preparation/all:
     get:
       summary: data preparation api.
-      description: carica il codice fiscale valido
+      description: Lista dei casi d'uso dell'ente
       security:
         - bearerAuth: []
       parameters:
@@ -205,9 +204,8 @@ paths:
           $ref: '#/components/responses/400BadRequest'
       tags:
         - datapreparation
-  /piva-verification/data-preparation/reset:
     delete:
-      summary: Ritorna lo stato dell'applicazione.
+      summary: Cancella i casi d'uso dell'ente
       description: |
         Ritorna lo stato dell'applicazione: 200 se funziona correttamente
         o un errore se l'applicazione è temporaneamente indisponibile
@@ -230,7 +228,7 @@ paths:
   /piva-verification/data-preparation/remove:
     post:
       summary: data preparation api.
-      description: carica il codice fiscale valido
+      description: Rimuove un preciso caso d'uso
       security:
         - bearerAuth: []
       requestBody:

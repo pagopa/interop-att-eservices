@@ -90,8 +90,8 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/fiscalcode-verification/data-preparation/all",
-    alias: "getFiscalcodeVerificationdataPreparationall",
+    path: "/fiscalcode-verification/data-preparation",
+    alias: "getFiscalcodeVerificationdataPreparation",
     description: `carica il codice fiscale valido`,
     requestFormat: "json",
     parameters: [
@@ -111,6 +111,37 @@ const endpoints = makeApi([
       {
         status: 400,
         description: `Bad Request`,
+        schema: z.void(),
+      },
+    ],
+  },
+  {
+    method: "delete",
+    path: "/fiscalcode-verification/data-preparation",
+    alias: "reset",
+    description: `Ritorna: 200 se sono stati correttamente cancellati.
+`,
+    requestFormat: "json",
+    response: z.void(),
+    errors: [
+      {
+        status: 400,
+        description: `Bad Request`,
+        schema: z.void(),
+      },
+      {
+        status: 401,
+        description: `Not authorized`,
+        schema: z.void(),
+      },
+      {
+        status: 429,
+        description: `Too many requests`,
+        schema: z.void(),
+      },
+      {
+        status: 503,
+        description: `Service Unavailable`,
         schema: z.void(),
       },
     ],
@@ -149,7 +180,7 @@ const endpoints = makeApi([
     method: "post",
     path: "/fiscalcode-verification/data-preparation/remove",
     alias: "postFiscalcodeVerificationdataPreparationremove",
-    description: `carica il codice fiscale valido`,
+    description: `cancella un codice fiscale precedentemente inserito`,
     requestFormat: "json",
     parameters: [
       {
@@ -173,39 +204,6 @@ const endpoints = makeApi([
       {
         status: 400,
         description: `Bad Request`,
-        schema: z.void(),
-      },
-    ],
-  },
-  {
-    method: "delete",
-    path: "/fiscalcode-verification/data-preparation/reset",
-    alias: "reset",
-    description: `Ritorna lo stato dell&#x27;applicazione: 200 se funziona correttamente
-o un errore se l&#x27;applicazione è temporaneamente indisponibile
-per manutenzione o per un problema tecnico.
-`,
-    requestFormat: "json",
-    response: z.void(),
-    errors: [
-      {
-        status: 400,
-        description: `Bad Request`,
-        schema: z.void(),
-      },
-      {
-        status: 401,
-        description: `Not authorized`,
-        schema: z.void(),
-      },
-      {
-        status: 429,
-        description: `Too many requests`,
-        schema: z.void(),
-      },
-      {
-        status: 503,
-        description: `Service Unavailable`,
         schema: z.void(),
       },
     ],

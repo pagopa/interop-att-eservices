@@ -7,3 +7,4 @@ export * from "./error/interalError.js";
 export * from "./fiscalcodeVerification/fiscalcodeVerification.js";
 export * from "./pivaVerification/pivaVerification.js";
 export * from "./handshake/handshake.js";
+export * from "./inadVerification/inadVerification.js"

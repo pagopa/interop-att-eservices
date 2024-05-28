@@ -2,16 +2,16 @@ import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext, logger } from "pdnd-common";
 import { authenticationMiddleware } from "pdnd-common";
-import { ErrorHandling } from "pdnd-models";
 import { api } from "../model/generated/api.js";
 import DataPreparationService from "../services/dataPreparationService.js";
 import { makeApiProblem } from "../exceptions/errors.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import {
-  apiPartitaIvaModelToDataPreparationResponse,
-  apiDatapreparationTemplateToPivaModel,
+  ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel,
+  convertArrayOfResponseRequestDigitalAddressModels,
 } from "../model/domain/apiConverter.js";
-import { contextDataPivaMiddleware } from "../context/context.js";
+import { contextDataInadMiddleware } from "../context/context.js";
+import { ErrorHandling } from "pdnd-models";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -19,13 +19,13 @@ const dataPreparationRouter = (
   const dataPreparationRouter = ctx.router(api.api);
 
   dataPreparationRouter.post(
-    "/piva-verification/data-preparation",
-    contextDataPivaMiddleware,
+    "/inad-verification/data-preparation",
+    contextDataInadMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
         await DataPreparationService.saveList(
-          apiDatapreparationTemplateToPivaModel(req.body)
+          ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel(req.body)
         );
         return res.status(200).end();
       } catch (error) {
@@ -36,8 +36,8 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.get(
-    "/piva-verification/data-preparation",
-    contextDataPivaMiddleware,
+    "/inad-verification/data-preparation",
+    contextDataInadMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
@@ -46,9 +46,9 @@ const dataPreparationRouter = (
         }
         const data = await DataPreparationService.getAll();
         const result =
-          data != null ? apiPartitaIvaModelToDataPreparationResponse(data) : [];
+          data != null ? convertArrayOfResponseRequestDigitalAddressModels(data) : [];
         logger.info(result);
-        return res.status(200).json(result).end();
+        return res.status(200).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();
@@ -57,8 +57,8 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.delete(
-    "/piva-verification/data-preparation",
-    contextDataPivaMiddleware,
+    "/inad-verification/data-preparation",
+    contextDataInadMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
@@ -71,24 +71,6 @@ const dataPreparationRouter = (
             `Not all data could be deleted. Remaining: ${data}`
           );
         }
-        return res.status(200).end();
-      } catch (error) {
-        const errorRes = makeApiProblem(error, createEserviceDataPreparation);
-        return res.status(errorRes.status).json(errorRes).end();
-      }
-    }
-  );
-/* eslint-disable */
-  dataPreparationRouter.post(
-    "/piva-verification/data-preparation/remove",
-    contextDataPivaMiddleware,
-    authenticationMiddleware(false),
-    async (req, res) => {
-      /* eslint-enable */
-      try {
-        await DataPreparationService.deleteByPiva(
-          apiDatapreparationTemplateToPivaModel(req.body).partitaIva
-        );
         return res.status(200).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
