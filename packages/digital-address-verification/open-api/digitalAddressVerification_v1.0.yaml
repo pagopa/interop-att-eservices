@@ -1,6 +1,7 @@
 openapi: 3.0.1
 info:
   title:  Domicilio Digitale
+  version: 1.0.0-SNAPSHOT
 tags:
   - name: API ESTRAZIONI MULTIPLE
   - name: API ESTRAZIONI PUNTUALI
