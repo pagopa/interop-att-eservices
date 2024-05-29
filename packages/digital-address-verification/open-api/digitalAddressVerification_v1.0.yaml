@@ -1,23 +1,6 @@
 openapi: 3.0.1
 info:
-  title: INAD - Domicilio Digitale
-  description: |-
-    API rese disponibili da INAD al Catalogo delle API previsto nel modello di interoperabilità delle pubbliche amministrazioni.
-
-    Pattern Model applicati:
-    - [ID_AUTH_CHANNEL_01] Direct Trust Transport-Level Security
-    - [BLOCK_REST] Blocking REST
-    - [NONBLOCK_PULL_REST] Not Blocking Pull REST
-  contact:
-    name: AgID - Agenzia per l'Italia Digitale
-    url: https://www.agid.gov.it/
-  license:
-    name: CC BY-NC-SA 4.0
-    url: https://creativecommons.org/licenses/by-nc-sa/4.0/
-  version: 1.0.0-SNAPSHOT
-servers:
-  - url: https://api.inad.gov.it/rest/inad/v1/domiciliodigitale
-    description: Generated server url
+  title:  Domicilio Digitale
 tags:
   - name: API ESTRAZIONI MULTIPLE
   - name: API ESTRAZIONI PUNTUALI

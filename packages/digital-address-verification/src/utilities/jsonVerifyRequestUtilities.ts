@@ -1,6 +1,7 @@
 import { classToPlain } from "class-transformer";
 import { logger } from "pdnd-common";
-import { VerifyRequest } from "../model/inad/VerifyRequest.js";
+import { VerifyRequest } from "../model/digitalAddress/VerifyRequest.js";
+import { ResponseRequestDigitalAddress } from "../model/domain/models.js";
 
 // Funzione che converte una stringa JSON in un oggetto della struttura specificata
 export function parseJsonToVerifyRequest(
@@ -58,6 +59,23 @@ export function convertStringToVerifyRequest(jsonString: any): VerifyRequest {
       jsonRequest: parsed.jsonRequest,
       jsonResult: parsed.jsonResult,
       count: parsed.count,
+    };
+  } catch (error) {
+    console.error(`Error parsing JSON string: ${error}`);
+    throw error;
+  }
+}
+
+/* eslint-disable */
+export function convertStringToResponseRequestDigitalAddress(jsonString: any): ResponseRequestDigitalAddress {
+  /* eslint-enable */
+  try {
+    const parsed = JSON.parse(jsonString);
+
+    return {
+      digitalAddress: parsed.digitalAddress,
+      codiceFiscale: parsed.codiceFiscale,
+      since: parsed.since,
     };
   } catch (error) {
     console.error(`Error parsing JSON string: ${error}`);

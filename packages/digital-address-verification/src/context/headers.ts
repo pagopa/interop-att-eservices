@@ -4,25 +4,25 @@ import { z } from "zod";
 import { AuthData } from "pdnd-common";
 import { readAuthDataFromJwtToken } from "pdnd-common";
 
-export const HeadersInad = z.object({
+export const HeadersDigitalAddress = z.object({
   authorization: z.string().nullish(),
   "x-correlation-id": z.string().nullish(),
 });
 
-export type HeadersInad = z.infer<typeof HeadersInad>;
+export type HeadersDigitalAddress = z.infer<typeof HeadersDigitalAddress>;
 
-export const ParsedHeadersInad = z
+export const ParsedHeadersDigitalAddress = z
   .object({
     correlationId: z.string().uuid(),
   })
   .and(AuthData);
-export type ParsedHeadersInad = z.infer<typeof ParsedHeadersInad>;
+export type ParsedHeadersDigitalAddress = z.infer<typeof ParsedHeadersDigitalAddress>;
 
-export const readHeadersInad = (
+export const readHeadersDigitalAddress = (
   req: Request
-): ParsedHeadersInad | undefined => {
+): ParsedHeadersDigitalAddress | undefined => {
   try {
-    const headers = HeadersInad.parse(req.headers);
+    const headers = HeadersDigitalAddress.parse(req.headers);
     return match(headers)
       .with(
         {

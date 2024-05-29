@@ -1,4 +1,4 @@
-import { logger } from "pdnd-common";
+/*import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
@@ -9,17 +9,17 @@ import {
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
-import { contextDataInadMiddleware } from "../context/context.js";
+import { contextDataDigitalAddressMiddleware } from "../context/context.js";
 
-const fiscalcodeVerificationRouter = (
+const digitalAddressVerificationRouter = (
   ctx: ZodiosContext
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const fiscalcodeVerificationRouter = ctx.router(api.api);
 
- /* fiscalcodeVerificationRouter.post(
+  fiscalcodeVerificationRouter.post(
     "/digital-address-verification/listDigitalAddress",
     // logHeadersMiddleware,
-    contextDataInadMiddleware,
+    contextDataDigitalAddressMiddleware,
     uniquexCorrelationIdMiddleware(true),
     authenticationMiddleware(true),
     async (req, res) => {
@@ -45,7 +45,7 @@ const fiscalcodeVerificationRouter = (
   fiscalcodeVerificationRouter.get(
     "/digital-address-verification/verify/:codice_fiscale",
     // logHeadersMiddleware,
-    contextDataInadMiddleware,
+    contextDataDigitalAddressMiddleware,
     uniquexCorrelationIdMiddleware(true),
     authenticationMiddleware(true),
     async (req, res) => {
@@ -66,9 +66,9 @@ const fiscalcodeVerificationRouter = (
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }
     }
-  );*/
+  );
 
   return fiscalcodeVerificationRouter;
 };
 
-export default fiscalcodeVerificationRouter;
+export default digitalAddressVerificationRouter;*/

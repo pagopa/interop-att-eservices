@@ -1,5 +1,5 @@
 import { fiscalcodeNotFound } from "../exceptions/errors.js";
-import { VerifyRequest } from "../model/inad/VerifyRequest.js";
+import { VerifyRequest } from "../model/digitalAddress/VerifyRequest.js";
 
 /* eslint-disable */
 // Funzione che aggiunge una lista di FiscalcodeModel a un array esistente solo se non esistono già, sostituendo eventuali duplicati

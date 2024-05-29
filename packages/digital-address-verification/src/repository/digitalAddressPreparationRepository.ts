@@ -1,10 +1,10 @@
 import { logger } from "pdnd-common";
 import { cacheManager } from "pdnd-common";
-import { VerifyRequest } from "../model/inad/VerifyRequest.js";
+import { VerifyRequest } from "../model/digitalAddress/VerifyRequest.js";
 import { parseJsonToVerifyRequestArray } from "../utilities/jsonVerifyRequestUtilities.js";
 import { findRequestlByIdRequest } from "../utilities/verifyRequestUtilities.js";
 
-class dataPreparationRepository {
+class digitalAddressRepository {
   
   public async saveRequest(
     genericRequest: VerifyRequest[],
@@ -13,11 +13,11 @@ class dataPreparationRepository {
     try {
       await cacheManager.setObject(key, JSON.stringify(genericRequest));
       const saved = await cacheManager.getObjectByKey(key);
-      logger.info(`dataPreparationRepository: Elemento salvato con successo.`);
+      logger.info(`DigitalAddressRepository: Elemento salvato con successo.`);
       return saved;
     } catch (error) {
       logger.error(
-        `dataPreparationRepository: Errore durante il salvataggio del' elemento: `,
+        `DigitalAddressRepository: Errore durante il salvataggio del' elemento: `,
         error
       );
       throw error;
@@ -29,12 +29,12 @@ class dataPreparationRepository {
     try {
       const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
       logger.info(
-        `dataPreparationRepository: Elemento recuperato con successo.`
+        `DigitalAddressRepository: Elemento recuperato con successo.`
       );
       return parseJsonToVerifyRequestArray(dataSaved);
     } catch (error) {
       logger.error(
-        `dataPreparationRepository: Errore durante il recupero dell'elemento: `,
+        `DigitalAddressRepository: Errore durante il recupero dell'elemento: `,
         error
       );
       throw error; // Rilancia l'errore per gestione superiore
@@ -50,12 +50,12 @@ class dataPreparationRepository {
       const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
       const datas = parseJsonToVerifyRequestArray(dataSaved);
       logger.info(
-        `dataPreparationRepository: Elemento recuperato con successo.`
+        `DigitalAddressRepository: Elemento recuperato con successo.`
       );
       return findRequestlByIdRequest(datas, fiscalCode);
     } catch (error) {
       logger.error(
-        `dataPreparationRepository: Errore durante il recupero dell'elemento: `,
+        `DigitalAddressRepository: Errore durante il recupero dell'elemento: `,
         error
       );
       throw error; // Rilancia l'errore per gestione superiore
@@ -75,7 +75,7 @@ class dataPreparationRepository {
       }
     } catch (error) {
       logger.error(
-        `dataPreparationRepository: Errore durante il recupero dell'elemento: `,
+        `DigitalAddressRepository: Errore durante il recupero dell'elemento: `,
         error
       );
       throw error; // Rilancia l'errore per gestione superiore
@@ -84,4 +84,4 @@ class dataPreparationRepository {
 }
 
 
-export default new dataPreparationRepository();
+export default new digitalAddressRepository();

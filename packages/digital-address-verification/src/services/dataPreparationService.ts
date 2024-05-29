@@ -12,7 +12,7 @@ import {
 
 class DataPreparationService {
   public appContext = getContext();
-  public eService: string = "inad-verification";
+  public eService: string = "digital-address-verification";
   public async saveList(
     fiscalCodeModel: ResponseRequestDigitalAddressModel
   ): Promise<ResponseRequestDigitalAddressModel[] | null> {

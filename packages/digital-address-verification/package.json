@@ -1,5 +1,5 @@
 {
-  "name": "inad-verification",
+  "name": "digital-address-verification",
   "version": "1.0.0",
   "description": "",
   "main": "dist",
@@ -13,7 +13,7 @@
     "format:write": "prettier --write src",
     "start": "node --no-warnings --loader ts-node/esm -r dotenv-flow/config ./src/index.ts",
     "build": "tsc",
-    "generate-model": "pnpm openapi-zod-client ./open-api/inadVerification_v1.0.yaml -o ./src/model/generated/api.ts",
+    "generate-model": "pnpm openapi-zod-client ./open-api/digitalAddressVerification_v1.0.yaml -o ./src/model/generated/api.ts",
     "clean-generated": "pnpm exec rm ./src/model/generated/api.ts"
   },
   "keywords": [],

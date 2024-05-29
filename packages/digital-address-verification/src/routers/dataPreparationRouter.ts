@@ -11,7 +11,7 @@ import {
   convertArrayOfModelsToResponseListRequestDigitalAddress,
   responseRequestDigitalAddressModelToResponseRequestDigitalAddress,
 } from "../model/domain/apiConverter.js";
-import { contextDataInadMiddleware } from "../context/context.js";
+import { contextDataDigitalAddressMiddleware } from "../context/context.js";
 import { ErrorHandling } from "pdnd-models";
 
 const dataPreparationRouter = (
@@ -21,7 +21,7 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.post(
     "/digital-address-verification/data-preparation",
-    contextDataInadMiddleware,
+    contextDataDigitalAddressMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
@@ -38,7 +38,7 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.get(
     "/digital-address-verification/data-preparation",
-    contextDataInadMiddleware,
+    contextDataDigitalAddressMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
@@ -62,7 +62,7 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.get(
     "/digital-address-verification/data-preparation/:codiceFiscale",
-    contextDataInadMiddleware,
+    contextDataDigitalAddressMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
@@ -88,7 +88,7 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.delete(
     "/digital-address-verification/data-preparation",
-    contextDataInadMiddleware,
+    contextDataDigitalAddressMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
@@ -110,7 +110,7 @@ const dataPreparationRouter = (
   );
   dataPreparationRouter.delete(
     "/digital-address-verification/data-preparation/:codiceFiscale",
-    contextDataInadMiddleware,
+    contextDataDigitalAddressMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {

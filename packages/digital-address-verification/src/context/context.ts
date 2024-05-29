@@ -1,14 +1,14 @@
 /* eslint-disable functional/immutable-data */
 import { NextFunction, Request, Response } from "express";
 import { getContext } from "pdnd-common";
-import { readHeadersInad } from "./headers.js";
+import { readHeadersDigitalAddress } from "./headers.js";
 
-export const contextDataInadMiddleware = (
+export const contextDataDigitalAddressMiddleware = (
   req: Request,
   _res: Response,
   next: NextFunction
 ): void => {
-  const headers = readHeadersInad(req);
+  const headers = readHeadersDigitalAddress(req);
   if (headers) {
     const context = getContext();
     context.authData = {
