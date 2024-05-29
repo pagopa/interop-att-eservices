@@ -91,7 +91,7 @@ export const schemas = {
 const endpoints = makeApi([
   {
     method: "post",
-    path: "/inad-verification/data-preparation",
+    path: "/digital-address-verification/data-preparation",
     alias: "dataPreparationlencoDomiciliDigitali",
     description: `Inserimento dati per la dataPreparation`,
     requestFormat: "json",
@@ -138,7 +138,7 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/inad-verification/data-preparation",
+    path: "/digital-address-verification/data-preparation",
     alias: "getDataPreparationElencoDomiciliDigitali",
     description: `Recupero dati inseriti con la dataPreparation`,
     requestFormat: "json",
@@ -178,7 +178,7 @@ const endpoints = makeApi([
   },
   {
     method: "delete",
-    path: "/inad-verification/data-preparation",
+    path: "/digital-address-verification/data-preparation",
     alias: "dataPreparationDeleteDomiciliDigitali",
     description: `Cancellazione di tutti i dati inseriti con la dataPreparation`,
     requestFormat: "json",
@@ -218,7 +218,7 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/inad-verification/data-preparation/:codiceFiscale",
+    path: "/digital-address-verification/data-preparation/:codiceFiscale",
     alias: "getDataPreparationElencoDomiciliDigitaliDetails",
     description: `Recupero dati inseriti con la dataPreparation`,
     requestFormat: "json",
@@ -265,7 +265,7 @@ const endpoints = makeApi([
   },
   {
     method: "delete",
-    path: "/inad-verification/data-preparation/:codiceFiscale",
+    path: "/digital-address-verification/data-preparation/:codiceFiscale",
     alias: "deleteDataPreparationElencoDomiciliDigitali",
     description: `Cancellazione dei dati inseriti con la dataPreparation per il codice fiscale specificato`,
     requestFormat: "json",
@@ -312,7 +312,7 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/inad-verification/extract/:codice_fiscale",
+    path: "/digital-address-verification/extract/:codice_fiscale",
     alias: "recuperoDomicilioDigitale",
     description: `Consente di ottenere il domicilio digitale corrispondente al codice fiscale al momento della consultazione e, in caso di domicilio digitale eletto in qualità di Professionista, anche l&#x27;attività professionale esercitata.`,
     requestFormat: "json",
@@ -368,7 +368,7 @@ const endpoints = makeApi([
   },
   {
     method: "post",
-    path: "/inad-verification/listDigitalAddress",
+    path: "/digital-address-verification/listDigitalAddress",
     alias: "richiestaElencoDomiciliDigitali",
     description: `Consente di inserire una richiesta di estrazione di domicili digitali a partire dall&#x27;elenco di codici fiscali forniti (fino ad un massimo di 1.000). Per ogni codice fiscale si ottiene il domicilio digitale corrispondente al momento dell&#x27;estrazione e, in caso di domicilio digitale eletto in qualità di Professionista, anche l&#x27;attività professionale esercitata. L&#x27;elaborazione della richiesta è asincrona. L&#x27;elenco, identificato da un codice univoco, è reso disponibile mediante un servizio di recupero.`,
     requestFormat: "json",
@@ -415,7 +415,7 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/inad-verification/listDigitalAddress/response/:id",
+    path: "/digital-address-verification/listDigitalAddress/response/:id",
     alias: "recuperoElencoDomiciliDigitali",
     description: `Consente di recuperare l&#x27;elenco dei domicili digitali individuato dal codice identificativo univoco.`,
     requestFormat: "json",
@@ -468,7 +468,7 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/inad-verification/listDigitalAddress/state/:id",
+    path: "/digital-address-verification/listDigitalAddress/state/:id",
     alias: "verificaStatoRichiestaElencoDomiciliDigitali",
     description: `Consente di verificare lo stato del processamento della richiesta dell&#x27;elenco dei domicili digitali individuato dal codice identificativo univoco.`,
     requestFormat: "json",
@@ -526,7 +526,7 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/inad-verification/status",
+    path: "/digital-address-verification/status",
     alias: "get_status",
     description: `Ritorna lo stato dell&#x27;applicazione: 200 se funziona correttamente
 o un errore se l&#x27;applicazione è temporaneamente indisponibile
@@ -569,7 +569,7 @@ per manutenzione o per un problema tecnico.
   },
   {
     method: "get",
-    path: "/inad-verification/verify/:codice_fiscale",
+    path: "/digital-address-verification/verify/:codice_fiscale",
     alias: "verificaDomicilioDigitale",
     description: `Fornito in input il domicilio digitale, codice fiscale e data, il servizio consente di verificare se, alla data indicata, il domicilio digitale era associato al codice fiscale indicato.`,
     requestFormat: "json",

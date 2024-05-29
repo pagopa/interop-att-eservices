@@ -22,7 +22,7 @@ tags:
   - name: API ESTRAZIONI MULTIPLE
   - name: API ESTRAZIONI PUNTUALI
 paths:
-  /inad-verification/status:
+  /digital-address-verification/status:
     get:
       summary: Ritorna lo stato dell'applicazione.
       description: |
@@ -50,7 +50,7 @@ paths:
         '503':
           $ref: '#/components/responses/503'
 
-  /inad-verification/data-preparation:
+  /digital-address-verification/data-preparation:
     post:
       tags:
         - DATA PREPARATION
@@ -125,7 +125,7 @@ paths:
           $ref: '#/components/responses/500'
         '503':
           $ref: '#/components/responses/503'
-  /inad-verification/data-preparation/{codiceFiscale}:
+  /digital-address-verification/data-preparation/{codiceFiscale}:
     get:
       tags:
         - DATA PREPARATION
@@ -185,7 +185,7 @@ paths:
         '503':
           $ref: '#/components/responses/503'
           
-  /inad-verification/listDigitalAddress:
+  /digital-address-verification/listDigitalAddress:
     post:
       tags:
         - API ESTRAZIONI MULTIPLE
@@ -219,7 +219,7 @@ paths:
           $ref: '#/components/responses/500'
         '503':
           $ref: '#/components/responses/503'
-  /inad-verification/verify/{codice_fiscale}:
+  /digital-address-verification/verify/{codice_fiscale}:
     get:
       tags:
         - API ESTRAZIONI PUNTUALI
@@ -273,7 +273,7 @@ paths:
           $ref: '#/components/responses/500'
         '503':
           $ref: '#/components/responses/503'
-  /inad-verification/listDigitalAddress/state/{id}:
+  /digital-address-verification/listDigitalAddress/state/{id}:
     get:
       tags:
         - API ESTRAZIONI MULTIPLE
@@ -320,7 +320,7 @@ paths:
           $ref: '#/components/responses/500'
         '503':
           $ref: '#/components/responses/503'
-  /inad-verification/listDigitalAddress/response/{id}:
+  /digital-address-verification/listDigitalAddress/response/{id}:
     get:
       tags:
         - API ESTRAZIONI MULTIPLE
@@ -352,7 +352,7 @@ paths:
           $ref: '#/components/responses/500'
         '503':
           $ref: '#/components/responses/503'
-  /inad-verification/extract/{codice_fiscale}:
+  /digital-address-verification/extract/{codice_fiscale}:
     get:
       tags:
         - API ESTRAZIONI PUNTUALI

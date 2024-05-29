@@ -1,4 +1,4 @@
-/*import { logger, getContext } from "pdnd-common";
+import { logger, getContext } from "pdnd-common";
 import FiscalcodeVerificationService from "../services/fiscalcodeVerificationService.js";
 import { Richiesta, VerificaCodiceFiscale } from "../model/domain/models.js";
 import { requestParamNotValid } from "../exceptions/errors.js";
@@ -31,4 +31,4 @@ class FiscalcodeVerificationController {
   }
 }
 
-export default new FiscalcodeVerificationController();*/
+export default new FiscalcodeVerificationController();

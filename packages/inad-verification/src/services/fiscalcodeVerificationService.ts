@@ -1,18 +1,17 @@
-/*import { logger } from "pdnd-common";
+import { logger } from "pdnd-common";
 import { getContext } from "pdnd-common";
 import dataPreparationRepository from "../repository/dataPreparationRepository.js";
 import generateHash from "../utilities/hashUtilities.js";
-import { findFiscalcodeModelByFiscalcode } from "../utilities/fiscalcodeUtilities.js";
-import { VerificaCodiceFiscale } from "../model/domain/models.js";
-import { fiscalcodeModelToVerificaCodiceFiscale } from "../model/domain/apiConverter.js";
+import { VerifyRequest } from "../model/inad/VerifyRequest.js";
+import { findRequestlByIdRequest } from "../utilities/verifyRequestUtilities.js";
 
 class FiscalcodeVerificationService {
   public appContext = getContext();
   public eService: string = "fiscalcode-verification";
 
-  public async getByFiscalCode(
+  public async getByIdRequest(
     fiscalCode: string
-  ): Promise<VerificaCodiceFiscale | null> {
+  ): Promise<VerifyRequest | null> {
     try {
       const hash = generateHash([
         this.eService,
@@ -20,7 +19,7 @@ class FiscalcodeVerificationService {
       ]);
       const result = await dataPreparationRepository.findAllByKey(hash);
       const fiscaldodes = result;
-      const found = findFiscalcodeModelByFiscalcode(fiscaldodes, fiscalCode);
+      const found = findRequestlByIdRequest(fiscaldodes, fiscalCode);
       if (found) {
         return fiscalcodeModelToVerificaCodiceFiscale(
           found,
@@ -46,4 +45,3 @@ class FiscalcodeVerificationService {
 }
 
 export default new FiscalcodeVerificationService();
-*/

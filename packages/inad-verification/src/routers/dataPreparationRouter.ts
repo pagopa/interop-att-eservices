@@ -20,7 +20,7 @@ const dataPreparationRouter = (
   const dataPreparationRouter = ctx.router(api.api);
 
   dataPreparationRouter.post(
-    "/inad-verification/data-preparation",
+    "/digital-address-verification/data-preparation",
     contextDataInadMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -37,7 +37,7 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.get(
-    "/inad-verification/data-preparation",
+    "/digital-address-verification/data-preparation",
     contextDataInadMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -61,7 +61,7 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.get(
-    "/inad-verification/data-preparation/:codiceFiscale",
+    "/digital-address-verification/data-preparation/:codiceFiscale",
     contextDataInadMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -87,7 +87,7 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.delete(
-    "/inad-verification/data-preparation",
+    "/digital-address-verification/data-preparation",
     contextDataInadMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -109,7 +109,7 @@ const dataPreparationRouter = (
     }
   );
   dataPreparationRouter.delete(
-    "/inad-verification/data-preparation/:codiceFiscale",
+    "/digital-address-verification/data-preparation/:codiceFiscale",
     contextDataInadMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
