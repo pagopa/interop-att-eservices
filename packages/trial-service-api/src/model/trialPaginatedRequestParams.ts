@@ -19,7 +19,7 @@ export class TrialPaginatedRequestParams {
     }
 
     public static validate(request: TrialPaginatedRequestParams) {
-        if (!request.page || request.page<=0 || request.page>100) {
+        if (request.page==null || request.page<=0 || request.page>100) {
             throw requestParamNotValid("Param 'page' must be between 1 and 100");
         }
         

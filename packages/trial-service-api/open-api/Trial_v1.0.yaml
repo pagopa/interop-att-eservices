@@ -135,7 +135,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
 
-
   /trial/category:
     get:
       tags:

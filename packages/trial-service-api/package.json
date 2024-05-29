@@ -67,6 +67,7 @@
     "openapi-zod-client": "1.15.1",
     "pdnd-common": "workspace:*",
     "pdnd-models": "workspace:*",
+    "sequelize": "^6.37.3",
     "redis": "^4.6.13",
     "trial": "workspace:*",
     "ts-pattern": "^5.0.6",

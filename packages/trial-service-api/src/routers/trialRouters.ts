@@ -60,8 +60,7 @@ const trialRouter = (
       try {
         logger.info("[START] POST - '/trial/search'");
         TrialPaginatedRequestParams.validate(req.query);
-        //TODO: COMPLETARE IMPLEMENTAZIONE API PAGINATA
-        const data = await trialController.findPaginatedTrials();
+        const data = await trialController.findPaginatedTrials(req.query);
         logger.info(`[END] POST - '/trial/search'`);
         return res.status(200).json(data).end();
       } catch (error) {
