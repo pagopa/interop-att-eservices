@@ -116,12 +116,26 @@ export const responseRequestDigitalAddressModelToResponseRequestDigitalAddress =
 });
 
 // Funzione che prende in input un array di ResponseRequestDigitalAddressModel, chiama la funzione di conversione e restituisce un array di ResponseRequestDigitalAddress
-export const convertArrayOfResponseRequestDigitalAddressModels = (
+export const convertArrayOfModelToResponseRequestDigitalAddress = (
   models: ResponseRequestDigitalAddressModel[]
 ): ResponseRequestDigitalAddress[] => {
   return models.map(responseRequestDigitalAddressModelToResponseRequestDigitalAddress);
 };
 
+// Funzione unificata
+export const convertArrayOfModelsToResponseListRequestDigitalAddress = (
+  models: ResponseRequestDigitalAddressModel[]
+): ResponseListRequestDigitalAddress => {
+  // Converti l'array di ResponseRequestDigitalAddressModel a ResponseRequestDigitalAddress
+  const convertedModels: ResponseRequestDigitalAddress[] = convertArrayOfModelToResponseRequestDigitalAddress(models);
+
+  // Crea un oggetto conforme a ResponseListRequestDigitalAddress
+  const responseList: ResponseListRequestDigitalAddress = {
+    data: convertedModels.length ? convertedModels : [],
+  };
+
+  return responseList;
+};
 
 // 7. Response_Request_Digital_Address
 export const ResponseListRequestDigitalAddressToResponseListRequestDigitalAddressModel = (

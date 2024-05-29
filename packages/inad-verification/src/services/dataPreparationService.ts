@@ -7,6 +7,7 @@ import {
   appendUniqueFiscalcodeModelsToArray,
   //areFiscalCodesValid,
   deleteFiscalcodeModelByFiscaldode,
+  findFiscalcodeModelByFiscalcode,
 } from "../utilities/fiscalcodeUtilities.js";
 
 class DataPreparationService {
@@ -114,6 +115,31 @@ class DataPreparationService {
     } catch (error) {
       logger.error(
         `deleteByFiscalcode - Errore durante l'aggiornamento della lista.`,
+        error
+      );
+      throw error;
+    }
+  }
+
+  public async findByFiscalCode(
+    fiscalCode: string
+  ): Promise<ResponseRequestDigitalAddressModel | null> {
+    try {
+      logger.info(`[START] findByFiscalCode`);
+      const hash = generateHash([
+        this.eService,
+        this.appContext.authData.purposeId,
+      ]);
+      const allSaved = await dataPreparationRepository.findAllByKey(hash);
+      const fiscaldode = findFiscalcodeModelByFiscalcode(allSaved, fiscalCode);
+      if (fiscaldode) {
+        return fiscaldode;
+      }
+      logger.info(`[END] findByFiscalCode`);
+      return null;
+    } catch (error) {
+      logger.error(
+        `findByFiscalCode - Errore durante il recupero della lista.`,
         error
       );
       throw error;

@@ -40,7 +40,7 @@ export function appendUniqueFiscalcodeModelsToArray(
 export function findFiscalcodeModelByFiscalcode(fiscalCodes: ResponseRequestDigitalAddressModel[] | null, fiscalCode: string): ResponseRequestDigitalAddressModel | null {
   if (fiscalCodes == null ) return null;
   for (const fiscalCodeModel of fiscalCodes) {
-      if (fiscalCodeModel.fiscalCode === fiscalCode) {
+      if (fiscalCodeModel.codiceFiscale === fiscalCode) {
           return fiscalCodeModel;
       }
   }
@@ -60,7 +60,7 @@ export function deleteFiscalcodeModelByFiscaldode(
 
   // Cerca FiscalcodeModel con lo stesso codice fiscale all'interno dell'array esistente
   for (const fiscalCodeM of existingArray) {
-    if (fiscalCodeM.fiscalCode !== fiscalCode) {
+    if (fiscalCodeM.codiceFiscale !== fiscalCode) {
       result.push(fiscalCodeM);
     }
   }

@@ -218,6 +218,100 @@ const endpoints = makeApi([
   },
   {
     method: "get",
+    path: "/inad-verification/data-preparation/:codiceFiscale",
+    alias: "getDataPreparationElencoDomiciliDigitaliDetails",
+    description: `Recupero dati inseriti con la dataPreparation`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "codiceFiscale",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: Response_Request_Digital_Address,
+    errors: [
+      {
+        status: 400,
+        description: `BAD_REQUEST`,
+        schema: z.void(),
+      },
+      {
+        status: 401,
+        description: `UNAUTHORIZED`,
+        schema: z.void(),
+      },
+      {
+        status: 403,
+        description: `FORBIDDEN`,
+        schema: z.void(),
+      },
+      {
+        status: 404,
+        description: `NOT_FOUND`,
+        schema: z.void(),
+      },
+      {
+        status: 500,
+        description: `INTERNAL_SERVER_ERROR`,
+        schema: z.void(),
+      },
+      {
+        status: 503,
+        description: `SERVICE_UNAVAILABLE`,
+        schema: z.void(),
+      },
+    ],
+  },
+  {
+    method: "delete",
+    path: "/inad-verification/data-preparation/:codiceFiscale",
+    alias: "deleteDataPreparationElencoDomiciliDigitali",
+    description: `Cancellazione dei dati inseriti con la dataPreparation per il codice fiscale specificato`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "codiceFiscale",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: z.void(),
+    errors: [
+      {
+        status: 400,
+        description: `BAD_REQUEST`,
+        schema: z.void(),
+      },
+      {
+        status: 401,
+        description: `UNAUTHORIZED`,
+        schema: z.void(),
+      },
+      {
+        status: 403,
+        description: `FORBIDDEN`,
+        schema: z.void(),
+      },
+      {
+        status: 404,
+        description: `NOT_FOUND`,
+        schema: z.void(),
+      },
+      {
+        status: 500,
+        description: `INTERNAL_SERVER_ERROR`,
+        schema: z.void(),
+      },
+      {
+        status: 503,
+        description: `SERVICE_UNAVAILABLE`,
+        schema: z.void(),
+      },
+    ],
+  },
+  {
+    method: "get",
     path: "/inad-verification/extract/:codice_fiscale",
     alias: "recuperoDomicilioDigitale",
     description: `Consente di ottenere il domicilio digitale corrispondente al codice fiscale al momento della consultazione e, in caso di domicilio digitale eletto in qualità di Professionista, anche l&#x27;attività professionale esercitata.`,

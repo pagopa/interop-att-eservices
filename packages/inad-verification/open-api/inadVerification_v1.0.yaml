@@ -125,6 +125,65 @@ paths:
           $ref: '#/components/responses/500'
         '503':
           $ref: '#/components/responses/503'
+  /inad-verification/data-preparation/{codiceFiscale}:
+    get:
+      tags:
+        - DATA PREPARATION
+      description: Recupero dati inseriti con la dataPreparation
+      operationId: getDataPreparationElencoDomiciliDigitaliDetails
+      parameters:
+        - name: codiceFiscale
+          in: path
+          required: true
+          description: L'ID dell'oggetto da restituire
+          schema:
+            type: string
+      responses:
+        '202':
+          description: JSON di risposta attraverso il quale l'Erogatore fornisce, insieme all'acknowledgement della richiesta, l'URL per interrogare lo stato di processamento utilizzando l'<i>HTTP header Location</i>. L'elenco è individuato da un codice identificativo univoco.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response_Request_Digital_Address'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
+    delete:
+      tags:
+        - DATA PREPARATION
+      description: Cancellazione dei dati inseriti con la dataPreparation per il codice fiscale specificato
+      operationId: deleteDataPreparationElencoDomiciliDigitali
+      parameters:
+        - name: codiceFiscale
+          in: path
+          required: true
+          description: Il codice fiscale dell'oggetto da eliminare
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operazione di cancellazione completata con successo
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+        '503':
+          $ref: '#/components/responses/503'
           
   /inad-verification/listDigitalAddress:
     post:

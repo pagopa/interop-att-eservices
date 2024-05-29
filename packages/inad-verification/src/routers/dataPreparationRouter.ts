@@ -8,7 +8,8 @@ import { makeApiProblem } from "../exceptions/errors.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import {
   ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel,
-  convertArrayOfResponseRequestDigitalAddressModels,
+  convertArrayOfModelsToResponseListRequestDigitalAddress,
+  responseRequestDigitalAddressModelToResponseRequestDigitalAddress,
 } from "../model/domain/apiConverter.js";
 import { contextDataInadMiddleware } from "../context/context.js";
 import { ErrorHandling } from "pdnd-models";
@@ -45,11 +46,40 @@ const dataPreparationRouter = (
           throw ErrorHandling.invalidApiRequest();
         }
         const data = await DataPreparationService.getAll();
-        const result =
-          data != null ? convertArrayOfResponseRequestDigitalAddressModels(data) : [];
-        logger.info(result);
-        return res.status(200).end();
+        const result = data  ? convertArrayOfModelsToResponseListRequestDigitalAddress(data) : undefined
+        if(result) {
+          return res.status(200).json(result).end();
+        } else {
+          return res.status(200).end();
+        }
+        
       } catch (error) {
+        const errorRes = makeApiProblem(error, createEserviceDataPreparation);
+        return res.status(errorRes.status).json(errorRes).end();
+      }
+    }
+  );
+
+  dataPreparationRouter.get(
+    "/inad-verification/data-preparation/:codiceFiscale",
+    contextDataInadMiddleware,
+    authenticationMiddleware(false),
+    async (req, res) => {
+      try {
+        if (!req) {
+          throw ErrorHandling.invalidApiRequest();
+        }
+        const data = await DataPreparationService.findByFiscalCode(req.params.codiceFiscale);
+  
+        const result = data  ? responseRequestDigitalAddressModelToResponseRequestDigitalAddress(data) : undefined
+        if(result) {
+          return res.status(200).json(result).end();
+        } else {
+          return res.status(200).end();
+        }
+        
+      } catch (error) {
+        logger.error(error)
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();
       }
@@ -78,7 +108,23 @@ const dataPreparationRouter = (
       }
     }
   );
-
+  dataPreparationRouter.delete(
+    "/inad-verification/data-preparation/:codiceFiscale",
+    contextDataInadMiddleware,
+    authenticationMiddleware(false),
+    async (req, res) => {
+      try {
+        if (!req) {
+          throw ErrorHandling.invalidApiRequest();
+        }
+        await DataPreparationService.deleteByFiscalCode(req.params.codiceFiscale);
+        return res.status(200).end();
+      } catch (error) {
+        const errorRes = makeApiProblem(error, createEserviceDataPreparation);
+        return res.status(errorRes.status).json(errorRes).end();
+      }
+    }
+  );
   return dataPreparationRouter;
 };
 export default dataPreparationRouter;
