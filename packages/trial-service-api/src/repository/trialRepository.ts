@@ -88,7 +88,7 @@ export class TrialRepository {
                 totalItems: queryResult.paginated_trial_query_result.totalItems,
                 totalPages: queryResult.paginated_trial_query_result.totalPages,
                 currentPage: queryResult.paginated_trial_query_result.currentPage,
-                data: queryResult.paginated_trial_query_result.data,
+                data: queryResult.paginated_trial_query_result.data ?? [],
             };
 
             return parsedResult;

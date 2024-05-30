@@ -1,8 +1,7 @@
-import { logger } from "pdnd-common";
+import { authenticationMiddleware, logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
-//import { authenticationMiddleware } from "pdnd-common";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
@@ -56,11 +55,12 @@ const trialRouter = (
 
   trialRouter.get(
     "/trial/search",
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         logger.info("[START] POST - '/trial/search'");
-        TrialPaginatedRequestParams.validate(req.query);
-        const data = await trialController.findPaginatedTrials(req.query);
+        const request = TrialPaginatedRequestParams.validate(req.query);
+        const data = await trialController.findPaginatedTrials(request);
         logger.info(`[END] POST - '/trial/search'`);
         return res.status(200).json(data).end();
       } catch (error) {

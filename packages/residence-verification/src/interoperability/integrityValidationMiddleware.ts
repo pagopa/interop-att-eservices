@@ -63,7 +63,7 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
           verifyJwtPayload(signatureToken, req);
         }
 
-        void TrialRepository.insert(req.url, req.method, "SIGNATURE_OK", "OK");
+        void TrialRepository.insert(req.url, req.method, "SIGNATURE", "OK");
         logger.info(`[COMPLETED] integrityValidationMiddleware`);
         return next();
       } catch (error) {

@@ -10,26 +10,30 @@ export class TrialPaginatedRequestParams {
     method?: string;
 
     constructor(query: any) {
-        this.page = query.page ? parseInt(query.page, 10) : undefined;
-        this.pageSize = query.pageSize ? parseInt(query.pageSize, 10) : undefined;
+        this.page = query.page;
+        this.pageSize = query.pageSize;
         this.purposeId = query.purposeId;
         this.correlationId = query.correlationId;
         this.path = query.path;
         this.method = query.method;
     }
 
-    public static validate(request: TrialPaginatedRequestParams) {
-        if (request.page==null || request.page<=0 || request.page>100) {
-            throw requestParamNotValid("Param 'page' must be between 1 and 100");
-        }
-        
-        if (!request.pageSize) {
-            throw requestParamNotValid("Param 'pageSize' is required");
+    public static validate(query: any): TrialPaginatedRequestParams {
+        const params = new TrialPaginatedRequestParams(query);
+
+        if (!params.page || isNaN(params.page) || params.page <= 0 || params.page > 100) {
+            throw requestParamNotValid("Param 'page' must be a number between 1 and 100");
         }
 
-        if (!request.purposeId) {
+        if (!params.pageSize || isNaN(params.pageSize) || params.pageSize <= 0) {
+            throw requestParamNotValid("Param 'pageSize' must be a positive number");
+        }
+
+        if (!params.purposeId) {
             throw requestParamNotValid("Param 'purposeId' is required");
         }
+
+        return params;
     }
 
 }

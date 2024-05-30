@@ -143,12 +143,12 @@ const endpoints = makeApi([
       {
         name: "page",
         type: "Query",
-        schema: z.number().int().optional(),
+        schema: z.string().optional(),
       },
       {
         name: "pageSize",
         type: "Query",
-        schema: z.number().int().optional(),
+        schema: z.string().optional(),
       },
       {
         name: "purposeId",

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: interop-att-fiscalcode-verification
+  name: interop-att-trial-service-api
   namespace: {{NAMESPACE}}
 spec:
   type: ClusterIP
@@ -10,9 +10,5 @@ spec:
       name: http
       targetPort: 3000
       protocol: TCP
-    - port: 3443
-      name: https
-      targetPort: 3443
-      protocol: TCP
   selector:
-    app: interop-att-fiscalcode-verification
+    app: interop-att-trial-service-api

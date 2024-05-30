@@ -1,42 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: interop-att-fiscalcode-verification
+  name: interop-att-trial-service-api
   namespace: {{NAMESPACE}}
   labels:
-    app: interop-att-fiscalcode-verification
+    app: interop-att-trial-service-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: interop-att-fiscalcode-verification
+      app: interop-att-trial-service-api
   template:
     metadata:
       labels:
-        app: interop-att-fiscalcode-verification
+        app: interop-att-trial-service-api
     spec:
       serviceAccountName: {{SERVICEACCOUNT}}
       containers:
-        - name: interop-att-fiscalcode-verification
-          #          image: ghcr.io/pagopa/interop-att-fiscalcode-verification:{{FISCALCODEVERIFICATIONIMAGEDIGEST}}
-          image: {{FISCALCODEVERIFICATIONIMAGE}}
+        - name: interop-att-trial-service-api
+#          image: ghcr.io/pagopa/interop-att-trial-service-api:{{TRIALSERVICEAPIIMAGE}}
+          image: {{TRIALSERVICEAPIIMAGE}}
           imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 3000
               protocol: TCP
-            - name: https
-              containerPort: 3443
-              protocol: TCP
-          volumeMounts:
-            - name: cert-pem
-              mountPath: /app/cert.pem
-              readOnly: true
-              subPath: cert.pem
-            - name: key-pem
-              mountPath: /app/key.pem
-              readOnly: true
-              subPath: key.pem
           resources:
             requests:
               cpu: 1.0
@@ -46,13 +34,13 @@ spec:
               memory: 2Gi
           livenessProbe:
             httpGet:
-              path: /fiscalcode-verification/status
+              path: /trial/status
               port: http
             initialDelaySeconds: 15
             periodSeconds: 120
           readinessProbe:
             httpGet:
-              path: /fiscalcode-verification/status
+              path: /trial/status
               port: http
             initialDelaySeconds: 15
             periodSeconds: 5
@@ -65,16 +53,4 @@ spec:
               value: info
           envFrom:
             - configMapRef:
-                name: fiscalcode-verification-configmap
-      volumes:
-        - name: cert-pem
-          configMap:
-            defaultMode: 256
-            name: https-configmap
-            optional: false
-        - name: key-pem
-          configMap:
-            defaultMode: 256
-            name: https-configmap
-            optional: false
-
+                name: trial-service-api-configmap

@@ -34,12 +34,12 @@ paths:
         - in: query
           name: page
           schema:
-            type: integer
+            type: string
           description: Numero della pagina da recuperare
         - in: query
           name: pageSize
           schema:
-            type: integer
+            type: string
           description: Numero di elementi per ogni pagina
         - in: query
           name: purposeId
