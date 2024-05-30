@@ -78,4 +78,4 @@ Trial.init(
   }
 );
 
-export { Trial };
+export { Trial, TrialAttributes };

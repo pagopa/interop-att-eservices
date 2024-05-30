@@ -73,7 +73,7 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
         void TrialRepository.insert(
           req.url,
           req.method,
-          "TRACKING_EVIDENCE_OK",
+          "TRACKING_EVIDENCE",
           "OK"
         );
         logger.info(`[COMPLETED] auditValidationMiddleware`);

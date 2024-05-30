@@ -93,13 +93,10 @@ INSERT INTO "check" (id,code,description,"order",category_id) VALUES
     (41,'userID','"userID" not valid in agid-jwt-trackingevidence payload token',13,3),
     (42,'userLocation','"userLocation" not valid in agid-jwt-trackingevidence payload token',14,3),
     (43,'LoA','"LoA" not valid in agid-jwt-trackingevidence payload token',15,3),
-    (44,'VOUCHER','OK',1,1),
-    (45,'Agid-JWT-Signature','OK',2,2),
-    (46,'Agid-JWT-TrackingEvidence','OK',3,3),
-    (47,'residence-verification-001','OK',4,4),
-    (48,'residence-verification-001','KO',4,4),
-    (49,'fiscalcode-verification','OK',3,4),
-    (50,'fiscalcode-verification','KO',3,4);
-INSERT INTO "check" (id,code,description,"order",category_id) VALUES
-    (51,'cert','OK',3,5),
-    (52,'cert','Not Valid',3,5);
+    (44,'VOUCHER','Authorization bearer token',1,1),
+    (45,'Agid-JWT-Signature','Token in the request Headers',2,2),
+    (46,'Agid-JWT-TrackingEvidence','Token in the request Headers',3,3),
+    (47,'residence-verification-001','API for a consultation of a residence',4,4),
+    (48,'fiscalcode-verification','API to validate a specific fiscal code',3,4),
+    (49,'cert','OK',2,5),
+    (50,'cert','Not Valid',2,5);
