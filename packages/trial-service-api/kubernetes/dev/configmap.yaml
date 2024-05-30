@@ -4,6 +4,8 @@ metadata:
   name: trial-service-api-configmap
   namespace: {{NAMESPACE}}
 data:
+  KMS_KEYID: '{{KMS_KEYID}}'
+  KMS_MAX_ACQUISITION_TIMEOUT_SECONDS: 60
   SKIP_JWT_VERIFICATION: false
   WELL_KNOWN_URLS: 'https://att.interop.pagopa.it/.well-known/jwks.json'
   TOKEN_ISS: 'att.interop.pagopa.it'
