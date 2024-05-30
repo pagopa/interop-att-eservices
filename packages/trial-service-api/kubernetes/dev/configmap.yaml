@@ -10,7 +10,7 @@ data:
   SKIP_JWT_VERIFICATION: false
   WELL_KNOWN_URLS: 'https://att.interop.pagopa.it/.well-known/jwks.json'
   TOKEN_ISS: 'att.interop.pagopa.it'
-  TOKEN_AUD: 'interop-att-trial-service-api'
+  TOKEN_AUD: 'interop-att-eservices-trial-api'
   TOKEN_TYP: 'at+jwt'
   DATABASE_URL: '{{DATABASE_URL}}'
   DATABASE_USERNAME: '{{DATABASE_USERNAME}}'
