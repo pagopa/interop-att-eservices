@@ -9,34 +9,34 @@ class DigitalAddressVerificationSingleController {
   public appContext = getContext();
 
     //Response_Status_List_Digital_Address
-    public async verify( //Response_Verify_Digital_Address
-      codiceFiscale: string  //Response_Request_Digital_Address
+    public async verify( 
+      codiceFiscale: string,  
+      digitalAddress: string,  
+      since: string 
+
     ): Promise<ResponseVerifyDigitalAddress> {
       try {
   
-          const richiesta = await DataPreparationService.findByFiscalCode(codiceFiscale)
+          const richiesta = await DataPreparationService.findByFiscalCode(codiceFiscale);
           if (richiesta) {
-            if(richiesta) {
-            const result : ResponseVerifyDigitalAddress = {
-              outcome: true,
-              dateTimeCheck: new Date().toISOString()
-            } 
-            return result;
-          }else {
-              const result : ResponseVerifyDigitalAddress = {
-                outcome: false,
+            let foundItem =  richiesta.digitalAddress.find(richiesta => richiesta.digitalAddress === digitalAddress);
+            if(foundItem) {
+              if (richiesta.since <= since) {
+                const result : ResponseVerifyDigitalAddress = {
+                outcome: true,
                 dateTimeCheck: new Date().toISOString()
+              } 
+              return result;
             }
-          return result;
+          }
         }
-          }
+          const result : ResponseVerifyDigitalAddress = {
+          outcome: false,
+          dateTimeCheck: new Date().toISOString()
           
-        
-           else {
-            throw requestParamNotValid(
-              "The request body has one or more required param not valid"
-            );
-          }
+        }
+          return result;
+          
       } catch (error) {
         logger.error(`Error during in method controller 'findFiscalcode': `, error);
         throw error;

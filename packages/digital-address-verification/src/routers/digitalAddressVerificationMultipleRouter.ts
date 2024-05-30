@@ -11,6 +11,10 @@ import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataDigitalAddressMiddleware } from "../context/context.js";
 import digitalAddressVerificationMultipleController from "../controllers/digitalAddressVerificationMultipleController.js"
+
+const locationBaseHost = process.env.BASE_HOST_LOCATION_HEADER || "";
+
+
 const DigitalAddressVerificationMultipleRouter = (
   ctx: ZodiosContext
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
@@ -27,6 +31,7 @@ const DigitalAddressVerificationMultipleRouter = (
         logger.info(`[START] Post - '/verifica' : ${req.body.codiciFiscali}`);
         const response = await digitalAddressVerificationMultipleController.saveRequest(req.body);
         logger.info(`[END] Post - '/verifica'`);
+        res.set('Location', locationBaseHost+`/digital-address-verification/listDigitalAddress/state/${response.id}`);
         return res.status(200).json(response).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
@@ -51,6 +56,10 @@ const DigitalAddressVerificationMultipleRouter = (
         logger.info(`[START] Post - '/verifica' : ${req.params.id}`);
         const response = await digitalAddressVerificationMultipleController.verify(req.params.id)
         logger.info(`[END] Post - '/verifica'`);
+        if (response.state == "DISPONIBILE") {
+          res.set('Location', locationBaseHost+`/digital-address-verification/listDigitalAddress/response/${req.params.id}`);
+          return res.status(200).json(response).end();
+        }
         return res.status(200).json(response).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);

@@ -26,7 +26,10 @@ const DigitalAddressVerificationSingleRouter = (
     async (req, res) => {
       try {
         logger.info(`[START] Post - '/verifica' : ${req.body}`);
-        const result = await digitalAddressVerificationSingleController.verify(req.params.codice_fiscale); 
+        const { codice_fiscale } = req.params;
+        const { digital_address, since, practicalReference } = req.query;
+        logger.info(practicalReference);
+        const result = await digitalAddressVerificationSingleController.verify(codice_fiscale,digital_address, since ); 
         logger.info(`[END] Post - '/verifica'`);
         return res.status(200).json(result).end();
       } catch (error) {
@@ -49,8 +52,12 @@ const DigitalAddressVerificationSingleRouter = (
     authenticationMiddleware(true),
     async (req, res) => {
       try {
-        logger.info(`[START] Post - '/verifica' : ${req.params.codice_fiscale}`);
-        const result = await digitalAddressVerificationSingleController.extract(req.params.codice_fiscale); 
+        
+        const { codice_fiscale } = req.params;
+        const { practicalReference } = req.query;
+        logger.info(practicalReference);
+        logger.info(`[START] Post - '/verifica' : ${codice_fiscale}`);
+        const result = await digitalAddressVerificationSingleController.extract(codice_fiscale); 
         logger.info(`[END] Post - '/verifica'`);
         return res.status(200).json(result).end(); 
       
