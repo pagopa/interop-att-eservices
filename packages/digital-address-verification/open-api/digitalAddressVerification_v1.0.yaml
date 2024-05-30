@@ -5,6 +5,9 @@ info:
 tags:
   - name: API ESTRAZIONI MULTIPLE
   - name: API ESTRAZIONI PUNTUALI
+servers:
+  - url: https://digital-address/v1/
+    description: Generated server url
 paths:
   /digital-address-verification/status:
     get:
@@ -15,7 +18,7 @@ paths:
         per manutenzione o per un problema tecnico.
       operationId: get_status
       tags:
-        - infrastructure
+        - INFRASTRUCTURE
       responses:
         '200':
           description: |

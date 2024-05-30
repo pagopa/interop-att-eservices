@@ -2,12 +2,12 @@ import { logger } from "pdnd-common";
 import { getContext } from "pdnd-common";
 import digitalAddressRepository from "../repository/digitalAddressPreparationRepository.js";
 import generateHash from "../utilities/hashUtilities.js";
-import { VerifyRequest } from "../model/digitalAddress/VerifyRequest.js";
 import { appendUniqueVerifyRequestToArray, findRequestlByIdRequest } from "../utilities/verifyRequestUtilities.js";
+import { VerifyRequest } from "../model/digitalAddress/VerifyRequest.js";
 
-class FiscalcodeVerificationService {
+class DigitalAddressVerificationService {
   public appContext = getContext();
-  public eService: string = "digital-address-verification";
+  public eService: string = "digital-address-verification-request";
 
   public async saveAll(
     fiscalCodeModel: VerifyRequest
@@ -76,23 +76,25 @@ class FiscalcodeVerificationService {
     }
   }
 
-  public async updateStatusByIdRequest(
-    verifyRequest: VerifyRequest
+  public async simulateWorkByIdRequest(
+    idRequest: string
   ): Promise<VerifyRequest | null> {
     try {
-      if (verifyRequest.count > 0) {
+      const verifyRequest = await this.getByIdRequest(idRequest);
+      if (verifyRequest && verifyRequest.count > 1) {
         verifyRequest.count -= 1;
         await this.saveAll(verifyRequest);
-    }
-    return verifyRequest;
+      }
+      return verifyRequest;
     } catch (error) {
       logger.error(
-        `DigitalAddressVerification: Errore durante il recupero dell'utente dal codice fiscale. `,
+        `DigitalAddressVerification: Errore durante la simulazione del lavoro. `,
         error
       );
       throw error;
     }
   }
+
 }
 
-export default new FiscalcodeVerificationService();
+export default new DigitalAddressVerificationService();

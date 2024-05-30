@@ -40,7 +40,7 @@ export function appendUniqueFiscalcodeModelsToArray(
 export function findFiscalcodeModelByFiscalcode(fiscalCodes: ResponseRequestDigitalAddressModel[] | null, fiscalCode: string): ResponseRequestDigitalAddressModel | null {
   if (fiscalCodes == null ) return null;
   for (const fiscalCodeModel of fiscalCodes) {
-      if (fiscalCodeModel.codiceFiscale === fiscalCode) {
+      if (fiscalCodeModel.codiceFiscale == fiscalCode) {
           return fiscalCodeModel;
       }
   }
