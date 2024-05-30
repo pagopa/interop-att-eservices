@@ -36,6 +36,8 @@ jobs:
             dockerfile_path: packages/fiscalcode-verification
           - image_name: piva-verification
             dockerfile_path: packages/piva-verification
+          - image_name: trial-service-api
+            dockerfile_path: packages/trial-service-api
 
     steps:
       - name: Checkout repository
