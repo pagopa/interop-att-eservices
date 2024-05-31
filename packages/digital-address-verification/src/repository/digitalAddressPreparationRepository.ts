@@ -5,7 +5,6 @@ import { parseJsonToVerifyRequestArray } from "../utilities/jsonVerifyRequestUti
 import { findRequestlByIdRequest } from "../utilities/verifyRequestUtilities.js";
 
 class digitalAddressRepository {
-  
   public async saveRequest(
     genericRequest: VerifyRequest[],
     key: string
@@ -82,6 +81,5 @@ class digitalAddressRepository {
     }
   }
 }
-
 
 export default new digitalAddressRepository();

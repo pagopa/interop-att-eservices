@@ -1,4 +1,3 @@
-
 import { logger } from "pdnd-common";
 import { sequelize, executeDatabaseMigrations } from "trial";
 import app from "./app.js";

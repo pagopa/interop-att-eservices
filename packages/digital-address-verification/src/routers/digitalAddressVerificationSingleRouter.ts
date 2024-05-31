@@ -10,12 +10,11 @@ import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataDigitalAddressMiddleware } from "../context/context.js";
-import digitalAddressVerificationSingleController from "../controllers/digitalAddressVerificationSingleController.js"
+import digitalAddressVerificationSingleController from "../controllers/digitalAddressVerificationSingleController.js";
 const DigitalAddressVerificationSingleRouter = (
   ctx: ZodiosContext
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const digitalAddressVerificationSingleRouter = ctx.router(api.api);
-
 
   digitalAddressVerificationSingleRouter.get(
     "/digital-address-verification/verify/:codice_fiscale",
@@ -29,7 +28,11 @@ const DigitalAddressVerificationSingleRouter = (
         const { codice_fiscale } = req.params;
         const { digital_address, since, practicalReference } = req.query;
         logger.info(practicalReference);
-        const result = await digitalAddressVerificationSingleController.verify(codice_fiscale,digital_address, since ); 
+        const result = await digitalAddressVerificationSingleController.verify(
+          codice_fiscale,
+          digital_address,
+          since
+        );
         logger.info(`[END] Post - '/verifica'`);
         return res.status(200).json(result).end();
       } catch (error) {
@@ -45,22 +48,22 @@ const DigitalAddressVerificationSingleRouter = (
   );
 
   digitalAddressVerificationSingleRouter.get(
-    "/digital-address-verification/extract/:codice_fiscale", 
-    // logHeadersMiddleware, 
+    "/digital-address-verification/extract/:codice_fiscale",
+    // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
     uniquexCorrelationIdMiddleware(true),
     authenticationMiddleware(true),
     async (req, res) => {
       try {
-        
         const { codice_fiscale } = req.params;
         const { practicalReference } = req.query;
         logger.info(practicalReference);
         logger.info(`[START] Post - '/verifica' : ${codice_fiscale}`);
-        const result = await digitalAddressVerificationSingleController.extract(codice_fiscale); 
+        const result = await digitalAddressVerificationSingleController.extract(
+          codice_fiscale
+        );
         logger.info(`[END] Post - '/verifica'`);
-        return res.status(200).json(result).end(); 
-      
+        return res.status(200).json(result).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;

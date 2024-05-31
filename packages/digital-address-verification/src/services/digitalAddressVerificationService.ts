@@ -2,7 +2,10 @@ import { logger } from "pdnd-common";
 import { getContext } from "pdnd-common";
 import digitalAddressRepository from "../repository/digitalAddressPreparationRepository.js";
 import generateHash from "../utilities/hashUtilities.js";
-import { appendUniqueVerifyRequestToArray, findRequestlByIdRequest } from "../utilities/verifyRequestUtilities.js";
+import {
+  appendUniqueVerifyRequestToArray,
+  findRequestlByIdRequest,
+} from "../utilities/verifyRequestUtilities.js";
 import { VerifyRequest } from "../model/digitalAddress/VerifyRequest.js";
 
 class DigitalAddressVerificationService {
@@ -25,10 +28,12 @@ class DigitalAddressVerificationService {
         await digitalAddressRepository.findAllByKey(hash);
 
       // se è vuota, la salvo senza ulteriori controlli
+      /* eslint-disable */
       if (
         persistedFiscalcodeData == null ||
         persistedFiscalcodeData.length === 0
       ) {
+         /* eslint-enable */
         await digitalAddressRepository.saveRequest(fiscalCodeData, hash);
       } else {
         // esistono già chiavi, devo aggiungere la nuova, o sostituirla nel caso esista
@@ -36,11 +41,11 @@ class DigitalAddressVerificationService {
           persistedFiscalcodeData,
           fiscalCodeData
         );
-        //if (areFiscalCodesValid(allFiscalcode)) {
+        // if (areFiscalCodesValid(allFiscalcode)) {
         await digitalAddressRepository.saveRequest(allFiscalcode, hash);
-       //} else {
-       // throw ErrorHandling.invalidApiRequest();
-       //}
+        // } else {
+        // throw ErrorHandling.invalidApiRequest();
+        // }
       }
       const response = await digitalAddressRepository.findAllByKey(hash);
       logger.info(`[END] datapreparation-saveList`);
@@ -53,7 +58,6 @@ class DigitalAddressVerificationService {
       throw error;
     }
   }
- 
 
   public async getByIdRequest(
     idRequest: string
@@ -65,8 +69,7 @@ class DigitalAddressVerificationService {
       ]);
       const result = await digitalAddressRepository.findAllByKey(hash);
       const requests = result;
-      const found = findRequestlByIdRequest(requests, idRequest);
-      return found;
+      return findRequestlByIdRequest(requests, idRequest);
     } catch (error) {
       logger.error(
         `DigitalAddressVerification: Errore durante il recupero dell'utente dal codice fiscale. `,
@@ -75,7 +78,7 @@ class DigitalAddressVerificationService {
       throw error;
     }
   }
-
+/* eslint-disable */
   public async simulateWorkByIdRequest(
     idRequest: string
   ): Promise<VerifyRequest | null> {
@@ -94,7 +97,6 @@ class DigitalAddressVerificationService {
       throw error;
     }
   }
-
-}
+} /* eslint-enable */
 
 export default new DigitalAddressVerificationService();

@@ -16,7 +16,9 @@ export const ParsedHeadersDigitalAddress = z
     correlationId: z.string().uuid(),
   })
   .and(AuthData);
-export type ParsedHeadersDigitalAddress = z.infer<typeof ParsedHeadersDigitalAddress>;
+export type ParsedHeadersDigitalAddress = z.infer<
+  typeof ParsedHeadersDigitalAddress
+>;
 
 export const readHeadersDigitalAddress = (
   req: Request

@@ -1,11 +1,11 @@
 import { logger } from "pdnd-common";
-import {  ResponseRequestDigitalAddressModel } from "pdnd-models";
+import { ResponseRequestDigitalAddressModel } from "pdnd-models";
 import { getContext } from "pdnd-common";
 import dataPreparationRepository from "../repository/dataPreparationRepository.js";
 import generateHash from "../utilities/hashUtilities.js";
 import {
   appendUniqueFiscalcodeModelsToArray,
-  //areFiscalCodesValid,
+  // areFiscalCodesValid,
   deleteFiscalcodeModelByFiscaldode,
   findFiscalcodeModelByFiscalcode,
 } from "../utilities/fiscalcodeUtilities.js";
@@ -18,7 +18,9 @@ class DataPreparationService {
   ): Promise<ResponseRequestDigitalAddressModel[] | null> {
     try {
       logger.info(`[START] datapreparation-saveList`);
-      const fiscalCodeData: ResponseRequestDigitalAddressModel[] = [fiscalCodeModel];
+      const fiscalCodeData: ResponseRequestDigitalAddressModel[] = [
+        fiscalCodeModel,
+      ];
 
       // recupera tutte le chiavi di data preparation
       const hash = generateHash([
@@ -40,11 +42,11 @@ class DataPreparationService {
           persistedFiscalcodeData,
           fiscalCodeData
         );
-        //if (areFiscalCodesValid(allFiscalcode)) {
+        // if (areFiscalCodesValid(allFiscalcode)) {
         await dataPreparationRepository.saveList(allFiscalcode, hash);
-       //} else {
-       // throw ErrorHandling.invalidApiRequest();
-       //}
+        // } else {
+        // throw ErrorHandling.invalidApiRequest();
+        // }
       }
       const response = await dataPreparationRepository.findAllByKey(hash);
       logger.info(`[END] datapreparation-saveList`);

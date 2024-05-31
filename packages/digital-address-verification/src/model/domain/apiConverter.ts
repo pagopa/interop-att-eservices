@@ -1,4 +1,5 @@
-import {   CodiceFiscaleModel,
+import {
+  CodiceFiscaleModel,
   DigitalAddressModel,
   MotivationTerminationModel,
   UsageInfoModel,
@@ -12,7 +13,8 @@ import {   CodiceFiscaleModel,
   ResponseRequestListDigitalAddressModel,
   ResponseVerifyDigitalAddressModel,
   ResponseStatusListDigitalAddressModel,
-  ResponseListDigitalAddressModel, } from "pdnd-models";
+  ResponseListDigitalAddressModel,
+} from "pdnd-models";
 
 import {
   CodiceFiscale,
@@ -32,7 +34,6 @@ import {
   ResponseListDigitalAddress,
 } from "./models.js";
 
-
 // 1. CodiceFiscale
 export const convertCodiceFiscaleToCodiceFiscaleModel = (
   codiceFiscale: CodiceFiscale
@@ -46,7 +47,7 @@ export const convertCodiceFiscaleModelToCodiceFiscale = (
 
 // 2.Digital_Address
 export const DigitalAddressToDigitalAddressModel = (
-  digitalAddress: DigitalAddressModel 
+  digitalAddress: DigitalAddressModel
 ): DigitalAddressModel => ({
   digitalAddress: digitalAddress?.digitalAddress || "",
 });
@@ -57,33 +58,35 @@ export const digitalAddressModelToDigitalAddress = (
 
 // 3. Motivation_Termination
 export const MotivationTerminationToMotivationTerminationModel = (
-  motivationTermination: MotivationTermination 
-): MotivationTerminationModel => (
-  motivationTermination
-);
+  motivationTermination: MotivationTermination
+): MotivationTerminationModel => motivationTermination;
 
 export const motivationTerminationModelToMotivationTermination = (
   model: MotivationTerminationModel
-): MotivationTermination =>  model;
+): MotivationTermination => model;
 
 // 4. Usage_Info
 export const usageInfoToUsageInfoModel = (
-  template: UsageInfo 
+  template: UsageInfo
 ): UsageInfoModel => ({
-  motivation: MotivationTerminationToMotivationTerminationModel(template?.motivation),
+  motivation: MotivationTerminationToMotivationTerminationModel(
+    template?.motivation
+  ),
   dateEndValidity: template?.dateEndValidity || "",
 });
 
 export const usageInfoModelTousageInfo = (
   model: UsageInfoModel
-): UsageInfo => ({ 
-  motivation: motivationTerminationModelToMotivationTermination(model.motivation),
+): UsageInfo => ({
+  motivation: motivationTerminationModelToMotivationTermination(
+    model.motivation
+  ),
   dateEndValidity: model.dateEndValidity,
 });
 
 // 5. Element_Digital_Address
 export const ElementDigitalAddressToElementDigitalAddressModel = (
-  object: ElementDigitalAddress 
+  object: ElementDigitalAddress
 ): ElementDigitalAddressModel => ({
   digitalAddress: object?.digitalAddress || "",
   practicedProfession: object?.practicedProfession,
@@ -92,42 +95,48 @@ export const ElementDigitalAddressToElementDigitalAddressModel = (
 
 export const elementDigitalAddressModelToElementDigitalAddress = (
   model: ElementDigitalAddressModel
-): ElementDigitalAddress => ({ 
+): ElementDigitalAddress => ({
   digitalAddress: model.digitalAddress,
   practicedProfession: model.practicedProfession,
   usageInfo: usageInfoModelTousageInfo(model.usageInfo),
 });
 
 // 6. Response_Request_Digital_Address
-export const ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel = (
-  object: ResponseRequestDigitalAddress 
-): ResponseRequestDigitalAddressModel => ({
-  codiceFiscale: object?.codiceFiscale || "",
-  since: object?.since || "",
-  digitalAddress: (object?.digitalAddress || []).map(ElementDigitalAddressToElementDigitalAddressModel),
-});
+export const ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel =
+  (
+    object: ResponseRequestDigitalAddress
+  ): ResponseRequestDigitalAddressModel => ({
+    codiceFiscale: object?.codiceFiscale || "",
+    since: object?.since || "",
+    digitalAddress: (object?.digitalAddress || []).map(
+      ElementDigitalAddressToElementDigitalAddressModel
+    ),
+  });
 
-export const responseRequestDigitalAddressModelToResponseRequestDigitalAddress = (
-  model: ResponseRequestDigitalAddressModel
-): ResponseRequestDigitalAddress => ({ 
-  codiceFiscale: model.codiceFiscale,
-  since: model.since,
-  digitalAddress: model.digitalAddress.map(elementDigitalAddressModelToElementDigitalAddress),
-});
+export const responseRequestDigitalAddressModelToResponseRequestDigitalAddress =
+  (
+    model: ResponseRequestDigitalAddressModel
+  ): ResponseRequestDigitalAddress => ({
+    codiceFiscale: model.codiceFiscale,
+    since: model.since,
+    digitalAddress: model.digitalAddress.map(
+      elementDigitalAddressModelToElementDigitalAddress
+    ),
+  });
 
 // Funzione che prende in input un array di ResponseRequestDigitalAddressModel, chiama la funzione di conversione e restituisce un array di ResponseRequestDigitalAddress
 export const convertArrayOfModelToResponseRequestDigitalAddress = (
   models: ResponseRequestDigitalAddressModel[]
-): ResponseRequestDigitalAddress[] => {
-  return models.map(responseRequestDigitalAddressModelToResponseRequestDigitalAddress);
-};
+): ResponseRequestDigitalAddress[] =>
+  models.map(responseRequestDigitalAddressModelToResponseRequestDigitalAddress);
 
 // Funzione unificata
 export const convertArrayOfModelsToResponseListRequestDigitalAddress = (
   models: ResponseRequestDigitalAddressModel[]
 ): ResponseListRequestDigitalAddress => {
   // Converti l'array di ResponseRequestDigitalAddressModel a ResponseRequestDigitalAddress
-  const convertedModels: ResponseRequestDigitalAddress[] = convertArrayOfModelToResponseRequestDigitalAddress(models);
+  const convertedModels: ResponseRequestDigitalAddress[] =
+    convertArrayOfModelToResponseRequestDigitalAddress(models);
 
   // Crea un oggetto conforme a ResponseListRequestDigitalAddress
   const responseList: ResponseListRequestDigitalAddress = {
@@ -138,21 +147,27 @@ export const convertArrayOfModelsToResponseListRequestDigitalAddress = (
 };
 
 // 7. Response_Request_Digital_Address
-export const ResponseListRequestDigitalAddressToResponseListRequestDigitalAddressModel = (
-  object: ResponseListRequestDigitalAddress 
-): ResponseListRequestDigitalAddressModel => ({
-  data: (object?.data || []).map(ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel),
-});
+export const ResponseListRequestDigitalAddressToResponseListRequestDigitalAddressModel =
+  (
+    object: ResponseListRequestDigitalAddress
+  ): ResponseListRequestDigitalAddressModel => ({
+    data: (object?.data || []).map(
+      ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel
+    ),
+  });
 
-export const responseListRequestDigitalAddressModelToResponseListRequestDigitalAddress = (
-  model: ResponseListRequestDigitalAddressModel
-): ResponseListRequestDigitalAddress => ({ 
-  data: model.data?.map(responseRequestDigitalAddressModelToResponseRequestDigitalAddress),
-});
+export const responseListRequestDigitalAddressModelToResponseListRequestDigitalAddress =
+  (
+    model: ResponseListRequestDigitalAddressModel
+  ): ResponseListRequestDigitalAddress => ({
+    data: model.data?.map(
+      responseRequestDigitalAddressModelToResponseRequestDigitalAddress
+    ),
+  });
 
 // 8. Response_Request_Digital_Address
 export const PracticalReferenceToPracticalReferenceModel = (
-  praticaReference: PracticalReference 
+  praticaReference: PracticalReference
 ): PracticalReferenceModel => ({
   practicalReference: praticaReference,
 });
@@ -163,7 +178,7 @@ export const practicalReferenceModelToPracticalReference = (
 
 // 9. Request_List_Digital_Address
 export const RequestListDigitalAddressToRequestListDigitalAddressModel = (
-  object: RequestListDigitalAddress 
+  object: RequestListDigitalAddress
 ): RequestListDigitalAddressModel => ({
   codiciFiscali: object?.codiciFiscali || [],
   praticalReference: object?.praticalReference || "",
@@ -171,53 +186,49 @@ export const RequestListDigitalAddressToRequestListDigitalAddressModel = (
 
 export const requestListDigitalAddressModelToRequestListDigitalAddress = (
   model: RequestListDigitalAddressModel
-): RequestListDigitalAddress => ({ 
+): RequestListDigitalAddress => ({
   codiciFiscali: model.codiciFiscali,
   praticalReference: model.praticalReference,
 });
 
 // 10. Status_Processing_Request
 export const StatusProcessingRequestToStatusProcessingRequestModel = (
-  object: StatusProcessingRequest 
-): StatusProcessingRequestModel => (
-  object
-);
+  object: StatusProcessingRequest
+): StatusProcessingRequestModel => object;
 
 export const statusProcessingRequestModelToStatusProcessingRequest = (
   model: StatusProcessingRequestModel
 ): StatusProcessingRequest => model;
 
 // 11. UUID
-export const UUIDToUUIDModel = (
-  object: UUID 
-): UUIDModel => object;
+export const UUIDToUUIDModel = (object: UUID): UUIDModel => object;
 
-export const uuidModelToUUID = (
-  model: UUIDModel
-): UUID => model;
+export const uuidModelToUUID = (model: UUIDModel): UUID => model;
 
 // 12. Response_Request_List_Digital_Address
-export const ResponseRequestListDigitalAddressToResponseRequestListDigitalAddressModel = (
-  object: ResponseRequestListDigitalAddress 
-): ResponseRequestListDigitalAddressModel => ({
-  state: StatusProcessingRequestToStatusProcessingRequestModel(object?.state),
-  message: object?.message || "",
-  id: object?.id || "",
-  dateTimeRequest: object?.dateTimeRequest || "",
-});
+export const ResponseRequestListDigitalAddressToResponseRequestListDigitalAddressModel =
+  (
+    object: ResponseRequestListDigitalAddress
+  ): ResponseRequestListDigitalAddressModel => ({
+    state: StatusProcessingRequestToStatusProcessingRequestModel(object?.state),
+    message: object?.message || "",
+    id: object?.id || "",
+    dateTimeRequest: object?.dateTimeRequest || "",
+  });
 
-export const responseRequestListDigitalAddressModelToResponseRequestListDigitalAddress = (
-  model: ResponseRequestListDigitalAddressModel
-): ResponseRequestListDigitalAddress => ({ 
-  state: statusProcessingRequestModelToStatusProcessingRequest(model.state),
-  message: model.message,
-  id: model.id,
-  dateTimeRequest: model.dateTimeRequest,
-});
+export const responseRequestListDigitalAddressModelToResponseRequestListDigitalAddress =
+  (
+    model: ResponseRequestListDigitalAddressModel
+  ): ResponseRequestListDigitalAddress => ({
+    state: statusProcessingRequestModelToStatusProcessingRequest(model.state),
+    message: model.message,
+    id: model.id,
+    dateTimeRequest: model.dateTimeRequest,
+  });
 
 // 13. Response_Verify_Digital_Address
 export const ResponseVerifyDigitalAddressToResponseVerifyDigitalAddressModel = (
-  object: ResponseVerifyDigitalAddress 
+  object: ResponseVerifyDigitalAddress
 ): ResponseVerifyDigitalAddressModel => ({
   outcome: object?.outcome || false,
   dateTimeCheck: object?.dateTimeCheck || "",
@@ -231,29 +242,36 @@ export const responseVerifyDigitalAddressModelToResponseVerifyDigitalAddress = (
 });
 
 // 14. Response_Status_List_Digital_Address
-export const ResponseStatusListDigitalAddressToResponseStatusListDigitalAddressModel = (
-  object: ResponseStatusListDigitalAddress 
-): ResponseStatusListDigitalAddressModel => ({
-  state: StatusProcessingRequestToStatusProcessingRequestModel(object?.state),
-  message: object?.message || "",
-});
+export const ResponseStatusListDigitalAddressToResponseStatusListDigitalAddressModel =
+  (
+    object: ResponseStatusListDigitalAddress
+  ): ResponseStatusListDigitalAddressModel => ({
+    state: StatusProcessingRequestToStatusProcessingRequestModel(object?.state),
+    message: object?.message || "",
+  });
 
-export const responseStatusListDigitalAddressModelToResponseStatusListDigitalAddress = (
-  model: ResponseStatusListDigitalAddressModel
-): ResponseStatusListDigitalAddress => ({ 
-  state: statusProcessingRequestModelToStatusProcessingRequest(model.state),
-  message: model.message,
-});
+export const responseStatusListDigitalAddressModelToResponseStatusListDigitalAddress =
+  (
+    model: ResponseStatusListDigitalAddressModel
+  ): ResponseStatusListDigitalAddress => ({
+    state: statusProcessingRequestModelToStatusProcessingRequest(model.state),
+    message: model.message,
+  });
 
 // 15. Response_List_Digital_Address
 export const ResponseListDigitalAddressToResponseListDigitalAddressModel = (
   object: ResponseListDigitalAddress // Replace 'any' with the appropriate type if known
 ): ResponseListDigitalAddressModel => ({
-  list: (object?.list || []).map(ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel),
+  list: (object?.list || []).map(
+    ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel
+  ),
 });
 
 export const responseListDigitalAddressModelToResponseListDigitalAddress = (
   model: ResponseListDigitalAddressModel
-): ResponseListDigitalAddress => ({ // Replace 'any' with the appropriate type if known
-  list: model.list.map(responseRequestDigitalAddressModelToResponseRequestDigitalAddress),
+): ResponseListDigitalAddress => ({
+  // Replace 'any' with the appropriate type if known
+  list: model.list.map(
+    responseRequestDigitalAddressModelToResponseRequestDigitalAddress
+  ),
 });

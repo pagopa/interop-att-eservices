@@ -2,6 +2,7 @@ import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext, logger } from "pdnd-common";
 import { authenticationMiddleware } from "pdnd-common";
+import { ErrorHandling } from "pdnd-models";
 import { api } from "../model/generated/api.js";
 import DataPreparationService from "../services/dataPreparationService.js";
 import { makeApiProblem } from "../exceptions/errors.js";
@@ -12,7 +13,6 @@ import {
   responseRequestDigitalAddressModelToResponseRequestDigitalAddress,
 } from "../model/domain/apiConverter.js";
 import { contextDataDigitalAddressMiddleware } from "../context/context.js";
-import { ErrorHandling } from "pdnd-models";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -26,7 +26,9 @@ const dataPreparationRouter = (
     async (req, res) => {
       try {
         await DataPreparationService.saveList(
-          ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel(req.body)
+          ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel(
+            req.body
+          )
         );
         return res.status(200).end();
       } catch (error) {
@@ -46,13 +48,14 @@ const dataPreparationRouter = (
           throw ErrorHandling.invalidApiRequest();
         }
         const data = await DataPreparationService.getAll();
-        const result = data  ? convertArrayOfModelsToResponseListRequestDigitalAddress(data) : undefined
-        if(result) {
+        const result = data
+          ? convertArrayOfModelsToResponseListRequestDigitalAddress(data)
+          : undefined;
+        if (result) {
           return res.status(200).json(result).end();
         } else {
           return res.status(200).end();
         }
-        
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();
@@ -69,17 +72,22 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        const data = await DataPreparationService.findByFiscalCode(req.params.codiceFiscale);
-  
-        const result = data  ? responseRequestDigitalAddressModelToResponseRequestDigitalAddress(data) : undefined
-        if(result) {
+        const data = await DataPreparationService.findByFiscalCode(
+          req.params.codiceFiscale
+        );
+
+        const result = data
+          ? responseRequestDigitalAddressModelToResponseRequestDigitalAddress(
+              data
+            )
+          : undefined;
+        if (result) {
           return res.status(200).json(result).end();
         } else {
           return res.status(200).end();
         }
-        
       } catch (error) {
-        logger.error(error)
+        logger.error(error);
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();
       }
@@ -117,7 +125,9 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        await DataPreparationService.deleteByFiscalCode(req.params.codiceFiscale);
+        await DataPreparationService.deleteByFiscalCode(
+          req.params.codiceFiscale
+        );
         return res.status(200).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);

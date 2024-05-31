@@ -23,7 +23,9 @@ class dataPreparationRepository {
     }
   }
 
-  public async findAllByKey(key: string): Promise<ResponseRequestDigitalAddressModel[] | null> {
+  public async findAllByKey(
+    key: string
+  ): Promise<ResponseRequestDigitalAddressModel[] | null> {
     // pourposeId
     try {
       const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
@@ -66,7 +68,8 @@ class dataPreparationRepository {
       await cacheManager.deleteAllObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
 
       const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
-      const arrayDataSaved = parseJsonToResponseRequestDigitalAddressArray(dataSaved);
+      const arrayDataSaved =
+        parseJsonToResponseRequestDigitalAddressArray(dataSaved);
       if (arrayDataSaved == null) {
         return 0;
       } else {

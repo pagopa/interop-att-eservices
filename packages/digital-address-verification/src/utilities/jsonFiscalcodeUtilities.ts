@@ -38,7 +38,8 @@ export function parseJsonToResponseRequestDigitalAddressArray(
 
     // Mappa ogni elemento dell'array e lo converte in un'istanza della classe FiscalcodeModel
     return parsedArray.map(
-      (item: ResponseRequestDigitalAddressModel) => classToPlain(item) as ResponseRequestDigitalAddressModel
+      (item: ResponseRequestDigitalAddressModel) =>
+        classToPlain(item) as ResponseRequestDigitalAddressModel
     );
   } catch (error) {
     logger.error(`Errore durante il parsing della stringa JSON: ${error}`);
@@ -46,10 +47,9 @@ export function parseJsonToResponseRequestDigitalAddressArray(
   }
 }
 
-
 /* eslint-disable */
 export function convertStringToRichiesta(jsonString: any): ResponseRequestDigitalAddressModel {
-  /* eslint-enable */
+  
   try {
     const parsed = JSON.parse(jsonString);
 
@@ -70,3 +70,4 @@ export function convertStringToRichiesta(jsonString: any): ResponseRequestDigita
     throw error;
   }
 }
+/* eslint-enable */

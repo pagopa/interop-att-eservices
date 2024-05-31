@@ -47,7 +47,6 @@ export function parseJsonToVerifyRequestArray(
   }
 }
 
-
 /* eslint-disable */
 export function convertStringToVerifyRequest(jsonString: any): VerifyRequest {
   /* eslint-enable */
@@ -61,7 +60,7 @@ export function convertStringToVerifyRequest(jsonString: any): VerifyRequest {
       count: parsed.count,
     };
   } catch (error) {
-    console.error(`Error parsing JSON string: ${error}`);
+    logger.error(`Error parsing JSON string: ${error}`);
     throw error;
   }
 }
@@ -78,7 +77,7 @@ export function convertStringToResponseRequestDigitalAddress(jsonString: any): R
       since: parsed.since,
     };
   } catch (error) {
-    console.error(`Error parsing JSON string: ${error}`);
+    logger.error(`Error parsing JSON string: ${error}`);
     throw error;
   }
 }
