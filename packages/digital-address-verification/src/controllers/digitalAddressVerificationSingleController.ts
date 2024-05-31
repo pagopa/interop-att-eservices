@@ -1,5 +1,5 @@
 import { logger, getContext } from "pdnd-common";
-import { requestParamNotValid } from "../exceptions/errors.js";
+import { fiscalcodeNotFound } from "../exceptions/errors.js";
 import {
   ResponseRequestDigitalAddress,
   ResponseVerifyDigitalAddress,
@@ -10,7 +10,6 @@ import { responseRequestDigitalAddressModelToResponseRequestDigitalAddress } fro
 class DigitalAddressVerificationSingleController {
   public appContext = getContext();
 
-  // Response_Status_List_Digital_Address
   public async verify(
     codiceFiscale: string,
     digitalAddress: string,
@@ -62,9 +61,7 @@ class DigitalAddressVerificationSingleController {
           richiesta
         );
       } else {
-        throw requestParamNotValid(
-          "The request body has one or more required param not valid"
-        );
+        throw fiscalcodeNotFound(`The fiscal code not found: ${codiceFiscale}`);
       }
     } catch (error) {
       logger.error(

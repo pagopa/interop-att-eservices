@@ -18,7 +18,7 @@ export type GeneralErrorModel = {
 
 const errorCodes = {
   eServiceNotFound: "0001",
-  certNotValid: "0002",
+  reqVerNotFound: "0002",
   requestParamNotValid: "0003",
   fiscalcodeNotFoud: "0004",
 };
@@ -37,11 +37,13 @@ export function eServiceNotFound(eserviceId: string): ApiError<ErrorCodes> {
   });
 }
 
-export function certNotValidError(details?: string): ApiError<ErrorCodes> {
+export function requestVerificationNotFountError(
+  details?: string
+): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: details != null ? details : "Certificate not valid",
-    code: "certNotValid",
-    title: "not valid",
+    detail: details != null ? details : "Request verification not found",
+    code: "reqVerNotFound",
+    title: "not found",
   });
 }
 

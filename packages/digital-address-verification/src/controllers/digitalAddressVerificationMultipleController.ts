@@ -1,5 +1,8 @@
 import { logger, getContext } from "pdnd-common";
-import { requestParamNotValid } from "../exceptions/errors.js";
+import {
+  requestParamNotValid,
+  requestVerificationNotFountError,
+} from "../exceptions/errors.js";
 import {
   RequestListDigitalAddress,
   ResponseListDigitalAddress,
@@ -15,11 +18,9 @@ import {
 import dataPreparationService from "../services/dataPreparationService.js";
 import { parseJsonToRequestListDigitalAddress } from "../utilities/jsonDigitalAddressUtilities.js";
 import { responseRequestDigitalAddressModelToResponseRequestDigitalAddress } from "../model/domain/apiConverter.js";
+
 class DigitalAddressVerificationSingleController {
   public appContext = getContext();
-
-  // Request_List_Digital_Address
-  // Response_Request_List_Digital_Address
 
   public async saveRequest(
     request: RequestListDigitalAddress
@@ -27,18 +28,13 @@ class DigitalAddressVerificationSingleController {
     try {
       if (request.codiciFiscali) {
         const jsonRequest = JSON.stringify(request);
-        const jsonResult = "";
         const count = getMaxNumber(); // presa in carico
 
-        const verifyRequestInstance = new VerifyRequest(
-          jsonRequest,
-          count,
-          jsonResult
-        );
+        const verifyRequestInstance = new VerifyRequest(jsonRequest, count);
+
         await DigitalAddressVerificationService.saveAll(verifyRequestInstance);
 
         const result: ResponseRequestListDigitalAddress = {
-          // idOperazione: request.idOperazioneClient,
           state: getStatusFromNumber(count),
           message: getStatusFromNumber(count),
           id: verifyRequestInstance.idRequest,
@@ -70,26 +66,22 @@ class DigitalAddressVerificationSingleController {
         );
       if (richiesta) {
         const result: ResponseStatusListDigitalAddress = {
-          // idOperazione: request.idOperazioneClient,
           state: getStatusFromNumber(richiesta.count),
           message: getStatusFromNumber(richiesta.count),
         };
         return result;
       } else {
-        throw requestParamNotValid(
-          "The request body has one or more required param not valid"
+        throw requestVerificationNotFountError(
+          `The request verification not found with id: ${idRichiesta}`
         );
       }
     } catch (error) {
-      logger.error(
-        `Error during in method controller 'findFiscalcode': `,
-        error
-      );
+      logger.error(`Error during in method controller 'verify': `, error);
       throw error;
     }
   }
 
-  // ResponseListDigitalAddress //lista Response_Request_Digital_Address
+  /* eslint-disable */
   public async getByIdRequest(
     idRichiesta: string
   ): Promise<ResponseListDigitalAddress> {
@@ -100,14 +92,11 @@ class DigitalAddressVerificationSingleController {
       const richiesta = await DigitalAddressVerificationService.getByIdRequest(
         idRichiesta
       );
-      /* eslint-disable */
-      if (richiesta && richiesta.count == 1) {         
-        /* eslint-enable */
+      if (richiesta?.count == 1) {
         const requestListDigitalAddress = parseJsonToRequestListDigitalAddress(
           richiesta.jsonRequest
         );
         if (requestListDigitalAddress) {
-          // Ciclare per tutti i codici fiscali
           for (const codiceFiscale of requestListDigitalAddress.codiciFiscali) {
             const addressModel = await dataPreparationService.findByFiscalCode(
               codiceFiscale
@@ -117,12 +106,14 @@ class DigitalAddressVerificationSingleController {
                 responseRequestDigitalAddressModelToResponseRequestDigitalAddress(
                   addressModel
                 );
-              /* eslint-disable */
               responseListDigitalAddress.list.push(address);
-              /* eslint-enable */
             }
           }
         }
+      }else {
+        throw requestVerificationNotFountError(
+          `The request verification not found with id: ${idRichiesta}`
+        );
       }
       return responseListDigitalAddress;
     } catch (error) {
@@ -132,6 +123,6 @@ class DigitalAddressVerificationSingleController {
       );
       throw error;
     }
-  }
+  } /* eslint-enable */
 }
 export default new DigitalAddressVerificationSingleController();
