@@ -1,7 +1,7 @@
 import { ExpressContext, getContext, logger } from "pdnd-common";
 import { ZodiosRouterContextRequestHandler } from "@zodios/express";
 import { match } from "ts-pattern";
-import { TrialRepository } from "trial";
+import { TrialService } from "trial";
 import DataPreparationHandshakeService from "../services/dataPreparationHandshakeService.js";
 import { getSerialNumberFromUrlEncodedCert } from "../utilities/certificateUtility.js";
 import {
@@ -46,7 +46,7 @@ export const verifyCertValidity: ZodiosRouterContextRequestHandler<
       logger.error(`apiKey non valida`);
       throw ErrorHandling.apikeyNotValidError();
     }
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "CERT_VERIFICATION_OK",
@@ -66,7 +66,7 @@ export const verifyCertValidity: ZodiosRouterContextRequestHandler<
         .with("apikeyNotValid", () => 500)
         .otherwise(() => 500)
     );
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "CERT_VERIFICATION_NOT_VALID",

@@ -6,7 +6,7 @@ import {
   authenticationMiddleware,
   uniquexCorrelationIdMiddleware,
 } from "pdnd-common";
-import { TrialRepository } from "trial";
+import { TrialService } from "trial";
 import ResidenceVerificationController from "../controllers/residenceVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -30,7 +30,7 @@ const residenceVerificationRouter = (
   residenceVerificationRouter.post(
     "/residence-verification",
     contextDataResidenceMiddleware,
-    uniquexCorrelationIdMiddleware(true),
+    uniquexCorrelationIdMiddleware,
     authenticationMiddleware(true),
     integrityValidationMiddleware(),
     auditValidationMiddleware(),
@@ -41,7 +41,7 @@ const residenceVerificationRouter = (
         if (!data || data.soggetti?.soggetto?.length === 0) {
           throw userModelNotFound();
         }
-        void TrialRepository.insert(
+        void TrialService.insert(
           req.url,
           req.method,
           "RESIDENCE_VERIFICATION_001",
@@ -56,7 +56,7 @@ const residenceVerificationRouter = (
           correlationId,
           errorRes
         );
-        void TrialRepository.insert(
+        void TrialService.insert(
           req.url,
           req.method,
           "RESIDENCE_VERIFICATION_001",

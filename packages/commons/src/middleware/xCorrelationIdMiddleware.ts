@@ -7,13 +7,13 @@ import { logger } from "../logging/index.js";
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 /* eslint-disable */
 
-export const uniquexCorrelationIdMiddleware: (isEnableTrial: boolean) => ZodiosRouterContextRequestHandler<ExpressContext> =
-  (isEnableTrial) => {
+export const uniquexCorrelationIdMiddleware: () => ZodiosRouterContextRequestHandler<ExpressContext> =
+  () => {
     const uniquexCorrelationIdMiddleware: ZodiosRouterContextRequestHandler<
       ExpressContext
     > = async (req, res, next): Promise<unknown> => {
       try {
-        if (!isEnableTrial || !req) {
+        if (!req) {
           return next();
         } else {
           const context = getContext();

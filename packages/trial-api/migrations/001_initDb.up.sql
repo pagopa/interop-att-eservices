@@ -39,11 +39,15 @@ CREATE INDEX trial_purpose_id_idx ON trial USING btree (purpose_id);
 
 
 INSERT INTO category (id,code,eservice,description,"order") VALUES
-    (1,'VOUCHER','residence-verification,fiscal-code','bearer token',1),
+    (1,'VOUCHER','residence-verification,fiscalcode-verification,piva-verification,digital-address-verification-verify,digital-address-verification-extract','bearer token',1),
     (2,'Agid-JWT-Signature','residence-verification','token in Headers',2),
     (3,'Agid-JWT-TrackingEvidence','residence-verification','token in Headers',3),
-    (4,'e-service','residence-verification,fiscalcode-verification','e-services exposed by the application',4),
-    (5,'cert','fiscalcode-verification','Verify certificate validity',2);
+    (4,'cert','fiscalcode-verification,piva-verification','Verify certificate validity',2),
+    (5,'e-service','residence-verification','e-service exposed by the application',4),
+    (6,'e-service','fiscalcode-verification','e-service exposed by the application',3),
+    (7,'e-service','piva-verification','e-service exposed by the application',3),
+    (8,'e-service','digital-address-verification-verify','e-service exposed by the application',2),
+    (9,'e-service','digital-address-verification-extract','e-service exposed by the application',2);
 
 INSERT INTO "check" (id,code,description,"order",category_id) VALUES
     (1,'authData','Bearer token can not be parsed',1,1),
@@ -93,10 +97,14 @@ INSERT INTO "check" (id,code,description,"order",category_id) VALUES
     (41,'userID','"userID" not valid in agid-jwt-trackingevidence payload token',13,3),
     (42,'userLocation','"userLocation" not valid in agid-jwt-trackingevidence payload token',14,3),
     (43,'LoA','"LoA" not valid in agid-jwt-trackingevidence payload token',15,3),
-    (44,'VOUCHER','Authorization bearer token',1,1),
-    (45,'Agid-JWT-Signature','Token in the request Headers',2,2),
-    (46,'Agid-JWT-TrackingEvidence','Token in the request Headers',3,3),
-    (47,'residence-verification-001','API for a consultation of a residence',4,4),
-    (48,'fiscalcode-verification','API to validate a specific fiscal code',3,4),
-    (49,'cert','OK',2,5),
-    (50,'cert','Not Valid',2,5);
+    (44,'VOUCHER','Authorization bearer token',7,1),
+    (45,'Agid-JWT-Signature','Token in the request Headers',23,2),
+    (46,'Agid-JWT-TrackingEvidence','Token in the request Headers',18,3),
+    (47,'residence-verification-001','API for a consultation of a residence',4,5),
+    (48,'fiscalcode-verification','API to validate a specific fiscal code',3,6),
+    (49,'cert','OK',2,4),
+    (50,'cert','Not Valid',2,4);
+INSERT INTO "check" (id,code,description,"order",category_id) VALUES   
+    (51,'piva-verification','API to validate a specific vat code',3,7),
+    (52,'digital-address-verification-verify','API to validate a specific digital address associated with a fiscal code',2,8),
+    (53,'digital-address-verification-extract','API to validate a specific digital address associated with a fiscal code',2,9);

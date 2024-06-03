@@ -13,6 +13,7 @@ import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import logHeadersMiddleware from "../middlewares/logHeaderMiddleware.js";
 import { contextDataPivaMiddleware } from "../context/context.js";
 import { verifyCertValidity } from "../security/certValidityMiddleware.js";
+import { TrialService } from "trial";
 
 const pivaVerificationRouter = (
   ctx: ZodiosContext
@@ -23,7 +24,7 @@ const pivaVerificationRouter = (
     "/piva-verification/verifica",
     logHeadersMiddleware,
     contextDataPivaMiddleware,
-    uniquexCorrelationIdMiddleware(true),
+    uniquexCorrelationIdMiddleware,
     authenticationMiddleware(true),
     verifyCertValidity,
     async (req, res) => {
@@ -32,6 +33,12 @@ const pivaVerificationRouter = (
 
         logger.info(`[START] Post - '/verifica' : ${req.body.codiceFiscale}`);
         const data = await PivaVerificationController.findPiva(req.body);
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "PIVA-VERIFICATION",
+          "OK"
+        );
         logger.info(`[END] Post - '/verifica'`);
         return res.status(200).json(data).end();
       } catch (error) {
@@ -40,6 +47,13 @@ const pivaVerificationRouter = (
         const generalErrorResponse = mapGeneralErrorModel(
           correlationId,
           errorRes
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "RESIDENCE_VERIFICATION_001",
+          "KO",
+          JSON.stringify(generalErrorResponse)
         );
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }

@@ -113,6 +113,9 @@ export const checkValuesMap: { [key: string]: number } = {
   FISCALCODE_VERIFICATION: 48,
   CERT_VERIFICATION_OK: 49,
   CERT_VERIFICATION_NOT_VALID: 50,
+  PIVA_VERIFICATION: 51,
+  DIGITAL_ADDRESS_VERIFICATION_VERIFY: 52,
+  DIGITAL_ADDRESS_VERIFICATION_EXTRACT: 53,
 };
 
 const getCheckValue = (key: string): number | undefined => checkValuesMap[key];

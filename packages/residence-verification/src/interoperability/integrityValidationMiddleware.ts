@@ -6,7 +6,7 @@ import { makeApiProblemBuilder } from "pdnd-models";
 import { match } from "ts-pattern";
 import { logger } from "pdnd-common";
 import { ExpressContext, InteroperabilityConfig } from "pdnd-common";
-import { TrialRepository } from "trial";
+import { TrialService } from "trial";
 import { generateHashFromString } from "../utilities/hashUtilities.js";
 import { validate as tokenValidation } from "./interoperabilityValidationMiddleware.js";
 
@@ -29,7 +29,7 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
           logger.error(
             `integrityValidationMiddleware - No matching headers found: agid-jwt-signature`
           );
-          void TrialRepository.insert(
+          void TrialService.insert(
             req.url,
             req.method,
             "SIGNATURE_NOT_PRESENT"
@@ -43,7 +43,7 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
           logger.error(
             `integrityValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`
           );
-          void TrialRepository.insert(
+          void TrialService.insert(
             req.url,
             req.method,
             "SIGNATURE_NOT_VALID"
@@ -52,7 +52,7 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
         }
         if (!(await tokenValidation(signatureToken, "signatureToken"))) {
           logger.error(`integrityValidationMiddleware - token not valid`);
-          void TrialRepository.insert(
+          void TrialService.insert(
             req.url,
             req.method,
             "SIGNATURE_PUBLIC_KEY_NOT_VALID"
@@ -63,7 +63,7 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
           verifyJwtPayload(signatureToken, req);
         }
 
-        void TrialRepository.insert(req.url, req.method, "SIGNATURE", "OK");
+        void TrialService.insert(req.url, req.method, "SIGNATURE", "OK");
         logger.info(`[COMPLETED] integrityValidationMiddleware`);
         return next();
       } catch (error) {
@@ -103,7 +103,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
 
   if (!decodedToken.payload) {
     logger.error(`verifyJwtPayload - Token not valid`);
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "SIGNATURE_PAYLOAD_NOT_PRESENT"
@@ -114,7 +114,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
   const dateNowSeconds = Math.floor(Date.now() / 1000);
   if (!decodedToken.payload.exp) {
     logger.error(`verifyJwtPayload - "exp" in payload is required`);
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "SIGNATURE_EXP_NOT_PRESENT"
@@ -123,7 +123,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
   }
   if (dateNowSeconds > decodedToken.payload.exp) {
     logger.error(`verifyJwtPayload - Request Token has expired`);
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "SIGNATURE_EXP_IS_EXPIRED"
@@ -133,7 +133,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
 
   if (!decodedToken.payload.iat) {
     logger.error(`verifyJwtPayload - "iat" in payload is required`);
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "SIGNATURE_IAT_NOT_PRESENT"
@@ -142,7 +142,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
   }
   if (dateNowSeconds < decodedToken.payload.iat) {
     logger.error(`verifyJwtPayload - Request Token has an invalid issue time`);
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "SIGNATURE_IAT_IS_EXPIRED"
@@ -152,7 +152,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
 
   if (!decodedToken.payload.aud) {
     logger.error(`verifyJwtPayload - "aud" in payload is required`);
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "SIGNATURE_AUD_NOT_PRESENT"
@@ -161,7 +161,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
   }
   if (decodedToken.payload.aud !== process.env.TOKEN_AUD) {
     logger.error(`verifyJwtPayload - Request header aud is not valid`);
-    void TrialRepository.insert(req.url, req.method, "SIGNATURE_AUD_NOT_VALID");
+    void TrialService.insert(req.url, req.method, "SIGNATURE_AUD_NOT_VALID");
     throw ErrorHandling.tokenNotValid();
   }
 
@@ -169,7 +169,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     logger.error(
       `verifyJwtPayload - "content-type" value in header is required`
     );
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "SIGNATURE_CONTENT_TYPE_NOT_PRESENT"
@@ -180,7 +180,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     logger.error(
       `verifyJwtPayload - "content-encoding" value in header is required`
     );
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "SIGNATURE_CONTENT_ENCODING_NOT_PRESENT"
@@ -191,7 +191,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     logger.error(
       `verifyJwtPayload - "signed_headers" value in token payload is required`
     );
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "SIGNATURE_SIGNED_NOT_PRESENT"
@@ -225,7 +225,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     logger.error(
       `verifyJwtPayload - The content-type '${req.headers["content-type"]}' value in request header is different from the value in payload ${signedContentType["content-encoding"]}`
     );
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "SIGNATURE_SIGNED_CONTENT_TYPE_NOT_MATCH"
@@ -243,7 +243,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     logger.error(
       `verifyJwtPayload - The content-encoding '${req.headers["content-encoding"]}' value in request header is different from the value in payload ${signedContentEncoding["content-encoding"]}`
     );
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "SIGNATURE_SIGNED_CONTENT_ENCODING_NOT_MATCH"
@@ -258,7 +258,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     logger.error(
       `verifyJwtPayload - The digest '${signedDigest.digest}' value in token payload is invalid`
     );
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "SIGNATURE_SIGNED_DIGEST_NOT_VALID"
@@ -270,7 +270,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     logger.error(
       `verifyJwtPayload - The digest '${req.headers.digest}' value in token payload is  invalid`
     );
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "SIGNATURE_DIGEST_NOT_VALID"
@@ -282,7 +282,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     logger.error(
       `verifyJwtPayload - The digest '${req.headers.digest}' value in request header is different from the value in payload ${signedDigest.digest}`
     );
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "SIGNATURE_DIGEST_NOT_MATCH_SIGNED_DIGEST"
@@ -295,7 +295,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     logger.error(
       `verifyJwtPayload - Request body digest does not match the signed digest`
     );
-    void TrialRepository.insert(
+    void TrialService.insert(
       req.url,
       req.method,
       "SIGNATURE_DIGEST_BODY_NOT_MATCH_SIGNED_DIGEST"
@@ -311,19 +311,19 @@ export const checkValueTrial = (
 ): void => {
   // Aggiunto export
   if (signedHeaderName === "content-type") {
-    void TrialRepository.insert(
+    void TrialService.insert(
       operationPath,
       operationMethod,
       "SIGNATURE_SIGNED_CONTENT_TYPE_NOT_PRESENT"
     );
   } else if (signedHeaderName === "content-encoding") {
-    void TrialRepository.insert(
+    void TrialService.insert(
       operationPath,
       operationMethod,
       "SIGNATURE_CONTENT_ENCODING_NOT_PRESENT"
     );
   } else {
-    void TrialRepository.insert(
+    void TrialService.insert(
       operationPath,
       operationMethod,
       "SIGNATURE_SIGNED_DIGEST_NOT_PRESENT"
