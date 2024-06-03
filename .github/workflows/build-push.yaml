@@ -38,7 +38,8 @@ jobs:
             dockerfile_path: packages/piva-verification
           - image_name: trial-service-api
             dockerfile_path: packages/trial-service-api
-
+          - image_name: digital-address-verification
+            dockerfile_path: packages/digital-address-verification
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
