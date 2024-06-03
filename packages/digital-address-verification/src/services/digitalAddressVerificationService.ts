@@ -7,6 +7,7 @@ import {
   findRequestlByIdRequest,
 } from "../utilities/verifyRequestUtilities.js";
 import { VerifyRequest } from "../model/digitalAddress/VerifyRequest.js";
+import { getMaxNumber } from "../utilities/statusRequestUtility.js";
 
 class DigitalAddressVerificationService {
   public appContext = getContext();
@@ -85,7 +86,9 @@ class DigitalAddressVerificationService {
     try {
       const verifyRequest = await this.getByIdRequest(idRequest);
       if (verifyRequest && verifyRequest.count > 1) {
-        verifyRequest.count -= 1;
+        const decrement = Math.floor(Math.random() * getMaxNumber()) + 1;
+        verifyRequest.count = Math.max(1, verifyRequest.count - decrement);
+        //verifyRequest.count -= 1;
         await this.saveAll(verifyRequest);
       }
       return verifyRequest;
