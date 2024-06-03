@@ -56,7 +56,6 @@ export function convertStringToVerifyRequest(jsonString: any): VerifyRequest {
     return {
       idRequest: parsed.idRequest,
       jsonRequest: parsed.jsonRequest,
-      jsonResult: parsed.jsonResult,
       count: parsed.count,
     };
   } catch (error) {

@@ -6,9 +6,9 @@ import { VerifyRequest } from "../../../src/model/digitalAddress/VerifyRequest.j
 
 // Mock data
 
-const validVerifyRequestJsonString = '{"idRequest": "12345", "jsonRequest": "{}", "jsonResult": "{}", "count": 1}';
+const validVerifyRequestJsonString = '{"idRequest": "12345", "jsonRequest": "{}", "count": 1}';
 const invalidJsonString = '{idRequest: 12345}';
-const validVerifyRequestArrayJsonString = '[{"idRequest": "12345", "jsonRequest": "{}", "jsonResult": "{}", "count": 1}]';
+const validVerifyRequestArrayJsonString = '[{"idRequest": "12345", "jsonRequest": "{}", "count": 1}]';
 const validResponseRequestDigitalAddressJsonString = '{"digitalAddress": "address1", "codiceFiscale": "ABC123", "since": "2024-01-01"}';
 
 // Mock the logger
@@ -54,7 +54,7 @@ describe('parseJsonToVerifyRequestArray', () => {
   });
 
   it('should throw an error if JSON does not represent an array', () => {
-    const notArrayJsonString = '{"idRequest": "12345", "jsonRequest": "{}", "jsonResult": "{}", "count": 1}';
+    const notArrayJsonString = '{"idRequest": "12345", "jsonRequest": "{}", "count": 1}';
     const result = parseJsonToVerifyRequestArray(notArrayJsonString);
     expect(result).toBeNull();
     expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('Errore durante il parsing della stringa JSON'));
@@ -67,7 +67,6 @@ describe('convertStringToVerifyRequest', () => {
     expect(result).toEqual({
       idRequest: '12345',
       jsonRequest: '{}',
-      jsonResult: '{}',
       count: 1,
     });
   });
