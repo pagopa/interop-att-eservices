@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: interop-att-dig-addr-ver
+  name: interop-att-digital-address-verification
   namespace: {{NAMESPACE}}
   labels:
-    app: interop-att-dig-addr-ver
+    app: interop-att-digital-address-verification
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: interop-att-dig-addr-ver
+      app: interop-att-digital-address-verification
   template:
     metadata:
       labels:
-        app: interop-att-dig-addr-ver
+        app: interop-att-digital-address-verification
     spec:
       serviceAccountName: {{SERVICEACCOUNT}}
       containers:
-        - name: interop-att-dig-addr-ver
-          #          image: ghcr.io/pagopa/interop-att-dig-addr-ver:{{DIGADDRVERIMAGEDIGEST}}
-          image: {{DIGADDRVERIMAGE}}
+        - name: interop-att-digital-address-verification
+          #          image: ghcr.io/pagopa/interop-att-digital-address-verification:{{DIGITALADDRESSVERIFICATIONIMAGEDIGEST}}
+          image: {{DIGITALADDRESSVERIFICATIONIMAGE}}
           imagePullPolicy: Always
           ports:
             - name: http
@@ -28,15 +28,6 @@ spec:
             - name: https
               containerPort: 3443
               protocol: TCP
-          volumeMounts:
-            - name: cert-pem
-              mountPath: /app/cert.pem
-              readOnly: true
-              subPath: cert.pem
-            - name: key-pem
-              mountPath: /app/key.pem
-              readOnly: true
-              subPath: key.pem
           resources:
             requests:
               cpu: 1.0
@@ -46,13 +37,13 @@ spec:
               memory: 2Gi
           livenessProbe:
             httpGet:
-              path: /dig-addr-ver/status
+              path: /digital-address-verification/status
               port: http
             initialDelaySeconds: 15
             periodSeconds: 120
           readinessProbe:
             httpGet:
-              path: /dig-addr-ver/status
+              path: /digital-address-verification/status
               port: http
             initialDelaySeconds: 15
             periodSeconds: 5
@@ -65,16 +56,5 @@ spec:
               value: info
           envFrom:
             - configMapRef:
-                name: dig-addr-ver-configmap
-      volumes:
-        - name: cert-pem
-          configMap:
-            defaultMode: 256
-            name: https-configmap
-            optional: false
-        - name: key-pem
-          configMap:
-            defaultMode: 256
-            name: https-configmap
-            optional: false
+                name: digital-address-verification-configmap
 

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: dig-addr-ver-configmap
+  name: digital-address-verification-configmap
   namespace: {{NAMESPACE}}
 data:
   KMS_KEYID: '{{KMS_KEYID}}'
