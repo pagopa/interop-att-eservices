@@ -17,3 +17,4 @@ data:
   DATABASE_PASSWORD: '{{DATABASE_PASSWORD}}'
   DATABASE_NAME: '{{DATABASE_NAME}}'
   DATABASE_SCHEMA: '{{DATABASE_SCHEMA}}'
+  BASE_HOST_LOCATION_HEADER: 'http://mtls.api.dev.interop.att.eservices.pagopa.it'

@@ -10,6 +10,7 @@ class TrialService {
     correlationId?: string,
     path?: string,
     method?: string
+    
   ): Promise<PaginatedTrialResponse> {
     try {
       return await TrialRepository.findPaginatedTrial(
