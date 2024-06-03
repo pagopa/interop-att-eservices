@@ -6,7 +6,7 @@ import {
   authenticationMiddleware,
   uniquexCorrelationIdMiddleware,
 } from "pdnd-common";
-import { TrialRepository } from "trial";
+import { TrialService } from "trial";
 import FiscalcodeVerificationController from "../controllers/fiscalcodeVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -23,7 +23,7 @@ const fiscalcodeVerificationRouter = (
     "/fiscalcode-verification/verifica",
     // logHeadersMiddleware,
     contextDataFiscalCodeMiddleware,
-    uniquexCorrelationIdMiddleware(true),
+    uniquexCorrelationIdMiddleware,
     authenticationMiddleware(true),
     verifyCertValidity,
     async (req, res) => {
@@ -32,7 +32,7 @@ const fiscalcodeVerificationRouter = (
         const data = await FiscalcodeVerificationController.findFiscalcode(
           req.body
         );
-        void TrialRepository.insert(
+        void TrialService.insert(
           req.url,
           req.method,
           "FISCALCODE_VERIFICATION",
@@ -47,7 +47,7 @@ const fiscalcodeVerificationRouter = (
           correlationId,
           errorRes
         );
-        void TrialRepository.insert(
+        void TrialService.insert(
           req.url,
           req.method,
           "FISCALCODE_VERIFICATION",

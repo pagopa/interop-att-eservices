@@ -11,6 +11,7 @@ import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataDigitalAddressMiddleware } from "../context/context.js";
 import digitalAddressVerificationSingleController from "../controllers/digitalAddressVerificationSingleController.js";
+import { TrialService } from "trial";
 const DigitalAddressVerificationSingleRouter = (
   ctx: ZodiosContext
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
@@ -20,7 +21,7 @@ const DigitalAddressVerificationSingleRouter = (
     "/digital-address-verification/verify/:codice_fiscale",
     // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
-    uniquexCorrelationIdMiddleware(true),
+    uniquexCorrelationIdMiddleware,
     authenticationMiddleware(true),
     async (req, res) => {
       try {
@@ -33,6 +34,12 @@ const DigitalAddressVerificationSingleRouter = (
           digital_address,
           since
         );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "DIGITAL_ADDRESS_VERIFICATION_VERIFY",
+          "OK"
+        );
         logger.info(`[END] Post - '/verifica'`);
         return res.status(200).json(result).end();
       } catch (error) {
@@ -41,6 +48,13 @@ const DigitalAddressVerificationSingleRouter = (
         const generalErrorResponse = mapGeneralErrorModel(
           correlationId,
           errorRes
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "DIGITAL_ADDRESS_VERIFICATION_VERIFY",
+          "KO",
+          JSON.stringify(generalErrorResponse)
         );
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }
@@ -51,7 +65,7 @@ const DigitalAddressVerificationSingleRouter = (
     "/digital-address-verification/extract/:codice_fiscale",
     // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
-    uniquexCorrelationIdMiddleware(true),
+    uniquexCorrelationIdMiddleware,
     authenticationMiddleware(true),
     async (req, res) => {
       try {
@@ -62,6 +76,12 @@ const DigitalAddressVerificationSingleRouter = (
         const result = await digitalAddressVerificationSingleController.extract(
           codice_fiscale
         );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "DIGITAL_ADDRESS_VERIFICATION_EXTRACT",
+          "OK"
+        );
         logger.info(`[END] Post - '/verifica'`);
         return res.status(200).json(result).end();
       } catch (error) {
@@ -70,6 +90,13 @@ const DigitalAddressVerificationSingleRouter = (
         const generalErrorResponse = mapGeneralErrorModel(
           correlationId,
           errorRes
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "DIGITAL_ADDRESS_VERIFICATION_EXTRACT",
+          "KO",
+          JSON.stringify(generalErrorResponse)
         );
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }

@@ -32,7 +32,6 @@ export class TrialRepository {
         message,
       });
 
-      // Output del record creato
       logger.info(
         `TrialRepository - Nuovo record Trial creato: ${newTrial.dataValues.id}`
       );

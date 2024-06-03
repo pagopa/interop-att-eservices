@@ -3,11 +3,11 @@ export * from "./model/trial.js";
 export * from "./model/check.js";
 export * from "./model/category.js";
 export * from "./repository/trialRepository.js";
+export {TrialService} from "./services/trialService.js";
 export * from "./migrate.js";
 import { logger } from "pdnd-common";
 import { eventManager, syncEventEmitter } from "pdnd-common";
-import { existCorrelationId } from "./services/trialService.js";
-import { TrialRepository } from "./index.js";
+import { TrialService, existCorrelationId } from "./services/trialService.js";
 
 const startlistner = async (): Promise<void> => {
   try {
@@ -17,7 +17,7 @@ const startlistner = async (): Promise<void> => {
         logger.error("trialEvent - data.checkName cannot be null");
         return;
       }
-      await TrialRepository.insert(
+      await TrialService.insert(
         data.operationPath,
         data.operationMethod,
         data.checkName,
