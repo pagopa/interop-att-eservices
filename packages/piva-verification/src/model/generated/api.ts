@@ -62,7 +62,7 @@ const endpoints = makeApi([
     method: "post",
     path: "/piva-verification/data-preparation",
     alias: "postPivaVerificationdataPreparation",
-    description: `carica il codice fiscale valido`,
+    description: `Carica i casi d&#x27;uso dell&#x27;ente`,
     requestFormat: "json",
     parameters: [
       {
@@ -92,9 +92,9 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/piva-verification/data-preparation/all",
-    alias: "getPivaVerificationdataPreparationall",
-    description: `carica il codice fiscale valido`,
+    path: "/piva-verification/data-preparation",
+    alias: "getPivaVerificationdataPreparation",
+    description: `Lista dei casi d&#x27;uso dell&#x27;ente`,
     requestFormat: "json",
     parameters: [
       {
@@ -113,6 +113,39 @@ const endpoints = makeApi([
       {
         status: 400,
         description: `Bad Request`,
+        schema: z.void(),
+      },
+    ],
+  },
+  {
+    method: "delete",
+    path: "/piva-verification/data-preparation",
+    alias: "reset",
+    description: `Ritorna lo stato dell&#x27;applicazione: 200 se funziona correttamente
+o un errore se l&#x27;applicazione è temporaneamente indisponibile
+per manutenzione o per un problema tecnico.
+`,
+    requestFormat: "json",
+    response: z.void(),
+    errors: [
+      {
+        status: 400,
+        description: `Bad Request`,
+        schema: z.void(),
+      },
+      {
+        status: 401,
+        description: `Not authorized`,
+        schema: z.void(),
+      },
+      {
+        status: 429,
+        description: `Too many requests`,
+        schema: z.void(),
+      },
+      {
+        status: 500,
+        description: `Service Unavailable`,
         schema: z.void(),
       },
     ],
@@ -151,7 +184,7 @@ const endpoints = makeApi([
     method: "post",
     path: "/piva-verification/data-preparation/remove",
     alias: "postPivaVerificationdataPreparationremove",
-    description: `carica il codice fiscale valido`,
+    description: `Rimuove un preciso caso d&#x27;uso`,
     requestFormat: "json",
     parameters: [
       {
@@ -175,39 +208,6 @@ const endpoints = makeApi([
       {
         status: 400,
         description: `Bad Request`,
-        schema: z.void(),
-      },
-    ],
-  },
-  {
-    method: "delete",
-    path: "/piva-verification/data-preparation/reset",
-    alias: "reset",
-    description: `Ritorna lo stato dell&#x27;applicazione: 200 se funziona correttamente
-o un errore se l&#x27;applicazione è temporaneamente indisponibile
-per manutenzione o per un problema tecnico.
-`,
-    requestFormat: "json",
-    response: z.void(),
-    errors: [
-      {
-        status: 400,
-        description: `Bad Request`,
-        schema: z.void(),
-      },
-      {
-        status: 401,
-        description: `Not authorized`,
-        schema: z.void(),
-      },
-      {
-        status: 429,
-        description: `Too many requests`,
-        schema: z.void(),
-      },
-      {
-        status: 500,
-        description: `Service Unavailable`,
         schema: z.void(),
       },
     ],

@@ -8,10 +8,11 @@ import DataPreparationService from "../services/dataPreparationService.js";
 import { makeApiProblem } from "../exceptions/errors.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import {
-  apiPartitaIvaModelToDataPreparationResponse,
-  apiDatapreparationTemplateToPivaModel,
+  ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel,
+  convertArrayOfModelsToResponseListRequestDigitalAddress,
+  responseRequestDigitalAddressModelToResponseRequestDigitalAddress,
 } from "../model/domain/apiConverter.js";
-import { contextDataPivaMiddleware } from "../context/context.js";
+import { contextDataDigitalAddressMiddleware } from "../context/context.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -19,13 +20,15 @@ const dataPreparationRouter = (
   const dataPreparationRouter = ctx.router(api.api);
 
   dataPreparationRouter.post(
-    "/piva-verification/data-preparation",
-    contextDataPivaMiddleware,
+    "/digital-address-verification/data-preparation",
+    contextDataDigitalAddressMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
         await DataPreparationService.saveList(
-          apiDatapreparationTemplateToPivaModel(req.body)
+          ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel(
+            req.body
+          )
         );
         return res.status(200).end();
       } catch (error) {
@@ -36,8 +39,8 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.get(
-    "/piva-verification/data-preparation",
-    contextDataPivaMiddleware,
+    "/digital-address-verification/data-preparation",
+    contextDataDigitalAddressMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
@@ -45,10 +48,14 @@ const dataPreparationRouter = (
           throw ErrorHandling.invalidApiRequest();
         }
         const data = await DataPreparationService.getAll();
-        const result =
-          data != null ? apiPartitaIvaModelToDataPreparationResponse(data) : [];
-        logger.info(result);
-        return res.status(200).json(result).end();
+        const result = data
+          ? convertArrayOfModelsToResponseListRequestDigitalAddress(data)
+          : undefined;
+        if (result) {
+          return res.status(200).json(result).end();
+        } else {
+          return res.status(200).end();
+        }
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();
@@ -56,9 +63,40 @@ const dataPreparationRouter = (
     }
   );
 
+  dataPreparationRouter.get(
+    "/digital-address-verification/data-preparation/:codiceFiscale",
+    contextDataDigitalAddressMiddleware,
+    authenticationMiddleware(false),
+    async (req, res) => {
+      try {
+        if (!req) {
+          throw ErrorHandling.invalidApiRequest();
+        }
+        const data = await DataPreparationService.findByFiscalCode(
+          req.params.codiceFiscale
+        );
+
+        const result = data
+          ? responseRequestDigitalAddressModelToResponseRequestDigitalAddress(
+              data
+            )
+          : undefined;
+        if (result) {
+          return res.status(200).json(result).end();
+        } else {
+          return res.status(200).end();
+        }
+      } catch (error) {
+        logger.error(error);
+        const errorRes = makeApiProblem(error, createEserviceDataPreparation);
+        return res.status(errorRes.status).json(errorRes).end();
+      }
+    }
+  );
+
   dataPreparationRouter.delete(
-    "/piva-verification/data-preparation",
-    contextDataPivaMiddleware,
+    "/digital-address-verification/data-preparation",
+    contextDataDigitalAddressMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
@@ -78,16 +116,17 @@ const dataPreparationRouter = (
       }
     }
   );
-/* eslint-disable */
-  dataPreparationRouter.post(
-    "/piva-verification/data-preparation/remove",
-    contextDataPivaMiddleware,
+  dataPreparationRouter.delete(
+    "/digital-address-verification/data-preparation/:codiceFiscale",
+    contextDataDigitalAddressMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
-      /* eslint-enable */
       try {
-        await DataPreparationService.deleteByPiva(
-          apiDatapreparationTemplateToPivaModel(req.body).partitaIva
+        if (!req) {
+          throw ErrorHandling.invalidApiRequest();
+        }
+        await DataPreparationService.deleteByFiscalCode(
+          req.params.codiceFiscale
         );
         return res.status(200).end();
       } catch (error) {
@@ -96,7 +135,6 @@ const dataPreparationRouter = (
       }
     }
   );
-
   return dataPreparationRouter;
 };
 export default dataPreparationRouter;

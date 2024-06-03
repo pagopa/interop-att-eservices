@@ -36,7 +36,7 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.get(
-    "/fiscalcode-verification/data-preparation/all",
+    "/fiscalcode-verification/data-preparation",
     contextDataFiscalCodeMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -57,7 +57,7 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.delete(
-    "/fiscalcode-verification/data-preparation/reset",
+    "/fiscalcode-verification/data-preparation",
     contextDataFiscalCodeMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
