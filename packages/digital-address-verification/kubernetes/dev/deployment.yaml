@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: interop-att-digital-address-verification
+  name: interop-att-dig-addr-ver
   namespace: {{NAMESPACE}}
   labels:
-    app: interop-att-digital-address-verification
+    app: interop-att-dig-addr-ver
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: interop-att-digital-address-verification
+      app: interop-att-dig-addr-ver
   template:
     metadata:
       labels:
-        app: interop-att-digital-address-verification
+        app: interop-att-dig-addr-ver
     spec:
       serviceAccountName: {{SERVICEACCOUNT}}
       containers:
-        - name: interop-att-digital-address-verification
-          #          image: ghcr.io/pagopa/interop-att-digital-address-verification:{{DIGITALADDRESSVERIFICATIONIMAGEDIGEST}}
-          image: {{DIGITALADDRESSVERIFICATIONIMAGE}}
+        - name: interop-att-dig-addr-ver
+          #          image: ghcr.io/pagopa/interop-att-dig-addr-ver:{{DIGADDRVERIMAGEDIGEST}}
+          image: {{DIGADDRVERIMAGE}}
           imagePullPolicy: Always
           ports:
             - name: http
@@ -46,13 +46,13 @@ spec:
               memory: 2Gi
           livenessProbe:
             httpGet:
-              path: /digital-address-verification/status
+              path: /dig-addr-ver/status
               port: http
             initialDelaySeconds: 15
             periodSeconds: 120
           readinessProbe:
             httpGet:
-              path: /digital-address-verification/status
+              path: /dig-addr-ver/status
               port: http
             initialDelaySeconds: 15
             periodSeconds: 5
@@ -65,7 +65,7 @@ spec:
               value: info
           envFrom:
             - configMapRef:
-                name: digital-address-verification-configmap
+                name: dig-addr-ver-configmap
       volumes:
         - name: cert-pem
           configMap:
