@@ -30,7 +30,7 @@ const residenceVerificationRouter = (
   residenceVerificationRouter.post(
     "/residence-verification",
     contextDataResidenceMiddleware,
-    uniquexCorrelationIdMiddleware,
+    uniquexCorrelationIdMiddleware(),
     authenticationMiddleware(true),
     integrityValidationMiddleware(),
     auditValidationMiddleware(),

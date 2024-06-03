@@ -21,7 +21,7 @@ const DigitalAddressVerificationSingleRouter = (
     "/digital-address-verification/verify/:codice_fiscale",
     // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
-    uniquexCorrelationIdMiddleware,
+    uniquexCorrelationIdMiddleware(),
     authenticationMiddleware(true),
     async (req, res) => {
       try {
@@ -65,7 +65,7 @@ const DigitalAddressVerificationSingleRouter = (
     "/digital-address-verification/extract/:codice_fiscale",
     // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
-    uniquexCorrelationIdMiddleware,
+    uniquexCorrelationIdMiddleware(),
     authenticationMiddleware(true),
     async (req, res) => {
       try {

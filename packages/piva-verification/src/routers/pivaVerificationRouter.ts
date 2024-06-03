@@ -24,7 +24,7 @@ const pivaVerificationRouter = (
     "/piva-verification/verifica",
     logHeadersMiddleware,
     contextDataPivaMiddleware,
-    uniquexCorrelationIdMiddleware,
+    uniquexCorrelationIdMiddleware(),
     authenticationMiddleware(true),
     verifyCertValidity,
     async (req, res) => {
