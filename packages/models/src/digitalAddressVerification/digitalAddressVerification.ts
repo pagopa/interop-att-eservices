@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // 1. CodiceFiscale
 export const CodiceFiscaleModel = z.object({
@@ -17,40 +17,58 @@ export const MotivationTerminationModel = z.enum([
   "CESSAZIONE_UFFICIO",
   "CESSAZIONE_VOLONTARIA",
 ]);
-export type MotivationTerminationModel = z.infer<typeof MotivationTerminationModel>;
+export type MotivationTerminationModel = z.infer<
+  typeof MotivationTerminationModel
+>;
 
 // 4. Usage_Info
-export const UsageInfoModel = z.object({
-  motivation: MotivationTerminationModel,
-  dateEndValidity: z.string().datetime({ offset: true }),
-}).passthrough();
+export const UsageInfoModel = z
+  .object({
+    motivation: MotivationTerminationModel,
+    dateEndValidity: z.string().datetime({ offset: true }),
+  })
+  .passthrough();
 export type UsageInfoModel = z.infer<typeof UsageInfoModel>;
 
 // 5. Element_Digital_Address
-export const ElementDigitalAddressModel = z.object({
-  digitalAddress: z.string().regex(
-    /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
-  ),
-  practicedProfession: z.string().optional(),
-  usageInfo: UsageInfoModel,
-}).passthrough();
-export type ElementDigitalAddressModel = z.infer<typeof ElementDigitalAddressModel>;
+export const ElementDigitalAddressModel = z
+  .object({
+    digitalAddress: z
+      .string()
+      .regex(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/),
+    practicedProfession: z.string().optional(),
+    usageInfo: UsageInfoModel,
+  })
+  .passthrough();
+export type ElementDigitalAddressModel = z.infer<
+  typeof ElementDigitalAddressModel
+>;
 
 // 6. Response_Request_Digital_Address
-export const ResponseRequestDigitalAddressModel = z.object({
-  codiceFiscale: z.string().regex(
-    /^([0-9]{11})|([A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1})$/
-  ),
-  since: z.string().datetime({ offset: true }),
-  digitalAddress: z.array(ElementDigitalAddressModel),
-}).passthrough();
-export type ResponseRequestDigitalAddressModel = z.infer<typeof ResponseRequestDigitalAddressModel>;
+export const ResponseRequestDigitalAddressModel = z
+  .object({
+    codiceFiscale: z
+      .string()
+      .regex(
+        /^([0-9]{11})|([A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1})$/
+      ),
+    since: z.string().datetime({ offset: true }),
+    digitalAddress: z.array(ElementDigitalAddressModel),
+  })
+  .passthrough();
+export type ResponseRequestDigitalAddressModel = z.infer<
+  typeof ResponseRequestDigitalAddressModel
+>;
 
 // 7. Response_List_Request_Digital_Address
-export const ResponseListRequestDigitalAddressModel = z.object({
-  data: z.array(ResponseRequestDigitalAddressModel).optional(),
-}).passthrough();
-export type ResponseListRequestDigitalAddressModel = z.infer<typeof ResponseListRequestDigitalAddressModel>;
+export const ResponseListRequestDigitalAddressModel = z
+  .object({
+    data: z.array(ResponseRequestDigitalAddressModel).optional(),
+  })
+  .passthrough();
+export type ResponseListRequestDigitalAddressModel = z.infer<
+  typeof ResponseListRequestDigitalAddressModel
+>;
 
 // 8. PracticalReference
 export const PracticalReferenceModel = z.object({
@@ -59,11 +77,15 @@ export const PracticalReferenceModel = z.object({
 export type PracticalReferenceModel = z.infer<typeof PracticalReferenceModel>;
 
 // 9. Request_List_Digital_Address
-export const RequestListDigitalAddressModel = z.object({
-  codiciFiscali: z.array(z.string()),
-  praticalReference: z.string(),
-}).passthrough();
-export type RequestListDigitalAddressModel = z.infer<typeof RequestListDigitalAddressModel>;
+export const RequestListDigitalAddressModel = z
+  .object({
+    codiciFiscali: z.array(z.string()),
+    praticalReference: z.string(),
+  })
+  .passthrough();
+export type RequestListDigitalAddressModel = z.infer<
+  typeof RequestListDigitalAddressModel
+>;
 
 // 10. Status_Processing_Request
 export const StatusProcessingRequestModel = z.enum([
@@ -71,37 +93,59 @@ export const StatusProcessingRequestModel = z.enum([
   "IN_ELABORAZIONE",
   "DISPONIBILE",
 ]);
-export type StatusProcessingRequestModel = z.infer<typeof StatusProcessingRequestModel>;
+export type StatusProcessingRequestModel = z.infer<
+  typeof StatusProcessingRequestModel
+>;
 
 // 11. UUID
 export const UUIDModel = z.string();
 export type UUIDModel = z.infer<typeof UUIDModel>;
 
 // 12. Response_Request_List_Digital_Address
-export const ResponseRequestListDigitalAddressModel = z.object({
-  state: StatusProcessingRequestModel,
-  message: z.string(),
-  id: z.string().min(20).max(40).regex(/^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$/),
-  dateTimeRequest: z.string().datetime({ offset: true }),
-}).passthrough();
-export type ResponseRequestListDigitalAddressModel = z.infer<typeof ResponseRequestListDigitalAddressModel>;
+export const ResponseRequestListDigitalAddressModel = z
+  .object({
+    state: StatusProcessingRequestModel,
+    message: z.string(),
+    id: z
+      .string()
+      .min(20)
+      .max(40)
+      .regex(/^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$/),
+    dateTimeRequest: z.string().datetime({ offset: true }),
+  })
+  .passthrough();
+export type ResponseRequestListDigitalAddressModel = z.infer<
+  typeof ResponseRequestListDigitalAddressModel
+>;
 
 // 13. Response_Verify_Digital_Address
-export const ResponseVerifyDigitalAddressModel = z.object({
-  outcome: z.boolean(),
-  dateTimeCheck: z.string().datetime({ offset: true }),
-}).passthrough();
-export type ResponseVerifyDigitalAddressModel = z.infer<typeof ResponseVerifyDigitalAddressModel>;
+export const ResponseVerifyDigitalAddressModel = z
+  .object({
+    outcome: z.boolean(),
+    dateTimeCheck: z.string().datetime({ offset: true }),
+  })
+  .passthrough();
+export type ResponseVerifyDigitalAddressModel = z.infer<
+  typeof ResponseVerifyDigitalAddressModel
+>;
 
 // 14. Response_Status_List_Digital_Address
-export const ResponseStatusListDigitalAddressModel = z.object({
-  state: StatusProcessingRequestModel,
-  message: z.string(),
-}).passthrough();
-export type ResponseStatusListDigitalAddressModel = z.infer<typeof ResponseStatusListDigitalAddressModel>;
+export const ResponseStatusListDigitalAddressModel = z
+  .object({
+    state: StatusProcessingRequestModel,
+    message: z.string(),
+  })
+  .passthrough();
+export type ResponseStatusListDigitalAddressModel = z.infer<
+  typeof ResponseStatusListDigitalAddressModel
+>;
 
 // 15. Response_List_Digital_Address
-export const ResponseListDigitalAddressModel = z.object({
-  list: z.array(ResponseRequestDigitalAddressModel),
-}).passthrough();
-export type ResponseListDigitalAddressModel = z.infer<typeof ResponseListDigitalAddressModel>;
+export const ResponseListDigitalAddressModel = z
+  .object({
+    list: z.array(ResponseRequestDigitalAddressModel),
+  })
+  .passthrough();
+export type ResponseListDigitalAddressModel = z.infer<
+  typeof ResponseListDigitalAddressModel
+>;

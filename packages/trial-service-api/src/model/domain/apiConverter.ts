@@ -2,14 +2,12 @@ import { Category, Check } from "trial";
 import {
   CategoryResponse,
   CheckResponse,
-  //PaginatedTrialResponse,
-  //PaginatedTrials,
-  //PaginatedTrialItem,
+  // PaginatedTrialResponse,
+  // PaginatedTrials,
+  // PaginatedTrialItem,
 } from "./models.js";
 
-export const checkToCheckResponse = (
-  check: Check
-): CheckResponse => ({
+export const checkToCheckResponse = (check: Check): CheckResponse => ({
   id: check?.dataValues.id,
   code: check?.dataValues.code,
   description: check?.dataValues.description || "",

@@ -141,9 +141,7 @@ export const verifyJwtPayloadAndHeader = (
     }
 
     if (decodedToken.payload.aud !== config.audValue) {
-      logger.info(
-        `verifyJwtPayloadAndHeader - decodedToken: ${decodedToken}`
-      );
+      logger.info(`verifyJwtPayloadAndHeader - decodedToken: ${decodedToken}`);
       logger.error(
         `verifyJwtPayloadAndHeader - Error parsing token aud not valid`
       );

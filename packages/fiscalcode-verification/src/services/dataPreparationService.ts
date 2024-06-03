@@ -40,10 +40,10 @@ class DataPreparationService {
           fiscalCodeData
         );
         if (areFiscalCodesValid(allFiscalcode)) {
-        await dataPreparationRepository.saveList(allFiscalcode, hash);
-       } else {
-        throw ErrorHandling.invalidApiRequest();
-       }
+          await dataPreparationRepository.saveList(allFiscalcode, hash);
+        } else {
+          throw ErrorHandling.invalidApiRequest();
+        }
       }
       const response = await dataPreparationRepository.findAllByKey(hash);
       logger.info(`[END] datapreparation-saveList`);

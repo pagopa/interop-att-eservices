@@ -6,4 +6,3 @@ export const HandshakeModel = z.object({
   cert: z.string(),
 });
 export type HandshakeModel = z.infer<typeof HandshakeModel>;
-

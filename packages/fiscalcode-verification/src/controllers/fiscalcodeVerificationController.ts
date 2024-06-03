@@ -25,7 +25,10 @@ class FiscalcodeVerificationController {
         );
       }
     } catch (error) {
-      logger.error(`Error during in method controller 'findFiscalcode': `, error);
+      logger.error(
+        `Error during in method controller 'findFiscalcode': `,
+        error
+      );
       throw error;
     }
   }

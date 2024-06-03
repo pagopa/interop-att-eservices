@@ -1,33 +1,48 @@
 import { logger } from "pdnd-common";
 import { sequelize } from "trial";
-import { PaginatedTrialResponse, PaginatedTrials } from "../model/domain/models.js";
-import { QueryTypes } from 'sequelize';
+import { QueryTypes } from "sequelize";
+import {
+  PaginatedTrialResponse,
+  PaginatedTrials,
+} from "../model/domain/models.js";
 
 export class TrialRepository {
+  public static async findPaginatedTrial(
+    page: number,
+    pageSize: number,
+    purposeId: string,
+    correlationId?: string,
+    path?: string,
+    method?: string
+  ): Promise<PaginatedTrialResponse> {
+    try {
+      const offset = (page - 1) * pageSize;
 
-    public static async findPaginatedTrial( page: number, pageSize: number, purposeId: string, correlationId?: string, path?: string, method?: string): Promise<PaginatedTrialResponse> {
-        try {
-            const offset = (page - 1) * pageSize;
+      const whereConditions: string[] = [`t.purpose_id = :purposeId`];
+      const replacements: any = {
+        purposeId,
+        offset,
+        limit: pageSize,
+        page,
+        pageSize,
+      };
 
-            const whereConditions: string[] = [`t.purpose_id = :purposeId`];
-            const replacements: any = { purposeId, offset, limit: pageSize, page, pageSize };
-    
-            if (correlationId) {
-                whereConditions.push(`t.correlation_id = :correlationId`);
-                replacements.correlationId = correlationId;
-            }
-            if (path) {
-                whereConditions.push(`t.operation_path = :path`);
-                replacements.path = path;
-            }
-            if (method) {
-                whereConditions.push(`t.operation_method = :method`);
-                replacements.method = method;
-            }
-    
-            const whereClause = whereConditions.join(' AND ');
-    
-            const query = `
+      if (correlationId) {
+        whereConditions.push(`t.correlation_id = :correlationId`);
+        replacements.correlationId = correlationId;
+      }
+      if (path) {
+        whereConditions.push(`t.operation_path = :path`);
+        replacements.path = path;
+      }
+      if (method) {
+        whereConditions.push(`t.operation_method = :method`);
+        replacements.method = method;
+      }
+
+      const whereClause = whereConditions.join(" AND ");
+
+      const query = `
                 WITH paginated_trials AS (
                     SELECT
                         t.purpose_id,
@@ -77,38 +92,40 @@ export class TrialRepository {
                     ) AS paginated_trial_query_result
                 FROM paginated_trials;
             `;
-    
-            const [queryResult] = await sequelize.query<PaginatedTrialQueryResult>(query, {
-                replacements,
-                type: QueryTypes.SELECT,
-                raw: true
-            });
 
-            const parsedResult: PaginatedTrialResponse = {
-                totalItems: queryResult.paginated_trial_query_result.totalItems,
-                totalPages: queryResult.paginated_trial_query_result.totalPages,
-                currentPage: queryResult.paginated_trial_query_result.currentPage,
-                data: queryResult.paginated_trial_query_result.data ?? [],
-            };
-
-            return parsedResult;
-        } catch (error) {
-          logger.error(
-            `Errore durante la ricerca dei record Trial con correlationId '${correlationId}' con errore: ${error}`
-          );
-          throw error; // Rilancia l'errore per una gestione esterna se necessario
+      const [queryResult] = await sequelize.query<PaginatedTrialQueryResult>(
+        query,
+        {
+          replacements,
+          type: QueryTypes.SELECT,
+          raw: true,
         }
-      }
+      );
 
+      const parsedResult: PaginatedTrialResponse = {
+        totalItems: queryResult.paginated_trial_query_result.totalItems,
+        totalPages: queryResult.paginated_trial_query_result.totalPages,
+        currentPage: queryResult.paginated_trial_query_result.currentPage,
+        data: queryResult.paginated_trial_query_result.data ?? [],
+      };
+
+      return parsedResult;
+    } catch (error) {
+      logger.error(
+        `Errore durante la ricerca dei record Trial con correlationId '${correlationId}' con errore: ${error}`
+      );
+      throw error; // Rilancia l'errore per una gestione esterna se necessario
+    }
+  }
 }
 
 interface PaginatedTrialData {
-    totalItems: number;
-    totalPages: number;
-    currentPage: number;
-    data: PaginatedTrials[];
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  data: PaginatedTrials[];
 }
 
 interface PaginatedTrialQueryResult {
-    paginated_trial_query_result: PaginatedTrialData;
+  paginated_trial_query_result: PaginatedTrialData;
 }

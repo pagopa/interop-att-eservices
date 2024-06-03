@@ -48,9 +48,7 @@ class dataPreparationHandshakeRepository {
       logger.info(pourposeId);
       const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
       const datas = parseJsonToHandshakeArray(dataSaved);
-      logger.info(
-        `HandshaekRepository: Elemento recuperato con successo.`
-      );
+      logger.info(`HandshaekRepository: Elemento recuperato con successo.`);
       return findHandshakeModelByPourposeId(datas, pourposeId);
     } catch (error) {
       logger.error(

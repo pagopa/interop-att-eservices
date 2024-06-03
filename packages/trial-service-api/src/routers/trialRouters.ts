@@ -13,45 +13,39 @@ const trialRouter = (
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const trialRouter = ctx.router(api.api);
 
-  trialRouter.get(
-    "/trial/check",
-    async (req, res) => {
-      try {
-        logger.info("[START] GET - '/trial/check'");
-        const data = await trialController.findAllChecks();
-        logger.info(`[END] GET - '/trial/check'`);
-        return res.status(200).json(data).end();
-      } catch (error) {
-        const errorRes = makeApiProblem(error, createEserviceDataPreparation);
-        const correlationId = req.headers["x-correlation-id"] as string;
-        const generalErrorResponse = mapGeneralErrorModel(
-          correlationId,
-          errorRes
-        );
-        return res.status(errorRes.status).json(generalErrorResponse).end();
-      }
+  trialRouter.get("/trial/check", async (req, res) => {
+    try {
+      logger.info("[START] GET - '/trial/check'");
+      const data = await trialController.findAllChecks();
+      logger.info(`[END] GET - '/trial/check'`);
+      return res.status(200).json(data).end();
+    } catch (error) {
+      const errorRes = makeApiProblem(error, createEserviceDataPreparation);
+      const correlationId = req.headers["x-correlation-id"] as string;
+      const generalErrorResponse = mapGeneralErrorModel(
+        correlationId,
+        errorRes
+      );
+      return res.status(errorRes.status).json(generalErrorResponse).end();
     }
-  );
-  
-  trialRouter.get(
-    "/trial/category",
-    async (req, res) => {
-      try {
-        logger.info("[START] GET - '/trial/check'");
-        const data = await trialController.findAllCategories();
-        logger.info(`[END] GET - '/trial/check'`);
-        return res.status(200).json(data).end();
-      } catch (error) {
-        const errorRes = makeApiProblem(error, createEserviceDataPreparation);
-        const correlationId = req.headers["x-correlation-id"] as string;
-        const generalErrorResponse = mapGeneralErrorModel(
-          correlationId,
-          errorRes
-        );
-        return res.status(errorRes.status).json(generalErrorResponse).end();
-      }
+  });
+
+  trialRouter.get("/trial/category", async (req, res) => {
+    try {
+      logger.info("[START] GET - '/trial/check'");
+      const data = await trialController.findAllCategories();
+      logger.info(`[END] GET - '/trial/check'`);
+      return res.status(200).json(data).end();
+    } catch (error) {
+      const errorRes = makeApiProblem(error, createEserviceDataPreparation);
+      const correlationId = req.headers["x-correlation-id"] as string;
+      const generalErrorResponse = mapGeneralErrorModel(
+        correlationId,
+        errorRes
+      );
+      return res.status(errorRes.status).json(generalErrorResponse).end();
     }
-  );
+  });
 
   trialRouter.get(
     "/trial/search",
@@ -77,6 +71,5 @@ const trialRouter = (
 
   return trialRouter;
 };
-
 
 export default trialRouter;

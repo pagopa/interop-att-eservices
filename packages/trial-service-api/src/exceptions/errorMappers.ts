@@ -5,10 +5,8 @@ import { ErrorCodes as LocalErrorCodes } from "./errors.js";
 
 type ErrorCodes = LocalErrorCodes | CommonErrorCodes;
 
-const {
-  HTTP_STATUS_INTERNAL_SERVER_ERROR,
-  HTTP_STATUS_BAD_REQUEST,
-} = constants;
+const { HTTP_STATUS_INTERNAL_SERVER_ERROR, HTTP_STATUS_BAD_REQUEST } =
+  constants;
 
 export const createEserviceDataPreparation = (
   error: ApiError<ErrorCodes>

@@ -12,29 +12,43 @@ class TrialController {
     try {
       return checkService.getAll();
     } catch (error) {
-      logger.error(`Error during in method controller 'findAllChecks': ${error}`);
+      logger.error(
+        `Error during in method controller 'findAllChecks': ${error}`
+      );
       throw error;
     }
   }
-  
+
   public async findAllCategories(): Promise<CategoryResponse[]> {
     try {
       return categoryService.getAll();
     } catch (error) {
-      logger.error(`Error during in method controller 'findAllChecks': ${error}`);
+      logger.error(
+        `Error during in method controller 'findAllChecks': ${error}`
+      );
       throw error;
     }
   }
-  
-  public async findPaginatedTrials(request: TrialPaginatedRequestParams): Promise<any> {
+
+  public async findPaginatedTrials(
+    request: TrialPaginatedRequestParams
+  ): Promise<any> {
     try {
-      return await trialService.getPaginatedTrial(request.page!, request.pageSize!, request.purposeId!, request.correlationId, request.path, request.method);
+      return await trialService.getPaginatedTrial(
+        request.page!,
+        request.pageSize!,
+        request.purposeId!,
+        request.correlationId,
+        request.path,
+        request.method
+      );
     } catch (error) {
-      logger.error(`Error during in method controller 'findPaginatedTrials': ${error}`);
+      logger.error(
+        `Error during in method controller 'findPaginatedTrials': ${error}`
+      );
       throw error;
     }
   }
-  
 }
 
 export default new TrialController();

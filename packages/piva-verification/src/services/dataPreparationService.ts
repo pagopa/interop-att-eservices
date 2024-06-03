@@ -37,7 +37,7 @@ class DataPreparationService {
           persistedPivaData,
           pivaData
         );
-        if(arePartitaIvasValid(allPiva)) {
+        if (arePartitaIvasValid(allPiva)) {
           await dataPreparationRepository.saveList(allPiva, hash);
         } else {
           throw ErrorHandling.invalidApiRequest();
