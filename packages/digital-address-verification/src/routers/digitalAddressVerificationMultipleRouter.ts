@@ -12,7 +12,6 @@ import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataDigitalAddressMiddleware } from "../context/context.js";
 import digitalAddressVerificationMultipleController from "../controllers/digitalAddressVerificationMultipleController.js";
 
-const locationBaseHost = process.env.BASE_HOST_LOCATION_HEADER || "";
 
 const DigitalAddressVerificationMultipleRouter = (
   ctx: ZodiosContext
@@ -33,6 +32,7 @@ const DigitalAddressVerificationMultipleRouter = (
             req.body
           );
         logger.info(`[END] Post - '/verifica'`);
+        const locationBaseHost = `${req.protocol}://${req.get('host')}`;
         res.set(
           "Location",
           locationBaseHost +
@@ -68,6 +68,7 @@ const DigitalAddressVerificationMultipleRouter = (
         /* eslint-disable */
         if (response.state == "DISPONIBILE") {
           /* eslint-enable */
+          const locationBaseHost = `${req.protocol}://${req.get('host')}`;
           res.set(
             "Location",
             locationBaseHost +
