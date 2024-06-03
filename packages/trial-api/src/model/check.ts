@@ -1,6 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../client.js";
-import { Category } from "./category.js"; // Assumendo che tu abbia già definito la classe Category
+import { Category } from "./category.js";
 
 interface CheckAttributes {
   id: number;
@@ -8,6 +8,7 @@ interface CheckAttributes {
   description: string | null;
   order: number;
   category_id: number | null;
+  category?: Category;
 }
 
 class Check extends Model<CheckAttributes> implements CheckAttributes {
@@ -16,6 +17,7 @@ class Check extends Model<CheckAttributes> implements CheckAttributes {
   public description!: string | null;
   public order!: number;
   public category_id!: number | null;
+  public category?: Category;
 }
 
 Check.init(
@@ -53,6 +55,12 @@ Check.init(
     timestamps: false,
   }
 );
+
+// Definisci l'associazione
+Check.belongsTo(Category, {
+  foreignKey: "category_id",
+  as: "category",
+});
 
 export const checkValuesMap: { [key: string]: number } = {
   VOUCHER_AUTH_DATA_CANNOT_BE_PARSED: 1,
@@ -98,15 +106,13 @@ export const checkValuesMap: { [key: string]: number } = {
   TRACKING_EVIDENCE_USER_ID_NOT_VALID: 41,
   TRACKING_EVIDENCE_USER_LOCATION_NOT_VALID: 42,
   TRACKING_EVIDENCE_USER_LOA_NOT_VALID: 43,
-  VOUCHER_OK: 44,
-  SIGNATURE_OK: 45,
-  TRACKING_EVIDENCE_OK: 46,
-  RESIDENCE_VERIFICATION_001_OK: 47,
-  RESIDENCE_VERIFICATION_001_KO: 48,
-  FISCALCODE_VERIFICATION_OK: 49,
-  FISCALCODE_VERIFICATION_KO: 50,
-  CERT_VERIFICATION_OK: 51,
-  CERT_VERIFICATION_NOT_VALID: 52,
+  VOUCHER: 44,
+  SIGNATURE: 45,
+  TRACKING_EVIDENCE: 46,
+  RESIDENCE_VERIFICATION_001: 47,
+  FISCALCODE_VERIFICATION: 48,
+  CERT_VERIFICATION_OK: 49,
+  CERT_VERIFICATION_NOT_VALID: 50,
 };
 
 const getCheckValue = (key: string): number | undefined => checkValuesMap[key];

@@ -35,7 +35,7 @@ const fiscalcodeVerificationRouter = (
         void TrialRepository.insert(
           req.url,
           req.method,
-          "FISCALCODE_VERIFICATION_OK",
+          "FISCALCODE_VERIFICATION",
           "OK"
         );
         logger.info(`[END] Post - '/verifica'`);
@@ -50,7 +50,7 @@ const fiscalcodeVerificationRouter = (
         void TrialRepository.insert(
           req.url,
           req.method,
-          "FISCALCODE_VERIFICATION_KO",
+          "FISCALCODE_VERIFICATION",
           "KO",
           JSON.stringify(generalErrorResponse)
         );

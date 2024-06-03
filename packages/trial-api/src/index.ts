@@ -1,5 +1,6 @@
 export * from "./client.js";
 export * from "./model/trial.js";
+export * from "./model/check.js";
 export * from "./model/category.js";
 export * from "./repository/trialRepository.js";
 export * from "./migrate.js";

@@ -44,7 +44,7 @@ const residenceVerificationRouter = (
         void TrialRepository.insert(
           req.url,
           req.method,
-          "RESIDENCE_VERIFICATION_001_OK",
+          "RESIDENCE_VERIFICATION_001",
           "OK"
         );
         logger.info(`[END] residenceVerificationRouter`);
@@ -59,7 +59,7 @@ const residenceVerificationRouter = (
         void TrialRepository.insert(
           req.url,
           req.method,
-          "RESIDENCE_VERIFICATION_001_KO",
+          "RESIDENCE_VERIFICATION_001",
           "KO",
           JSON.stringify(generalErrorResponse)
         );

@@ -8,6 +8,7 @@
     "start:residence-verification": "turbo start --filter residence-verification",
     "start:fiscalcode-verification": "turbo start --filter fiscalcode-verification",
     "start:piva-verification": "turbo start --filter piva-verification",
+    "start:trial-service": "turbo start --filter trial-service-api",
     "start:digital-address-verification": "turbo start --filter digital-address-verification",
     "test": "turbo test",
     "test:it": "turbo test:it",
