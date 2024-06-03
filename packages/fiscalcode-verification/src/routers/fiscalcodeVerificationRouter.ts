@@ -23,7 +23,7 @@ const fiscalcodeVerificationRouter = (
     "/fiscalcode-verification/verifica",
     // logHeadersMiddleware,
     contextDataFiscalCodeMiddleware,
-    uniquexCorrelationIdMiddleware,
+    uniquexCorrelationIdMiddleware(),
     authenticationMiddleware(true),
     verifyCertValidity,
     async (req, res) => {

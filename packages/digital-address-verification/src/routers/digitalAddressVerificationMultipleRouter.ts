@@ -22,7 +22,7 @@ const DigitalAddressVerificationMultipleRouter = (
     "/digital-address-verification/listDigitalAddress",
     // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
-    uniquexCorrelationIdMiddleware,
+    uniquexCorrelationIdMiddleware(),
     authenticationMiddleware(true),
     async (req, res) => {
       try {
@@ -55,7 +55,7 @@ const DigitalAddressVerificationMultipleRouter = (
     "/digital-address-verification/listDigitalAddress/state/:id",
     // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
-    uniquexCorrelationIdMiddleware,
+    uniquexCorrelationIdMiddleware(),
     authenticationMiddleware(true),
     async (req, res) => {
       try {
@@ -93,7 +93,7 @@ const DigitalAddressVerificationMultipleRouter = (
     "/digital-address-verification/listDigitalAddress/response/:id",
     // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
-    uniquexCorrelationIdMiddleware,
+    uniquexCorrelationIdMiddleware(),
     authenticationMiddleware(true),
     async (req, res) => {
       try {
