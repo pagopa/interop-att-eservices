@@ -178,11 +178,28 @@ const TipoRichiestaAR001 = z
     casoUso: z.string(),
   })
   .passthrough();
+const TipoLocalitaEstera = z
+  .object({ indirizzoEstero: TipoIndirizzoEstero, consolato: TipoConsolato })
+  .partial()
+  .passthrough();
+const TipoVerificaResidenza = z
+  .object({
+    tipoIndirizzo: z.string(),
+    indirizzo: TipoIndirizzo,
+    localitaEstera: TipoLocalitaEstera,
+  })
+  .partial()
+  .passthrough();
+const TipoVerificaAR002 = z
+  .object({ residenza: TipoVerificaResidenza })
+  .partial()
+  .passthrough();
 const RichiestaAR001 = z
   .object({
     idOperazioneClient: z.string(),
     parametriRicerca: TipoParametriRicercaAR001,
     richiesta: TipoRichiestaAR001,
+    verifica: TipoVerificaAR002.optional(),
   })
   .passthrough();
 const TipoCodiceFiscale = z
@@ -337,6 +354,9 @@ export const schemas = {
   TipoDatiNascitaE000,
   TipoParametriRicercaAR001,
   TipoRichiestaAR001,
+  TipoLocalitaEstera,
+  TipoVerificaResidenza,
+  TipoVerificaAR002,
   RichiestaAR001,
   TipoCodiceFiscale,
   TipoLuogoEvento,
@@ -580,6 +600,39 @@ const endpoints = makeApi([
         errors: z.array(ProblemError).min(1),
       })
       .passthrough(),
+  },
+  {
+    method: "post",
+    path: "/residence-verification/verify",
+    alias: "AR002",
+    description: `Consultazione di un caso d&#x27;uso`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        description: `Richiesta da consultare`,
+        type: "Body",
+        schema: RichiestaAR001,
+      },
+    ],
+    response: RispostaAR001,
+    errors: [
+      {
+        status: 400,
+        description: `Caso d&#x27;uso invalido`,
+        schema: z.void(),
+      },
+      {
+        status: 404,
+        description: `Caso d&#x27;uso non trovato`,
+        schema: z.void(),
+      },
+      {
+        status: 500,
+        description: `Internal Server Error`,
+        schema: z.void(),
+      },
+    ],
   },
 ]);
 

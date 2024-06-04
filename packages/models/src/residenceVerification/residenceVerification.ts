@@ -193,11 +193,28 @@ export const TipoRichiestaModel = z
   .passthrough();
 export type TipoRichiestaModel = z.infer<typeof TipoRichiestaModel>;
 
+export const TipoVerificaResidenzaModel = z
+  .object({
+    tipoIndirizzo: z.string(),
+  })
+  .passthrough();
+export type TipoVerificaResidenzaModel = z.infer<typeof TipoVerificaResidenzaModel>;
+
+export const TipoVerificaModel = z
+  .object({
+    residenza: TipoVerificaResidenzaModel,
+    indirizzo: TipoIndirizzoModel,
+    localitaEstera: TipoLocalitaEsteraModel,
+  })
+  .passthrough();
+export type TipoVerificaModel = z.infer<typeof TipoVerificaModel>;
+
 export const RichiestaModel = z
   .object({
     idOperazioneClient: z.string(),
     parametriRicerca: TipoParametriRicercaModel,
     richiesta: TipoRichiestaModel,
+    verifica: TipoVerificaModel,
   })
   .passthrough();
 export type RichiestaModel = z.infer<typeof RichiestaModel>;

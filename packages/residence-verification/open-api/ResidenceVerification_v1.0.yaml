@@ -271,6 +271,49 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/GeneralError'
+  
+  /residence-verification/verify:
+    post:
+      tags:
+        - ARservice002
+      summary: Trova caso d'uso
+      description: Consultazione di un caso d'uso
+      operationId: AR002
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        description: Richiesta da consultare
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaAR001'
+      responses:
+        "200":
+          description: Caso d'uso trovato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RispostaAR001'
+        "400":
+          description: Caso d'uso invalido
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        "404":
+          description: Caso d'uso non trovato
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        "500":
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+
   /residence-verification/status:
     get:
       tags:
@@ -381,6 +424,8 @@ components:
           $ref: '#/components/schemas/TipoParametriRicercaAR001'
         richiesta:
           $ref: '#/components/schemas/TipoRichiestaAR001'
+        verifica:
+          $ref: '#/components/schemas/TipoVerificaAR002'
     RispostaAR001:
       type: object
       properties:
@@ -801,6 +846,27 @@ components:
           example: '2021-11-15'
         trascritto:
           type: string
+    TipoVerificaAR002:
+      type: object
+      properties:
+        residenza:
+          $ref: '#/components/schemas/TipoVerificaResidenza'
+    TipoVerificaResidenza:
+      type: object
+      properties:
+        tipoIndirizzo:
+          type: string
+        indirizzo:
+          $ref: '#/components/schemas/TipoIndirizzo'
+        localitaEstera:
+          $ref: '#/components/schemas/TipoLocalitaEstera'
+    TipoLocalitaEstera:
+      type: object
+      properties:
+        indirizzoEstero:
+          $ref: '#/components/schemas/TipoIndirizzoEstero'
+        consolato:
+          $ref: '#/components/schemas/TipoConsolato'
     GeneralError:
       type: object
       properties:
