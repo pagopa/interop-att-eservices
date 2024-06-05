@@ -2,7 +2,7 @@ import { UserModel } from "pdnd-models";
 import { logger, getContext } from "pdnd-common";
 import ResidenceVerificationService from "../services/residenceVerificationService.js";
 import { requestParamNotValid } from "../exceptions/errors.js";
-import { RichiestaAR001, RispostaAR001, RispostaAR002 } from "../model/domain/models.js";
+import { RichiestaAR001, RichiestaE002, RispostaAR001, RispostaAR002 } from "../model/domain/models.js";
 import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
 
 class ResidenceVerificationController {
@@ -76,14 +76,14 @@ class ResidenceVerificationController {
 
 
   public async findUserVerify(
-    request: RichiestaAR001
-  ): Promise<RispostaAR001 | null | undefined> {
+    request: RichiestaE002
+  ): Promise<RispostaAR002> {
     try {
       logger.info(`post request: ${request}`);
       var resultData;
-      if (request.parametriRicerca.codiceFiscale) {
+      if (request.criteriRicerca.codiceFiscale) {
         const data = await ResidenceVerificationService.getByFiscalCode(
-          request.parametriRicerca.codiceFiscale
+          request.criteriRicerca.codiceFiscale
         );
 
         const list: UserModel[] = data ? [data] : [];
@@ -96,9 +96,9 @@ class ResidenceVerificationController {
             ),
           },
         };
-      } else if (checkPersonalInfo(request)) {
+      } else if (checkPersonalInfoVerify(request)) {
         const data = await ResidenceVerificationService.getByPersonalInfo(
-          request.parametriRicerca
+          request.criteriRicerca
         );
 
         resultData = {
@@ -109,10 +109,10 @@ class ResidenceVerificationController {
             ),
           },
         };
-      } else if (request.parametriRicerca.id) {
-        if (request.parametriRicerca.id) {
+      } else if (request.criteriRicerca.id) {
+        if (request.criteriRicerca.id) {
           const data = await ResidenceVerificationService.getById(
-            request.parametriRicerca.id
+            ""+request.criteriRicerca.id
           );
 
           const list: UserModel[] = data ? [data] : [];
@@ -126,20 +126,54 @@ class ResidenceVerificationController {
             },
           };
         }
-        return null;
       } else {
         throw requestParamNotValid(
           "The request body has one or more required param not valid"
         );
       }
-      var response: RispostaAR002 = {};
-      if (request.verifica && request.verifica?.residenza) {
-        if (request.verifica?.residenza?.indirizzo != resultData.soggetti.soggetto[0].zz) {
-
-        }
+      var response: RispostaAR002 | null= null
+      if (!resultData || resultData.soggetti?.soggetto?.length === 0) {
+        response:  response = {
+          "id": "id",
+          "chiave": "string",
+          "valore": "N",
+          "valoreTesto": "string",
+          "valoreData": "2021-11-15",
+          "dettaglio": "string"
+        };
+        return response;
+      } else {//vado a vedere se qualcuno ha la residenza richiesta in oggetto
         
-       
+        resultData?.soggetti?.soggetto.forEach(oggetto => {
+          oggetto.residenza?.forEach ( residenza => {
+            if(request.verifica?.residenza?.indirizzo?.comune?.nomeComune == residenza.indirizzo?.comune?.nomeComune) {
+              response = {
+                "id": "id",
+                "chiave": "string",
+                "valore": "S",
+                "valoreTesto": "string",
+                "valoreData": "2021-11-15",
+                "dettaglio": "string"
+              }
+            }
+          })
+        });
+        if(response) {
+          return response;
+        } else {
+          response:  response = {
+            "id": "id",
+            "chiave": "string",
+            "valore": "A",
+            "valoreTesto": "string",
+            "valoreData": "2021-11-15",
+            "dettaglio": "string"
+          };
+          return response;
+  }
+
       }
+      
     } catch (error) {
       logger.error(`Error during in method controller 'findUser': `, error);
       throw error;
@@ -156,4 +190,13 @@ const checkPersonalInfo = (request: RichiestaAR001): boolean =>
   !!request.parametriRicerca?.datiNascita?.luogoNascita?.comune?.nomeComune &&
   !!request.parametriRicerca?.datiNascita?.luogoNascita?.localita?.codiceStato;
 
+
+  const checkPersonalInfoVerify = (request: RichiestaE002): boolean =>
+    !!request.criteriRicerca.nome &&
+    !!request.criteriRicerca.cognome &&
+    !!request.criteriRicerca.datiNascita &&
+    !!request.criteriRicerca.datiNascita.dataEvento &&
+    !!request.criteriRicerca.datiNascita.luogoNascita &&
+    !!request.criteriRicerca?.datiNascita?.luogoNascita?.comune?.nomeComune &&
+    !!request.criteriRicerca?.datiNascita?.luogoNascita?.localita?.codiceStato;
 export default new ResidenceVerificationController();

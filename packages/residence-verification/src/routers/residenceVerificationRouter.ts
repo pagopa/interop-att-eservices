@@ -28,7 +28,7 @@ const residenceVerificationRouter = (
   residenceVerificationRouter.use(authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware()); */
 
   residenceVerificationRouter.post(
-    "/residence-verification",
+    "/residence-verification/old",
     contextDataResidenceMiddleware,
     uniquexCorrelationIdMiddleware(),
     authenticationMiddleware(true),
@@ -78,10 +78,10 @@ const residenceVerificationRouter = (
     async (req, res) => {
       try {
         logger.info(`[START] Verfy ResidenceVerificationRouter: ${req.body}`);
-        const data = await ResidenceVerificationController.findUser(req.body);
-        if (!data || data.soggetti?.soggetto?.length === 0) {
+        const data = await ResidenceVerificationController.findUserVerify(req.body);
+        /*if (!data) {
           throw userModelNotFound();
-        }
+        }*/
         void TrialService.insert(
           req.url,
           req.method,

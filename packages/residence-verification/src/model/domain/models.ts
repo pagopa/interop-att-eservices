@@ -46,7 +46,7 @@ export type TipoParametriRicercaAR001 = z.infer<
 >;
 
 export type TipoRichiestaAR001 = z.infer<typeof api.schemas.TipoRichiestaAR001>;
-export type TipoVerificaAR002 = z.infer<typeof api.schemas.TipoVerificaAR002>;
+//export type TipoVerificaAR002 = z.infer<typeof api.schemas.TipoVerificaAR002>;
 export type TipoVerificaResidenza = z.infer<typeof api.schemas.TipoVerificaResidenza>;
 export type TipoLocalitaEstera = z.infer<typeof api.schemas.TipoLocalitaEstera>;
 export type RichiestaAR001 = z.infer<typeof api.schemas.RichiestaAR001>;
@@ -67,9 +67,13 @@ export type TipoDatiSoggettiEnte = z.infer<
 export type TipoListaSoggetti = z.infer<typeof api.schemas.TipoListaSoggetti>;
 export type TipoErroriAnomalia = z.infer<typeof api.schemas.TipoErroriAnomalia>;
 export type RispostaAR001 = z.infer<typeof api.schemas.RispostaAR001>;
-export type RispostaAR002 = z.infer<typeof api.schemas.RispostaAR002>;
+export type RispostaAR002 = z.infer<typeof api.schemas.RispostaE002OK>;
 export type ProblemError = z.infer<typeof api.schemas.ProblemError>;
 export type Problem = z.infer<typeof api.schemas.Problem>;
+
+export type RichiestaE002 = z.infer<typeof api.schemas.RichiestaE002>;
+
+
 
 /* export const schemas = {
     TipoComune,
