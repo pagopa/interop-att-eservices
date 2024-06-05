@@ -4,6 +4,8 @@ import ResidenceVerificationService from "../services/residenceVerificationServi
 import { requestParamNotValid } from "../exceptions/errors.js";
 import { RichiestaAR001, RichiestaE002, RispostaAR001, RispostaAR002 } from "../model/domain/models.js";
 import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
+import { deepEqual } from "../utilities/equalsUtilities.js";
+import { v4 as uuidv4 } from 'uuid';
 
 class ResidenceVerificationController {
   public appContext = getContext();
@@ -133,27 +135,26 @@ class ResidenceVerificationController {
       }
       var response: RispostaAR002 | null= null
       if (!resultData || resultData.soggetti?.soggetto?.length === 0) {
-        response:  response = {
-          "id": "id",
-          "chiave": "string",
+        return  response = {
+          "id": uuidv4(),
+          "chiave": "-",
           "valore": "N",
-          "valoreTesto": "string",
-          "valoreData": "2021-11-15",
-          "dettaglio": "string"
+          "valoreTesto": "-",
+          "valoreData": new Date(),
+          "dettaglio": "-"
         };
-        return response;
       } else {//vado a vedere se qualcuno ha la residenza richiesta in oggetto
         
         resultData?.soggetti?.soggetto.forEach(oggetto => {
           oggetto.residenza?.forEach ( residenza => {
-            if(request.verifica?.residenza?.indirizzo?.comune?.nomeComune == residenza.indirizzo?.comune?.nomeComune) {
+            if (deepEqual(request.verifica?.residenza, residenza)) {
               response = {
-                "id": "id",
-                "chiave": "string",
+                "id": uuidv4(),
+                "chiave": "-",
                 "valore": "S",
-                "valoreTesto": "string",
-                "valoreData": "2021-11-15",
-                "dettaglio": "string"
+                "valoreTesto": "-",
+                "valoreData": new Date(),
+                "dettaglio": "-"
               }
             }
           })
@@ -161,17 +162,15 @@ class ResidenceVerificationController {
         if(response) {
           return response;
         } else {
-          response:  response = {
-            "id": "id",
-            "chiave": "string",
+          return  response = {
+            "id": uuidv4(),
+            "chiave": "-",
             "valore": "A",
-            "valoreTesto": "string",
-            "valoreData": "2021-11-15",
-            "dettaglio": "string"
+            "valoreTesto": "-",
+            "valoreData": new Date(),
+            "dettaglio": "-"
           };
-          return response;
-  }
-
+          }
       }
       
     } catch (error) {
