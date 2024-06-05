@@ -294,7 +294,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RispostaAR001'
+                $ref: '#/components/schemas/RispostaAR002'
         "400":
           description: Caso d'uso invalido
           content:
@@ -867,6 +867,17 @@ components:
           $ref: '#/components/schemas/TipoIndirizzoEstero'
         consolato:
           $ref: '#/components/schemas/TipoConsolato'
+    RispostaAR002:
+      type: object
+      properties:
+        idOperazioneANPR:
+          type: string
+        listaSoggetti:
+          $ref: '#/components/schemas/TipoListaSoggetti'
+        listaAnomalie:
+          type: array
+          items:
+            $ref: '#/components/schemas/TipoErroriAnomalia'    
     GeneralError:
       type: object
       properties:

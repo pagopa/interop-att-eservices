@@ -67,6 +67,7 @@ export type TipoDatiSoggettiEnte = z.infer<
 export type TipoListaSoggetti = z.infer<typeof api.schemas.TipoListaSoggetti>;
 export type TipoErroriAnomalia = z.infer<typeof api.schemas.TipoErroriAnomalia>;
 export type RispostaAR001 = z.infer<typeof api.schemas.RispostaAR001>;
+export type RispostaAR002 = z.infer<typeof api.schemas.RispostaAR002>;
 export type ProblemError = z.infer<typeof api.schemas.ProblemError>;
 export type Problem = z.infer<typeof api.schemas.Problem>;
 

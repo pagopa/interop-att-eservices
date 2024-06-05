@@ -318,6 +318,14 @@ const RispostaAR001 = z
   })
   .partial()
   .passthrough();
+const RispostaAR002 = z
+  .object({
+    idOperazioneANPR: z.string(),
+    listaSoggetti: TipoListaSoggetti,
+    listaAnomalie: z.array(TipoErroriAnomalia),
+  })
+  .partial()
+  .passthrough();
 const ProblemError = z
   .object({ code: z.string(), detail: z.string() })
   .passthrough();
@@ -371,6 +379,7 @@ export const schemas = {
   TipoListaSoggetti,
   TipoErroriAnomalia,
   RispostaAR001,
+  RispostaAR002,
   ProblemError,
   Problem,
 };
@@ -615,7 +624,7 @@ const endpoints = makeApi([
         schema: RichiestaAR001,
       },
     ],
-    response: RispostaAR001,
+    response: RispostaAR002,
     errors: [
       {
         status: 400,

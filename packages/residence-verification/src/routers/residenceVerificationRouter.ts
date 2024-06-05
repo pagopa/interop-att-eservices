@@ -69,7 +69,7 @@ const residenceVerificationRouter = (
   );
   
   residenceVerificationRouter.post(
-    "/residence-verification",
+    "/residence-verification/verify",
     contextDataResidenceMiddleware,
     uniquexCorrelationIdMiddleware(),
     authenticationMiddleware(true),
@@ -77,7 +77,7 @@ const residenceVerificationRouter = (
     auditValidationMiddleware(),
     async (req, res) => {
       try {
-        logger.info(`[START] residenceVerificationRouter: ${req.body}`);
+        logger.info(`[START] Verfy ResidenceVerificationRouter: ${req.body}`);
         const data = await ResidenceVerificationController.findUser(req.body);
         if (!data || data.soggetti?.soggetto?.length === 0) {
           throw userModelNotFound();
@@ -88,7 +88,7 @@ const residenceVerificationRouter = (
           "RESIDENCE_VERIFICATION_001",
           "OK"
         );
-        logger.info(`[END] residenceVerificationRouter`);
+        logger.info(`[END] Verfy ResidenceVerificationRouter`);
         return res.status(200).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
