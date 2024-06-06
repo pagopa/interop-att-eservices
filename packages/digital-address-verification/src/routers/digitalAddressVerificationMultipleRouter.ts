@@ -11,6 +11,7 @@ import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataDigitalAddressMiddleware } from "../context/context.js";
 import digitalAddressVerificationMultipleController from "../controllers/digitalAddressVerificationMultipleController.js";
+import { TrialService } from "trial";
 
 
 const DigitalAddressVerificationMultipleRouter = (
@@ -38,6 +39,12 @@ const DigitalAddressVerificationMultipleRouter = (
           locationBaseHost +
             `/digital-address-verification/listDigitalAddress/state/${response.id}`
         );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "DIGITAL_ADDRESS_VERIFICATION_LIST",
+          "OK"
+        );
         return res.status(200).json(response).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
@@ -45,6 +52,13 @@ const DigitalAddressVerificationMultipleRouter = (
         const generalErrorResponse = mapGeneralErrorModel(
           correlationId,
           errorRes
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "DIGITAL_ADDRESS_VERIFICATION_LIST",
+          "KO",
+          JSON.stringify(generalErrorResponse)
         );
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }
@@ -74,8 +88,20 @@ const DigitalAddressVerificationMultipleRouter = (
             locationBaseHost +
               `/digital-address-verification/listDigitalAddress/response/${req.params.id}`
           );
+          void TrialService.insert(
+            req.url,
+            req.method,
+            "DIGITAL_ADDRESS_VERIFICATION_LIST_STATE",
+            "OK"
+          );
           return res.status(200).json(response).end();
         }
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "DIGITAL_ADDRESS_VERIFICATION_LIST_STATE",
+          "OK"
+        );
         return res.status(200).json(response).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
@@ -83,6 +109,13 @@ const DigitalAddressVerificationMultipleRouter = (
         const generalErrorResponse = mapGeneralErrorModel(
           correlationId,
           errorRes
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "DIGITAL_ADDRESS_VERIFICATION_LIST_STATE",
+          "KO",
+          JSON.stringify(generalErrorResponse)
         );
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }
@@ -104,6 +137,12 @@ const DigitalAddressVerificationMultipleRouter = (
             req.params.id
           );
 
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "DIGITAL_ADDRESS_VERIFICATION_LIST_RESPONSE",
+          "OK"
+        );
         logger.info(`[END] Post - '/verifica'`);
         return res.status(200).json(response).end();
       } catch (error) {
@@ -112,6 +151,13 @@ const DigitalAddressVerificationMultipleRouter = (
         const generalErrorResponse = mapGeneralErrorModel(
           correlationId,
           errorRes
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "DIGITAL_ADDRESS_VERIFICATION_LIST_RESPONSE",
+          "KO",
+          JSON.stringify(generalErrorResponse)
         );
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }

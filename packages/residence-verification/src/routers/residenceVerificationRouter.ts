@@ -85,7 +85,7 @@ const residenceVerificationRouter = (
         void TrialService.insert(
           req.url,
           req.method,
-          "RESIDENCE_VERIFICATION_001",
+          "RESIDENCE_VERIFICATION_002",
           "OK"
         );
         logger.info(`[END] Verfy ResidenceVerificationRouter`);
@@ -100,7 +100,7 @@ const residenceVerificationRouter = (
         void TrialService.insert(
           req.url,
           req.method,
-          "RESIDENCE_VERIFICATION_001",
+          "RESIDENCE_VERIFICATION_002",
           "KO",
           JSON.stringify(generalErrorResponse)
         );
