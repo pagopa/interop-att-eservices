@@ -43,11 +43,15 @@ INSERT INTO category (id,code,eservice,description,"order") VALUES
     (2,'Agid-JWT-Signature','residence-verification','token in Headers',2),
     (3,'Agid-JWT-TrackingEvidence','residence-verification','token in Headers',3),
     (4,'cert','fiscalcode-verification,piva-verification','Verify certificate validity',2),
-    (5,'e-service','residence-verification','e-service exposed by the application',4),
+    (5,'e-service','residence-verification-001','e-service exposed by the application',4),
     (6,'e-service','fiscalcode-verification','e-service exposed by the application',3),
     (7,'e-service','piva-verification','e-service exposed by the application',3),
     (8,'e-service','digital-address-verification-verify','e-service exposed by the application',2),
-    (9,'e-service','digital-address-verification-extract','e-service exposed by the application',2);
+    (9,'e-service','digital-address-verification-extract','e-service exposed by the application',2),
+    (10,'e-service','digital-address-verification-list','e-service exposed by the application',2),
+    (11,'e-service','digital-address-verification-list-state','e-service exposed by the application',2),
+    (12,'e-service','digital-address-verification-list-response','e-service exposed by the application',2),
+    (13,'e-service','residence-verification-002','e-service exposed by the application',4);
 
 INSERT INTO "check" (id,code,description,"order",category_id) VALUES
     (1,'authData','Bearer token can not be parsed',1,1),
@@ -107,4 +111,8 @@ INSERT INTO "check" (id,code,description,"order",category_id) VALUES
 INSERT INTO "check" (id,code,description,"order",category_id) VALUES   
     (51,'piva-verification','API to validate a specific vat code',3,7),
     (52,'digital-address-verification-verify','API to validate a specific digital address associated with a fiscal code',2,8),
-    (53,'digital-address-verification-extract','API to validate a specific digital address associated with a fiscal code',2,9);
+    (53,'digital-address-verification-extract','API to validate a specific digital address associated with a fiscal code',2,9),
+    (54,'digital-address-verification-list','API thath allows you to enter a request for the extraction of digital address',2,10),
+    (55,'digital-address-verification-list-state','API that allows you to check the processing status of the request for the list of digital address',2,11),
+    (56,'digital-address-verification-list-response','API that allows you to retrieve the list of digital address',2,12),
+    (57,'residence-verification-002','API to verify a residence',4,13);

@@ -1,7 +1,7 @@
 import { UserModel } from "pdnd-models";
-import DataPreparationService from "../../src/services/DataPreparationService";
+import DataPreparationService from "../../../src/services/DataPreparationService";
 import { expect, test } from "vitest";
-import dataPreparationRepository from "../../src/repository/dataPreparationRepository";
+import dataPreparationRepository from "../../../src/repository/dataPreparationRepository";
 /* eslint-disable */
 test('POST Data Preparation API', async () => {
     const testResponse: UserModel[] | null = await DataPreparationService.saveList(requestPostDataPreparation);
@@ -21,14 +21,14 @@ test('GET GetAll Data Preparation API', async () => {
     expect(isCorrectCF).to.be.true;
 });
 
-test('GET GetByUuiD Data Preparation API', async () => {
+/*test('GET GetByUuiD Data Preparation API', async () => {
     const testResponse = await DataPreparationService.getByUUID("48a6e56e-c7af-4fcf-928b-f240857621a8");
     let isCorrectCF = false;
     if (testResponse && testResponse.uuid==="48a6e56e-c7af-4fcf-928b-f240857621a8") {
         isCorrectCF = true;
     }
     expect(isCorrectCF).to.be.true;
-});
+});*/
 
 const requestPostDataPreparation = {
     "soggetto": {

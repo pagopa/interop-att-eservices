@@ -301,6 +301,74 @@ const RispostaAR001 = z
   })
   .partial()
   .passthrough();
+const TipoCriteriRicercaE002 = z
+  .object({
+    codiceFiscale: z.string(),
+    idANPR: z.string(),
+    cognome: z.string(),
+    senzaCognome: z.string(),
+    nome: z.string(),
+    senzaNome: z.string(),
+    sesso: z.string(),
+    datiNascita: TipoDatiNascitaE000,
+  })
+  .partial()
+  .passthrough();
+const TipoLocalitaEstera = z
+  .object({ indirizzoEstero: TipoIndirizzoEstero, consolato: TipoConsolato })
+  .partial()
+  .passthrough();
+const TipoVerificaResidenza = z
+  .object({
+    tipoIndirizzo: z.string(),
+    indirizzo: TipoIndirizzo,
+    localitaEstera: TipoLocalitaEstera,
+  })
+  .partial()
+  .passthrough();
+const TipoVerificaE002 = z
+  .object({ residenza: TipoVerificaResidenza })
+  .partial()
+  .passthrough();
+const TipoDatiRichiestaE002 = z
+  .object({
+    dataRiferimentoRichiesta: z.string(),
+    motivoRichiesta: z.string(),
+    casoUso: z.string(),
+  })
+  .passthrough();
+const RichiestaE002 = z
+  .object({
+    idOperazioneClient: z.string(),
+    criteriRicerca: TipoCriteriRicercaE002,
+    verifica: TipoVerificaE002.optional(),
+    datiRichiesta: TipoDatiRichiestaE002,
+  })
+  .passthrough();
+const TipoInfoValore = z.enum(["A", "N", "S"]);
+const TipoInfoSoggettoEnte = z
+  .object({
+    id: z.string(),
+    chiave: z.string(),
+    valore: TipoInfoValore,
+    valoreTesto: z.string(),
+    valoreData: z.string(),
+    dettaglio: z.string(),
+  })
+  .partial()
+  .passthrough();
+const VerifyTipoDatiSoggettiEnte = z
+  .object({ infoSoggettoEnte: z.array(TipoInfoSoggettoEnte) })
+  .partial()
+  .passthrough();
+const RispostaE002OK = z
+  .object({
+    idOperazioneANPR: z.string(),
+    listaSoggetti: VerifyTipoDatiSoggettiEnte,
+    listaAnomalie: z.array(TipoErroriAnomalia),
+  })
+  .partial()
+  .passthrough();
 const ProblemError = z
   .object({ code: z.string(), detail: z.string() })
   .passthrough();
@@ -351,48 +419,21 @@ export const schemas = {
   TipoListaSoggetti,
   TipoErroriAnomalia,
   RispostaAR001,
+  TipoCriteriRicercaE002,
+  TipoLocalitaEstera,
+  TipoVerificaResidenza,
+  TipoVerificaE002,
+  TipoDatiRichiestaE002,
+  RichiestaE002,
+  TipoInfoValore,
+  TipoInfoSoggettoEnte,
+  VerifyTipoDatiSoggettiEnte,
+  RispostaE002OK,
   ProblemError,
   Problem,
 };
 
 const endpoints = makeApi([
-  {
-    method: "post",
-    path: "/residence-verification",
-    alias: "AR001",
-    description: `Consultazione di un caso d&#x27;uso dell&#x27;ente`,
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "body",
-        type: "Body",
-        schema: RichiestaAR001,
-      },
-    ],
-    response: RispostaAR001,
-    errors: [
-      {
-        status: 400,
-        description: `Bad request`,
-        schema: z.void(),
-      },
-      {
-        status: 401,
-        description: `Unauthorized`,
-        schema: z.void(),
-      },
-      {
-        status: 403,
-        description: `Forbidden`,
-        schema: z.void(),
-      },
-      {
-        status: 429,
-        description: `Too Many Requests`,
-        schema: z.void(),
-      },
-    ],
-  },
   {
     method: "post",
     path: "/residence-verification/data-preparation",
@@ -565,6 +606,43 @@ const endpoints = makeApi([
     ],
   },
   {
+    method: "post",
+    path: "/residence-verification/old",
+    alias: "AR001",
+    description: `Consultazione di un caso d&#x27;uso dell&#x27;ente`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: RichiestaAR001,
+      },
+    ],
+    response: RispostaAR001,
+    errors: [
+      {
+        status: 400,
+        description: `Bad request`,
+        schema: z.void(),
+      },
+      {
+        status: 401,
+        description: `Unauthorized`,
+        schema: z.void(),
+      },
+      {
+        status: 403,
+        description: `Forbidden`,
+        schema: z.void(),
+      },
+      {
+        status: 429,
+        description: `Too Many Requests`,
+        schema: z.void(),
+      },
+    ],
+  },
+  {
     method: "get",
     path: "/residence-verification/status",
     alias: "getStatus",
@@ -580,6 +658,39 @@ const endpoints = makeApi([
         errors: z.array(ProblemError).min(1),
       })
       .passthrough(),
+  },
+  {
+    method: "post",
+    path: "/residence-verification/verify",
+    alias: "e002",
+    description: `Consultazione di un caso d&#x27;uso`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        description: `Richiesta da consultare`,
+        type: "Body",
+        schema: RichiestaE002,
+      },
+    ],
+    response: RispostaE002OK,
+    errors: [
+      {
+        status: 400,
+        description: `Caso d&#x27;uso invalido`,
+        schema: z.void(),
+      },
+      {
+        status: 404,
+        description: `Caso d&#x27;uso non trovato`,
+        schema: z.void(),
+      },
+      {
+        status: 500,
+        description: `Internal Server Error`,
+        schema: z.void(),
+      },
+    ],
   },
 ]);
 

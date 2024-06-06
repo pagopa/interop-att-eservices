@@ -28,7 +28,7 @@ const residenceVerificationRouter = (
   residenceVerificationRouter.use(authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware()); */
 
   residenceVerificationRouter.post(
-    "/residence-verification",
+    "/residence-verification/old",
     contextDataResidenceMiddleware,
     uniquexCorrelationIdMiddleware(),
     authenticationMiddleware(true),
@@ -60,6 +60,47 @@ const residenceVerificationRouter = (
           req.url,
           req.method,
           "RESIDENCE_VERIFICATION_001",
+          "KO",
+          JSON.stringify(generalErrorResponse)
+        );
+        return res.status(errorRes.status).json(generalErrorResponse).end();
+      }
+    }
+  );
+  
+  residenceVerificationRouter.post(
+    "/residence-verification/verify",
+    contextDataResidenceMiddleware,
+    uniquexCorrelationIdMiddleware(),
+    authenticationMiddleware(true),
+    integrityValidationMiddleware(),
+    auditValidationMiddleware(),
+    async (req, res) => {
+      try {
+        logger.info(`[START] Verfy ResidenceVerificationRouter: ${req.body}`);
+        const data = await ResidenceVerificationController.findUserVerify(req.body);
+        /*if (!data) {
+          throw userModelNotFound();
+        }*/
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "RESIDENCE_VERIFICATION_002",
+          "OK"
+        );
+        logger.info(`[END] Verfy ResidenceVerificationRouter`);
+        return res.status(200).json(data).end();
+      } catch (error) {
+        const errorRes = makeApiProblem(error, createEserviceDataPreparation);
+        const correlationId = req.headers["x-correlation-id"] as string;
+        const generalErrorResponse = mapGeneralErrorModel(
+          correlationId,
+          errorRes
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "RESIDENCE_VERIFICATION_002",
           "KO",
           JSON.stringify(generalErrorResponse)
         );
