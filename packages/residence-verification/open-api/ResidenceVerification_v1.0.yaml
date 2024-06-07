@@ -225,7 +225,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/GeneralError'
                 
-  /residence-verification/old:
+  /residence-verification:
     post:
       tags:
         - ARService001
@@ -274,10 +274,10 @@ paths:
   /residence-verification/verify:
     post:
       tags:
-        - E002 service
+        - ARService002
       summary: Trova caso d'uso
       description: Consultazione di un caso d'uso
-      operationId: e002
+      operationId: AR002
       security:
         - bearerAuth: []
       requestBody:
@@ -286,14 +286,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RichiestaE002'
+              $ref: '#/components/schemas/RichiestaAR002'
       responses:
         "200":
           description: Caso d'uso trovato
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RispostaE002OK'
+                $ref: '#/components/schemas/RispostaAR002OK'
         "400":
           description: Caso d'uso invalido
           content:
@@ -330,7 +330,7 @@ paths:
 
 components:
   schemas:
-    RichiestaE002:
+    RichiestaAR002:
       type: object
       required:
         - idOperazioneClient
@@ -341,18 +341,18 @@ components:
           type: string
           description: Identificativo univoco attribuito all'operazione dall'ente. Deve essere numerico e crescente. Se esiste in ANPR, l'ente riceve come esito la risposta in precedenza fornita da ANPR con lo stesso ID; se non esiste ed e' inferiore all'ultimo inviato, l'elaborazione termina con errore.
         criteriRicerca:
-          $ref: '#/components/schemas/TipoCriteriRicercaE002'
+          $ref: '#/components/schemas/TipoCriteriRicercaAR002'
         verifica:
-          $ref: '#/components/schemas/TipoVerificaE002'
+          $ref: '#/components/schemas/TipoVerificaAR002'
         datiRichiesta:
-          $ref: '#/components/schemas/TipoDatiRichiestaE002'
-    RispostaE002OK:
+          $ref: '#/components/schemas/TipoDatiRichiestaAR002'
+    RispostaAR002OK:
       type: object
       properties:
-        idOperazioneANPR:
+        idOperazione:
           type: string
-        listaSoggetti:
-          $ref: '#/components/schemas/VerifyTipoDatiSoggettiEnte'
+        soggetti:
+          $ref: '#/components/schemas/VerifyTipoDatiSoggetti'
         listaAnomalie:
           type: array
           items:
@@ -366,7 +366,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TipoErroriAnomalia'
-    TipoCriteriRicercaE002:
+    TipoCriteriRicercaAR002:
       type: object
       properties:
         codiceFiscale:
@@ -386,7 +386,7 @@ components:
           type: string
         datiNascita:
           $ref: '#/components/schemas/TipoDatiNascitaE000'
-    TipoVerificaE002:
+    TipoVerificaAR002:
       type: object
       properties:
         residenza:
@@ -407,7 +407,7 @@ components:
           $ref: '#/components/schemas/TipoIndirizzoEstero'
         consolato:
           $ref: '#/components/schemas/TipoConsolato'
-    TipoDatiRichiestaE002:
+    TipoDatiRichiestaAR002:
       type: object
       required:
         - dataRiferimentoRichiesta
@@ -605,14 +605,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TipoDatiSoggettiEnte'
-    VerifyTipoDatiSoggettiEnte:
+    VerifyTipoDatiSoggetti:
       type: object
       properties:
-        infoSoggettoEnte:
+        infoSoggetto:
           type: array
           items:
-            $ref: '#/components/schemas/TipoInfoSoggettoEnte'
-    TipoInfoSoggettoEnte:
+            $ref: '#/components/schemas/TipoInfoSoggetto'
+    TipoInfoSoggetto:
       type: object
       properties:
         id:
@@ -631,9 +631,9 @@ components:
           type: string      
     TipoInfoValore:
       enum:
-      - A
+      - "A"
       - "N"
-      - S
+      - "S"
       type: string
     TipoDatiSoggettiEnte:
       type: object
