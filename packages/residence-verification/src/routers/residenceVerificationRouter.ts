@@ -28,7 +28,7 @@ const residenceVerificationRouter = (
   residenceVerificationRouter.use(authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware()); */
 
   residenceVerificationRouter.post(
-    "/residence-verification/old",
+    "/residence-verification",
     contextDataResidenceMiddleware,
     uniquexCorrelationIdMiddleware(),
     authenticationMiddleware(true),
