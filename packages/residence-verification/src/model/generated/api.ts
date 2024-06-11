@@ -357,8 +357,12 @@ const TipoInfoSoggetto = z
   })
   .partial()
   .passthrough();
+const InfoSoggettoEnte = z
+  .object({ infoSoggettoEnte: z.array(TipoInfoSoggetto) })
+  .partial()
+  .passthrough();
 const VerifyTipoDatiSoggetti = z
-  .object({ infoSoggetto: z.array(TipoInfoSoggetto) })
+  .object({ infoSoggetto: z.array(InfoSoggettoEnte) })
   .partial()
   .passthrough();
 const RispostaAR002OK = z
@@ -427,6 +431,7 @@ export const schemas = {
   RichiestaAR002,
   TipoInfoValore,
   TipoInfoSoggetto,
+  InfoSoggettoEnte,
   VerifyTipoDatiSoggetti,
   RispostaAR002OK,
   ProblemError,
