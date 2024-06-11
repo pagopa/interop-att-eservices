@@ -611,6 +611,13 @@ components:
         infoSoggetto:
           type: array
           items:
+            $ref: '#/components/schemas/InfoSoggettoEnte'
+    InfoSoggettoEnte:
+      type: object
+      properties:
+        infoSoggettoEnte:
+          type: array
+          items:
             $ref: '#/components/schemas/TipoInfoSoggetto'
     TipoInfoSoggetto:
       type: object

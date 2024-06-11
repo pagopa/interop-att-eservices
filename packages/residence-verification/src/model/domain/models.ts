@@ -65,6 +65,8 @@ export type TipoDatiSoggettiEnte = z.infer<
   typeof api.schemas.TipoDatiSoggettiEnte
 >;
 export type TipoListaSoggetti = z.infer<typeof api.schemas.TipoListaSoggetti>;
+export type InfoSoggettoEnte = z.infer<typeof api.schemas.InfoSoggettoEnte>;
+export type TipoInfoSoggetto = z.infer<typeof api.schemas.TipoInfoSoggetto>;
 export type TipoErroriAnomalia = z.infer<typeof api.schemas.TipoErroriAnomalia>;
 export type RispostaAR001 = z.infer<typeof api.schemas.RispostaAR001>;
 export type RichiestaAR002 = z.infer<typeof api.schemas.RichiestaAR002>;
