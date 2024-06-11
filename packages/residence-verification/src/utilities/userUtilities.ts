@@ -2,7 +2,6 @@ import { UserModel } from "pdnd-models";
 import { TipoParametriRicercaAR001 } from "../model/domain/models.js";
 import { userModelNotFound } from "../exceptions/errors.js";
 
-/* eslint-disable */
 // Funzione che aggiunge una lista di UserModel a un array esistente solo se non esistono già, sostituendo eventuali duplicati
 export function appendUniqueUserModelsToArray(
   existingArray: UserModel[] | null,
@@ -15,21 +14,24 @@ export function appendUniqueUserModelsToArray(
     );
   }
 
-  // Creiamo una nuova copia dell'array esistente
+  // Copia l'array esistente per non modificarlo direttamente
   const newArray = existingArray.slice();
 
-  // Creiamo un set per tenere traccia degli UUID dei modelli esistenti
-  const uuidSet = new Set(
-    newArray.map((model) => model.soggetto.codiceFiscale)
-  );
-
-  // Aggiungiamo solo i nuovi UserModel che non esistono già nell'array esistente
+  // Aggiunge solo i nuovi UserModel che non esistono già nell'array esistente
   for (const modelToAdd of modelsToAdd) {
-    // Verifichiamo se il UserModel è già presente nell'array esistente
-    if (!uuidSet.has(modelToAdd.soggetto.codiceFiscale)) {
-      // Se non esiste, lo aggiungiamo all'array e aggiorniamo il set degli UUID
+    // Cerca se esiste già un UserModel con lo stesso codice fiscale nell'array esistente
+    const existingModelIndex = newArray.findIndex(
+      (model) =>
+        model.soggetto.codiceFiscale === modelToAdd.soggetto.codiceFiscale
+    );
+    if (existingModelIndex !== -1) {
+      // Se esiste già un UserModel con lo stesso codice fiscale, aggiorna l'UUID dell'elemento da sostituire
+      modelToAdd.uuid = newArray[existingModelIndex].uuid;
+      // Sostituisci l'elemento esistente con il nuovo UserModel
+      newArray.splice(existingModelIndex, 1, modelToAdd);
+    } else {
+      // Se non esiste già un UserModel con lo stesso codice fiscale, aggiungi il nuovo UserModel
       newArray.push(modelToAdd);
-      uuidSet.add(modelToAdd.soggetto.codiceFiscale);
     }
   }
 
@@ -198,4 +200,6 @@ export function deleteUserModelByUUID(
 
   return result; // Restituisci l'oggetto UserModel trovato, se presente
 }
+
+
 
