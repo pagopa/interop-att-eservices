@@ -16,6 +16,10 @@ spec:
         app: interop-att-trial-service-api
     spec:
       serviceAccountName: {{SERVICEACCOUNT}}
+      initContainers:
+        - name: interop-att-data-migration
+          image: {{DATAMIGRATIONIMAGE}}
+          args: [ "-url={{DATABASE_URL}}", "-user={{DATABASE_SU_USERNAME}}", "-password={{DATABASE_SU_PASSWORD", "-connectRetries=5" "migrate" ]
       containers:
         - name: interop-att-trial-service-api
 #          image: ghcr.io/pagopa/interop-att-trial-service-api:{{TRIALSERVICEAPIIMAGE}}
