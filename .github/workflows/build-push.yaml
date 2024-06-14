@@ -41,7 +41,7 @@ jobs:
           - image_name: digital-address-verification
             dockerfile_path: packages/digital-address-verification
           - image_name: data-migration
-            dockerfile_path: migrations/
+            dockerfile_path: migrations
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
