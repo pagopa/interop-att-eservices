@@ -19,7 +19,7 @@ spec:
       initContainers:
         - name: interop-att-data-migration
           image: {{DATAMIGRATIONIMAGE}}
-          args: [ "-connectRetries=5" "migrate" ]
+          args: [ "-connectRetries=5", "migrate" ]
           volumeMounts:
             - name: flyway-conf
               mountPath: /flyway/conf/flyway.conf
