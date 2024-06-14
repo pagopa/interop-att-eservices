@@ -19,7 +19,12 @@ spec:
       initContainers:
         - name: interop-att-data-migration
           image: {{DATAMIGRATIONIMAGE}}
-          args: [ "-url={{DATABASE_URL}}", "-user={{DATABASE_SU_USERNAME}}", "-password={{DATABASE_SU_PASSWORD", "-connectRetries=5" "migrate" ]
+          args: [ "-connectRetries=5" "migrate" ]
+          volumeMounts:
+            - name: flyway-conf
+              mountPath: /flyway/conf/flyway.conf
+              readOnly: true
+              subPath: flyway.conf
       containers:
         - name: interop-att-trial-service-api
 #          image: ghcr.io/pagopa/interop-att-trial-service-api:{{TRIALSERVICEAPIIMAGE}}
@@ -58,3 +63,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: trial-service-api-configmap
+      volumes:
+        - name: flyway-conf
+          configMap:
+            defaultMode: 256
+            name: flyway-configmap
+            optional: false

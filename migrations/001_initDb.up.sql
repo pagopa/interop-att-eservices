@@ -1,18 +1,20 @@
 -- Creazione dell'utente 'att' con password 'user_psw'
-CREATE USER att WITH PASSWORD '{{USER_PASSWORD}}';
+CREATE USER {{USER_NAME}} WITH PASSWORD '{{USER_PASSWORD}}';
 
 -- Creazione dello schema 'att'
-CREATE SCHEMA IF NOT EXISTS att AUTHORIZATION att;
+CREATE SCHEMA IF NOT EXISTS {{USER_NAME}} AUTHORIZATION {{USER_NAME}};
 
 -- Concessione dei permessi all'utente 'att' sullo schema 'att'
-GRANT USAGE ON SCHEMA att TO att;
+GRANT USAGE ON SCHEMA {{USER_NAME}} TO {{USER_NAME}};
 
 -- Concessione dei permessi di INSERT, UPDATE e DELETE sulle tabelle dello schema 'att' all'utente 'att'
-GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA att TO att;
+GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA {{USER_NAME}} TO {{USER_NAME}};
 
 -- Impostazione dei permessi di default per le future tabelle dello schema 'att'
-ALTER DEFAULT PRIVILEGES IN SCHEMA att
-GRANT INSERT, UPDATE, DELETE ON TABLES TO att;
+ALTER DEFAULT PRIVILEGES IN SCHEMA {{USER_NAME}}
+GRANT INSERT, UPDATE, DELETE ON TABLES TO {{USER_NAME}};
+
+SET search_path TO {{USER_NAME}}
 
 -- up.sql: Migrazione per creare la tabella 'Users'
 CREATE TABLE category (
