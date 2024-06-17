@@ -134,3 +134,9 @@ INSERT INTO "check" (id,code,description,"order",category_id) VALUES
     (55,'digital-address-verification-list-state','API that allows you to check the processing status of the request for the list of digital address',2,11),
     (56,'digital-address-verification-list-response','API that allows you to retrieve the list of digital address',2,12),
     (57,'residence-verification-002','API to verify a residence',4,13);
+
+
+-- Impostazione dei permessi per le sequence delle tabelle
+GRANT ALL ON SEQUENCE category_id_seq TO {{USER_NAME}};
+GRANT ALL ON SEQUENCE check_id_seq TO {{USER_NAME}};
+GRANT ALL ON SEQUENCE trial_id_seq TO {{USER_NAME}};
