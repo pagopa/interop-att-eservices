@@ -25,6 +25,9 @@ spec:
               mountPath: /flyway/conf/flyway.conf
               readOnly: true
               subPath: flyway.conf
+          envFrom:
+            - configMapRef:
+                name: trial-service-api-configmap
       containers:
         - name: interop-att-trial-service-api
 #          image: ghcr.io/pagopa/interop-att-trial-service-api:{{TRIALSERVICEAPIIMAGE}}
