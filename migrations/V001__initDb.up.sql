@@ -2,7 +2,7 @@
 CREATE USER {{USER_NAME}} WITH PASSWORD '{{USER_PASSWORD}}';
 
 -- Creazione dello schema 'att'
-CREATE SCHEMA IF NOT EXISTS {{USER_NAME}} AUTHORIZATION {{USER_NAME}};
+CREATE SCHEMA IF NOT EXISTS {{USER_NAME}};
 
 -- Concessione dei permessi all'utente 'att' sullo schema 'att'
 GRANT USAGE ON SCHEMA {{USER_NAME}} TO {{USER_NAME}};
