@@ -1,7 +1,7 @@
 import fs from "fs";
 import https from "https";
 import { logger } from "pdnd-common";
-import { sequelize, executeDatabaseMigrations } from "trial";
+import { sequelize } from "trial";
 import app from "./app.js";
 
 const port = process.env.PORT || 3003;
@@ -12,7 +12,6 @@ const startServer = async (): Promise<void> => {
     logger.info(`Piva verficiation`);
     await sequelize.authenticate();
 
-    await executeDatabaseMigrations();
     logger.info("Connection to Database has been established.");
 
     if (process.env.HTTPS_KEY_PATH && process.env.HTTPS_CERT_PATH) {

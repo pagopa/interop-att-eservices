@@ -40,6 +40,8 @@ jobs:
             dockerfile_path: packages/trial-service-api
           - image_name: digital-address-verification
             dockerfile_path: packages/digital-address-verification
+          - image_name: data-migration
+            dockerfile_path: migrations
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -73,7 +75,7 @@ jobs:
         if: ${{ github.ref_type == 'tag' }}
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: ${{ steps.login-ecr.outputs.registry }}/interop-att-${{ matrix.image_name }}
+          images: ${{ steps.login-ecr.outputs.registry }}/interop-att-eservice-${{ matrix.image_name }}
           flavor: |
             latest=false
             prefix=
