@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import dataPreparationRepository from "../../../src/repository/dataPreparationRepository";
 import { logger, cacheManager } from "pdnd-common";
 import { parseJsonToUserArray } from "../../../src/utilities/jsonUserUtilities";
-import { getUserModelByCodiceFiscale } from "../../../src/utilities/userUtilities";
 import { FiscalcodeModel } from "pdnd-models";
 
 // Mock delle dipendenze
