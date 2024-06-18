@@ -22,7 +22,7 @@ class TrialService {
         method
       );
     } catch (error) {
-      logger.error(`getAll - generic error during Check findAll: ${error}`);
+      logger.error(`GetAll - generic error during Check 'findAll': ${error}`);
       throw error;
     }
   }

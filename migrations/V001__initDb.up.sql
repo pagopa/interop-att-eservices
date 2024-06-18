@@ -8,11 +8,11 @@ CREATE SCHEMA IF NOT EXISTS {{USER_NAME}};
 GRANT USAGE ON SCHEMA {{USER_NAME}} TO {{USER_NAME}};
 
 -- Concessione dei permessi di INSERT, UPDATE e DELETE sulle tabelle dello schema 'att' all'utente 'att'
-GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA {{USER_NAME}} TO {{USER_NAME}};
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA {{USER_NAME}} TO {{USER_NAME}};
 
 -- Impostazione dei permessi di default per le future tabelle dello schema 'att'
 ALTER DEFAULT PRIVILEGES IN SCHEMA {{USER_NAME}}
-GRANT INSERT, UPDATE, DELETE ON TABLES TO {{USER_NAME}};
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO {{USER_NAME}};
 
 SET search_path TO {{USER_NAME}};
 
@@ -134,3 +134,9 @@ INSERT INTO "check" (id,code,description,"order",category_id) VALUES
     (55,'digital-address-verification-list-state','API that allows you to check the processing status of the request for the list of digital address',2,11),
     (56,'digital-address-verification-list-response','API that allows you to retrieve the list of digital address',2,12),
     (57,'residence-verification-002','API to verify a residence',4,13);
+
+
+-- Impostazione dei permessi per le sequence delle tabelle
+GRANT ALL ON SEQUENCE category_id_seq TO {{USER_NAME}};
+GRANT ALL ON SEQUENCE check_id_seq TO {{USER_NAME}};
+GRANT ALL ON SEQUENCE trial_id_seq TO {{USER_NAME}};
