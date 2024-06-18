@@ -13,6 +13,7 @@
     "format:write": "prettier --write src",
     "start": "node --no-warnings --loader ts-node/esm -r dotenv-flow/config ./src/index.ts",
     "build": "tsc",
+    "check": "tsc --project tsconfig.check.json",
     "generate-model": "pnpm openapi-zod-client ./open-api/ResidenceVerification_v1.0.yaml -o ./src/model/generated/api.ts",
     "clean-generated": "pnpm exec rm ./src/model/generated/api.ts"
   },

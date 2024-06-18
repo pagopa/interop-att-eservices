@@ -12,6 +12,7 @@
     "start:digital-address-verification": "turbo start --filter digital-address-verification",
     "test": "turbo test",
     "test:it": "turbo test:it",
+    "check": "turbo check",
     "build": "turbo build",
     "lint": "turbo lint",
     "lint:autofix": "turbo lint:autofix",

@@ -30,6 +30,16 @@
           "dist"
         ]
       },
+      "check": {
+        "dependsOn": [
+          "generate-model",
+          "generate-protobuf",
+          "^build"
+        ],
+        "outputs": [
+          "dist"
+        ]
+      },
       "generate-model": {
         "dependsOn": [
           "^generate-model"
