@@ -46,12 +46,7 @@ export const verifyCertValidity: ZodiosRouterContextRequestHandler<
       logger.error(`apiKey non valida`);
       throw ErrorHandling.apikeyNotValidError();
     }
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "CERT_VERIFICATION_OK",
-      "OK"
-    );
+    void TrialService.insert(req.url, req.method, "CERT_VERIFICATION_OK", "OK");
     next(); // Chiamare next solo se il certificato è valido
   } catch (error) {
     logger.error(

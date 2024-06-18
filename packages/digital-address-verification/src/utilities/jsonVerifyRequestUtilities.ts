@@ -65,7 +65,9 @@ export function convertStringToVerifyRequest(jsonString: any): VerifyRequest {
 }
 
 /* eslint-disable */
-export function convertStringToResponseRequestDigitalAddress(jsonString: any): ResponseRequestDigitalAddress {
+export function convertStringToResponseRequestDigitalAddress(
+  jsonString: any
+): ResponseRequestDigitalAddress {
   /* eslint-enable */
   try {
     const parsed = JSON.parse(jsonString);

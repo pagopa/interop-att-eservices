@@ -1,55 +1,68 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import dataPreparationRepository from '../../../src/repository/dataPreparationRepository';
-import { logger, cacheManager } from 'pdnd-common';
-import { parseJsonToUserArray } from '../../../src/utilities/jsonUserUtilities';
-import { getUserModelByCodiceFiscale } from '../../../src/utilities/userUtilities';
-import { FiscalcodeModel } from 'pdnd-models';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import dataPreparationRepository from "../../../src/repository/dataPreparationRepository";
+import { logger, cacheManager } from "pdnd-common";
+import { parseJsonToUserArray } from "../../../src/utilities/jsonUserUtilities";
+import { getUserModelByCodiceFiscale } from "../../../src/utilities/userUtilities";
+import { FiscalcodeModel } from "pdnd-models";
 
 // Mock delle dipendenze
-vi.mock('pdnd-common', () => ({
+vi.mock("pdnd-common", () => ({
   logger: {
     info: vi.fn(),
-    error: vi.fn()
+    error: vi.fn(),
   },
   cacheManager: {
     setObject: vi.fn(),
     getObjectByKey: vi.fn(),
-    deleteAllObjectByKey: vi.fn()
-  }
+    deleteAllObjectByKey: vi.fn(),
+  },
 }));
 
-vi.mock('../../../src/utilities/jsonFiscalcodeUtilities', () => ({
-  parseJsonToUserArray: vi.fn()
+vi.mock("../../../src/utilities/jsonFiscalcodeUtilities", () => ({
+  parseJsonToUserArray: vi.fn(),
 }));
 
-
-vi.mock('../../../src/utilities/fiscalcodeUtilities', () => ({
-  getUserModelByCodiceFiscale: vi.fn()
+vi.mock("../../../src/utilities/fiscalcodeUtilities", () => ({
+  getUserModelByCodiceFiscale: vi.fn(),
 }));
 
-describe('dataPreparationRepository', () => {
+describe("dataPreparationRepository", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('saveList', () => {
-    it('should save the list and return the saved object', async () => {
-      const mockRequest: FiscalcodeModel[] = [{ fiscalCode: 'bccccc44r61w122q' }];
-      const mockKey = 'testKey';
+  describe("saveList", () => {
+    it("should save the list and return the saved object", async () => {
+      const mockRequest: FiscalcodeModel[] = [
+        { fiscalCode: "bccccc44r61w122q" },
+      ];
+      const mockKey = "testKey";
       const mockSavedData = JSON.stringify(mockRequest);
 
-      (cacheManager.setObject as ReturnType<typeof vi.fn>).mockResolvedValue(null);
-      (cacheManager.getObjectByKey as ReturnType<typeof vi.fn>).mockResolvedValue(mockSavedData);
+      (cacheManager.setObject as ReturnType<typeof vi.fn>).mockResolvedValue(
+        null
+      );
+      (
+        cacheManager.getObjectByKey as ReturnType<typeof vi.fn>
+      ).mockResolvedValue(mockSavedData);
 
-      const result = await dataPreparationRepository.saveList(mockRequest, mockKey);
+      const result = await dataPreparationRepository.saveList(
+        mockRequest,
+        mockKey
+      );
 
-      expect(cacheManager.setObject).toHaveBeenCalledWith(mockKey, mockSavedData);
+      expect(cacheManager.setObject).toHaveBeenCalledWith(
+        mockKey,
+        mockSavedData
+      );
       expect(cacheManager.getObjectByKey).toHaveBeenCalledWith(mockKey);
-      expect(logger.info).toHaveBeenCalledWith('dataPreparationRepository: Elemento salvato con successo.');
+      expect(logger.info).toHaveBeenCalledWith(
+        "dataPreparationRepository: Elemento salvato con successo."
+      );
       expect(result).toBe(mockSavedData);
     });
 
-   /* it('should log an error and throw it if saving fails', async () => {
+    /* it('should log an error and throw it if saving fails', async () => {
       const mockRequest: FiscalcodeModel[] = [{ fiscalCode: 'bccccc44r61w122q' }];
       const mockKey = 'testKey';
       const mockError = new Error('Test error');
@@ -61,7 +74,7 @@ describe('dataPreparationRepository', () => {
     });*/
   });
 
- /* describe('findAllByKey', () => {
+  /* describe('findAllByKey', () => {
     it('should retrieve and parse the saved object', async () => {
       const mockKey = 'testKey';
       const mockSavedData = '[{ fiscalCode: bccccc44r61w122 }]';

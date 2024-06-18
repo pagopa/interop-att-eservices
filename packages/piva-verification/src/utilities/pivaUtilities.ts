@@ -37,12 +37,15 @@ export function appendUniquePivaModelsToArray(
   return newArray;
 }
 
-export function findPivaModelByPiva(pivas: PartitaIvaModel[] | null, piva: string): PartitaIvaModel | null {
-  if (pivas == null ) return null;
+export function findPivaModelByPiva(
+  pivas: PartitaIvaModel[] | null,
+  piva: string
+): PartitaIvaModel | null {
+  if (pivas == null) return null;
   for (const pivaModel of pivas) {
-      if (pivaModel.partitaIva === piva) {
-          return pivaModel;
-      }
+    if (pivaModel.partitaIva === piva) {
+      return pivaModel;
+    }
   }
   return null; // Se non viene trovato nessun oggetto corrispondente
 }
@@ -69,7 +72,9 @@ export function deletePivaModelByPiva(
 }
 
 // Funzione per validare una lista di FiscalcodeModel
-export const arePartitaIvasValid = (partitaIvaList: PartitaIvaModel[]): boolean => {
+export const arePartitaIvasValid = (
+  partitaIvaList: PartitaIvaModel[]
+): boolean => {
   return partitaIvaList.every((item) => {
     const parsedItem = PartitaIvaModel.safeParse(item);
     return parsedItem.success && parsedItem.data.partitaIva.length > 5;

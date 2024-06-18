@@ -3,7 +3,7 @@ export * from "./model/trial.js";
 export * from "./model/check.js";
 export * from "./model/category.js";
 export * from "./repository/trialRepository.js";
-export {TrialService} from "./services/trialService.js";
+export { TrialService } from "./services/trialService.js";
 import { logger } from "pdnd-common";
 import { eventManager, syncEventEmitter } from "pdnd-common";
 import { TrialService, existCorrelationId } from "./services/trialService.js";

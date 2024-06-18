@@ -124,11 +124,7 @@ const verifyJwtPayload = (
   const dateNowSeconds = Math.floor(Date.now() / 1000);
   if (!decodedToken.payload.exp) {
     logger.error(`verifyJwtPayload - "exp" in payload is required`);
-    void TrialService.insert(
-      url,
-      method,
-      "TRACKING_EVIDENCE_EXP_NOT_PRESENT"
-    );
+    void TrialService.insert(url, method, "TRACKING_EVIDENCE_EXP_NOT_PRESENT");
     throw ErrorHandling.tokenNotValid();
   }
   if (dateNowSeconds > decodedToken.payload.exp) {
@@ -139,11 +135,7 @@ const verifyJwtPayload = (
 
   if (!decodedToken.payload.iat) {
     logger.error(`verifyJwtPayload - "iat" in payload is required`);
-    void TrialService.insert(
-      url,
-      method,
-      "TRACKING_EVIDENCE_IAT_NOT_PRESENT"
-    );
+    void TrialService.insert(url, method, "TRACKING_EVIDENCE_IAT_NOT_PRESENT");
     throw ErrorHandling.tokenNotValid();
   }
   if (dateNowSeconds < decodedToken.payload.iat) {
@@ -154,11 +146,7 @@ const verifyJwtPayload = (
 
   if (!decodedToken.payload.aud) {
     logger.error(`verifyJwtPayload - "aud" in payload is required`);
-    void TrialService.insert(
-      url,
-      method,
-      "TRACKING_EVIDENCE_AUD_NOT_PRESENT"
-    );
+    void TrialService.insert(url, method, "TRACKING_EVIDENCE_AUD_NOT_PRESENT");
     throw ErrorHandling.tokenNotValid();
   }
   if (decodedToken.payload.aud !== process.env.TOKEN_AUD) {
@@ -169,11 +157,7 @@ const verifyJwtPayload = (
 
   if (!decodedToken.payload.iss) {
     logger.error(`verifyJwtPayload - Request header 'iss' not present`);
-    void TrialService.insert(
-      url,
-      method,
-      "TRACKING_EVIDENCE_ISS_NOT_PRESENT"
-    );
+    void TrialService.insert(url, method, "TRACKING_EVIDENCE_ISS_NOT_PRESENT");
     throw ErrorHandling.tokenNotValid();
   }
 

@@ -198,7 +198,9 @@ export const TipoVerificaResidenzaModel = z
     tipoIndirizzo: z.string(),
   })
   .passthrough();
-export type TipoVerificaResidenzaModel = z.infer<typeof TipoVerificaResidenzaModel>;
+export type TipoVerificaResidenzaModel = z.infer<
+  typeof TipoVerificaResidenzaModel
+>;
 
 export const TipoVerificaModel = z
   .object({

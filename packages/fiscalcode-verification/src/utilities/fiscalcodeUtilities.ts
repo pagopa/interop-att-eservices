@@ -37,12 +37,15 @@ export function appendUniqueFiscalcodeModelsToArray(
   return newArray;
 }
 
-export function findFiscalcodeModelByFiscalcode(fiscalCodes: FiscalcodeModel[] | null, fiscalCode: string): FiscalcodeModel | null {
-  if (fiscalCodes == null ) return null;
+export function findFiscalcodeModelByFiscalcode(
+  fiscalCodes: FiscalcodeModel[] | null,
+  fiscalCode: string
+): FiscalcodeModel | null {
+  if (fiscalCodes == null) return null;
   for (const fiscalCodeModel of fiscalCodes) {
-      if (fiscalCodeModel.fiscalCode === fiscalCode) {
-          return fiscalCodeModel;
-      }
+    if (fiscalCodeModel.fiscalCode === fiscalCode) {
+      return fiscalCodeModel;
+    }
   }
   return null; // Se non viene trovato nessun oggetto corrispondente
 }
@@ -69,7 +72,9 @@ export function deleteFiscalcodeModelByFiscaldode(
 }
 
 // Funzione per validare una lista di FiscalcodeModel
-export const areFiscalCodesValid = (fiscalCodeList: FiscalcodeModel[]): boolean => {
+export const areFiscalCodesValid = (
+  fiscalCodeList: FiscalcodeModel[]
+): boolean => {
   return fiscalCodeList.every((item) => {
     const parsedItem = FiscalcodeModel.safeParse(item);
     return parsedItem.success && parsedItem.data.fiscalCode.length > 5;

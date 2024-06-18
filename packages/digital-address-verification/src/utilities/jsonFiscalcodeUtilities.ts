@@ -48,8 +48,9 @@ export function parseJsonToResponseRequestDigitalAddressArray(
 }
 
 /* eslint-disable */
-export function convertStringToRichiesta(jsonString: any): ResponseRequestDigitalAddressModel {
-  
+export function convertStringToRichiesta(
+  jsonString: any
+): ResponseRequestDigitalAddressModel {
   try {
     const parsed = JSON.parse(jsonString);
 

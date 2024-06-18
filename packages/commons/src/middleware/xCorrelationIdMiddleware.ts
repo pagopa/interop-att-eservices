@@ -17,11 +17,14 @@ export const uniquexCorrelationIdMiddleware: () => ZodiosRouterContextRequestHan
           return next();
         } else {
           const context = getContext();
-          const response = await syncEventEmitter.emitSync('checkCorrelationId', context.correlationId);
+          const response = await syncEventEmitter.emitSync(
+            "checkCorrelationId",
+            context.correlationId
+          );
           console.log(`Response: ${response}`);
           if (response) {
-              logger.error("x-correlation-id alredy exist");
-              throw ErrorHandling.xCorrelationIdNotValidError();
+            logger.error("x-correlation-id alredy exist");
+            throw ErrorHandling.xCorrelationIdNotValidError();
           }
         }
         logger.info(`[COMPLETED] xCorrelationIdMiddleware`);

@@ -67,7 +67,7 @@ const residenceVerificationRouter = (
       }
     }
   );
-  
+
   residenceVerificationRouter.post(
     "/residence-verification/verify",
     contextDataResidenceMiddleware,
@@ -78,7 +78,9 @@ const residenceVerificationRouter = (
     async (req, res) => {
       try {
         logger.info(`[START] Verfy ResidenceVerificationRouter: ${req.body}`);
-        const data = await ResidenceVerificationController.findUserVerify(req.body);
+        const data = await ResidenceVerificationController.findUserVerify(
+          req.body
+        );
         /*if (!data) {
           throw userModelNotFound();
         }*/

@@ -10,7 +10,7 @@ const portHttps = Number(port) + 443;
 const startServer = async (): Promise<void> => {
   try {
     await sequelize.authenticate();
- 
+
     logger.info("Connection to Database has been established.");
 
     if (process.env.HTTPS_KEY_PATH && process.env.HTTPS_CERT_PATH) {

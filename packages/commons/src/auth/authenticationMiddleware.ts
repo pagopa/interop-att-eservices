@@ -13,47 +13,62 @@ import {
 
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 /* eslint-disable */
-export const authenticationMiddleware: (isEnableTrial: boolean) => ZodiosRouterContextRequestHandler<ExpressContext> =
-  (isEnableTrial) => {
-    const authMiddleware: ZodiosRouterContextRequestHandler<
-      ExpressContext
-    > = async (req, res, next): Promise<unknown> => {
-      try {
-        const addCtxAuthData = async (
-          authHeader: string,
-          correlationId: string
-        ): Promise<void> => {
-          const authorizationHeader = authHeader.split(" ");
-          if (authorizationHeader.length !== 2 || authorizationHeader[0] !== "Bearer") {
-            logger.error(`authenticationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`);
-            throw ErrorHandling.missingBearer();
-          }
+export const authenticationMiddleware: (
+  isEnableTrial: boolean
+) => ZodiosRouterContextRequestHandler<ExpressContext> = (isEnableTrial) => {
+  const authMiddleware: ZodiosRouterContextRequestHandler<
+    ExpressContext
+  > = async (req, res, next): Promise<unknown> => {
+    try {
+      const addCtxAuthData = async (
+        authHeader: string,
+        correlationId: string
+      ): Promise<void> => {
+        const authorizationHeader = authHeader.split(" ");
+        if (
+          authorizationHeader.length !== 2 ||
+          authorizationHeader[0] !== "Bearer"
+        ) {
+          logger.error(
+            `authenticationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`
+          );
+          throw ErrorHandling.missingBearer();
+        }
 
-          const jwtToken = authorizationHeader[1];
+        const jwtToken = authorizationHeader[1];
 
-          const valid = await verifyJwtToken(jwtToken);
-          if (!valid) {
-            logger.error(`authenticationMiddleware - The jwt token is not valid`);
-            throw ErrorHandling.tokenNotValid("Authorizzation bearer token is not valid");
-          }
-          logger.info(`authenticationMiddleware - Bearer Token: isValid: ${valid}`);
+        const valid = await verifyJwtToken(jwtToken);
+        if (!valid) {
+          logger.error(`authenticationMiddleware - The jwt token is not valid`);
+          throw ErrorHandling.tokenNotValid(
+            "Authorizzation bearer token is not valid"
+          );
+        }
+        logger.info(
+          `authenticationMiddleware - Bearer Token: isValid: ${valid}`
+        );
 
-          const authData = readAuthDataFromJwtToken(jwtToken);
-          match(authData)
-            .with(P.instanceOf(Error), (err) => {
-              logger.warn(`authenticationMiddleware - Invalid authentication provided: ${err.message}`);
-              if (isEnableTrial) {
-                sendCustomEvent('trialEvent', { operationPath: req.url, checkName: "VOUCHER_AUTH_DATA_CANNOT_BE_PARSED" });
-              }
-              throw ErrorHandling.genericError("Invalid claims");
-            })
-            .otherwise((claimsRes: AuthData) => {
-             /* eslint-disable */
-              req.ctx = {
-                authData: { ...claimsRes },
-                correlationId,
-              };
-              /* eslint-enable */
+        const authData = readAuthDataFromJwtToken(jwtToken);
+        match(authData)
+          .with(P.instanceOf(Error), (err) => {
+            logger.warn(
+              `authenticationMiddleware - Invalid authentication provided: ${err.message}`
+            );
+            if (isEnableTrial) {
+              sendCustomEvent("trialEvent", {
+                operationPath: req.url,
+                checkName: "VOUCHER_AUTH_DATA_CANNOT_BE_PARSED",
+              });
+            }
+            throw ErrorHandling.genericError("Invalid claims");
+          })
+          .otherwise((claimsRes: AuthData) => {
+            /* eslint-disable */
+            req.ctx = {
+              authData: { ...claimsRes },
+              correlationId,
+            };
+            /* eslint-enable */
           });
 
         const validPayloadAndHeader = await verifyJwtPayloadAndHeader(

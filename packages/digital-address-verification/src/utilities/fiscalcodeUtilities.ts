@@ -37,12 +37,15 @@ export function appendUniqueFiscalcodeModelsToArray(
   return newArray;
 }
 
-export function findFiscalcodeModelByFiscalcode(fiscalCodes: ResponseRequestDigitalAddressModel[] | null, fiscalCode: string): ResponseRequestDigitalAddressModel | null {
-  if (fiscalCodes == null ) return null;
+export function findFiscalcodeModelByFiscalcode(
+  fiscalCodes: ResponseRequestDigitalAddressModel[] | null,
+  fiscalCode: string
+): ResponseRequestDigitalAddressModel | null {
+  if (fiscalCodes == null) return null;
   for (const fiscalCodeModel of fiscalCodes) {
-      if (fiscalCodeModel.codiceFiscale == fiscalCode) {
-          return fiscalCodeModel;
-      }
+    if (fiscalCodeModel.codiceFiscale == fiscalCode) {
+      return fiscalCodeModel;
+    }
   }
   return null; // Se non viene trovato nessun oggetto corrispondente
 }

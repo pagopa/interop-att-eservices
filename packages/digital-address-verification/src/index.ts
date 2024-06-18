@@ -7,7 +7,7 @@ const port = process.env.PORT || 3004;
 const startServer = async (): Promise<void> => {
   try {
     await sequelize.authenticate();
- 
+
     logger.info("Connection to Database has been established.");
 
     app.listen(port, () => {

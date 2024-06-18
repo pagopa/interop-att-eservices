@@ -200,6 +200,3 @@ export function deleteUserModelByUUID(
 
   return result; // Restituisci l'oggetto UserModel trovato, se presente
 }
-
-
-

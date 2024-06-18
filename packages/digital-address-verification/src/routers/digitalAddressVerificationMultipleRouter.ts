@@ -13,7 +13,6 @@ import { contextDataDigitalAddressMiddleware } from "../context/context.js";
 import digitalAddressVerificationMultipleController from "../controllers/digitalAddressVerificationMultipleController.js";
 import { TrialService } from "trial";
 
-
 const DigitalAddressVerificationMultipleRouter = (
   ctx: ZodiosContext
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
@@ -33,7 +32,7 @@ const DigitalAddressVerificationMultipleRouter = (
             req.body
           );
         logger.info(`[END] Post - '/verifica'`);
-        const locationBaseHost = `${req.protocol}://${req.get('host')}`;
+        const locationBaseHost = `${req.protocol}://${req.get("host")}`;
         res.set(
           "Location",
           locationBaseHost +
@@ -82,7 +81,7 @@ const DigitalAddressVerificationMultipleRouter = (
         /* eslint-disable */
         if (response.state == "DISPONIBILE") {
           /* eslint-enable */
-          const locationBaseHost = `${req.protocol}://${req.get('host')}`;
+          const locationBaseHost = `${req.protocol}://${req.get("host")}`;
           res.set(
             "Location",
             locationBaseHost +

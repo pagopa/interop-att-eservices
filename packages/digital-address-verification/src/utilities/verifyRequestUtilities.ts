@@ -37,12 +37,15 @@ export function appendUniqueVerifyRequestToArray(
   return newArray;
 }
 
-export function findRequestlByIdRequest(fiscalCodes: VerifyRequest[] | null, idRequest: string): VerifyRequest | null {
-  if (fiscalCodes == null ) return null;
+export function findRequestlByIdRequest(
+  fiscalCodes: VerifyRequest[] | null,
+  idRequest: string
+): VerifyRequest | null {
+  if (fiscalCodes == null) return null;
   for (const fiscalCodeModel of fiscalCodes) {
-      if (fiscalCodeModel.idRequest === idRequest) {
-          return fiscalCodeModel;
-      }
+    if (fiscalCodeModel.idRequest === idRequest) {
+      return fiscalCodeModel;
+    }
   }
   return null; // Se non viene trovato nessun oggetto corrispondente
 }

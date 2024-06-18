@@ -36,17 +36,23 @@ export function appendUniqueHandshakeModelsToArray(
   return newArray;
 }
 
-export function findHandshakeModelByPourposeId(handshakes: HandshakeModel[] | null, pourposeId: string): HandshakeModel | null {
-  if (handshakes == null ) return null;
+export function findHandshakeModelByPourposeId(
+  handshakes: HandshakeModel[] | null,
+  pourposeId: string
+): HandshakeModel | null {
+  if (handshakes == null) return null;
   for (const handshake of handshakes) {
-      if (handshake.pourposeId === pourposeId) {
-          return handshake;
-      }
+    if (handshake.pourposeId === pourposeId) {
+      return handshake;
+    }
   }
   return null; // Se non viene trovato nessun oggetto corrispondente
 }
 
-export function isCertUnique(existingArray: HandshakeModel[] | null, modelsToAdd: HandshakeModel[] | null): boolean {
+export function isCertUnique(
+  existingArray: HandshakeModel[] | null,
+  modelsToAdd: HandshakeModel[] | null
+): boolean {
   // Verifica se l'array esistente o la lista dei modelli da aggiungere sono nulli o undefined
   if (!existingArray || !modelsToAdd) {
     return true;

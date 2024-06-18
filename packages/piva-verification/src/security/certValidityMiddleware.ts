@@ -45,7 +45,7 @@ export const verifyCertValidity: ZodiosRouterContextRequestHandler<
   } catch (error) {
     logger.error(
       `Si è verificato un errore durante la verifica della validità del certificato: ${error}`
-    );/* eslint-disable */
+    ); /* eslint-disable */
     const problem = makeApiProblem(error, (err: { code: any }) =>
       match(err.code)
         .with("unauthorizedError", () => 401)

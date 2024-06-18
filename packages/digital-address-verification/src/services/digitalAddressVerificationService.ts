@@ -34,7 +34,7 @@ class DigitalAddressVerificationService {
         persistedFiscalcodeData == null ||
         persistedFiscalcodeData.length === 0
       ) {
-         /* eslint-enable */
+        /* eslint-enable */
         await digitalAddressRepository.saveRequest(fiscalCodeData, hash);
       } else {
         // esistono già chiavi, devo aggiungere la nuova, o sostituirla nel caso esista
@@ -79,7 +79,7 @@ class DigitalAddressVerificationService {
       throw error;
     }
   }
-/* eslint-disable */
+  /* eslint-disable */
   public async simulateWorkByIdRequest(
     idRequest: string
   ): Promise<VerifyRequest | null> {

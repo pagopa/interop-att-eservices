@@ -110,7 +110,7 @@ class DigitalAddressVerificationSingleController {
             }
           }
         }
-      }else {
+      } else {
         throw requestVerificationNotFountError(
           `The request verification not found with id: ${idRichiesta}`
         );

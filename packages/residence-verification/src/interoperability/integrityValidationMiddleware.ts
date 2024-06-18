@@ -43,11 +43,7 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
           logger.error(
             `integrityValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`
           );
-          void TrialService.insert(
-            req.url,
-            req.method,
-            "SIGNATURE_NOT_VALID"
-          );
+          void TrialService.insert(req.url, req.method, "SIGNATURE_NOT_VALID");
           throw ErrorHandling.missingHeader();
         }
         if (!(await tokenValidation(signatureToken, "signatureToken"))) {
@@ -114,49 +110,29 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
   const dateNowSeconds = Math.floor(Date.now() / 1000);
   if (!decodedToken.payload.exp) {
     logger.error(`verifyJwtPayload - "exp" in payload is required`);
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_EXP_NOT_PRESENT"
-    );
+    void TrialService.insert(req.url, req.method, "SIGNATURE_EXP_NOT_PRESENT");
     throw ErrorHandling.tokenNotValid();
   }
   if (dateNowSeconds > decodedToken.payload.exp) {
     logger.error(`verifyJwtPayload - Request Token has expired`);
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_EXP_IS_EXPIRED"
-    );
+    void TrialService.insert(req.url, req.method, "SIGNATURE_EXP_IS_EXPIRED");
     throw ErrorHandling.tokenExpired();
   }
 
   if (!decodedToken.payload.iat) {
     logger.error(`verifyJwtPayload - "iat" in payload is required`);
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_IAT_NOT_PRESENT"
-    );
+    void TrialService.insert(req.url, req.method, "SIGNATURE_IAT_NOT_PRESENT");
     throw ErrorHandling.tokenNotValid();
   }
   if (dateNowSeconds < decodedToken.payload.iat) {
     logger.error(`verifyJwtPayload - Request Token has an invalid issue time`);
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_IAT_IS_EXPIRED"
-    );
+    void TrialService.insert(req.url, req.method, "SIGNATURE_IAT_IS_EXPIRED");
     throw ErrorHandling.tokenExpired();
   }
 
   if (!decodedToken.payload.aud) {
     logger.error(`verifyJwtPayload - "aud" in payload is required`);
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_AUD_NOT_PRESENT"
-    );
+    void TrialService.insert(req.url, req.method, "SIGNATURE_AUD_NOT_PRESENT");
     throw ErrorHandling.tokenNotValid();
   }
   if (decodedToken.payload.aud !== process.env.TOKEN_AUD) {
@@ -270,11 +246,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     logger.error(
       `verifyJwtPayload - The digest '${req.headers.digest}' value in token payload is  invalid`
     );
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_DIGEST_NOT_VALID"
-    );
+    void TrialService.insert(req.url, req.method, "SIGNATURE_DIGEST_NOT_VALID");
     throw ErrorHandling.tokenNotValid();
   }
 

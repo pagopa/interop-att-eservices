@@ -47,7 +47,9 @@ export type TipoParametriRicercaAR001 = z.infer<
 
 export type TipoRichiestaAR001 = z.infer<typeof api.schemas.TipoRichiestaAR001>;
 //export type TipoVerificaAR002 = z.infer<typeof api.schemas.TipoVerificaAR002>;
-export type TipoVerificaResidenza = z.infer<typeof api.schemas.TipoVerificaResidenza>;
+export type TipoVerificaResidenza = z.infer<
+  typeof api.schemas.TipoVerificaResidenza
+>;
 export type TipoLocalitaEstera = z.infer<typeof api.schemas.TipoLocalitaEstera>;
 export type RichiestaAR001 = z.infer<typeof api.schemas.RichiestaAR001>;
 export type TipoCodiceFiscale = z.infer<typeof api.schemas.TipoCodiceFiscale>;
@@ -73,7 +75,6 @@ export type RichiestaAR002 = z.infer<typeof api.schemas.RichiestaAR002>;
 export type RispostaAR002OK = z.infer<typeof api.schemas.RispostaAR002OK>;
 export type ProblemError = z.infer<typeof api.schemas.ProblemError>;
 export type Problem = z.infer<typeof api.schemas.Problem>;
-
 
 /* export const schemas = {
     TipoComune,

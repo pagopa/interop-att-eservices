@@ -2,16 +2,21 @@ import { TrialRepository } from "../index.js";
 import { Trial } from "../model/trial.js";
 
 export class TrialService {
-
   public static async insert(
     operationPath: string,
     operationMethod: string,
     checkName: string,
     response?: string,
-    message?: string): Promise<void> {
-      TrialRepository.insert(operationPath, operationMethod, checkName, response, message);
-    }
-
+    message?: string
+  ): Promise<void> {
+    TrialRepository.insert(
+      operationPath,
+      operationMethod,
+      checkName,
+      response,
+      message
+    );
+  }
 }
 
 export async function findByCorrelationId(data: string): Promise<Trial[]> {
