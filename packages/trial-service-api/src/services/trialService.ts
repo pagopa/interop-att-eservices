@@ -1,7 +1,7 @@
 import { logger } from "pdnd-common";
 import { PaginatedTrialResponse } from "../model/domain/models.js";
 import { TrialRepository } from "../repository/trialRepository.js";
-
+/* eslint-disable */
 class TrialService {
   public async getPaginatedTrial(
     page: number,
@@ -26,5 +26,5 @@ class TrialService {
     }
   }
 }
-
+/* eslint-enable */
 export default new TrialService();

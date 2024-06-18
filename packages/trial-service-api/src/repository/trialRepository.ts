@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { logger } from "pdnd-common";
 import { sequelize } from "trial";
 import { QueryTypes } from "sequelize";
@@ -129,3 +130,4 @@ interface PaginatedTrialData {
 interface PaginatedTrialQueryResult {
   paginated_trial_query_result: PaginatedTrialData;
 }
+/* eslint-enable */

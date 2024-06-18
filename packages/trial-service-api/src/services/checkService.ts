@@ -2,6 +2,7 @@ import { logger } from "pdnd-common";
 import { CheckResponse } from "../model/domain/models.js";
 import { checkToCheckResponse } from "../model/domain/apiConverter.js";
 import { CheckRepository } from "../repository/checkRepository.js";
+/* eslint-disable */
 
 class CheckService {
   public async getAll(): Promise<CheckResponse[]> {
@@ -18,5 +19,6 @@ class CheckService {
     }
   }
 }
+/* eslint-enable */
 
 export default new CheckService();

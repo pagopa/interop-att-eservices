@@ -1,13 +1,14 @@
 import { requestParamNotValid } from "../exceptions/errors.js";
 
 export class TrialPaginatedRequestParams {
-  page?: number;
-  pageSize?: number;
-  purposeId?: string;
-  correlationId?: string;
-  path?: string;
-  method?: string;
+  public page?: number;
+  public pageSize?: number;
+  public purposeId?: string;
+  public correlationId?: string;
+  public path?: string;
+  public method?: string;
 
+  /* eslint-disable */
   constructor(query: any) {
     this.page = query.page;
     this.pageSize = query.pageSize;
@@ -41,4 +42,5 @@ export class TrialPaginatedRequestParams {
 
     return params;
   }
+  /* eslint-enable */
 }

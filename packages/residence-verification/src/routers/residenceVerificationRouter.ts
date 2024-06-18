@@ -81,9 +81,9 @@ const residenceVerificationRouter = (
         const data = await ResidenceVerificationController.findUserVerify(
           req.body
         );
-        /*if (!data) {
+        /* if (!data) {
           throw userModelNotFound();
-        }*/
+        } */
         void TrialService.insert(
           req.url,
           req.method,

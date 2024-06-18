@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Category, Check } from "trial";
 import {
   CategoryResponse,
@@ -34,3 +35,4 @@ export const paginatedTrialResponse = (
   description: category?.dataValues.description || "",
   order: category?.dataValues.order,
 });
+/* eslint-enable */

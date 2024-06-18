@@ -6,6 +6,7 @@ import {
   authenticationMiddleware,
   uniquexCorrelationIdMiddleware,
 } from "pdnd-common";
+import { TrialService } from "trial";
 import PivaVerificationController from "../controllers/pivaVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -13,7 +14,6 @@ import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import logHeadersMiddleware from "../middlewares/logHeaderMiddleware.js";
 import { contextDataPivaMiddleware } from "../context/context.js";
 import { verifyCertValidity } from "../security/certValidityMiddleware.js";
-import { TrialService } from "trial";
 
 const pivaVerificationRouter = (
   ctx: ZodiosContext

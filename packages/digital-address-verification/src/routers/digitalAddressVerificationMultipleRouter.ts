@@ -6,12 +6,12 @@ import {
   authenticationMiddleware,
   uniquexCorrelationIdMiddleware,
 } from "pdnd-common";
+import { TrialService } from "trial";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataDigitalAddressMiddleware } from "../context/context.js";
 import digitalAddressVerificationMultipleController from "../controllers/digitalAddressVerificationMultipleController.js";
-import { TrialService } from "trial";
 
 const DigitalAddressVerificationMultipleRouter = (
   ctx: ZodiosContext

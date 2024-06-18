@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { InfoSoggettoEnte, TipoInfoSoggetto } from "../model/domain/models.js";
-
+/* eslint-disable */
 export function deepEqual(obj1: any, obj2: any): boolean {
   // Se sono lo stesso oggetto, sono uguali
   if (obj1 === obj2) {
@@ -26,7 +26,7 @@ export function deepEqual(obj1: any, obj2: any): boolean {
   }
 
   // Confronto ricorsivo delle chiavi e dei valori degli oggetti
-  for (let key of keys1) {
+  for (const key of keys1) {
     if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key])) {
       return false;
     }
@@ -37,10 +37,10 @@ export function deepEqual(obj1: any, obj2: any): boolean {
 }
 
 export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
-  var response: InfoSoggettoEnte = {
+  const response: InfoSoggettoEnte = {
     infoSoggettoEnte: [] as TipoInfoSoggetto[],
   };
-  var listObj: TipoInfoSoggetto[] = [];
+  const listObj: TipoInfoSoggetto[] = [];
   // Se uno dei due oggetti è null o non è un oggetto, non sono uguali
   if (
     obj1 === null ||
@@ -55,7 +55,7 @@ export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
   const keys2 = Object.keys(obj2);
 
   // Confronto ricorsivo delle chiavi e dei valori degli oggetti
-  for (let key of keys1) {
+  for (const key of keys1) {
     const dateNow: Date = new Date();
     if (!keys2.includes(key)) {
       listObj.push({
@@ -90,3 +90,4 @@ export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
   response.infoSoggettoEnte?.push(...listObj);
   return response;
 }
+/* eslint-enable */

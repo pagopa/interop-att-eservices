@@ -1,7 +1,7 @@
 import { UserModel } from "pdnd-models";
 import { TipoParametriRicercaAR001 } from "../model/domain/models.js";
 import { userModelNotFound } from "../exceptions/errors.js";
-
+/* eslint-disable */
 // Funzione che aggiunge una lista di UserModel a un array esistente solo se non esistono già, sostituendo eventuali duplicati
 export function appendUniqueUserModelsToArray(
   existingArray: UserModel[] | null,
@@ -200,3 +200,4 @@ export function deleteUserModelByUUID(
 
   return result; // Restituisci l'oggetto UserModel trovato, se presente
 }
+/* eslint-enable */

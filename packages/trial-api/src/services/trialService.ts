@@ -9,7 +9,7 @@ export class TrialService {
     response?: string,
     message?: string
   ): Promise<void> {
-    TrialRepository.insert(
+    await TrialRepository.insert(
       operationPath,
       operationMethod,
       checkName,

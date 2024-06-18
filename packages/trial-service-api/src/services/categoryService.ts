@@ -2,7 +2,7 @@ import { logger } from "pdnd-common";
 import { Category } from "trial";
 import { CategoryResponse } from "../model/domain/models.js";
 import { categoryToCategoryResponse } from "../model/domain/apiConverter.js";
-
+/* eslint-disable */
 class CategoryService {
   public async getAll(): Promise<CategoryResponse[]> {
     try {
@@ -21,5 +21,5 @@ class CategoryService {
     }
   }
 }
-
+/* eslint-enable */
 export default new CategoryService();

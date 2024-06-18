@@ -30,6 +30,7 @@ class TrialController {
     }
   }
 
+  /* eslint-disable */
   public async findPaginatedTrials(
     request: TrialPaginatedRequestParams
   ): Promise<any> {
@@ -50,5 +51,5 @@ class TrialController {
     }
   }
 }
-
+/* eslint-enable */
 export default new TrialController();

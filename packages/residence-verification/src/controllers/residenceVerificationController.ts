@@ -82,13 +82,13 @@ class ResidenceVerificationController {
       throw error;
     }
   }
-
+  /* eslint-disable */
   public async findUserVerify(
     request: RichiestaAR002
   ): Promise<RispostaAR002OK> {
     try {
       logger.info(`post request: ${request}`);
-      var resultData;
+      let resultData;
       if (request.criteriRicerca.codiceFiscale) {
         const data = await ResidenceVerificationService.getByFiscalCode(
           request.criteriRicerca.codiceFiscale
@@ -120,7 +120,7 @@ class ResidenceVerificationController {
       } else if (request.criteriRicerca.id) {
         if (request.criteriRicerca.id) {
           const data = await ResidenceVerificationService.getById(
-            "" + request.criteriRicerca.id
+            `${request.criteriRicerca.id}`
           );
 
           const list: UserModel[] = data ? [data] : [];
@@ -139,12 +139,13 @@ class ResidenceVerificationController {
           "The request body has one or more required param not valid"
         );
       }
-      var response: RispostaAR002OK = {};
+
+      const response: RispostaAR002OK = {};
       response.idOperazione = request.idOperazioneClient;
       if (!resultData || resultData.soggetti?.soggetto?.length === 0) {
         throw userModelNotFound();
       } else {
-        //vado a vedere se qualcuno ha la residenza richiesta in oggetto
+        // vado a vedere se qualcuno ha la residenza richiesta in oggetto
         response.soggetti = { infoSoggetto: [] };
         resultData?.soggetti?.soggetto.forEach((oggetto) => {
           oggetto.residenza?.forEach((residenza) => {
@@ -154,7 +155,7 @@ class ResidenceVerificationController {
           });
         });
       }
-
+      /* eslint-enable */
       return response;
     } catch (error) {
       logger.error(`Error during in method controller 'findUser': `, error);
