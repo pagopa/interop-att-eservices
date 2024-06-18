@@ -18,11 +18,11 @@ vi.mock("pdnd-common", () => ({
   },
 }));
 
-vi.mock("../../../src/utilities/jsonFiscalcodeUtilities", () => ({
+vi.mock("../../../src/utilities/jsonUserUtilities", () => ({
   parseJsonToUserArray: vi.fn(),
 }));
 
-vi.mock("../../../src/utilities/fiscalcodeUtilities", () => ({
+vi.mock("../../../src/utilities/userUtilities", () => ({
   getUserModelByCodiceFiscale: vi.fn(),
 }));
 
@@ -62,7 +62,7 @@ describe("dataPreparationRepository", () => {
       expect(result).toBe(mockSavedData);
     });
 
-    /* it('should log an error and throw it if saving fails', async () => {
+    it('should log an error and throw it if saving fails', async () => {
       const mockRequest: FiscalcodeModel[] = [{ fiscalCode: 'bccccc44r61w122q' }];
       const mockKey = 'testKey';
       const mockError = new Error('Test error');
@@ -71,10 +71,10 @@ describe("dataPreparationRepository", () => {
 
       await expect(dataPreparationRepository.saveList(mockRequest, mockKey)).rejects.toThrow(mockError);
       expect(logger.error).toHaveBeenCalledWith('dataPreparationRepository: Errore durante il salvataggio del\' elemento: ', mockError);
-    });*/
+    });
   });
 
-  /* describe('findAllByKey', () => {
+   describe('findAllByKey', () => {
     it('should retrieve and parse the saved object', async () => {
       const mockKey = 'testKey';
       const mockSavedData = '[{ fiscalCode: bccccc44r61w122 }]';
@@ -100,42 +100,10 @@ describe("dataPreparationRepository", () => {
       await expect(dataPreparationRepository.findAllByKey(mockKey)).rejects.toThrow(mockError);
       expect(logger.error).toHaveBeenCalledWith('userRepository: Errore durante il recupero dell\'elemento: ', mockError);
     });
-  });*/
+  });
 
-  /*describe('findByPurposeId', () => {
-    it('should retrieve and find the fiscal code', async () => {
-      const mockKey = 'testKey';
-      const mockFiscalCode = 'bccccc44r61w122q';
-      const mockSavedData = '[{ fiscalCode: bccccc44r61w122q }]';
-      const mockParsedData: FiscalcodeModel[] = [{ fiscalCode: 'bccccc44r61w122q' }];
-      const mockFoundData: FiscalcodeModel = { fiscalCode: 'bccccc44r61w122q' };
-
-      (cacheManager.getObjectByKey as ReturnType<typeof vi.fn>).mockResolvedValue(mockSavedData);
-      (parseJsonToUserArray as ReturnType<typeof vi.fn>).mockReturnValue(mockParsedData);
-      (getUserModelByCodiceFiscale as ReturnType<typeof vi.fn>).mockReturnValue(mockFoundData);
-
-      const result = await dataPreparationRepository.findAllByUuid(mockKey, mockFiscalCode);
-
-      expect(cacheManager.getObjectByKey).toHaveBeenCalledWith(mockKey);
-      expect(parseJsonToUserArray).toHaveBeenCalledWith(mockSavedData);
-      expect(getUserModelByCodiceFiscale).toHaveBeenCalledWith(mockParsedData, mockFiscalCode);
-      expect(logger.info).toHaveBeenCalledWith('dataPreparationRepository: Elemento recuperato con successo.');
-      expect(result).toBe(mockFoundData);
-    });
-
-    it('should log an error and throw it if retrieval fails', async () => {
-      const mockKey = 'testKey';
-      const mockFiscalCode = 'testFiscalCode';
-      const mockError = new Error('Test error');
-
-      (cacheManager.getObjectByKey as ReturnType<typeof vi.fn>).mockRejectedValue(mockError);
-
-      await expect(dataPreparationRepository.findByPurposeId(mockKey, mockFiscalCode)).rejects.toThrow(mockError);
-      expect(logger.error).toHaveBeenCalledWith('userRepository: Errore durante il recupero dell\'elemento: ', mockError);
-    });
-  });*/
-
-  /*describe('deleteAllByKey', () => {
+ 
+  describe('deleteAllByKey', () => {
     it('should delete the object and return the length of deleted items', async () => {
       const mockKey = 'testKey';
       const mockSavedData = null;
@@ -161,5 +129,5 @@ describe("dataPreparationRepository", () => {
       await expect(dataPreparationRepository.deleteAllByKey(mockKey)).rejects.toThrow(mockError);
       expect(logger.error).toHaveBeenCalledWith('userRepository: Errore durante il recupero dell\'elemento: ', mockError);
     });
-  });*/
+  });
 });
