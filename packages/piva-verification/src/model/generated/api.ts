@@ -1,10 +1,10 @@
 import { makeApi, Zodios, type ZodiosOptions } from "@zodios/core";
 import { z } from "zod";
 
-const PartitaIva = z.string();
+const OrganizationId = z.string();
 const DatapreparationTemplate = z
   .object({
-    partitaIva: PartitaIva.min(11)
+    organizationId: OrganizationId.min(11)
       .max(11)
       .regex(/^[0-9]+/),
   })
@@ -13,7 +13,7 @@ const DatapreparationTemplate = z
 const DataPreparationResponse = z.array(
   z
     .object({
-      partitaIva: PartitaIva.min(11)
+      organizationId: OrganizationId.min(11)
         .max(11)
         .regex(/^[0-9]+/),
     })
@@ -22,15 +22,15 @@ const DataPreparationResponse = z.array(
 );
 const Richiesta = z
   .object({
-    partitaIva: PartitaIva.min(11)
+    organizationId: OrganizationId.min(11)
       .max(11)
       .regex(/^[0-9]+/),
   })
   .partial()
   .passthrough();
-const VerificaPartitaIva = z
+const VerificaOrganizationId = z
   .object({
-    partitaIva: PartitaIva.min(11)
+    organizationId: OrganizationId.min(11)
       .max(11)
       .regex(/^[0-9]+/),
     valida: z.boolean(),
@@ -40,7 +40,7 @@ const VerificaPartitaIva = z
     dataCessazioneAttivita: z.string(),
     dataInizioSospensione: z.string(),
     isGruppoIva: z.boolean(),
-    partitaIvaGruppo: PartitaIva.min(11)
+    partitaIvaGruppo: OrganizationId.min(11)
       .max(11)
       .regex(/^[0-9]+/),
     dataInizioPartecipazioneGruppoIva: z.string(),
@@ -50,18 +50,18 @@ const VerificaPartitaIva = z
   .passthrough();
 
 export const schemas = {
-  PartitaIva,
+  OrganizationId,
   DatapreparationTemplate,
   DataPreparationResponse,
   Richiesta,
-  VerificaPartitaIva,
+  VerificaOrganizationId,
 };
 
 const endpoints = makeApi([
   {
     method: "post",
-    path: "/piva-verification/data-preparation",
-    alias: "postPivaVerificationdataPreparation",
+    path: "/organizationid-verification/data-preparation",
+    alias: "postOrganizationidVerificationdataPreparation",
     description: `Carica i casi d&#x27;uso dell&#x27;ente`,
     requestFormat: "json",
     parameters: [
@@ -92,8 +92,8 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/piva-verification/data-preparation",
-    alias: "getPivaVerificationdataPreparation",
+    path: "/organizationid-verification/data-preparation",
+    alias: "getOrganizationidVerificationdataPreparation",
     description: `Lista dei casi d&#x27;uso dell&#x27;ente`,
     requestFormat: "json",
     parameters: [
@@ -119,7 +119,7 @@ const endpoints = makeApi([
   },
   {
     method: "delete",
-    path: "/piva-verification/data-preparation",
+    path: "/organizationid-verification/data-preparation",
     alias: "reset",
     description: `Ritorna lo stato dell&#x27;applicazione: 200 se funziona correttamente
 o un errore se l&#x27;applicazione è temporaneamente indisponibile
@@ -152,8 +152,8 @@ per manutenzione o per un problema tecnico.
   },
   {
     method: "post",
-    path: "/piva-verification/data-preparation/handshake",
-    alias: "postPivaVerificationdataPreparationhandshake",
+    path: "/organizationid-verification/data-preparation/handshake",
+    alias: "postOrganizationidVerificationdataPreparationhandshake",
     description: `Carica il certificato nel formato .pem insieme a due campi nell&#x27;header.`,
     requestFormat: "form-data",
     parameters: [
@@ -182,8 +182,8 @@ per manutenzione o per un problema tecnico.
   },
   {
     method: "post",
-    path: "/piva-verification/data-preparation/remove",
-    alias: "postPivaVerificationdataPreparationremove",
+    path: "/organizationid-verification/data-preparation/remove",
+    alias: "postOrganizationidVerificationdataPreparationremove",
     description: `Rimuove un preciso caso d&#x27;uso`,
     requestFormat: "json",
     parameters: [
@@ -214,7 +214,7 @@ per manutenzione o per un problema tecnico.
   },
   {
     method: "get",
-    path: "/piva-verification/status",
+    path: "/organizationid-verification/status",
     alias: "get_status",
     description: `Ritorna lo stato dell&#x27;applicazione: 200 se funziona correttamente
 o un errore se l&#x27;applicazione è temporaneamente indisponibile
@@ -225,9 +225,9 @@ per manutenzione o per un problema tecnico.
   },
   {
     method: "post",
-    path: "/piva-verification/verifica",
-    alias: "post_partita_iva",
-    description: `Ritorna informazioni sulla validità della partita iva
+    path: "/organizationid-verification/verifica",
+    alias: "post_partita_organizationId",
+    description: `Ritorna informazioni sulla validità dell organizationId
 e in caso di esito positivo vengono aggiunte alcune informazioni anagrafiche.
 `,
     requestFormat: "json",
@@ -238,7 +238,7 @@ e in caso di esito positivo vengono aggiunte alcune informazioni anagrafiche.
         schema: Richiesta,
       },
     ],
-    response: VerificaPartitaIva,
+    response: VerificaOrganizationId,
     errors: [
       {
         status: 400,

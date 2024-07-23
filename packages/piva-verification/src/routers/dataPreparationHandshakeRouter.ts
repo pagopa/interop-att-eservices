@@ -23,7 +23,7 @@ const dataPreparationHandshakeRouter = (
   const upload = multer({ storage: multer.memoryStorage() });
 
   dataPreparationHandshakeRouter.post(
-    "/piva-verification/data-preparation/handshake",
+    "/organizationid-verification/data-preparation/handshake",
     contextDataPivaMiddleware,
     authenticationMiddleware(false),
     upload.single("certificate"),

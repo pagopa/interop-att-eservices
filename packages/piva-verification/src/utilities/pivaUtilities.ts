@@ -19,12 +19,12 @@ export function appendUniquePivaModelsToArray(
   // Creiamo un mappatura dei pourposeId ai modelli esistenti
   const modelMap = new Map<string, PartitaIvaModel>();
   for (const model of newArray) {
-    modelMap.set(model.partitaIva, model);
+    modelMap.set(model.organizationId, model);
   }
 
   // Aggiungiamo o aggiorniamo i modelli
   for (const modelToAdd of modelsToAdd) {
-    const existingModel = modelMap.get(modelToAdd.partitaIva);
+    const existingModel = modelMap.get(modelToAdd.organizationId);
     if (existingModel) {
       // Se il pourposeId esiste già, aggiorniamo i dati con quelli passati
       Object.assign(existingModel, modelToAdd);
@@ -43,7 +43,7 @@ export function findPivaModelByPiva(
 ): PartitaIvaModel | null {
   if (pivas == null) return null;
   for (const pivaModel of pivas) {
-    if (pivaModel.partitaIva === piva) {
+    if (pivaModel.organizationId === piva) {
       return pivaModel;
     }
   }
@@ -63,7 +63,7 @@ export function deletePivaModelByPiva(
 
   // Cerca HandshakeModel con lo stesso codice piva all'interno dell'array esistente
   for (const pivaM of existingArray) {
-    if (pivaM.partitaIva !== piva) {
+    if (pivaM.organizationId !== piva) {
       result.push(pivaM);
     }
   }
@@ -77,6 +77,6 @@ export const arePartitaIvasValid = (
 ): boolean => {
   return partitaIvaList.every((item) => {
     const parsedItem = PartitaIvaModel.safeParse(item);
-    return parsedItem.success && parsedItem.data.partitaIva.length > 5;
+    return parsedItem.success && parsedItem.data.organizationId.length > 5;
   });
 };

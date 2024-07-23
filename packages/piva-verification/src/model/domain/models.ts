@@ -8,6 +8,6 @@ export type DatapreparationTemplate = z.infer<
 export type DataPreparationResponse = z.infer<
   typeof api.schemas.DataPreparationResponse
 >;
-export type PartitaIva = z.infer<typeof api.schemas.PartitaIva>;
+export type PartitaIva = z.infer<typeof api.schemas.OrganizationId>;
 export type Richiesta = z.infer<typeof api.schemas.Richiesta>;
-export type VerificaPartitaIva = z.infer<typeof api.schemas.VerificaPartitaIva>;
+export type VerificaPartitaIva = z.infer<typeof api.schemas.VerificaOrganizationId>;

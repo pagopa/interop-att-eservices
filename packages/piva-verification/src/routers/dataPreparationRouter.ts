@@ -19,7 +19,7 @@ const dataPreparationRouter = (
   const dataPreparationRouter = ctx.router(api.api);
 
   dataPreparationRouter.post(
-    "/piva-verification/data-preparation",
+    "/organizationid-verification/data-preparation",
     contextDataPivaMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -36,7 +36,7 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.get(
-    "/piva-verification/data-preparation",
+    "/organizationid-verification/data-preparation",
     contextDataPivaMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -57,7 +57,7 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.delete(
-    "/piva-verification/data-preparation",
+    "/organizationid-verification/data-preparation",
     contextDataPivaMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -80,14 +80,14 @@ const dataPreparationRouter = (
   );
   /* eslint-disable */
   dataPreparationRouter.post(
-    "/piva-verification/data-preparation/remove",
+    "/organizationid-verification/data-preparation/remove",
     contextDataPivaMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       /* eslint-enable */
       try {
         await DataPreparationService.deleteByPiva(
-          apiDatapreparationTemplateToPivaModel(req.body).partitaIva
+          apiDatapreparationTemplateToPivaModel(req.body).organizationId
         );
         return res.status(200).end();
       } catch (error) {

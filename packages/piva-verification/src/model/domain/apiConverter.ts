@@ -8,14 +8,14 @@ import {
 export const apiDatapreparationTemplateToPivaModel = (
   template: DatapreparationTemplate | undefined
 ): PartitaIvaModel => ({
-  partitaIva: template?.partitaIva || "",
+  organizationId: template?.organizationId || "",
 });
 
 export const apiPartitaIvaModelToDataPreparationResponse = (
   partitaIvas: PartitaIvaModel[] | undefined
 ): DataPreparationResponse =>
   partitaIvas?.map((partitaIva) => ({
-    partitaIva: partitaIva.partitaIva,
+    organizationId: partitaIva.organizationId,
   })) || [];
 
 export const partitaIvaModelToVerificaPartitaIva = (
@@ -26,13 +26,13 @@ export const partitaIvaModelToVerificaPartitaIva = (
 ): VerificaPartitaIva | null => {
   if (partitaIva !== undefined && partitaIva !== null) {
     return {
-      partitaIva: partitaIva.partitaIva || "",
+      organizationId: partitaIva.organizationId || "",
       valido: isValid,
       messaggio: message,
     };
   } else {
     return {
-      partitaIva: partitaIvaNotFound,
+      organizationId: partitaIvaNotFound,
       valido: isValid,
       messaggio: message,
     };

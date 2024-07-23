@@ -1,5 +1,5 @@
 #
-# Verifica validità partita iva
+# Verifica validità organizationId
 x-commons:
   ratelimit-headers: &ratelimit-headers
     X-RateLimit-Limit:
@@ -27,13 +27,13 @@ info:
   version: "3.0.0"
   termsOfService: https://www.agenziaentrate.gov.it/portale/web/guest/privacy
   title: |-
-    Verifica validità partita iva.
+    Verifica validità organizationId.
   x-summary: >-
-    Verifica di validità di partita iva e recupero di alcuni dati anagrafici
+    Verifica di validità di un organizationId e recupero di alcuni dati anagrafici
 
   description: |
     #### Documentazione
-    Questo servizio ritorna la validità di una partita iva. In caso riscontro positivo 
+    Questo servizio ritorna la validità di un organizationId. In caso riscontro positivo 
     vengono fornite alcune informazioni di tipo
     anagrafico tra cui eventuali riferimenti al GRUPPO IVA:
 
@@ -48,7 +48,7 @@ info:
     
     #### Note
     Poiché il servizio effettua una verifica sul dato in input una risposta verrà sempre ritornata con stato 200 
-    anche se la partita iva in input non fosse presente negli archivi.
+    anche se l organizationId  in input non fosse presente negli archivi.
     
     Alcune "DATE" potrebbero essere espresse nei seguenti formati '1001-01-01', '9999-12-31'.
     Tali date devono essere interpretate come informazioni assenti o non certe.
@@ -89,7 +89,7 @@ servers:
 
 
 paths:
-  /piva-verification/data-preparation/handshake:
+  /organizationid-verification/data-preparation/handshake:
     post:
       summary: Carica il certificato e i campi dell'header.
       description: Carica il certificato nel formato .pem insieme a due campi nell'header.
@@ -128,7 +128,7 @@ paths:
           $ref: '#/components/responses/400BadRequest'
       tags:
         - datapreparation
-  /piva-verification/data-preparation:
+  /organizationid-verification/data-preparation:
     post:
       summary: data preparation api.
       description: Carica i casi d'uso dell'ente
@@ -141,12 +141,12 @@ paths:
             schema:
               $ref: '#/components/schemas/DatapreparationTemplate'
             examples:
-              codiceFiscaleAlfanumerico:
+              organizationIdAlfanumerico:
                 value:
-                  codiceFiscale: 'AAAZZZ00H00T000Z'
-              codiceFiscaleNumerico:
+                  organizationId: 'AAAZZZ00H00T000Z'
+              organizationIdNumerico:
                 value:
-                  codiceFiscale: '06363391001'
+                  organizationId: '06363391001'
       parameters:
         - in: header
           name: apikey
@@ -225,7 +225,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-  /piva-verification/data-preparation/remove:
+  /organizationid-verification/data-preparation/remove:
     post:
       summary: data preparation api.
       description: Rimuove un preciso caso d'uso
@@ -238,12 +238,12 @@ paths:
             schema:
               $ref: '#/components/schemas/DatapreparationTemplate'
             examples:
-              codiceFiscaleAlfanumerico:
+              organizationIdAlfanumerico:
                 value:
-                  codiceFiscale: 'AAAZZZ00H00T000Z'
-              codiceFiscaleNumerico:
+                  organizationId: 'AAAZZZ00H00T000Z'
+              organizationIdNumerico:
                 value:
-                  codiceFiscale: '06363391001'
+                  organizationId: '06363391001'
       parameters:
         - in: header
           name: apikey
@@ -272,7 +272,7 @@ paths:
           $ref: '#/components/responses/400BadRequest'
       tags:
         - datapreparation
-  /piva-verification/status:
+  /organizationid-verification/status:
     get:
       summary: Ritorna lo stato dell'applicazione.
       description: |
@@ -291,14 +291,14 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-  /piva-verification/verifica:
+  /organizationid-verification/verifica:
     post:
-      summary: Valida una partita iva.
+      summary: Valida un organizationId.
       description: |
-        Ritorna informazioni sulla validità della partita iva
+        Ritorna informazioni sulla validità dell organizationId
         e in caso di esito positivo vengono aggiunte alcune informazioni anagrafiche.
 
-      operationId: post_partita_iva
+      operationId: post_partita_organizationId
       tags:
         - verifiche
       requestBody:
@@ -308,9 +308,9 @@ paths:
             schema:
               $ref: '#/components/schemas/Richiesta'
             examples:
-              partitaIvaNumerica:
+              organizationIdNumeric0:
                 value:
-                  partitaIva: '06363391001'
+                  organizationId: '06363391001'
       responses:
         <<: *common-responses
         '200':
@@ -318,43 +318,43 @@ paths:
             Il servizio ha ritornato l'esito della validazione - che può essere positivo o negativo -
             a seconda del valore del campo `valida`.
 
-            Attenzione! Le partite iva valide possono essere o meno attive: va quindi sempre
+            Attenzione! Le organizationId valide possono essere o meno attive: va quindi sempre
             verificato il contenuto della response.
           # header di throttling sono obbligatori
                       
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VerificaPartitaIva'
+                $ref: '#/components/schemas/VerificaOrganizationId'
               examples:    # Esempi per ogni casistica
                 Invalida:
                   value:
-                    partitaIva: '01043931007'
+                    organizationId: '01043931007'
                     valida: false
                 Attiva:
-                  value:  &example_partita_iva_attiva
-                    partitaIva: '06363391001'
+                  value:  &example_organizationId
+                    organizationId: '06363391001'
                     valida: true
                     stato: 'ATTIVA'
                     denominazione: 'AGENZIA DELLE ENTRATE'
                     dataInizioAttivita: '2001-01-02'
                 Sospesa:
                   value:
-                    <<: *example_partita_iva_attiva
+                    <<: *example_organizationId
                     stato: 'SOSPESA'
                     dataInizioSospensione: '2013-03-15'
                 Cessata:
                   value:
-                    <<: *example_partita_iva_attiva
+                    <<: *example_organizationId
                     stato: 'CESSATA'
                     dataCessazioneAttivita: '1989-01-01'
                 GruppoIva:
                   value:
-                    <<: *example_partita_iva_attiva
+                    <<: *example_organizationId
                     isGruppoIva: true
                 PartecipanteGruppoIva:
                   value:
-                    <<: *example_partita_iva_attiva
+                    <<: *example_organizationId
                     isPartecipanteGruppoIva: true
                     dataInizioPartecipazioneGruppoIva: '2018-10-27'
                     partitaIvaGruppo: '06363391001'
@@ -365,35 +365,34 @@ components:
     DatapreparationTemplate:
       type: object
       properties:
-        partitaIva:
-          $ref: '#/components/schemas/PartitaIva'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
 
     DataPreparationResponse:
       type: array
       items:
         type: object
         properties:
-          partitaIva:
-            $ref: '#/components/schemas/PartitaIva'
+          organizationId:
+            $ref: '#/components/schemas/OrganizationId'
 
     Richiesta:
       type: object
       properties:
-        partitaIva:
-          $ref: '#/components/schemas/PartitaIva'
-
-    PartitaIva:
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+    OrganizationId:
       type: string
       maxLength: 11
       minLength: 11
       pattern: '^[0-9]+'
       example: '06363391001'
 
-    VerificaPartitaIva:
+    VerificaOrganizationId:
       type: object
       properties:
-        partitaIva:
-          $ref: '#/components/schemas/PartitaIva'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
         valida:
           type: boolean
           example: true
@@ -423,7 +422,7 @@ components:
           type: boolean
           example: false
         partitaIvaGruppo:
-          $ref: '#/components/schemas/PartitaIva'
+          $ref: '#/components/schemas/OrganizationId'
         dataInizioPartecipazioneGruppoIva:
           type: string
           format: date

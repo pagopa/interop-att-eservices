@@ -8,9 +8,9 @@ class PivaVerificationController {
 
   public async findPiva(request: Richiesta): Promise<VerificaPartitaIva> {
     try {
-      if (request.partitaIva) {
+      if (request.organizationId) {
         const data = await PivaVerificationService.getByPiva(
-          request.partitaIva
+          request.organizationId
         );
         const result: VerificaPartitaIva = {
           // idOperazione: request.idOperazioneClient,
