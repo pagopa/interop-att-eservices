@@ -11,7 +11,7 @@ class PivaVerificationService {
   public eService: string = "piva-verification";
 
   public async getByPiva(
-    partitaIva: string 
+    partitaIva: string
   ): Promise<VerificaPartitaIva | null> {
     try {
       const hash = generateHash([

@@ -18,7 +18,10 @@ class DataPreparationService {
   ): Promise<PartitaIvaModel[] | null> {
     try {
       logger.info(`[START] datapreparation-saveList`);
-      if (pivaModel.organizationId==null || pivaModel.organizationId.length<=5) {
+      if (
+        pivaModel.organizationId == null ||
+        pivaModel.organizationId.length <= 5
+      ) {
         throw pivaNotValid();
       }
 
