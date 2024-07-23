@@ -20,7 +20,8 @@ const errorCodes = {
   eServiceNotFound: "0001",
   certNotValid: "0002",
   requestParamNotValid: "0003",
-  pivaNotFound: "0004",
+  operationIdNotFound: "0004",
+  operationIdNotValid: "0005",
 };
 
 export type ErrorCodes = keyof typeof errorCodes;
@@ -55,9 +56,16 @@ export function requestParamNotValid(details?: string): ApiError<ErrorCodes> {
 
 export function pivaNotFound(details?: string): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: details != null ? details : "partita iva not foud",
-    code: "pivaNotFound",
+    detail: details != null ? details : "operationId not found",
+    code: "operationIdNotFound",
     title: "not found",
+  });
+}
+export function pivaNotValid(details?: string): ApiError<ErrorCodes> {
+  return new ApiError({
+    detail: details != null ? details : "operationId not valid",
+    code: "operationIdNotValid",
+    title: "not valid",
   });
 }
 

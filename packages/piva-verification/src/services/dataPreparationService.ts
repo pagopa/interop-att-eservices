@@ -8,6 +8,7 @@ import {
   arePartitaIvasValid,
   deletePivaModelByPiva,
 } from "../utilities/pivaUtilities.js";
+import { pivaNotValid } from "../exceptions/errors.js";
 
 class DataPreparationService {
   public appContext = getContext();
@@ -17,6 +18,10 @@ class DataPreparationService {
   ): Promise<PartitaIvaModel[] | null> {
     try {
       logger.info(`[START] datapreparation-saveList`);
+      if (pivaModel.organizationId==null || pivaModel.organizationId.length<=5) {
+        throw pivaNotValid();
+      }
+
       const pivaData: PartitaIvaModel[] = [pivaModel];
 
       // recupera tutte le chiavi di data preparation

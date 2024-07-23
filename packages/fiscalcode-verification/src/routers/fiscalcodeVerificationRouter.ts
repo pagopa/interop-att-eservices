@@ -10,7 +10,7 @@ import { TrialService } from "trial";
 import FiscalcodeVerificationController from "../controllers/fiscalcodeVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
-import { verifyCertValidity } from "../security/certValidityMiddleware.js";
+//import { verifyCertValidity } from "../security/certValidityMiddleware.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataFiscalCodeMiddleware } from "../context/context.js";
 
@@ -25,7 +25,7 @@ const fiscalcodeVerificationRouter = (
     contextDataFiscalCodeMiddleware,
     uniquexCorrelationIdMiddleware(),
     authenticationMiddleware(true),
-    verifyCertValidity,
+    //verifyCertValidity,
     async (req, res) => {
       try {
         logger.info(`[START] Post - '/verifica' : ${req.body.codiceFiscale}`);

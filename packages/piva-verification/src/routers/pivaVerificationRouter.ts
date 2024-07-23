@@ -13,7 +13,7 @@ import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import logHeadersMiddleware from "../middlewares/logHeaderMiddleware.js";
 import { contextDataPivaMiddleware } from "../context/context.js";
-import { verifyCertValidity } from "../security/certValidityMiddleware.js";
+//import { verifyCertValidity } from "../security/certValidityMiddleware.js";
 
 const pivaVerificationRouter = (
   ctx: ZodiosContext
@@ -26,7 +26,7 @@ const pivaVerificationRouter = (
     contextDataPivaMiddleware,
     uniquexCorrelationIdMiddleware(),
     authenticationMiddleware(true),
-    verifyCertValidity,
+    //verifyCertValidity,
     async (req, res) => {
       try {
         logger.info("Request Headers:", req.headers);
