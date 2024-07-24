@@ -31,9 +31,6 @@ const Response_Request_Digital_Address = z
     digitalAddress: z.array(Element_Digital_Address),
   })
   .passthrough();
-const Response_List_Request_Digital_Address = z
-  .object({ data: z.array(Response_Request_Digital_Address).optional() })
-  .passthrough();
 const PracticalReference = z.string();
 const Request_List_Digital_Address = z
   .object({
@@ -77,7 +74,6 @@ export const schemas = {
   Usage_Info,
   Element_Digital_Address,
   Response_Request_Digital_Address,
-  Response_List_Request_Digital_Address,
   PracticalReference,
   Request_List_Digital_Address,
   Status_Processing_Request,
@@ -102,7 +98,7 @@ const endpoints = makeApi([
         schema: Response_Request_Digital_Address,
       },
     ],
-    response: Response_Request_Digital_Address,
+    response: z.void(),
     errors: [
       {
         status: 400,
@@ -142,7 +138,7 @@ const endpoints = makeApi([
     alias: "getDataPreparationElencoDomiciliDigitali",
     description: `Recupero dati inseriti con la dataPreparation`,
     requestFormat: "json",
-    response: Response_List_Request_Digital_Address,
+    response: z.array(Response_Request_Digital_Address),
     errors: [
       {
         status: 400,

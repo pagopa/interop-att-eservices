@@ -39,7 +39,7 @@ paths:
               $ref: '#/components/schemas/DataPreparationTemplate'
       responses:
         '200':
-          description: signal inteserted
+          description: OK
           content:
             application/json:
               schema:
@@ -160,7 +160,7 @@ paths:
         - bearerAuth: []
       responses:
         '200':
-          description: signal inteserted
+          description: OK
           content:
             application/json:
               schema:
@@ -242,7 +242,7 @@ paths:
                 $ref: '#/components/schemas/RichiestaAR001'
       responses:
         '200':
-          description: signal inteserted
+          description: OK
           content:
             application/json:
               schema:

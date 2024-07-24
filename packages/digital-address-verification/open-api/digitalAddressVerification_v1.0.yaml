@@ -50,12 +50,8 @@ paths:
               $ref: '#/components/schemas/Response_Request_Digital_Address'
         required: true
       responses:
-        '202':
-          description: JSON di risposta attraverso il quale l'Erogatore fornisce, insieme all'acknowledgement della richiesta, l'URL per interrogare lo stato di processamento utilizzando l'<i>HTTP header Location</i>. L'elenco è individuato da un codice identificativo univoco.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Response_Request_Digital_Address'
+        '200':
+          description: Richiesta completata con successo.
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -74,12 +70,14 @@ paths:
       description: Recupero dati inseriti con la dataPreparation
       operationId: getDataPreparationElencoDomiciliDigitali
       responses:
-        '202':
-          description: JSON di risposta attraverso il quale l'Erogatore fornisce, insieme all'acknowledgement della richiesta, l'URL per interrogare lo stato di processamento utilizzando l'<i>HTTP header Location</i>. L'elenco è individuato da un codice identificativo univoco.
+        '200':
+          description: Richiesta completata con successo.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Response_List_Request_Digital_Address'
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Response_Request_Digital_Address'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -99,7 +97,7 @@ paths:
       operationId: dataPreparationDeleteDomiciliDigitali
       responses:
         '202':
-          description: JSON di risposta attraverso il quale l'Erogatore fornisce, insieme all'acknowledgement della richiesta, l'URL per interrogare lo stato di processamento utilizzando l'<i>HTTP header Location</i>. L'elenco è individuato da un codice identificativo univoco.
+          description: Richiesta completata con successo.
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -126,8 +124,8 @@ paths:
           schema:
             type: string
       responses:
-        '202':
-          description: JSON di risposta attraverso il quale l'Erogatore fornisce, insieme all'acknowledgement della richiesta, l'URL per interrogare lo stato di processamento utilizzando l'<i>HTTP header Location</i>. L'elenco è individuato da un codice identificativo univoco.
+        '200':
+          description: Richiesta completata con successo.
           content:
             application/json:
               schema:
@@ -158,7 +156,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Operazione di cancellazione completata con successo
+          description: Richiesta completata con successo.
         '400':
           $ref: '#/components/responses/400'
         '401':
