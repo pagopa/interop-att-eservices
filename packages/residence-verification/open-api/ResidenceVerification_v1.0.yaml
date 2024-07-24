@@ -339,7 +339,7 @@ components:
       properties:
         idOperazioneClient:
           type: string
-          description: Identificativo univoco attribuito all'operazione dall'ente. Deve essere numerico e crescente. Se esiste in ANPR, l'ente riceve come esito la risposta in precedenza fornita da ANPR con lo stesso ID; se non esiste ed e' inferiore all'ultimo inviato, l'elaborazione termina con errore.
+          description: Identificativo univoco attribuito all'operazione dall'ente.
         criteriRicerca:
           $ref: '#/components/schemas/TipoCriteriRicercaAR002'
         verifica:
@@ -360,7 +360,7 @@ components:
     RispostaKO:
       type: object
       properties:
-        idOperazioneANPR:
+        idOperazioneUN:
           type: string
         listaErrori:
           type: array
@@ -371,7 +371,7 @@ components:
       properties:
         codiceFiscale:
           type: string
-        idANPR:
+        id:
           type: string
           description: Identificativo Unico Nazionale
         cognome:

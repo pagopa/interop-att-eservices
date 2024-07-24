@@ -304,7 +304,7 @@ const RispostaAR001 = z
 const TipoCriteriRicercaAR002 = z
   .object({
     codiceFiscale: z.string(),
-    idANPR: z.string(),
+    id: z.string(),
     cognome: z.string(),
     senzaCognome: z.string(),
     nome: z.string(),
