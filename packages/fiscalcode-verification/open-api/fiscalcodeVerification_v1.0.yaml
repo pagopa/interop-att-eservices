@@ -88,8 +88,8 @@ tags:
     externalDocs:
       url: https://developer.agenziaentrate.gov.it/entrate/api
 servers:
-  - description: Production server
-    url: https://modipa-val.agenziaentrate.it/govway/rest/in/AgenziaEntrate-PDND/verifica-cf/v3
+  - description: Ambiente di Attestazione
+    url: https://mtls.eservices.att.interop.pagopa.it/
 
 
 

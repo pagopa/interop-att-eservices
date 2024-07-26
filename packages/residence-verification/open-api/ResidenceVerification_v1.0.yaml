@@ -7,10 +7,8 @@ info:
   termsOfService: 'http://swagger.io/terms/'
   x-summary: Accertamento residenza
 servers:
-  - url: 'https://inserire.url.test.app.it'
-    description: Url di test
-  - url: 'https://insrire.url.esercizio.app.it'
-    description: Url di esercizio
+  - url: 'http://eservices.att.interop.pagopa.it/'
+    description: Ambiente di Attestazione
 tags:
   - name: DataPreparation
     description: Configurazione Data Preparation

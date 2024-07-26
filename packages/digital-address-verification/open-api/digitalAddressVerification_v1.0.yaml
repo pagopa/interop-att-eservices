@@ -6,8 +6,8 @@ tags:
   - name: API ESTRAZIONI MULTIPLE
   - name: API ESTRAZIONI PUNTUALI
 servers:
-  - url: https://digital-address/v1/
-    description: Generated server url
+  - url: http://eservices.att.interop.pagopa.it/
+    description: Ambiente di Attestazione
 paths:
   /digital-address-verification/status:
     get:
