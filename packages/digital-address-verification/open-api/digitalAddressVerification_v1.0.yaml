@@ -75,9 +75,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items: 
-                  $ref: '#/components/schemas/Response_Request_Digital_Address'
+                $ref: '#/components/schemas/Response_List_Request_Digital_Address'
         '400':
           $ref: '#/components/responses/400'
         '401':
