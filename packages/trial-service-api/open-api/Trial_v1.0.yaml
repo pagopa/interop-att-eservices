@@ -7,7 +7,7 @@ info:
   termsOfService: 'http://swagger.io/terms/'
   x-summary: Trial
 servers:
-  - url: 'http:eservices.att.interop.pagopa.it/'
+  - url: 'http://eservices.att.interop.pagopa.it/'
     description: Ambiente di Attestazione
 tags:
   - name: Trial
