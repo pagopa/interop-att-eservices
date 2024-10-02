@@ -60,8 +60,10 @@ info:
     to apply the throttling policies defined within the subscribed plan
 
   contact:
+    name: PagoPA S.p.A
+    url: https://www.interop.pagopa.it/
   x-audience:
-    - public
+    - Check
   x-api-id: 5ca54741-8f62-4aad-ab79-13ae762920e3
   license:
     name: Apache 2.0
