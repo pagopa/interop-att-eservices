@@ -1,5 +1,5 @@
 #
-# Verifica validità organizationId
+# Verifica validità organization id
 x-commons:
   ratelimit-headers: &ratelimit-headers
     X-RateLimit-Limit:
@@ -7,7 +7,7 @@ x-commons:
     X-RateLimit-Remaining:
       $ref: '#/components/headers/X-RateLimit-Remaining'
     X-RateLimit-Reset:
-        $ref: '#/components/headers/X-RateLimit-Reset'
+      $ref: '#/components/headers/X-RateLimit-Reset'
   common-responses: &common-responses
     '400':
       $ref: '#/components/responses/400BadRequest'
@@ -21,78 +21,69 @@ x-commons:
       $ref: '#/components/responses/default'
 
 
-    
+
 openapi: 3.0.1
 info:
   version: "3.0.0"
-  termsOfService: https://www.agenziaentrate.gov.it/portale/web/guest/privacy
   title: |-
-    Verifica validità organizationId.
+    Check validity organization Id.
   x-summary: >-
-    Verifica di validità di un organizationId e recupero di alcuni dati anagrafici
+    Check about validity of an organizationId and recovery of some personal data
 
   description: |
-    #### Documentazione
-    Questo servizio ritorna la validità di un organizationId. In caso riscontro positivo 
-    vengono fornite alcune informazioni di tipo
-    anagrafico tra cui eventuali riferimenti al GRUPPO IVA:
+    #### Documentation
+    This service returns the validity of an organizationId. In case of positive feedback 
+    some general information is provided
+    registry including any references to the Organization Group:
 
     - STATO, DENOMINAZIONE, DATA INIZIO ATTIVITA', DATA CESSAZIONE, DATA SOSPENSIONE
     
-    ##### Denominazione
-    Per le ditte individuali viene fornita la denominazione se dichiarata, diversamente il cognome e nome del titolare
-
-    ##### Gruppo Iva
-    Il concetto di *GRUPPO IVA* può essere approfondito al seguente
-    [link](https://www.agenziaentrate.gov.it/portale/web/guest/schede/istanze/costituzione-gruppo-iva/scheda-informativa-costituzione-gruppoiva).
+    #### Denomination
+    For sole proprietorships, the business name is provided if declared; otherwise, the owner's last name and first name are given.
     
-    #### Note
-    Poiché il servizio effettua una verifica sul dato in input una risposta verrà sempre ritornata con stato 200 
-    anche se l organizationId  in input non fosse presente negli archivi.
+    #### Notes
+    Since the service checks the input data, a response will always be returned with a status of 200 
+    even if the input organizationId was not present in the archives.
     
-    Alcune "DATE" potrebbero essere espresse nei seguenti formati '1001-01-01', '9999-12-31'.
-    Tali date devono essere interpretate come informazioni assenti o non certe.
-    E' in corso una revisione degli archivi dell'Agenzia Delle Entrate per sanare queste informazioni.
+    Some "DATES" may be expressed in the following formats '1001-01-01', '9999-12-31'.
+    Such dates should be interpreted as absent or uncertain information.
+    A review of the Internal Revenue Service archives is underway to correct this information.
 
-    Il servizio non richiede autenticazione, ma va' usato rispettando gli
-    header di throttling esposti in conformita' alle Linee Guida del Modello di interoperabilita'.
+    The service does not require authentication, but must be used respecting the
+    throttling headers exposed in accordance with the Interoperability Model Guidelines
     
-    ##### Confomrmità con il modello di interoperabilità
-    L'Header di Throttling X-RateLimit-Reset non viene inviato in caso di https status code 200, sarà presente solo in caso di 429
+    #### Compliance with the interoperability model
+    The X-RateLimit-Reset Throttling Header is not sent in case of https status code 200, it will only be present in case of 429
 
-    #### Sicurezza
-    Pur essendo questa API di pubblico accesso, è richiesto l'invio delle API Key che consentono all'infrastruttura
-    di applicare le politiche di throttling definite nell'ambito del piano sottoscritto
- 
-  
+    #### Security
+    Even though this API is publicly accessible, it is required to send the API Key that allows the infrastructure
+    to apply the throttling policies defined within the subscribed plan
+
   contact:
-    name: Agenzia delle Entrate
-    url: https://www.agenziaentrate.gov.it
+    name: PagoPA S.p.A
+    url: https://www.interop.pagopa.it/
   x-audience:
-    - public
+    - Check
   x-api-id: 5ca54741-8f62-4aad-ab79-13ae762920e3
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 tags:
-  - name: public
+  - name: Health Check
     description: |-
-      Endpoint non autenticato per la verifica dello stato del servizio
-  - name: verifiche
+      Unauthenticated endpoint for checking service status
+  - name: Check
     description: |-
-      verifica la validità e l'esistenza della partita iva in input
-    externalDocs:
-      url: https://developer.agenziaentrate.gov.it/entrate/api
+      verifies the validity and existence of the input Organization id
 servers:
   - description: Ambiente di Attestazione
     url: https://mtls.eservices.att.interop.pagopa.it/
 
-
 paths:
   /organizationid-verification/data-preparation/handshake:
     post:
-      summary: Carica il certificato e i campi dell'header.
-      description: Carica il certificato nel formato .pem insieme a due campi nell'header.
+      summary: Upload the certificate and header fields.
+      description: Upload the certificate in .pem format along with two fields in the header.
       security:
         - bearerAuth: []
       requestBody:
@@ -105,17 +96,17 @@ paths:
                 certificate:
                   type: string
                   format: binary
-                  description: Il certificato nel formato .pem
+                  description: The certificate in .pem format
       parameters:
         - in: header
           name: apikey
           required: true
           schema:
             type: string
-          description: Chiave dell'API
+          description: API key
       responses:
         '200':
-          description: Operazione completata con successo
+          description: Operation completed successfully
           content:
             application/json:
               schema:
@@ -123,15 +114,15 @@ paths:
                 properties:
                   message:
                     type: string
-                    description: Messaggio di conferma dell'operazione
+                    description: Operation confirmation message
         '400':
           $ref: '#/components/responses/400BadRequest'
       tags:
-        - datapreparation
+        - Data Preparation
   /organizationid-verification/data-preparation:
     post:
       summary: data preparation api.
-      description: Carica i casi d'uso dell'ente
+      description: Upload your organization's use cases
       security:
         - bearerAuth: []
       requestBody:
@@ -141,10 +132,10 @@ paths:
             schema:
               $ref: '#/components/schemas/DatapreparationTemplate'
             examples:
-              organizationIdAlfanumerico:
+              alphanumericOrganizationId:
                 value:
                   organizationId: 'AAAZZZ00H00T000Z'
-              organizationIdNumerico:
+              numericOrganizationI:
                 value:
                   organizationId: '06363391001'
       parameters:
@@ -153,7 +144,7 @@ paths:
           required: true
           schema:
             type: string
-          description: Chiave dell'API
+          description: API key
         - in: header
           name: x-correlation-id
           required: true
@@ -162,7 +153,7 @@ paths:
           description: correlationId
       responses:
         '200':
-          description: Operazione completata con successo
+          description: Operation completed successfully
           content:
             application/json:
               schema:
@@ -170,14 +161,14 @@ paths:
                 properties:
                   message:
                     type: string
-                    description: Messaggio di conferma dell'operazione
+                    description: Operation confirmation message
         '400':
           $ref: '#/components/responses/400BadRequest'
       tags:
-        - datapreparation
+        - Data Preparation
     get:
       summary: data preparation api.
-      description: Lista dei casi d'uso dell'ente
+      description: List of institution use cases
       security:
         - bearerAuth: []
       parameters:
@@ -186,7 +177,7 @@ paths:
           required: true
           schema:
             type: string
-          description: Chiave dell'API
+          description: API key
         - in: header
           name: x-correlation-id
           required: true
@@ -195,7 +186,7 @@ paths:
           description: correlationId
       responses:
         '200':
-          description: Operazione completata con successo
+          description: Operation completed successfully
           content:
             application/json:
               schema:
@@ -203,22 +194,22 @@ paths:
         '400':
           $ref: '#/components/responses/400BadRequest'
       tags:
-        - datapreparation
+        - Data Preparation
     delete:
-      summary: Cancella i casi d'uso dell'ente
+      summary: Delete institution use cases
       description: |
-        Ritorna lo stato dell'applicazione: 200 se funziona correttamente
-        o un errore se l'applicazione è temporaneamente indisponibile
-        per manutenzione o per un problema tecnico.
+        Returns the application status: 200 if it is working correctly
+        or an error if the application is temporarily unavailable
+        for maintenance or a technical problem.
       operationId: reset
       tags:
-        - datapreparation
+        - Data Preparation
       responses:
         <<: *common-responses
         '200':
           description: |
-            Il server ha ritornato lo status. In caso di problemi
-            ritorna sempre un problem+json.
+            The server has returned to status. In case of problems
+            always returns a problem+json.
           headers:
             <<: *ratelimit-headers
           content:
@@ -228,7 +219,7 @@ paths:
   /organizationid-verification/data-preparation/remove:
     post:
       summary: data preparation api.
-      description: Rimuove un preciso caso d'uso
+      description: It removes a specific use case
       security:
         - bearerAuth: []
       requestBody:
@@ -238,10 +229,10 @@ paths:
             schema:
               $ref: '#/components/schemas/DatapreparationTemplate'
             examples:
-              organizationIdAlfanumerico:
+              alphanumericOrganizationId:
                 value:
                   organizationId: 'AAAZZZ00H00T000Z'
-              organizationIdNumerico:
+              numericOrganizationId:
                 value:
                   organizationId: '06363391001'
       parameters:
@@ -250,7 +241,7 @@ paths:
           required: true
           schema:
             type: string
-          description: Chiave dell'API
+          description: API key
         - in: header
           name: x-correlation-id
           required: true
@@ -259,7 +250,7 @@ paths:
           description: correlationId
       responses:
         '200':
-          description: Operazione completata con successo
+          description: Operation completed successfully
           content:
             application/json:
               schema:
@@ -267,40 +258,40 @@ paths:
                 properties:
                   message:
                     type: string
-                    description: Messaggio di conferma dell'operazione
+                    description: Operation confirmation message
         '400':
           $ref: '#/components/responses/400BadRequest'
       tags:
-        - datapreparation
+        - Data Preparation
   /organizationid-verification/status:
     get:
-      summary: Ritorna lo stato dell'applicazione.
+      summary: Returns the application state.
       description: |
-        Ritorna lo stato dell'applicazione: 200 se funziona correttamente
-        o un errore se l'applicazione è temporaneamente indisponibile
-        per manutenzione o per un problema tecnico.
+        Returns the application status: 200 if it is working correctly
+        or an error if the application is temporarily unavailable
+        for maintenance or a technical problem.
       operationId: get_status
       tags:
-        - public
+        - Health Check
       responses:
         '200':
           description: |
-            Il server ha ritornato lo status. In caso di problemi
-            ritorna sempre un problem+json.
+            The server has returned to status. In case of problems
+            always returns a problem+json.
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-  /organizationid-verification/verifica:
+  /organizationid-verification/check:
     post:
-      summary: Valida un organizationId.
+      summary: Verify an organizationId.
       description: |
-        Ritorna informazioni sulla validità dell organizationId
-        e in caso di esito positivo vengono aggiunte alcune informazioni anagrafiche.
+        Returns information on the validity of the organizationId
+        and if successful, some personal information is added.
 
       operationId: post_partita_organizationId
       tags:
-        - verifiche
+        - Check
       requestBody:
         required: true
         content:
@@ -308,20 +299,19 @@ paths:
             schema:
               $ref: '#/components/schemas/Richiesta'
             examples:
-              organizationIdNumeric0:
+              numericOrganizationId:
                 value:
                   organizationId: '06363391001'
       responses:
         <<: *common-responses
         '200':
           description: |
-            Il servizio ha ritornato l'esito della validazione - che può essere positivo o negativo -
-            a seconda del valore del campo `valida`.
+            The service has returned the validation result - which can be positive or negative -
+            depending on the value of the `valid` field.
+            Attention! Valid organizationIds may or may not be active: it always works
+            verified the contents of the response.
+            # header di throttling sono obbligatori
 
-            Attenzione! Le organizationId valide possono essere o meno attive: va quindi sempre
-            verificato il contenuto della response.
-          # header di throttling sono obbligatori
-                      
           content:
             application/json:
               schema:
@@ -330,34 +320,34 @@ paths:
                 Invalida:
                   value:
                     organizationId: '01043931007'
-                    valida: false
+                    valid: false
                 Attiva:
                   value:  &example_organizationId
                     organizationId: '06363391001'
-                    valida: true
-                    stato: 'ATTIVA'
-                    denominazione: 'AGENZIA DELLE ENTRATE'
-                    dataInizioAttivita: '2001-01-02'
+                    valid: true
+                    status: 'ATTIVA'
+                    denomination: 'AGENZIA DELLE ENTRATE'
+                    dateStartActivity: '2001-01-02'
                 Sospesa:
                   value:
                     <<: *example_organizationId
-                    stato: 'SOSPESA'
-                    dataInizioSospensione: '2013-03-15'
+                    status: 'SOSPESA'
+                    dateStartSuspension: '2013-03-15'
                 Cessata:
                   value:
                     <<: *example_organizationId
-                    stato: 'CESSATA'
-                    dataCessazioneAttivita: '1989-01-01'
+                    status: 'CESSATA'
+                    dateEndActivity: '1989-01-01'
                 GruppoIva:
                   value:
                     <<: *example_organizationId
-                    isGruppoIva: true
+                    isOrganizationId: true
                 PartecipanteGruppoIva:
                   value:
                     <<: *example_organizationId
-                    isPartecipanteGruppoIva: true
-                    dataInizioPartecipazioneGruppoIva: '2018-10-27'
-                    partitaIvaGruppo: '06363391001'
+                    isPartecipantOrganizationGroupId: true
+                    dateStartPartecipationOrganizationGroupId: '2018-10-27'
+                    organizationGroupId: '06363391001'
 
 components:
   schemas:
@@ -393,41 +383,41 @@ components:
       properties:
         organizationId:
           $ref: '#/components/schemas/OrganizationId'
-        valida:
+        valid:
           type: boolean
           example: true
-        stato:
+        status:
           type: string
           enum:
             - ATTIVA
             - CESSATA
             - SOSPESA
           example: 'ATTIVA'
-        denominazione:
+        denomination:
           type: string
           example: 'AGENZIA DELLE ENTRATE'
-        dataInizioAttivita:
+        dateStartActivity:
           type: string
           format: date
           example: '1982-05-22'
-        dataCessazioneAttivita:
+        dateEndActivity:
           type: string
           format: date
           example: '1982-05-22'
-        dataInizioSospensione:
+        dateStartSuspension:
           type: string
           format: date
           example: '1982-05-22'
-        isGruppoIva:
+        isOrganizationId:
           type: boolean
           example: false
-        partitaIvaGruppo:
+        organizationGroupId:
           $ref: '#/components/schemas/OrganizationId'
-        dataInizioPartecipazioneGruppoIva:
+        dateStartPartecipationOrganizationGroupId:
           type: string
           format: date
           example: '1982-05-22'
-        isPartecipanteGruppoIva:
+        isPartecipantOrganizationGroupId:
           type: boolean
           example: false
     Problem:
@@ -540,4 +530,3 @@ components:
           $ref: '#/components/headers/Retry-After'
     default:
       description: Unexpected error
- 
