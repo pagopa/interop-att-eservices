@@ -19,12 +19,12 @@ export function appendUniqueFiscalcodeModelsToArray(
   // Creiamo un mappatura dei pourposeId ai modelli esistenti
   const modelMap = new Map<string, ResponseRequestDigitalAddressModel>();
   for (const model of newArray) {
-    modelMap.set(model.codiceFiscale, model);
+    modelMap.set(model.idSubject, model);
   }
 
   // Aggiungiamo o aggiorniamo i modelli
   for (const modelToAdd of modelsToAdd) {
-    const existingModel = modelMap.get(modelToAdd.codiceFiscale);
+    const existingModel = modelMap.get(modelToAdd.idSubject);
     if (existingModel) {
       // Se il pourposeId esiste già, aggiorniamo i dati con quelli passati
       Object.assign(existingModel, modelToAdd);
@@ -43,7 +43,7 @@ export function findFiscalcodeModelByFiscalcode(
 ): ResponseRequestDigitalAddressModel | null {
   if (fiscalCodes == null) return null;
   for (const fiscalCodeModel of fiscalCodes) {
-    if (fiscalCodeModel.codiceFiscale == fiscalCode) {
+    if (fiscalCodeModel.idSubject == fiscalCode) {
       return fiscalCodeModel;
     }
   }
@@ -63,7 +63,7 @@ export function deleteFiscalcodeModelByFiscaldode(
 
   // Cerca FiscalcodeModel con lo stesso codice fiscale all'interno dell'array esistente
   for (const fiscalCodeM of existingArray) {
-    if (fiscalCodeM.codiceFiscale !== fiscalCode) {
+    if (fiscalCodeM.idSubject !== fiscalCode) {
       result.push(fiscalCodeM);
     }
   }

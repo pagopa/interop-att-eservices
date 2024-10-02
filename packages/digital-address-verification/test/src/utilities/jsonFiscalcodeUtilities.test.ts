@@ -10,10 +10,10 @@ import {
 
 // Mock data
 const validJsonString =
-  '{"codiceFiscale": "ABC123", "someField": "someValue", "digitalAddress": [{"digitalAddress": "address1", "practicedProfession": "profession1", "usageInfo": {"motivation": "motivation1", "dateEndValidity": "2024-12-31"}}]}';
-const invalidJsonString = "{codiceFiscale: ABC123}";
+  '{"idSubject": "ABC123", "someField": "someValue", "digitalAddress": [{"digitalAddress": "address1", "profession": "profession1", "information": {"reason": "reason1", "endDate": "2024-12-31"}}]}';
+const invalidJsonString = "{idSubject: ABC123}";
 const validArrayJsonString =
-  '[{"codiceFiscale": "ABC123", "someField": "someValue", "digitalAddress": [{"digitalAddress": "address1", "practicedProfession": "profession1", "usageInfo": {"motivation": "motivation1", "dateEndValidity": "2024-12-31"}}]}]';
+  '[{"idSubject": "ABC123", "someField": "someValue", "digitalAddress": [{"digitalAddress": "address1", "profession": "profession1", "information": {"reason": "reason1", "endDate": "2024-12-31"}}]}]';
 
 // Mock the logger
 vi.mock("pdnd-common", () => ({
@@ -76,7 +76,7 @@ describe("parseJsonToResponseRequestDigitalAddressArray", () => {
 
   it("should throw an error if JSON does not represent an array", () => {
     const notArrayJsonString =
-      '{"codiceFiscale": "ABC123", "someField": "someValue"}';
+      '{"idSubject": "ABC123", "someField": "someValue"}';
     const result =
       parseJsonToResponseRequestDigitalAddressArray(notArrayJsonString);
     expect(result).toBeNull();
@@ -90,15 +90,15 @@ describe("convertStringToRichiesta", () => {
   it("should return a parsed object for valid JSON string", () => {
     const result = convertStringToRichiesta(validJsonString);
     expect(result).toEqual({
-      codiceFiscale: "ABC123",
-      since: undefined,
+      idSubject: "ABC123",
+      from: undefined,
       digitalAddress: [
         {
           digitalAddress: "address1",
-          practicedProfession: "profession1",
-          usageInfo: {
-            motivation: "motivation1",
-            dateEndValidity: "2024-12-31",
+          profession: "profession1",
+          information: {
+            reason: "reason1",
+            endDate: "2024-12-31",
           },
         },
       ],

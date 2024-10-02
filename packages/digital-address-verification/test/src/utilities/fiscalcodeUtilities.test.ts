@@ -12,29 +12,29 @@ import {
 // Mock data
 const mockData: ResponseRequestDigitalAddressModel[] = [
   {
-    codiceFiscale: "RRANGL74M28R701A",
-    since: "2017-07-21T17:32:28Z",
+    idSubject: "RRANGL74M28R701A",
+    from: "2017-07-21T17:32:28Z",
     digitalAddress: [
       {
         digitalAddress: "example@pec.it",
-        practicedProfession: "AVVOCATO",
-        usageInfo: {
-          motivation: "CESSAZIONE_VOLONTARIA",
-          dateEndValidity: "2017-07-21T17:32:28Z",
+        profession: "AVVOCATO",
+        information: {
+          reason: "CESSAZIONE_VOLONTARIA",
+          endDate: "2017-07-21T17:32:28Z",
         },
       },
     ],
   },
   {
-    codiceFiscale: "RRANGL74M28R701B",
-    since: "2017-07-21T17:32:28Z",
+    idSubject: "RRANGL74M28R701B",
+    from: "2017-07-21T17:32:28Z",
     digitalAddress: [
       {
         digitalAddress: "example@pec.it",
-        practicedProfession: "AVVOCATO",
-        usageInfo: {
-          motivation: "CESSAZIONE_VOLONTARIA",
-          dateEndValidity: "2017-07-21T17:32:28Z",
+        profession: "AVVOCATO",
+        information: {
+          reason: "CESSAZIONE_VOLONTARIA",
+          endDate: "2017-07-21T17:32:28Z",
         },
       },
     ],
@@ -75,7 +75,7 @@ describe("deleteFiscalcodeModelByFiscaldode", () => {
     );
     expect(result).toHaveLength(1);
     expect(
-      result?.find((model) => model.codiceFiscale === "RRANGL74M28R701A")
+      result?.find((model) => model.idSubject === "RRANGL74M28R701A")
     ).toBeUndefined();
   });
 
