@@ -47,7 +47,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Response_Request_Address'
+              $ref: '#/components/schemas/Response_Request_Digital_Address'
         required: true
       responses:
         '200':
@@ -127,7 +127,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Response_Request_Address'
+                $ref: '#/components/schemas/Response_Request_Digital_Address'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -214,7 +214,7 @@ paths:
           description: subject id for which you are looking for
           required: true
           schema:
-            $ref: '#/components/schemas/idSubject'
+            $ref: '#/components/schemas/CodiceFiscale'
           example: VRANGL74M28R701X
         - name: digital_address
           in: query
@@ -347,7 +347,7 @@ paths:
           description: subject id for which you are searching
           required: true
           schema:
-            $ref: '#/components/schemas/idSubject'
+            $ref: '#/components/schemas/CodiceFiscale'
           example: VRANGL74M28R701X
         - name: practicalReference
           in: query
@@ -361,7 +361,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Response_Request_Address'
+                $ref: '#/components/schemas/Response_Request_Digital_Address'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -433,14 +433,14 @@ components:
       description: Response template for Digital Address List Request
     Request_List_Digital_Address:
       required:
-        - idSubject
+        - idSubjects
         - idRequest
       type: object
       properties:
-        idSubject:
+        idSubjects:
           type: array
           items:
-            $ref: '#/components/schemas/idSubject'
+            $ref: '#/components/schemas/CodiceFiscale'
         idRequest:
           $ref: '#/components/schemas/PracticalReference'
       description: Request form for Digital Domicile List
@@ -497,9 +497,9 @@ components:
           type: array
           description: List of extracted Digital Domiciles
           items:
-            $ref: '#/components/schemas/Response_Request_Address'
+            $ref: '#/components/schemas/Response_Request_Digital_Address'
       description: Answer template for Digital Domicile List
-    Response_Request_Address:
+    Response_Request_Digital_Address:
       required:
         - idSubject
         - digitalAddress
@@ -507,7 +507,7 @@ components:
       type: object
       properties:
         idSubject:
-          $ref: '#/components/schemas/idSubject'
+          $ref: '#/components/schemas/CodiceFiscale'
         from:
           type: string
           description: Date/Time extraction in ISO 8601 format <yyyy-MM-dd'T'HH:mm:ssZ>
@@ -530,7 +530,7 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/Response_Request_Address'
+            $ref: '#/components/schemas/Response_Request_Digital_Address'
       description: Answer template for Digital Address List
     
     Usage_Info:
@@ -547,7 +547,7 @@ components:
           format: date-time
           example: '2017-07-21T17:32:28Z'
       description: Response template Info Use for single digital address
-    idSubject:
+    CodiceFiscale:
       pattern: ^([0-9]{11})|([A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1})$
       type: string
       description: tax code/VAT number relating to the digital address

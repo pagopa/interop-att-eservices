@@ -19,7 +19,7 @@ const DigitalAddressVerificationMultipleRouter = (
   const digitalAddressVerificationMultipleRouter = ctx.router(api.api);
 
   digitalAddressVerificationMultipleRouter.post(
-    "/digital-address-verification/listDigitalAddress",
+    "/digital-address-verification/list",
     // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
     uniquexCorrelationIdMiddleware(),
@@ -36,7 +36,7 @@ const DigitalAddressVerificationMultipleRouter = (
         res.set(
           "Location",
           locationBaseHost +
-            `/digital-address-verification/listDigitalAddress/state/${response.id}`
+            `/digital-address-verification/list/state/${response.id}`
         );
         void TrialService.insert(
           req.url,
@@ -65,7 +65,7 @@ const DigitalAddressVerificationMultipleRouter = (
   );
 
   digitalAddressVerificationMultipleRouter.get(
-    "/digital-address-verification/listDigitalAddress/state/:id",
+    "/digital-address-verification/list/state/:id",
     // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
     uniquexCorrelationIdMiddleware(),
@@ -122,7 +122,7 @@ const DigitalAddressVerificationMultipleRouter = (
   );
 
   digitalAddressVerificationMultipleRouter.get(
-    "/digital-address-verification/listDigitalAddress/response/:id",
+    "/digital-address-verification/list/response/:id",
     // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
     uniquexCorrelationIdMiddleware(),

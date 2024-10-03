@@ -18,7 +18,7 @@ const DigitalAddressVerificationSingleRouter = (
   const digitalAddressVerificationSingleRouter = ctx.router(api.api);
 
   digitalAddressVerificationSingleRouter.get(
-    "/digital-address-verification/verify/:codice_fiscale",
+    "/digital-address-verification/verify/:id_subject",
     // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
     uniquexCorrelationIdMiddleware(),
@@ -26,13 +26,13 @@ const DigitalAddressVerificationSingleRouter = (
     async (req, res) => {
       try {
         logger.info(`[START] Post - '/verifica' : ${req.body}`);
-        const { codice_fiscale } = req.params;
-        const { digital_address, since, practicalReference } = req.query;
-        logger.info(practicalReference);
+        const { id_subject } = req.params;
+        const { digital_address, from, idPractice } = req.query;
+        logger.info(idPractice);
         const result = await digitalAddressVerificationSingleController.verify(
-          codice_fiscale,
+          id_subject,
           digital_address,
-          since
+          from
         );
         void TrialService.insert(
           req.url,
@@ -62,19 +62,19 @@ const DigitalAddressVerificationSingleRouter = (
   );
 
   digitalAddressVerificationSingleRouter.get(
-    "/digital-address-verification/extract/:codice_fiscale",
+    "/digital-address-verification/retrieve/:id_subject",
     // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
     uniquexCorrelationIdMiddleware(),
     authenticationMiddleware(true),
     async (req, res) => {
       try {
-        const { codice_fiscale } = req.params;
+        const { id_subject } = req.params;
         const { practicalReference } = req.query;
         logger.info(practicalReference);
-        logger.info(`[START] Post - '/verifica' : ${codice_fiscale}`);
+        logger.info(`[START] Post - '/verifica' : ${id_subject}`);
         const result = await digitalAddressVerificationSingleController.extract(
-          codice_fiscale
+          id_subject
         );
         void TrialService.insert(
           req.url,

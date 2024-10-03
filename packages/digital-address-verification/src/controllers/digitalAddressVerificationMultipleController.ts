@@ -38,7 +38,7 @@ class DigitalAddressVerificationSingleController {
           state: getStatusFromNumber(count),
           message: getStatusFromNumber(count),
           id: verifyRequestInstance.idRequest,
-          dateTimeRequest: new Date().toISOString(),
+          requestTimestamp: new Date().toISOString(),
         };
         return result;
       } else {
@@ -66,7 +66,7 @@ class DigitalAddressVerificationSingleController {
         );
       if (richiesta) {
         const result: ResponseStatusListDigitalAddress = {
-          state: getStatusFromNumber(richiesta.count),
+          status: getStatusFromNumber(richiesta.count),
           message: getStatusFromNumber(richiesta.count),
         };
         return result;
@@ -97,9 +97,9 @@ class DigitalAddressVerificationSingleController {
           richiesta.jsonRequest
         );
         if (requestListDigitalAddress) {
-          for (const codiceFiscale of requestListDigitalAddress.codiciFiscali) {
+          for (const idSubject of requestListDigitalAddress.idSubjects) {
             const addressModel = await dataPreparationService.findByFiscalCode(
-              codiceFiscale
+              idSubject
             );
             if (addressModel) {
               const address =

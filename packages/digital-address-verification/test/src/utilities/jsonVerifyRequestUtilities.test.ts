@@ -17,7 +17,7 @@ const invalidJsonString = "{idRequest: 12345}";
 const validVerifyRequestArrayJsonString =
   '[{"idRequest": "12345", "jsonRequest": "{}", "count": 1}]';
 const validResponseRequestDigitalAddressJsonString =
-  '{"digitalAddress": "address1", "codiceFiscale": "ABC123", "since": "2024-01-01"}';
+  '{"digitalAddress": "address1", "idSubject": "ABC123", "from": "2024-01-01"}';
 
 // Mock the logger
 vi.mock("pdnd-common", () => ({
@@ -110,8 +110,8 @@ describe("convertStringToResponseRequestDigitalAddress", () => {
     );
     expect(result).toEqual({
       digitalAddress: "address1",
-      codiceFiscale: "ABC123",
-      since: "2024-01-01",
+      idSubject: "ABC123",
+      from: "2024-01-01",
     });
   });
 
