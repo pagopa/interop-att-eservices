@@ -14,7 +14,7 @@
     "start": "node --no-warnings --loader ts-node/esm -r dotenv-flow/config ./src/index.ts",
     "build": "tsc",
     "check": "tsc --project tsconfig.check.json",
-    "generate-model": "pnpm openapi-zod-client ./open-api/AgID-INAD_CONSULTAZIONE_API_v2.yaml -o ./src/model/generated/api.ts",
+    "generate-model": "pnpm openapi-zod-client ./open-api/DIGITAL_ADDRESS_API_V1.yaml -o ./src/model/generated/api.ts",
     "clean-generated": "pnpm exec rm ./src/model/generated/api.ts"
   },
   "keywords": [],

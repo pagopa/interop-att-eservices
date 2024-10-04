@@ -20,7 +20,7 @@ const fiscalcodeVerificationRouter = (
   const fiscalcodeVerificationRouter = ctx.router(api.api);
 
   fiscalcodeVerificationRouter.post(
-    "/fiscalcode-verification/verifica",
+    "/fiscalcode-verification/check",
     // logHeadersMiddleware,
     contextDataFiscalCodeMiddleware,
     uniquexCorrelationIdMiddleware(),
@@ -28,7 +28,7 @@ const fiscalcodeVerificationRouter = (
     verifyCertValidity,
     async (req, res) => {
       try {
-        logger.info(`[START] Post - '/verifica' : ${req.body.codiceFiscale}`);
+        logger.info(`[START] Post - '/verifica' : ${req.body.idSubject}`);
         const data = await FiscalcodeVerificationController.findFiscalcode(
           req.body
         );
