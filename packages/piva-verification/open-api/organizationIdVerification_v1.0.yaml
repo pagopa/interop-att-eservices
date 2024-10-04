@@ -1,5 +1,5 @@
 #
-# Check subject id validity
+# Verifica validità organization id
 x-commons:
   ratelimit-headers: &ratelimit-headers
     X-RateLimit-Limit:
@@ -15,59 +15,72 @@ x-commons:
       $ref: '#/components/responses/401Unauthorized'
     '429':
       $ref: '#/components/responses/429TooManyRequests'
-    '503':
-      $ref: '#/components/responses/503ServiceUnavailable'
+    '500':
+      $ref: '#/components/responses/500InternalServerError'
     default:
       $ref: '#/components/responses/default'
 
 
-openapi: 3.0.0
+
+openapi: 3.0.1
 info:
   version: "3.0.0"
-
   title: |-
-    Check subject id validity.
+    Check validity organization Id.
   x-summary: >-
-    Check the validity of the subject id for individuals and non-individual entities
+    Check about validity of an organizationId and recovery of some personal data
 
   description: |
     #### Documentation
-    This service returns the validity of a given subject id, represented by a boolean return field in the JSON response object.
+    This service returns the validity of an organizationId. In case of positive feedback 
+    some general information is provided
+    registry including any references to the Organization Group:
 
+    - STATO, DENOMINAZIONE, DATA INIZIO ATTIVITA', DATA CESSAZIONE, DATA SOSPENSIONE
+    
+    #### Denomination
+    For sole proprietorships, the business name is provided if declared; otherwise, the owner's last name and first name are given.
+    
     #### Notes
-    Since the service performs a verification on the input data, a response with a 200 status code will always be returned, even if the subject id is not present in the records.
+    Since the service checks the input data, a response will always be returned with a status of 200 
+    even if the input organizationId was not present in the archives.
+    
+    Some "DATES" may be expressed in the following formats '1001-01-01', '9999-12-31'.
+    Such dates should be interpreted as absent or uncertain information.
+    A review of the Internal Revenue Service archives is underway to correct this information.
 
-    The response includes a message field that contains the same wording as the public subject id verification service available on the official website.
+    The service does not require authentication, but must be used respecting the
+    throttling headers exposed in accordance with the Interoperability Model Guidelines
     
     #### Compliance with the interoperability model
-    The Throttling Header X-RateLimit-Reset is not sent in case of an HTTPS status code 200; it will only be present if a 429 status code occurs.
+    The X-RateLimit-Reset Throttling Header is not sent in case of https status code 200, it will only be present in case of 429
 
     #### Security
-    Although this is a publicly accessible API, it requires the submission of an API Key, allowing the infrastructure to apply throttling policies defined in the subscribed plan.
+    Even though this API is publicly accessible, it is required to send the API Key that allows the infrastructure
+    to apply the throttling policies defined within the subscribed plan
 
   contact:
     name: PagoPA S.p.A
     url: https://www.interop.pagopa.it/
   x-audience:
-    - public
+    - Check
   x-api-id: 5ca54741-8f62-4aad-ab79-13ae762920e3
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 tags:
-  - name: HealthCheck
+  - name: Health Check
     description: |-
-      Unauthenticated endpoint for service status check.
+      Unauthenticated endpoint for checking service status
   - name: Check
     description: |-
-      checks the validity and existence of the input subject id
+      verifies the validity and existence of the input Organization id
 servers:
   - description: Ambiente di Attestazione
     url: https://mtls.eservices.att.interop.pagopa.it/
 
-
 paths:
-  /fiscalcode-verification/data-preparation/handshake:
+  /organization-id-verification/data-preparation/handshake:
     post:
       summary: Upload the certificate and header fields.
       description: Upload the certificate in .pem format along with two fields in the header.
@@ -106,10 +119,10 @@ paths:
           $ref: '#/components/responses/400BadRequest'
       tags:
         - Data Preparation
-  /fiscalcode-verification/data-preparation:
+  /organization-id-verification/data-preparation:
     post:
       summary: data preparation api.
-      description: upload your valid subject id
+      description: Upload your organization's use cases
       security:
         - bearerAuth: []
       requestBody:
@@ -119,12 +132,12 @@ paths:
             schema:
               $ref: '#/components/schemas/DatapreparationTemplate'
             examples:
-              alphanumericIdSubject:
+              alphanumericOrganizationId:
                 value:
-                  idSubject: 'AAAZZZ00H00T000Z'
-              numericIdSubject:
+                  organizationId: 'AAAZZZ00H00T000Z'
+              numericOrganizationI:
                 value:
-                  idSubject: '06363391001'
+                  organizationId: '06363391001'
       parameters:
         - in: header
           name: apikey
@@ -155,7 +168,7 @@ paths:
         - Data Preparation
     get:
       summary: data preparation api.
-      description: upload the valid subject id
+      description: List of institution use cases
       security:
         - bearerAuth: []
       parameters:
@@ -183,9 +196,11 @@ paths:
       tags:
         - Data Preparation
     delete:
-      summary: Delete all previously entered data
+      summary: Delete institution use cases
       description: |
-        Returns: 200 if successfully cleared.
+        Returns the application status: 200 if it is working correctly
+        or an error if the application is temporarily unavailable
+        for maintenance or a technical problem.
       operationId: reset
       tags:
         - Data Preparation
@@ -193,18 +208,18 @@ paths:
         <<: *common-responses
         '200':
           description: |
-            In case of errors
-            returns a problem+json.
+            The server has returned to status. In case of problems
+            always returns a problem+json.
           headers:
             <<: *ratelimit-headers
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-  /fiscalcode-verification/data-preparation/remove:
+  /organization-id-verification/data-preparation/remove:
     post:
       summary: data preparation api.
-      description: deletes a previously entered subject id
+      description: It removes a specific use case
       security:
         - bearerAuth: []
       requestBody:
@@ -214,12 +229,12 @@ paths:
             schema:
               $ref: '#/components/schemas/DatapreparationTemplate'
             examples:
-              alphanumericIdSubject:
+              alphanumericOrganizationId:
                 value:
-                  idSubject: 'AAAZZZ00H00T000Z'
-              numericIdSubject:
+                  organizationId: 'AAAZZZ00H00T000Z'
+              numericOrganizationId:
                 value:
-                  idSubject: '06363391001'
+                  organizationId: '06363391001'
       parameters:
         - in: header
           name: apikey
@@ -248,7 +263,7 @@ paths:
           $ref: '#/components/responses/400BadRequest'
       tags:
         - Data Preparation
-  /fiscalcode-verification/status:
+  /organization-id-verification/status:
     get:
       summary: Returns the application state.
       description: |
@@ -257,27 +272,26 @@ paths:
         for maintenance or a technical problem.
       operationId: get_status
       tags:
-        - HealthCheck
+        - Health Check
       responses:
-        <<: *common-responses
         '200':
           description: |
             The server has returned to status. In case of problems
-            always returns a problem+json..
-          headers:
-            <<: *ratelimit-headers
+            always returns a problem+json.
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-  /fiscalcode-verification/check:
+  /organization-id-verification/check:
     post:
-      summary: Carry out a validation of the input subject id.
-      operationId: post_verifica_codiceFiscale
+      summary: Verify an organizationId.
+      description: |
+        Returns information on the validity of the organizationId
+        and if successful, some personal information is added.
+
+      operationId: post_partita_organizationId
       tags:
         - Check
-      description: |
-        Returns information about the validity of the input subject id
       requestBody:
         required: true
         content:
@@ -285,95 +299,127 @@ paths:
             schema:
               $ref: '#/components/schemas/Richiesta'
             examples:
-              alphanumericIdSubject:
+              numericOrganizationId:
                 value:
-                  idSubject: 'AAAZZZ00H00T000Z'
-              numericIdSubject:
-                value:
-                  idSubject: '06363391001'
+                  organizationId: '06363391001'
       responses:
         <<: *common-responses
         '200':
           description: |
-            The server was able to verify the validity of the subject id.
-          # header di throttling requires
-          headers:
-            <<: *ratelimit-headers
+            The service has returned the validation result - which can be positive or negative -
+            depending on the value of the `valid` field.
+            Attention! Valid organizationIds may or may not be active: it always works
+            verified the contents of the response.
+            # header di throttling sono obbligatori
+
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VerificaCodiceFiscale'
-              examples:    # Examples for each case
-                ValidIdSubject:
+                $ref: '#/components/schemas/VerificaOrganizationId'
+              examples:    # Esempi per ogni casistica
+                Invalida:
                   value:
-                    idSubject: '06363391001'
-                    valid: true
-                    message: "Valid id subject"
-                NotUsableIdSubject:
-                  value:
-                    idSubject: '***********'
-                    valid: true
-                    message: "Valid subject id, no longer usable"
-                NotValidUpdatedInOther:
-                  value:
-                    idSubject: '***********'
+                    organizationId: '01043931007'
                     valid: false
-                    message: "Valid subject id, no longer usable as it has been updated to another subject id"
-                NotValidIdSubject:
+                Attiva:
+                  value:  &example_organizationId
+                    organizationId: '06363391001'
+                    valid: true
+                    status: 'ATTIVA'
+                    denomination: 'AGENZIA DELLE ENTRATE'
+                    dateStartActivity: '2001-01-02'
+                Sospesa:
                   value:
-                    idSubject: 'AAAZZZ00H00T000Z'
-                    valid: false
-                    message: "Not valid id subject"
-components:
+                    <<: *example_organizationId
+                    status: 'SOSPESA'
+                    dateStartSuspension: '2013-03-15'
+                Cessata:
+                  value:
+                    <<: *example_organizationId
+                    status: 'CESSATA'
+                    dateEndActivity: '1989-01-01'
+                GruppoIva:
+                  value:
+                    <<: *example_organizationId
+                    isOrganizationId: true
+                PartecipanteGruppoIva:
+                  value:
+                    <<: *example_organizationId
+                    isPartecipantOrganizationGroupId: true
+                    dateStartPartecipationOrganizationGroupId: '2018-10-27'
+                    organizationGroupId: '06363391001'
 
+components:
   schemas:
 
     DatapreparationTemplate:
       type: object
       properties:
-        idSubject:
-          $ref: '#/components/schemas/CodiceFiscale'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
 
     DataPreparationResponse:
       type: array
       items:
         type: object
         properties:
-          idSubject:
-            $ref: '#/components/schemas/CodiceFiscale'
+          organizationId:
+            $ref: '#/components/schemas/OrganizationId'
 
     Richiesta:
       type: object
       properties:
-        idSubject:
-          $ref: '#/components/schemas/CodiceFiscale'
-
-
-    CodiceFiscale:
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
+    OrganizationId:
       type: string
+      maxLength: 11
       minLength: 11
-      maxLength: 16
-      pattern: '^[0-9]{11}|(?:^(?:[A-Z][AEIOU][AEIOUX]|[B-DF-HJ-NP-TV-Z]{2}[A-Z]){2}(?:[\dLMNP-V]{2}(?:[A-EHLMPR-T](?:[04LQ][1-9MNP-V]|[15MR][\dLMNP-V]|[26NS][0-8LMNP-U])|[DHPS][37PT][0L]|[ACELMRT][37PT][01LM]|[AC-EHLMPR-T][26NS][9V])|(?:[02468LNQSU][048LQU]|[13579MPRTV][26NS])B[26NS][9V])(?:[A-MZ][1-9MNP-V][\dLMNP-V]{2}|[A-M][0L](?:[1-9MNP-V][\dLMNP-V]|[0L][1-9MNP-V]))[A-Z]$)'
-
+      pattern: '^[0-9]+'
       example: '06363391001'
-      description: 'it can take on an alphanumeric value of length 16 or a numeric value of length 11 (i.e. 06363391001)'
 
-
-    VerificaCodiceFiscale:
+    VerificaOrganizationId:
       type: object
       properties:
-        idSubject:
-          $ref: '#/components/schemas/CodiceFiscale'
+        organizationId:
+          $ref: '#/components/schemas/OrganizationId'
         valid:
           type: boolean
           example: true
-        message:
+        status:
           type: string
-          example: "Codice fiscale valido"
-          description: "messaggio congurente con il serivizio a libero accesso di verifica codice fiscale sul sito istituzionale"
-
-
-    
+          enum:
+            - ATTIVA
+            - CESSATA
+            - SOSPESA
+          example: 'ATTIVA'
+        denomination:
+          type: string
+          example: 'AGENZIA DELLE ENTRATE'
+        dateStartActivity:
+          type: string
+          format: date
+          example: '1982-05-22'
+        dateEndActivity:
+          type: string
+          format: date
+          example: '1982-05-22'
+        dateStartSuspension:
+          type: string
+          format: date
+          example: '1982-05-22'
+        isOrganizationId:
+          type: boolean
+          example: false
+        organizationGroupId:
+          $ref: '#/components/schemas/OrganizationId'
+        dateStartPartecipationOrganizationGroupId:
+          type: string
+          format: date
+          example: '1982-05-22'
+        isPartecipantOrganizationGroupId:
+          type: boolean
+          example: false
     Problem:
       properties:
         detail:
@@ -473,7 +519,7 @@ components:
           $ref: '#/components/headers/X-RateLimit-Remaining'
         X-RateLimit-Reset:
           $ref: '#/components/headers/X-RateLimit-Reset'
-    503ServiceUnavailable:
+    500InternalServerError:
       content:
         application/problem+json:
           schema:
