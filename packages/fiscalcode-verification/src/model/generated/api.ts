@@ -58,7 +58,7 @@ export const schemas = {
 const endpoints = makeApi([
   {
     method: "post",
-    path: "/fiscalcode-verification/check",
+    path: "/subject-id-verification/check",
     alias: "post_verifica_codiceFiscale",
     description: `Returns information about the validity of the input subject id
 `,
@@ -96,8 +96,8 @@ const endpoints = makeApi([
   },
   {
     method: "post",
-    path: "/fiscalcode-verification/data-preparation",
-    alias: "postFiscalcodeVerificationdataPreparation",
+    path: "/subject-id-verification/data-preparation",
+    alias: "postSubjectIdVerificationdataPreparation",
     description: `upload your valid subject id`,
     requestFormat: "json",
     parameters: [
@@ -128,8 +128,8 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/fiscalcode-verification/data-preparation",
-    alias: "getFiscalcodeVerificationdataPreparation",
+    path: "/subject-id-verification/data-preparation",
+    alias: "getSubjectIdVerificationdataPreparation",
     description: `upload the valid subject id`,
     requestFormat: "json",
     parameters: [
@@ -155,7 +155,7 @@ const endpoints = makeApi([
   },
   {
     method: "delete",
-    path: "/fiscalcode-verification/data-preparation",
+    path: "/subject-id-verification/data-preparation",
     alias: "reset",
     description: `Returns: 200 if successfully cleared.
 `,
@@ -186,8 +186,8 @@ const endpoints = makeApi([
   },
   {
     method: "post",
-    path: "/fiscalcode-verification/data-preparation/handshake",
-    alias: "postFiscalcodeVerificationdataPreparationhandshake",
+    path: "/subject-id-verification/data-preparation/handshake",
+    alias: "postSubjectIdVerificationdataPreparationhandshake",
     description: `Upload the certificate in .pem format along with two fields in the header.`,
     requestFormat: "form-data",
     parameters: [
@@ -216,8 +216,8 @@ const endpoints = makeApi([
   },
   {
     method: "post",
-    path: "/fiscalcode-verification/data-preparation/remove",
-    alias: "postFiscalcodeVerificationdataPreparationremove",
+    path: "/subject-id-verification/data-preparation/remove",
+    alias: "postSubjectIdVerificationdataPreparationremove",
     description: `deletes a previously entered subject id`,
     requestFormat: "json",
     parameters: [
@@ -248,7 +248,7 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/fiscalcode-verification/status",
+    path: "/subject-id-verification/status",
     alias: "get_status",
     description: `Returns the application status: 200 if it is working correctly
 or an error if the application is temporarily unavailable

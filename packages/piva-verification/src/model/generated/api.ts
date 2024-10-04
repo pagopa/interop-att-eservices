@@ -60,7 +60,7 @@ export const schemas = {
 const endpoints = makeApi([
   {
     method: "post",
-    path: "/organizationid-verification/check",
+    path: "/organization-id-verification/check",
     alias: "post_partita_organizationId",
     description: `Returns information on the validity of the organizationId
 and if successful, some personal information is added.
@@ -99,8 +99,8 @@ and if successful, some personal information is added.
   },
   {
     method: "post",
-    path: "/organizationid-verification/data-preparation",
-    alias: "postOrganizationidVerificationdataPreparation",
+    path: "/organization-id-verification/data-preparation",
+    alias: "postOrganizationIdVerificationdataPreparation",
     description: `Upload your organization&#x27;s use cases`,
     requestFormat: "json",
     parameters: [
@@ -131,8 +131,8 @@ and if successful, some personal information is added.
   },
   {
     method: "get",
-    path: "/organizationid-verification/data-preparation",
-    alias: "getOrganizationidVerificationdataPreparation",
+    path: "/organization-id-verification/data-preparation",
+    alias: "getOrganizationIdVerificationdataPreparation",
     description: `List of institution use cases`,
     requestFormat: "json",
     parameters: [
@@ -158,7 +158,7 @@ and if successful, some personal information is added.
   },
   {
     method: "delete",
-    path: "/organizationid-verification/data-preparation",
+    path: "/organization-id-verification/data-preparation",
     alias: "reset",
     description: `Returns the application status: 200 if it is working correctly
 or an error if the application is temporarily unavailable
@@ -191,8 +191,8 @@ for maintenance or a technical problem.
   },
   {
     method: "post",
-    path: "/organizationid-verification/data-preparation/handshake",
-    alias: "postOrganizationidVerificationdataPreparationhandshake",
+    path: "/organization-id-verification/data-preparation/handshake",
+    alias: "postOrganizationIdVerificationdataPreparationhandshake",
     description: `Upload the certificate in .pem format along with two fields in the header.`,
     requestFormat: "form-data",
     parameters: [
@@ -221,8 +221,8 @@ for maintenance or a technical problem.
   },
   {
     method: "post",
-    path: "/organizationid-verification/data-preparation/remove",
-    alias: "postOrganizationidVerificationdataPreparationremove",
+    path: "/organization-id-verification/data-preparation/remove",
+    alias: "postOrganizationIdVerificationdataPreparationremove",
     description: `It removes a specific use case`,
     requestFormat: "json",
     parameters: [
@@ -253,7 +253,7 @@ for maintenance or a technical problem.
   },
   {
     method: "get",
-    path: "/organizationid-verification/status",
+    path: "/organization-id-verification/status",
     alias: "get_status",
     description: `Returns the application status: 200 if it is working correctly
 or an error if the application is temporarily unavailable

@@ -20,7 +20,7 @@ const fiscalcodeVerificationRouter = (
   const fiscalcodeVerificationRouter = ctx.router(api.api);
 
   fiscalcodeVerificationRouter.post(
-    "/fiscalcode-verification/check",
+    "/subject-id-verification/check",
     // logHeadersMiddleware,
     contextDataFiscalCodeMiddleware,
     uniquexCorrelationIdMiddleware(),

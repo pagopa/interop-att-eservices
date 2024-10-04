@@ -21,7 +21,7 @@ const pivaVerificationRouter = (
   const pivaVerificationRouter = ctx.router(api.api);
 
   pivaVerificationRouter.post(
-    "/organizationid-verification/check",
+    "/organization-id-verification/check",
     logHeadersMiddleware,
     contextDataPivaMiddleware,
     uniquexCorrelationIdMiddleware(),

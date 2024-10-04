@@ -9,7 +9,7 @@ const healthRouter = (
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const healthRouter = ctx.router(api.api);
 
-  healthRouter.get("/fiscalcode-verification/status", async (req, res) => {
+  healthRouter.get("/subject-id-verification/status", async (req, res) => {
     if (!req) {
       return res.status(500);
     }
