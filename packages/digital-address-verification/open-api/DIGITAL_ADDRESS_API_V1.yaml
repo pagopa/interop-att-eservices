@@ -1,29 +1,29 @@
 openapi: 3.0.1
 info:
-  title:  Domicilio Digitale
+  title:  API Digital Address
   version: 1.0.0-SNAPSHOT
 tags:
-  - name: API ESTRAZIONI MULTIPLE
-  - name: API ESTRAZIONI PUNTUALI
+  - name: API Massive extractions
+  - name: API Single extractions
 servers:
   - url: http://eservices.att.interop.pagopa.it/
-    description: Ambiente di Attestazione
+    description: Attestation Environment
 paths:
   /digital-address-verification/status:
     get:
-      summary: Ritorna lo stato dell'applicazione.
+      summary: Returns the application state.
       description: |
-        Ritorna lo stato dell'applicazione: 200 se funziona correttamente
-        o un errore se l'applicazione è temporaneamente indisponibile
-        per manutenzione o per un problema tecnico.
+        Returns the application state: 200 if it works correctly
+        or an error if the application is temporarily unavailable
+        for maintenance or a technical problem.
       operationId: get_status
       tags:
-        - INFRASTRUCTURE
+        - HealthCheck
       responses:
         '200':
           description: |
-            Il server ha ritornato lo status. In caso di problemi
-            ritorna sempre un problem+json.
+            The server has returned to status. In case of problems
+            always returns a problem+json.
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -40,9 +40,9 @@ paths:
   /digital-address-verification/data-preparation:
     post:
       tags:
-        - DATA PREPARATION
-      description: Inserimento dati per la dataPreparation
-      operationId: dataPreparationlencoDomiciliDigitali
+        - Data Preparation
+      description: Data entry for dataPreparation
+      operationId: dataPreparationlListDigitalAddress
       requestBody:
         content:
           application/json:
@@ -51,7 +51,7 @@ paths:
         required: true
       responses:
         '200':
-          description: Richiesta completata con successo.
+          description: Request completed successfully.
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -66,12 +66,12 @@ paths:
           $ref: '#/components/responses/503'
     get:
       tags:
-        - DATA PREPARATION
-      description: Recupero dati inseriti con la dataPreparation
+        - Data Preparation
+      description: Retrieval of data inserted with dataPreparation
       operationId: getDataPreparationElencoDomiciliDigitali
       responses:
         '200':
-          description: Richiesta completata con successo.
+          description: Request completed successfully.
           content:
             application/json:
               schema:
@@ -90,12 +90,12 @@ paths:
           $ref: '#/components/responses/503'
     delete:
       tags:
-        - DATA PREPARATION
-      description: Cancellazione di tutti i dati inseriti con la dataPreparation
+        - Data Preparation
+      description: Deletion of all data entered with dataPreparation
       operationId: dataPreparationDeleteDomiciliDigitali
       responses:
         '202':
-          description: Richiesta completata con successo.
+          description: Request completed successfully.
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -108,22 +108,22 @@ paths:
           $ref: '#/components/responses/500'
         '503':
           $ref: '#/components/responses/503'
-  /digital-address-verification/data-preparation/{codiceFiscale}:
+  /digital-address-verification/data-preparation/{idSubject}:
     get:
       tags:
-        - DATA PREPARATION
-      description: Recupero dati inseriti con la dataPreparation
+        - Data Preparation
+      description: Retrieval of data inserted with dataPreparation
       operationId: getDataPreparationElencoDomiciliDigitaliDetails
       parameters:
-        - name: codiceFiscale
+        - name: idSubject
           in: path
           required: true
-          description: L'ID dell'oggetto da restituire
+          description: The ID of the object to return
           schema:
             type: string
       responses:
         '200':
-          description: Richiesta completata con successo.
+          description: Request completed successfully.
           content:
             application/json:
               schema:
@@ -142,19 +142,19 @@ paths:
           $ref: '#/components/responses/503'
     delete:
       tags:
-        - DATA PREPARATION
-      description: Cancellazione dei dati inseriti con la dataPreparation per il codice fiscale specificato
-      operationId: deleteDataPreparationElencoDomiciliDigitali
+        - Data Preparation
+      description: Deletion of data entered with dataPreparation for the specified idSubject
+      operationId: deleteDataPreparationListDigitalAddress
       parameters:
-        - name: codiceFiscale
+        - name: idSubject
           in: path
           required: true
-          description: Il codice fiscale dell'oggetto da eliminare
+          description: The idSubject of the object to be deleted
           schema:
             type: string
       responses:
         '200':
-          description: Richiesta completata con successo.
+          description: Request completed successfully.
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -168,12 +168,12 @@ paths:
         '503':
           $ref: '#/components/responses/503'
           
-  /digital-address-verification/listDigitalAddress:
+  /digital-address-verification/list:
     post:
       tags:
-        - API ESTRAZIONI MULTIPLE
-      description: Consente di inserire una richiesta di estrazione di domicili digitali a partire dall'elenco di codici fiscali forniti (fino ad un massimo di 1.000). Per ogni codice fiscale si ottiene il domicilio digitale corrispondente al momento dell'estrazione e, in caso di domicilio digitale eletto in qualità di Professionista, anche l'attività professionale esercitata. L'elaborazione della richiesta è asincrona. L'elenco, identificato da un codice univoco, è reso disponibile mediante un servizio di recupero.
-      operationId: richiestaElencoDomiciliDigitali
+        - API Massive extractions
+      description: Allows you to send a request to extract digital addresses starting from the list of subject IDs provided (up to a maximum of 1,000 subject IDs). For each subject ID you obtain the relevant digital address found at the time of extraction and, in the case of a digital address as a Professional, the professional activity carried out will also be returned. Request processing is carried out in asynchronous mode. The list, identified by a unique code, is made available through a recovery service.
+      operationId: requestListDigitalAddresses
       requestBody:
         content:
           application/json:
@@ -182,7 +182,7 @@ paths:
         required: true
       responses:
         '202':
-          description: JSON di risposta attraverso il quale l'Erogatore fornisce, insieme all'acknowledgement della richiesta, l'URL per interrogare lo stato di processamento utilizzando l'<i>HTTP header Location</i>. L'elenco è individuato da un codice identificativo univoco.
+          description: JSON response through which the Provider provides, together with the acknowledgment of the request, the URL to query the processing status using the <i>HTTP header Location</i>. The list is identified by a unique identification code.
           headers:
             Location:
               $ref: '#/components/headers/Location'
@@ -202,44 +202,44 @@ paths:
           $ref: '#/components/responses/500'
         '503':
           $ref: '#/components/responses/503'
-  /digital-address-verification/verify/{codice_fiscale}:
+  /digital-address-verification/verify/{id_subject}:
     get:
       tags:
-        - API ESTRAZIONI PUNTUALI
-      description: Fornito in input il domicilio digitale, codice fiscale e data, il servizio consente di verificare se, alla data indicata, il domicilio digitale era associato al codice fiscale indicato.
-      operationId: verificaDomicilioDigitale
+        - API Single extractions
+      description: By providing the digital address, subject ID, and date as input, the service allows you to verify if, on the specified date, the digital address was associated with the indicated subject ID
+      operationId: checkDigitalAdrress
       parameters:
-        - name: codice_fiscale
+        - name: id_subject
           in: path
-          description: Codice fiscale per il quale si effettua la ricerca
+          description: subject id for which you are looking for
           required: true
           schema:
             $ref: '#/components/schemas/CodiceFiscale'
-          example: RRANGL74M28R701V
+          example: VRANGL74M28R701X
         - name: digital_address
           in: query
-          description: Indirizzo PEC del Domicilio da ricercare
+          description: PEC address of the address to search for
           required: true
           schema:
             $ref: '#/components/schemas/Digital_Address'
           example: example@pec.it
-        - name: since
+        - name: from
           in: query
-          description: Data in formato ISO 8601 <i>yyyy-MM-dd</i>
+          description: Date in ISO 8601 format <i>yyyy-MM-dd</i>
           required: true
           schema:
             type: string
             format: date
           example: '2017-07-21'
-        - name: practicalReference
+        - name: idPractice
           in: query
-          description: Riferimento del procedimento amministrativo per il quale si richiede l'estrazione
+          description: Reference of the administrative procedure for which the extraction is requested
           required: true
           schema:
             $ref: '#/components/schemas/PracticalReference'
       responses:
         '200':
-          description: JSON di risposta che restituisce l'esito della verifica del domicilio digitale associato (<i>true</i>) o non associato (<i>false</i>).
+          description: Response JSON that returns the result of the verification of the associated (<i>true</i>) or non-associated (<i>false</i>) digital address.
           content:
             application/json:
               schema:
@@ -256,31 +256,31 @@ paths:
           $ref: '#/components/responses/500'
         '503':
           $ref: '#/components/responses/503'
-  /digital-address-verification/listDigitalAddress/state/{id}:
+  /digital-address-verification/list/state/{id}:
     get:
       tags:
-        - API ESTRAZIONI MULTIPLE
-      description: Consente di verificare lo stato del processamento della richiesta dell'elenco dei domicili digitali individuato dal codice identificativo univoco.
+        - API Massive extractions
+      description: It allows you to check the processing status of the request for the list of digital addresses, identified by a unique code
       operationId: verificaStatoRichiestaElencoDomiciliDigitali
       parameters:
         - name: id
           in: path
-          description: Codice univoco della richiesta di elaborazione Report
+          description: Unique code of the Report processing request
           required: true
           schema:
             $ref: '#/components/schemas/UUID'
       responses:
         '200':
-          description: JSON di risposta attraverso il quale l'Erogatore indica, sulla base dello stato del processamento, che l'operazione non è completata.
+          description: Response JSON through which the Provider indicates, based on the processing status, that the operation is not completed.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Response_Status_List_Digital_Address'
               example:
                 state: IN_ELABORAZIONE
-                message: Richiesta elenco in elaborazione
+                message: List request in progress state
         '303':
-          description: JSON di risposta attraverso il quale l'Erogatore indica, sulla base dello stato del processamento, che l'elenco è pronto all'URL indicato nell'<i>HTTP header Location</i>.
+          description: The response JSON through which the Provider indicates, based on the processing status, that the list is ready at the URL specified in the <i>HTTP Location header</i>.
           headers:
             Location:
               $ref: '#/components/headers/Location'
@@ -290,7 +290,7 @@ paths:
                 $ref: '#/components/schemas/Response_Status_List_Digital_Address'
               example:
                 state: DISPONIBILE
-                message: Richiesta elenco disponibile
+                message: Request list available
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -303,22 +303,22 @@ paths:
           $ref: '#/components/responses/500'
         '503':
           $ref: '#/components/responses/503'
-  /digital-address-verification/listDigitalAddress/response/{id}:
+  /digital-address-verification/list/response/{id}:
     get:
       tags:
-        - API ESTRAZIONI MULTIPLE
-      description: Consente di recuperare l'elenco dei domicili digitali individuato dal codice identificativo univoco.
-      operationId: recuperoElencoDomiciliDigitali
+        - API Massive extractions
+      description: Allows you to retrieve the list of digital domiciles identified by the unique identification code.
+      operationId: recoveryListDigitalAddresses
       parameters:
         - name: id
           in: path
-          description: Codice univoco della richiesta di elaborazione Report
+          description: Unique code of the Report processing request
           required: true
           schema:
             $ref: '#/components/schemas/UUID'
       responses:
         '200':
-          description: Risposta di tipo JSON che rappresenta l'elenco dei domicili digitali estratti. I codici fiscali per i quali non è presente il domicilio digitale sono comunque indicati nella risposta con informazione non valorizzata. L'elenco è reso disponibile per un massimo di 48 ore, trascorse le quali l'elenco viene cancellato.
+          description: A JSON response containing the list of extracted digital addresses. The tax codes for which a digital address is not available are still included in the response, with the corresponding field left unpopulated. The list is available for up to 48 hours, after which it is deleted.
           content:
             application/json:
               schema:
@@ -335,29 +335,29 @@ paths:
           $ref: '#/components/responses/500'
         '503':
           $ref: '#/components/responses/503'
-  /digital-address-verification/extract/{codice_fiscale}:
+  /digital-address-verification/retrieve/{id_subject}:
     get:
       tags:
-        - API ESTRAZIONI PUNTUALI
-      description: Consente di ottenere il domicilio digitale corrispondente al codice fiscale al momento della consultazione e, in caso di domicilio digitale eletto in qualità di Professionista, anche l'attività professionale esercitata.
-      operationId: recuperoDomicilioDigitale
+        - API Single extractions
+      description: It allows you to retrieve the digital address associated with the subject's ID at the time of consultation and, if the digital address has been selected as a Professional, also the details regarding the professional activity carried out.
+      operationId: retrieveDigitalAddress
       parameters:
-        - name: codice_fiscale
+        - name: id_subject
           in: path
-          description: Codice fiscale per il quale si effettua la ricerca
+          description: subject id for which you are searching
           required: true
           schema:
             $ref: '#/components/schemas/CodiceFiscale'
-          example: RRANGL74M28R701V
+          example: VRANGL74M28R701X
         - name: practicalReference
           in: query
-          description: Riferimento del procedimento amministrativo per il quale si richiede l'estrazione
+          description: Reference of the procedure for which the extraction is requested
           required: true
           schema:
             $ref: '#/components/schemas/PracticalReference'
       responses:
         '200':
-          description: JSON di risposta che restituisce il domicilio digitale estratto. Per domicilio digitale eletto in qualità di Professionista è estratta anche l'attività professionale esercitata.
+          description: Response JSON that returns the extracted digital address. For the digital address chosen as a Professional, the professional activity carried out is also extracted.
           content:
             application/json:
               schema:
@@ -384,7 +384,7 @@ components:
       properties:
         status:
           type: string
-          description: Codice di errore
+          description: Error code
           example: <HTTP_CODE>
           enum:
             - '400'
@@ -395,7 +395,7 @@ components:
             - '503'
         type:
           type: string
-          description: Tipologia di errore
+          description: Type of error
           example: <HTTP_STATUS>
           enum:
             - BAD_REQUEST
@@ -406,12 +406,12 @@ components:
             - SERVICE_UNAVAILABLE
         detail:
           type: string
-          description: Descrizione di dettaglio dello specifico problema verificatosi
+          description: Detailed description of the specific problem that occurred
           example: <detail_error>
-      description: Modello di risposta in caso di errore
+      description: Error response template
     Response_Request_List_Digital_Address:
       required:
-        - dateTimeRequest
+        - requestTimestamp
         - id
         - message
         - state
@@ -421,73 +421,73 @@ components:
           $ref: '#/components/schemas/Status_Processing_Request'
         message:
           type: string
-          description: Messaggio di conferma dell'avvenuta presa in carico della richiesta
-          example: Richiesta elenco presa in carico
+          description: Confirmation message that the request has been processed
+          example: List request
         id:
           $ref: '#/components/schemas/UUID'
-        dateTimeRequest:
+        requestTimestamp:
           type: string
-          description: Data/Ora di inserimento della richiesta in formato ISO 8601 <yyyy-MM-dd'T'HH:mm:ssZ>
+          description: Date/Time of entry of the request in ISO 8601 format <yyyy-MM-dd'T'HH:mm:ssZ>
           format: date-time
           example: '2017-07-21T17:32:28Z'
-      description: Modello di risposta per Richiesta Elenco Domicili Digitali
+      description: Response template for Digital Address List Request
     Request_List_Digital_Address:
       required:
-        - codiciFiscali
-        - praticalReference
+        - idSubjects
+        - idRequest
       type: object
       properties:
-        codiciFiscali:
+        idSubjects:
           type: array
           items:
             $ref: '#/components/schemas/CodiceFiscale'
-        praticalReference:
+        idRequest:
           $ref: '#/components/schemas/PracticalReference'
-      description: Modello di richiesta per Elenco Domicili Digitali
+      description: Request form for Digital Domicile List
     Response_Verify_Digital_Address:
       required:
-        - dateTimeCheck
-        - outcome
+        - timestampCheck
+        - result
       type: object
       properties:
-        outcome:
+        result:
           type: boolean
-          description: Esito della verifica
+          description: Result of the check
           example: true
-        dateTimeCheck:
+        timestampCheck:
           type: string
-          description: Data/Ora estrazione in formato ISO 8601 <yyyy-MM-dd'T'HH:mm:ssZ>
+          description: Date/Time extraction in ISO 8601 format <yyyy-MM-dd'T'HH:mm:ssZ>
           format: date-time
           example: '2017-07-21T17:32:28Z'
-      description: Modello di risposta per Verifica Domicilio Digitale
+      description: Answer template for Digital Address Verification
     Response_Status_List_Digital_Address:
       required:
         - message
-        - state
+        - status
       type: object
       properties:
-        state:
+        status:
           $ref: '#/components/schemas/Status_Processing_Request'
         message:
           type: string
-          description: Messaggio descrittivo dello stato della richiesta
-          example: Richiesta elenco in fase di processamento
-      description: Modello di risposta per Stato Richiesta Elenco Domicili Digitali
+          description: Descriptive message of the status of the request
+          example: List request being processed
+      description: Response template for Digital Address List Request Status
     Element_Digital_Address:
       required:
         - digitalAddress
-        - usageInfo
+        - information
       type: object
       properties:
         digitalAddress:
           $ref: '#/components/schemas/Digital_Address'
-        practicedProfession:
+        profession:
           type: string
-          description: Professione esercitata. Non presente per Persona Fisica/Ente
-          example: Avvocato
-        usageInfo:
+          description: Profession. Field not present for Individual/Entity
+          example: Doctor
+        information:
           $ref: '#/components/schemas/Usage_Info'
-      description: Modello di risposta per singolo Domicilio Digitale
+      description: Response model for single digital address
     Response_List_Digital_Address:
       required:
         - list
@@ -495,79 +495,79 @@ components:
       properties:
         list:
           type: array
-          description: Elenco Domicili Digitali estratti
+          description: List of extracted Digital Domiciles
           items:
             $ref: '#/components/schemas/Response_Request_Digital_Address'
-      description: Modello di risposta per Elenco Domicili Digitali
+      description: Answer template for Digital Domicile List
     Response_Request_Digital_Address:
       required:
-        - codiceFiscale
+        - idSubject
         - digitalAddress
-        - since
+        - from
       type: object
       properties:
-        codiceFiscale:
+        idSubject:
           $ref: '#/components/schemas/CodiceFiscale'
-        since:
+        from:
           type: string
-          description: Data/Ora estrazione in formato ISO 8601 <yyyy-MM-dd'T'HH:mm:ssZ>
+          description: Date/Time extraction in ISO 8601 format <yyyy-MM-dd'T'HH:mm:ssZ>
           format: date-time
           example: '2017-07-21T17:32:28Z'
         digitalAddress:
           type: array
-          description: Elenco Domicili Digitali afferenti al Codice Fiscale di Input
+          description: List of Digital Domiciles relating to the Input subject id
           items:
             $ref: '#/components/schemas/Element_Digital_Address'
-      description: Modello di risposta per Ricerca Domicilio Digitale
+      description: Answer template for Digital Address Search
     
     Response_List_Request_Digital_Address:
       required:
-        - codiceFiscale
+        - idSubject
         - digitalAddress
-        - since
+        - from
       type: object
       properties:
         data:
           type: array
           items:
             $ref: '#/components/schemas/Response_Request_Digital_Address'
-      description: Modello di risposta per Elenco Domicili Digitali
+      description: Answer template for Digital Address List
     
     Usage_Info:
       required:
-        - dateEndValidity
-        - motivation
+        - endDate
+        - reason
       type: object
       properties:
-        motivation:
+        reason:
           $ref: '#/components/schemas/Motivation_Termination'
-        dateEndValidity:
+        endDate:
           type: string
-          description: Data/Ora fine validità in formato ISO 8601 <yyyy-MM-dd'T'HH:mm:ssZ>
+          description: End of validity date/time in ISO 8601 format <yyyy-MM-dd'T'HH:mm:ssZ>
           format: date-time
           example: '2017-07-21T17:32:28Z'
-      description: Modello di risposta Info Utilizzo per singolo Domicilio Digitale
+      description: Response template Info Use for single digital address
     CodiceFiscale:
       pattern: ^([0-9]{11})|([A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1})$
       type: string
-      description: Codice Fiscale/Partita IVA relativa al Domicilio Digitale
-      example: RRANGL74M28R701V
+      description: tax code/VAT number relating to the digital address
+      example: VRANGL74M28R701X
     PracticalReference:
       type: string
-      description: Riferimento del procedimento amministrativo per il quale si richiede l'estrazione
+      description: Reference of the administrative procedure for which the extraction is requested
       example: abc123
     Digital_Address:
       pattern: ^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$
       type: string
-      description: Indirizzo PEC del Domicilio Digitale
+      description: PEC address
       example: example@pec.it
     UUID:
       maxLength: 40
       minLength: 20
       pattern: ^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$
       type: string
-      description: Codice univoco della richiesta di elaborazione Report
-      example: f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454
+      description: Unique code of the Report processing request
+      example: d9c3de3d-1fea-4f5c-a8b0-29f63c4c3455
     Status_Processing_Request:
       type: string
       description: Stato della richiesta di elaborazione Report
@@ -578,7 +578,7 @@ components:
         - DISPONIBILE
     Motivation_Termination:
       type: string
-      description: Motivazione cessazione del Domicilio Digitale
+      description: Reason for termination of the Digital address
       example: CESSAZIONE_VOLONTARIA
       enum:
         - CESSAZIONE_UFFICIO
@@ -622,7 +622,7 @@ components:
             $ref: '#/components/schemas/Errore'
   headers:
     Location:
-      description: URL dove verificare lo stato
+      description: URL to check the status
       schema:
         type: string
         format: uri
@@ -631,6 +631,6 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: Implementazione conforme ad RFC8725. Contiene il JWT recuperato da PDND interoperabilità applicando le Linee Guida sull'infrastruttura tecnologica della Piattaforma Digitale Nazionale Dati per l'interoperabilità dei sistemi informativi e delle basi di dati ai sensi dell'articolo 50-ter, comma 2 del CAD
+      description: RFC8725 compliant implementation. Contains the JWT recovered from PDND interoperability by applying the Guidelines on the technological infrastructure of the National Digital Data Platform for the interoperability of information systems and databases pursuant to article 50-ter, paragraph 2 of the CAD
 security:
   - bearerAuth: []

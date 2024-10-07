@@ -4,7 +4,7 @@ import { z } from "zod";
 const CodiceFiscale = z.string();
 const DatapreparationTemplate = z
   .object({
-    codiceFiscale: CodiceFiscale.min(11)
+    idSubject: CodiceFiscale.min(11)
       .max(16)
       .regex(
         /^[0-9]{11}|(?:^(?:[A-Z][AEIOU][AEIOUX]|[B-DF-HJ-NP-TV-Z]{2}[A-Z]){2}(?:[\dLMNP-V]{2}(?:[A-EHLMPR-T](?:[04LQ][1-9MNP-V]|[15MR][\dLMNP-V]|[26NS][0-8LMNP-U])|[DHPS][37PT][0L]|[ACELMRT][37PT][01LM]|[AC-EHLMPR-T][26NS][9V])|(?:[02468LNQSU][048LQU]|[13579MPRTV][26NS])B[26NS][9V])(?:[A-MZ][1-9MNP-V][\dLMNP-V]{2}|[A-M][0L](?:[1-9MNP-V][\dLMNP-V]|[0L][1-9MNP-V]))[A-Z]$)/
@@ -15,7 +15,7 @@ const DatapreparationTemplate = z
 const DataPreparationResponse = z.array(
   z
     .object({
-      codiceFiscale: CodiceFiscale.min(11)
+      idSubject: CodiceFiscale.min(11)
         .max(16)
         .regex(
           /^[0-9]{11}|(?:^(?:[A-Z][AEIOU][AEIOUX]|[B-DF-HJ-NP-TV-Z]{2}[A-Z]){2}(?:[\dLMNP-V]{2}(?:[A-EHLMPR-T](?:[04LQ][1-9MNP-V]|[15MR][\dLMNP-V]|[26NS][0-8LMNP-U])|[DHPS][37PT][0L]|[ACELMRT][37PT][01LM]|[AC-EHLMPR-T][26NS][9V])|(?:[02468LNQSU][048LQU]|[13579MPRTV][26NS])B[26NS][9V])(?:[A-MZ][1-9MNP-V][\dLMNP-V]{2}|[A-M][0L](?:[1-9MNP-V][\dLMNP-V]|[0L][1-9MNP-V]))[A-Z]$)/
@@ -26,7 +26,7 @@ const DataPreparationResponse = z.array(
 );
 const Richiesta = z
   .object({
-    codiceFiscale: CodiceFiscale.min(11)
+    idSubject: CodiceFiscale.min(11)
       .max(16)
       .regex(
         /^[0-9]{11}|(?:^(?:[A-Z][AEIOU][AEIOUX]|[B-DF-HJ-NP-TV-Z]{2}[A-Z]){2}(?:[\dLMNP-V]{2}(?:[A-EHLMPR-T](?:[04LQ][1-9MNP-V]|[15MR][\dLMNP-V]|[26NS][0-8LMNP-U])|[DHPS][37PT][0L]|[ACELMRT][37PT][01LM]|[AC-EHLMPR-T][26NS][9V])|(?:[02468LNQSU][048LQU]|[13579MPRTV][26NS])B[26NS][9V])(?:[A-MZ][1-9MNP-V][\dLMNP-V]{2}|[A-M][0L](?:[1-9MNP-V][\dLMNP-V]|[0L][1-9MNP-V]))[A-Z]$)/
@@ -36,13 +36,13 @@ const Richiesta = z
   .passthrough();
 const VerificaCodiceFiscale = z
   .object({
-    codiceFiscale: CodiceFiscale.min(11)
+    idSubject: CodiceFiscale.min(11)
       .max(16)
       .regex(
         /^[0-9]{11}|(?:^(?:[A-Z][AEIOU][AEIOUX]|[B-DF-HJ-NP-TV-Z]{2}[A-Z]){2}(?:[\dLMNP-V]{2}(?:[A-EHLMPR-T](?:[04LQ][1-9MNP-V]|[15MR][\dLMNP-V]|[26NS][0-8LMNP-U])|[DHPS][37PT][0L]|[ACELMRT][37PT][01LM]|[AC-EHLMPR-T][26NS][9V])|(?:[02468LNQSU][048LQU]|[13579MPRTV][26NS])B[26NS][9V])(?:[A-MZ][1-9MNP-V][\dLMNP-V]{2}|[A-M][0L](?:[1-9MNP-V][\dLMNP-V]|[0L][1-9MNP-V]))[A-Z]$)/
       ),
-    valido: z.boolean(),
-    messaggio: z.string(),
+    valid: z.boolean(),
+    message: z.string(),
   })
   .partial()
   .passthrough();
@@ -58,9 +58,47 @@ export const schemas = {
 const endpoints = makeApi([
   {
     method: "post",
-    path: "/fiscalcode-verification/data-preparation",
-    alias: "postFiscalcodeVerificationdataPreparation",
-    description: `carica il codice fiscale valido`,
+    path: "/subject-id-verification/check",
+    alias: "post_verifica_codiceFiscale",
+    description: `Returns information about the validity of the input subject id
+`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: Richiesta,
+      },
+    ],
+    response: VerificaCodiceFiscale,
+    errors: [
+      {
+        status: 400,
+        description: `Bad Request`,
+        schema: z.void(),
+      },
+      {
+        status: 401,
+        description: `Not authorized`,
+        schema: z.void(),
+      },
+      {
+        status: 429,
+        description: `Too many requests`,
+        schema: z.void(),
+      },
+      {
+        status: 503,
+        description: `Service Unavailable`,
+        schema: z.void(),
+      },
+    ],
+  },
+  {
+    method: "post",
+    path: "/subject-id-verification/data-preparation",
+    alias: "postSubjectIdVerificationdataPreparation",
+    description: `upload your valid subject id`,
     requestFormat: "json",
     parameters: [
       {
@@ -90,9 +128,9 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/fiscalcode-verification/data-preparation",
-    alias: "getFiscalcodeVerificationdataPreparation",
-    description: `carica il codice fiscale valido`,
+    path: "/subject-id-verification/data-preparation",
+    alias: "getSubjectIdVerificationdataPreparation",
+    description: `upload the valid subject id`,
     requestFormat: "json",
     parameters: [
       {
@@ -117,9 +155,9 @@ const endpoints = makeApi([
   },
   {
     method: "delete",
-    path: "/fiscalcode-verification/data-preparation",
+    path: "/subject-id-verification/data-preparation",
     alias: "reset",
-    description: `Ritorna: 200 se sono stati correttamente cancellati.
+    description: `Returns: 200 if successfully cleared.
 `,
     requestFormat: "json",
     response: z.void(),
@@ -148,9 +186,9 @@ const endpoints = makeApi([
   },
   {
     method: "post",
-    path: "/fiscalcode-verification/data-preparation/handshake",
-    alias: "postFiscalcodeVerificationdataPreparationhandshake",
-    description: `Carica il certificato nel formato .pem insieme a due campi nell&#x27;header.`,
+    path: "/subject-id-verification/data-preparation/handshake",
+    alias: "postSubjectIdVerificationdataPreparationhandshake",
+    description: `Upload the certificate in .pem format along with two fields in the header.`,
     requestFormat: "form-data",
     parameters: [
       {
@@ -178,9 +216,9 @@ const endpoints = makeApi([
   },
   {
     method: "post",
-    path: "/fiscalcode-verification/data-preparation/remove",
-    alias: "postFiscalcodeVerificationdataPreparationremove",
-    description: `cancella un codice fiscale precedentemente inserito`,
+    path: "/subject-id-verification/data-preparation/remove",
+    alias: "postSubjectIdVerificationdataPreparationremove",
+    description: `deletes a previously entered subject id`,
     requestFormat: "json",
     parameters: [
       {
@@ -210,52 +248,14 @@ const endpoints = makeApi([
   },
   {
     method: "get",
-    path: "/fiscalcode-verification/status",
+    path: "/subject-id-verification/status",
     alias: "get_status",
-    description: `Ritorna lo stato dell&#x27;applicazione: 200 se funziona correttamente
-o un errore se l&#x27;applicazione è temporaneamente indisponibile
-per manutenzione o per un problema tecnico.
+    description: `Returns the application status: 200 if it is working correctly
+or an error if the application is temporarily unavailable
+for maintenance or a technical problem.
 `,
     requestFormat: "json",
     response: z.void(),
-    errors: [
-      {
-        status: 400,
-        description: `Bad Request`,
-        schema: z.void(),
-      },
-      {
-        status: 401,
-        description: `Not authorized`,
-        schema: z.void(),
-      },
-      {
-        status: 429,
-        description: `Too many requests`,
-        schema: z.void(),
-      },
-      {
-        status: 503,
-        description: `Service Unavailable`,
-        schema: z.void(),
-      },
-    ],
-  },
-  {
-    method: "post",
-    path: "/fiscalcode-verification/verifica",
-    alias: "post_verifica_codiceFiscale",
-    description: `Ritorna informazioni circa la validità del codice fiscale in input
-`,
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "body",
-        type: "Body",
-        schema: Richiesta,
-      },
-    ],
-    response: VerificaCodiceFiscale,
     errors: [
       {
         status: 400,

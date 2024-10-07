@@ -27,14 +27,14 @@ export const partitaIvaModelToVerificaPartitaIva = (
   if (partitaIva !== undefined && partitaIva !== null) {
     return {
       organizationId: partitaIva.organizationId || "",
-      valido: isValid,
-      messaggio: message,
+      valid: isValid,
+      message,
     };
   } else {
     return {
       organizationId: partitaIvaNotFound,
-      valido: isValid,
-      messaggio: message,
+      valid: isValid,
+      message,
     };
   }
 };

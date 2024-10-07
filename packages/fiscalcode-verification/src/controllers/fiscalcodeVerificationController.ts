@@ -10,9 +10,9 @@ class FiscalcodeVerificationController {
     request: Richiesta
   ): Promise<VerificaCodiceFiscale> {
     try {
-      if (request.codiceFiscale) {
+      if (request.idSubject) {
         const data = await FiscalcodeVerificationService.getByFiscalCode(
-          request.codiceFiscale
+          request.idSubject
         );
         const result: VerificaCodiceFiscale = {
           // idOperazione: request.idOperazioneClient,

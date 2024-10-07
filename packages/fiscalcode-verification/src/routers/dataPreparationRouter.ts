@@ -19,7 +19,7 @@ const dataPreparationRouter = (
   const dataPreparationRouter = ctx.router(api.api);
 
   dataPreparationRouter.post(
-    "/fiscalcode-verification/data-preparation",
+    "/subject-id-verification/data-preparation",
     contextDataFiscalCodeMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -36,7 +36,7 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.get(
-    "/fiscalcode-verification/data-preparation",
+    "/subject-id-verification/data-preparation",
     contextDataFiscalCodeMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -57,7 +57,7 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.delete(
-    "/fiscalcode-verification/data-preparation",
+    "/subject-id-verification/data-preparation",
     contextDataFiscalCodeMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -80,7 +80,7 @@ const dataPreparationRouter = (
   );
   /* eslint-disable */
   dataPreparationRouter.post(
-    "/fiscalcode-verification/data-preparation/remove",
+    "/subject-id-verification/data-preparation/remove",
     contextDataFiscalCodeMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {

@@ -74,8 +74,8 @@ export function convertStringToResponseRequestDigitalAddress(
 
     return {
       digitalAddress: parsed.digitalAddress,
-      codiceFiscale: parsed.codiceFiscale,
-      since: parsed.since,
+      idSubject: parsed.idSubject,
+      from: parsed.from,
     };
   } catch (error) {
     logger.error(`Error parsing JSON string: ${error}`);

@@ -8,7 +8,7 @@ import {
 export const apiDatapreparationTemplateToFiscalcodeModel = (
   template: DatapreparationTemplate | undefined
 ): FiscalcodeModel => ({
-  fiscalCode: template?.codiceFiscale || "",
+  fiscalCode: template?.idSubject || "",
 });
 
 /* export const apiFiscalcodeModelToDataPreparationResponse = (
@@ -28,7 +28,7 @@ export const apiFiscalcodeModelToDataPreparationResponse = (
   fiscalCodes: FiscalcodeModel[] | undefined
 ): DataPreparationResponse =>
   fiscalCodes?.map((fiscalCode) => ({
-    codiceFiscale: fiscalCode.fiscalCode,
+    idSubject: fiscalCode.fiscalCode,
   })) || [];
 export const fiscalcodeModelToVerificaCodiceFiscale = (
   fiscalCode: FiscalcodeModel | undefined | null,
@@ -38,15 +38,15 @@ export const fiscalcodeModelToVerificaCodiceFiscale = (
 ): VerificaCodiceFiscale | null => {
   if (fiscalCode !== undefined && fiscalCode !== null) {
     return {
-      fiscalCode: fiscalCode.fiscalCode || "",
-      valido: isValid,
-      messaggio: message,
+      idSubject: fiscalCode.fiscalCode || "",
+      valid: isValid,
+      message,
     };
   } else {
     return {
-      fiscalCode: fiscalCodeNotFound,
-      valido: isValid,
-      messaggio: message,
+      idSubject: fiscalCodeNotFound,
+      valid: isValid,
+      message,
     };
   }
 };

@@ -64,7 +64,7 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.get(
-    "/digital-address-verification/data-preparation/:codiceFiscale",
+    "/digital-address-verification/data-preparation/:idSubject",
     contextDataDigitalAddressMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -73,7 +73,7 @@ const dataPreparationRouter = (
           throw ErrorHandling.invalidApiRequest();
         }
         const data = await DataPreparationService.findByFiscalCode(
-          req.params.codiceFiscale
+          req.params.idSubject
         );
 
         const result = data
@@ -117,7 +117,7 @@ const dataPreparationRouter = (
     }
   );
   dataPreparationRouter.delete(
-    "/digital-address-verification/data-preparation/:codiceFiscale",
+    "/digital-address-verification/data-preparation/:idSubject",
     contextDataDigitalAddressMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -125,9 +125,7 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        await DataPreparationService.deleteByFiscalCode(
-          req.params.codiceFiscale
-        );
+        await DataPreparationService.deleteByFiscalCode(req.params.idSubject);
         return res.status(200).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);

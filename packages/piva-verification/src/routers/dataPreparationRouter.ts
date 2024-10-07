@@ -19,7 +19,7 @@ const dataPreparationRouter = (
   const dataPreparationRouter = ctx.router(api.api);
 
   dataPreparationRouter.post(
-    "/organizationid-verification/data-preparation",
+    "/organization-id-verification/data-preparation",
     contextDataPivaMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -36,7 +36,7 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.get(
-    "/organizationid-verification/data-preparation",
+    "/organization-id-verification/data-preparation",
     contextDataPivaMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -57,7 +57,7 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.delete(
-    "/organizationid-verification/data-preparation",
+    "/organization-id-verification/data-preparation",
     contextDataPivaMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -80,7 +80,7 @@ const dataPreparationRouter = (
   );
   /* eslint-disable */
   dataPreparationRouter.post(
-    "/organizationid-verification/data-preparation/remove",
+    "/organization-id-verification/data-preparation/remove",
     contextDataPivaMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {

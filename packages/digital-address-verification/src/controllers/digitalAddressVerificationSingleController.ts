@@ -11,13 +11,13 @@ class DigitalAddressVerificationSingleController {
   public appContext = getContext();
 
   public async verify(
-    codiceFiscale: string,
+    idSubject: string,
     digitalAddress: string,
-    since: string
+    from: string
   ): Promise<ResponseVerifyDigitalAddress> {
     try {
       const richiesta = await DataPreparationService.findByFiscalCode(
-        codiceFiscale
+        idSubject
       );
       /* eslint-disable */
       if (richiesta) {
@@ -25,18 +25,18 @@ class DigitalAddressVerificationSingleController {
           (richiesta) => richiesta.digitalAddress === digitalAddress
         );
         if (foundItem) {
-          if (richiesta.since <= since) {
+          if (richiesta.from <= from) {
             const result: ResponseVerifyDigitalAddress = {
-              outcome: true,
-              dateTimeCheck: new Date().toISOString(),
+              result: true,
+              timestampCheck: new Date().toISOString(),
             };
             return result;
           }
         }
       } /* eslint-enable */
       const result: ResponseVerifyDigitalAddress = {
-        outcome: false,
-        dateTimeCheck: new Date().toISOString(),
+        result: false,
+        timestampCheck: new Date().toISOString(),
       };
       return result;
     } catch (error) {
@@ -50,18 +50,18 @@ class DigitalAddressVerificationSingleController {
 
   // Response_Status_List_Digital_Address
   public async extract(
-    codiceFiscale: string // Response_Request_Digital_Address
+    idSubject: string // Response_Request_Digital_Address
   ): Promise<ResponseRequestDigitalAddress> {
     try {
       const richiesta = await DataPreparationService.findByFiscalCode(
-        codiceFiscale
+        idSubject
       );
       if (richiesta) {
         return responseRequestDigitalAddressModelToResponseRequestDigitalAddress(
           richiesta
         );
       } else {
-        throw fiscalcodeNotFound(`The fiscal code not found: ${codiceFiscale}`);
+        throw fiscalcodeNotFound(`The fiscal code not found: ${idSubject}`);
       }
     } catch (error) {
       logger.error(

@@ -69,19 +69,15 @@ export const motivationTerminationModelToMotivationTermination = (
 export const usageInfoToUsageInfoModel = (
   template: UsageInfo
 ): UsageInfoModel => ({
-  motivation: MotivationTerminationToMotivationTerminationModel(
-    template?.motivation
-  ),
-  dateEndValidity: template?.dateEndValidity || "",
+  reason: MotivationTerminationToMotivationTerminationModel(template?.reason),
+  endDate: template?.endDate || "",
 });
 
 export const usageInfoModelTousageInfo = (
   model: UsageInfoModel
 ): UsageInfo => ({
-  motivation: motivationTerminationModelToMotivationTermination(
-    model.motivation
-  ),
-  dateEndValidity: model.dateEndValidity,
+  reason: motivationTerminationModelToMotivationTermination(model.reason),
+  endDate: model.endDate,
 });
 
 // 5. Element_Digital_Address
@@ -89,16 +85,16 @@ export const ElementDigitalAddressToElementDigitalAddressModel = (
   object: ElementDigitalAddress
 ): ElementDigitalAddressModel => ({
   digitalAddress: object?.digitalAddress || "",
-  practicedProfession: object?.practicedProfession,
-  usageInfo: usageInfoToUsageInfoModel(object?.usageInfo),
+  profession: object?.profession,
+  information: usageInfoToUsageInfoModel(object?.information),
 });
 
 export const elementDigitalAddressModelToElementDigitalAddress = (
   model: ElementDigitalAddressModel
 ): ElementDigitalAddress => ({
   digitalAddress: model.digitalAddress,
-  practicedProfession: model.practicedProfession,
-  usageInfo: usageInfoModelTousageInfo(model.usageInfo),
+  profession: model.profession,
+  information: usageInfoModelTousageInfo(model.information),
 });
 
 // 6. Response_Request_Digital_Address
@@ -106,8 +102,8 @@ export const ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel =
   (
     object: ResponseRequestDigitalAddress
   ): ResponseRequestDigitalAddressModel => ({
-    codiceFiscale: object?.codiceFiscale || "",
-    since: object?.since || "",
+    idSubject: object?.idSubject || "",
+    from: object?.from || "",
     digitalAddress: (object?.digitalAddress || []).map(
       ElementDigitalAddressToElementDigitalAddressModel
     ),
@@ -117,8 +113,8 @@ export const responseRequestDigitalAddressModelToResponseRequestDigitalAddress =
   (
     model: ResponseRequestDigitalAddressModel
   ): ResponseRequestDigitalAddress => ({
-    codiceFiscale: model.codiceFiscale,
-    since: model.since,
+    idSubject: model.idSubject,
+    from: model.from,
     digitalAddress: model.digitalAddress.map(
       elementDigitalAddressModelToElementDigitalAddress
     ),
@@ -180,15 +176,15 @@ export const practicalReferenceModelToPracticalReference = (
 export const RequestListDigitalAddressToRequestListDigitalAddressModel = (
   object: RequestListDigitalAddress
 ): RequestListDigitalAddressModel => ({
-  codiciFiscali: object?.codiciFiscali || [],
-  praticalReference: object?.praticalReference || "",
+  idSubjects: object?.idSubjects || [],
+  idRequest: object?.idRequest || "",
 });
 
 export const requestListDigitalAddressModelToRequestListDigitalAddress = (
   model: RequestListDigitalAddressModel
 ): RequestListDigitalAddress => ({
-  codiciFiscali: model.codiciFiscali,
-  praticalReference: model.praticalReference,
+  idSubjects: model.idSubjects,
+  idRequest: model.idRequest,
 });
 
 // 10. Status_Processing_Request
@@ -213,7 +209,7 @@ export const ResponseRequestListDigitalAddressToResponseRequestListDigitalAddres
     state: StatusProcessingRequestToStatusProcessingRequestModel(object?.state),
     message: object?.message || "",
     id: object?.id || "",
-    dateTimeRequest: object?.dateTimeRequest || "",
+    requestTimestamp: object?.requestTimestamp || "",
   });
 
 export const responseRequestListDigitalAddressModelToResponseRequestListDigitalAddress =
@@ -223,22 +219,22 @@ export const responseRequestListDigitalAddressModelToResponseRequestListDigitalA
     state: statusProcessingRequestModelToStatusProcessingRequest(model.state),
     message: model.message,
     id: model.id,
-    dateTimeRequest: model.dateTimeRequest,
+    requestTimestamp: model.requestTimestamp,
   });
 
 // 13. Response_Verify_Digital_Address
 export const ResponseVerifyDigitalAddressToResponseVerifyDigitalAddressModel = (
   object: ResponseVerifyDigitalAddress
 ): ResponseVerifyDigitalAddressModel => ({
-  outcome: object?.outcome || false,
-  dateTimeCheck: object?.dateTimeCheck || "",
+  result: object?.result || false,
+  timestampCheck: object?.timestampCheck || "",
 });
 
 export const responseVerifyDigitalAddressModelToResponseVerifyDigitalAddress = (
   model: ResponseVerifyDigitalAddressModel
 ): ResponseVerifyDigitalAddress => ({
-  outcome: model.outcome,
-  dateTimeCheck: model.dateTimeCheck,
+  result: model.result,
+  timestampCheck: model.timestampCheck,
 });
 
 // 14. Response_Status_List_Digital_Address
@@ -246,7 +242,9 @@ export const ResponseStatusListDigitalAddressToResponseStatusListDigitalAddressM
   (
     object: ResponseStatusListDigitalAddress
   ): ResponseStatusListDigitalAddressModel => ({
-    state: StatusProcessingRequestToStatusProcessingRequestModel(object?.state),
+    status: StatusProcessingRequestToStatusProcessingRequestModel(
+      object?.status
+    ),
     message: object?.message || "",
   });
 
@@ -254,7 +252,7 @@ export const responseStatusListDigitalAddressModelToResponseStatusListDigitalAdd
   (
     model: ResponseStatusListDigitalAddressModel
   ): ResponseStatusListDigitalAddress => ({
-    state: statusProcessingRequestModelToStatusProcessingRequest(model.state),
+    status: statusProcessingRequestModelToStatusProcessingRequest(model.status),
     message: model.message,
   });
 

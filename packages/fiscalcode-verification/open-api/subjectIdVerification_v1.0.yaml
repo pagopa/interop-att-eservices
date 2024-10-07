@@ -1,5 +1,5 @@
 #
-# Verifica validità organizationId
+# Check subject id validity
 x-commons:
   ratelimit-headers: &ratelimit-headers
     X-RateLimit-Limit:
@@ -7,7 +7,7 @@ x-commons:
     X-RateLimit-Remaining:
       $ref: '#/components/headers/X-RateLimit-Remaining'
     X-RateLimit-Reset:
-        $ref: '#/components/headers/X-RateLimit-Reset'
+      $ref: '#/components/headers/X-RateLimit-Reset'
   common-responses: &common-responses
     '400':
       $ref: '#/components/responses/400BadRequest'
@@ -15,59 +15,39 @@ x-commons:
       $ref: '#/components/responses/401Unauthorized'
     '429':
       $ref: '#/components/responses/429TooManyRequests'
-    '500':
-      $ref: '#/components/responses/500InternalServerError'
+    '503':
+      $ref: '#/components/responses/503ServiceUnavailable'
     default:
       $ref: '#/components/responses/default'
 
 
-    
-openapi: 3.0.1
+openapi: 3.0.0
 info:
   version: "3.0.0"
-  termsOfService: https://www.agenziaentrate.gov.it/portale/web/guest/privacy
+
   title: |-
-    Verifica validità organizationId.
+    Check subject id validity.
   x-summary: >-
-    Verifica di validità di un organizationId e recupero di alcuni dati anagrafici
+    Check the validity of the subject id for individuals and non-individual entities
 
   description: |
-    #### Documentazione
-    Questo servizio ritorna la validità di un organizationId. In caso riscontro positivo 
-    vengono fornite alcune informazioni di tipo
-    anagrafico tra cui eventuali riferimenti al GRUPPO IVA:
+    #### Documentation
+    This service returns the validity of a given subject id, represented by a boolean return field in the JSON response object.
 
-    - STATO, DENOMINAZIONE, DATA INIZIO ATTIVITA', DATA CESSAZIONE, DATA SOSPENSIONE
-    
-    ##### Denominazione
-    Per le ditte individuali viene fornita la denominazione se dichiarata, diversamente il cognome e nome del titolare
+    #### Notes
+    Since the service performs a verification on the input data, a response with a 200 status code will always be returned, even if the subject id is not present in the records.
 
-    ##### Gruppo Iva
-    Il concetto di *GRUPPO IVA* può essere approfondito al seguente
-    [link](https://www.agenziaentrate.gov.it/portale/web/guest/schede/istanze/costituzione-gruppo-iva/scheda-informativa-costituzione-gruppoiva).
+    The response includes a message field that contains the same wording as the public subject id verification service available on the official website.
     
-    #### Note
-    Poiché il servizio effettua una verifica sul dato in input una risposta verrà sempre ritornata con stato 200 
-    anche se l organizationId  in input non fosse presente negli archivi.
-    
-    Alcune "DATE" potrebbero essere espresse nei seguenti formati '1001-01-01', '9999-12-31'.
-    Tali date devono essere interpretate come informazioni assenti o non certe.
-    E' in corso una revisione degli archivi dell'Agenzia Delle Entrate per sanare queste informazioni.
+    #### Compliance with the interoperability model
+    The Throttling Header X-RateLimit-Reset is not sent in case of an HTTPS status code 200; it will only be present if a 429 status code occurs.
 
-    Il servizio non richiede autenticazione, ma va' usato rispettando gli
-    header di throttling esposti in conformita' alle Linee Guida del Modello di interoperabilita'.
-    
-    ##### Confomrmità con il modello di interoperabilità
-    L'Header di Throttling X-RateLimit-Reset non viene inviato in caso di https status code 200, sarà presente solo in caso di 429
+    #### Security
+    Although this is a publicly accessible API, it requires the submission of an API Key, allowing the infrastructure to apply throttling policies defined in the subscribed plan.
 
-    #### Sicurezza
-    Pur essendo questa API di pubblico accesso, è richiesto l'invio delle API Key che consentono all'infrastruttura
-    di applicare le politiche di throttling definite nell'ambito del piano sottoscritto
- 
-  
   contact:
-    name: Agenzia delle Entrate
-    url: https://www.agenziaentrate.gov.it
+    name: PagoPA S.p.A
+    url: https://www.interop.pagopa.it/
   x-audience:
     - public
   x-api-id: 5ca54741-8f62-4aad-ab79-13ae762920e3
@@ -75,24 +55,22 @@ info:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 tags:
-  - name: public
+  - name: HealthCheck
     description: |-
-      Endpoint non autenticato per la verifica dello stato del servizio
-  - name: verifiche
+      Unauthenticated endpoint for service status check.
+  - name: Check
     description: |-
-      verifica la validità e l'esistenza della partita iva in input
-    externalDocs:
-      url: https://developer.agenziaentrate.gov.it/entrate/api
+      checks the validity and existence of the input subject id
 servers:
   - description: Ambiente di Attestazione
     url: https://mtls.eservices.att.interop.pagopa.it/
 
 
 paths:
-  /organizationid-verification/data-preparation/handshake:
+  /subject-id-verification/data-preparation/handshake:
     post:
-      summary: Carica il certificato e i campi dell'header.
-      description: Carica il certificato nel formato .pem insieme a due campi nell'header.
+      summary: Upload the certificate and header fields.
+      description: Upload the certificate in .pem format along with two fields in the header.
       security:
         - bearerAuth: []
       requestBody:
@@ -105,17 +83,17 @@ paths:
                 certificate:
                   type: string
                   format: binary
-                  description: Il certificato nel formato .pem
+                  description: The certificate in .pem format
       parameters:
         - in: header
           name: apikey
           required: true
           schema:
             type: string
-          description: Chiave dell'API
+          description: API key
       responses:
         '200':
-          description: Operazione completata con successo
+          description: Operation completed successfully
           content:
             application/json:
               schema:
@@ -123,15 +101,15 @@ paths:
                 properties:
                   message:
                     type: string
-                    description: Messaggio di conferma dell'operazione
+                    description: Operation confirmation message
         '400':
           $ref: '#/components/responses/400BadRequest'
       tags:
-        - datapreparation
-  /organizationid-verification/data-preparation:
+        - Data Preparation
+  /subject-id-verification/data-preparation:
     post:
       summary: data preparation api.
-      description: Carica i casi d'uso dell'ente
+      description: upload your valid subject id
       security:
         - bearerAuth: []
       requestBody:
@@ -141,19 +119,19 @@ paths:
             schema:
               $ref: '#/components/schemas/DatapreparationTemplate'
             examples:
-              organizationIdAlfanumerico:
+              alphanumericIdSubject:
                 value:
-                  organizationId: 'AAAZZZ00H00T000Z'
-              organizationIdNumerico:
+                  idSubject: 'AAAZZZ00H00T000Z'
+              numericIdSubject:
                 value:
-                  organizationId: '06363391001'
+                  idSubject: '06363391001'
       parameters:
         - in: header
           name: apikey
           required: true
           schema:
             type: string
-          description: Chiave dell'API
+          description: API key
         - in: header
           name: x-correlation-id
           required: true
@@ -162,7 +140,7 @@ paths:
           description: correlationId
       responses:
         '200':
-          description: Operazione completata con successo
+          description: Operation completed successfully
           content:
             application/json:
               schema:
@@ -170,14 +148,14 @@ paths:
                 properties:
                   message:
                     type: string
-                    description: Messaggio di conferma dell'operazione
+                    description: Operation confirmation message
         '400':
           $ref: '#/components/responses/400BadRequest'
       tags:
-        - datapreparation
+        - Data Preparation
     get:
       summary: data preparation api.
-      description: Lista dei casi d'uso dell'ente
+      description: upload the valid subject id
       security:
         - bearerAuth: []
       parameters:
@@ -186,7 +164,7 @@ paths:
           required: true
           schema:
             type: string
-          description: Chiave dell'API
+          description: API key
         - in: header
           name: x-correlation-id
           required: true
@@ -195,7 +173,7 @@ paths:
           description: correlationId
       responses:
         '200':
-          description: Operazione completata con successo
+          description: Operation completed successfully
           content:
             application/json:
               schema:
@@ -203,32 +181,30 @@ paths:
         '400':
           $ref: '#/components/responses/400BadRequest'
       tags:
-        - datapreparation
+        - Data Preparation
     delete:
-      summary: Cancella i casi d'uso dell'ente
+      summary: Delete all previously entered data
       description: |
-        Ritorna lo stato dell'applicazione: 200 se funziona correttamente
-        o un errore se l'applicazione è temporaneamente indisponibile
-        per manutenzione o per un problema tecnico.
+        Returns: 200 if successfully cleared.
       operationId: reset
       tags:
-        - datapreparation
+        - Data Preparation
       responses:
         <<: *common-responses
         '200':
           description: |
-            Il server ha ritornato lo status. In caso di problemi
-            ritorna sempre un problem+json.
+            In case of errors
+            returns a problem+json.
           headers:
             <<: *ratelimit-headers
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-  /organizationid-verification/data-preparation/remove:
+  /subject-id-verification/data-preparation/remove:
     post:
       summary: data preparation api.
-      description: Rimuove un preciso caso d'uso
+      description: deletes a previously entered subject id
       security:
         - bearerAuth: []
       requestBody:
@@ -238,19 +214,19 @@ paths:
             schema:
               $ref: '#/components/schemas/DatapreparationTemplate'
             examples:
-              organizationIdAlfanumerico:
+              alphanumericIdSubject:
                 value:
-                  organizationId: 'AAAZZZ00H00T000Z'
-              organizationIdNumerico:
+                  idSubject: 'AAAZZZ00H00T000Z'
+              numericIdSubject:
                 value:
-                  organizationId: '06363391001'
+                  idSubject: '06363391001'
       parameters:
         - in: header
           name: apikey
           required: true
           schema:
             type: string
-          description: Chiave dell'API
+          description: API key
         - in: header
           name: x-correlation-id
           required: true
@@ -259,7 +235,7 @@ paths:
           description: correlationId
       responses:
         '200':
-          description: Operazione completata con successo
+          description: Operation completed successfully
           content:
             application/json:
               schema:
@@ -267,40 +243,41 @@ paths:
                 properties:
                   message:
                     type: string
-                    description: Messaggio di conferma dell'operazione
+                    description: Operation confirmation message
         '400':
           $ref: '#/components/responses/400BadRequest'
       tags:
-        - datapreparation
-  /organizationid-verification/status:
+        - Data Preparation
+  /subject-id-verification/status:
     get:
-      summary: Ritorna lo stato dell'applicazione.
+      summary: Returns the application state.
       description: |
-        Ritorna lo stato dell'applicazione: 200 se funziona correttamente
-        o un errore se l'applicazione è temporaneamente indisponibile
-        per manutenzione o per un problema tecnico.
+        Returns the application status: 200 if it is working correctly
+        or an error if the application is temporarily unavailable
+        for maintenance or a technical problem.
       operationId: get_status
       tags:
-        - public
+        - HealthCheck
       responses:
+        <<: *common-responses
         '200':
           description: |
-            Il server ha ritornato lo status. In caso di problemi
-            ritorna sempre un problem+json.
+            The server has returned to status. In case of problems
+            always returns a problem+json..
+          headers:
+            <<: *ratelimit-headers
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
-  /organizationid-verification/verifica:
+  /subject-id-verification/check:
     post:
-      summary: Valida un organizationId.
-      description: |
-        Ritorna informazioni sulla validità dell organizationId
-        e in caso di esito positivo vengono aggiunte alcune informazioni anagrafiche.
-
-      operationId: post_partita_organizationId
+      summary: Carry out a validation of the input subject id.
+      operationId: post_verifica_codiceFiscale
       tags:
-        - verifiche
+        - Check
+      description: |
+        Returns information about the validity of the input subject id
       requestBody:
         required: true
         content:
@@ -308,128 +285,95 @@ paths:
             schema:
               $ref: '#/components/schemas/Richiesta'
             examples:
-              organizationIdNumeric0:
+              alphanumericIdSubject:
                 value:
-                  organizationId: '06363391001'
+                  idSubject: 'AAAZZZ00H00T000Z'
+              numericIdSubject:
+                value:
+                  idSubject: '06363391001'
       responses:
         <<: *common-responses
         '200':
           description: |
-            Il servizio ha ritornato l'esito della validazione - che può essere positivo o negativo -
-            a seconda del valore del campo `valida`.
-
-            Attenzione! Le organizationId valide possono essere o meno attive: va quindi sempre
-            verificato il contenuto della response.
-          # header di throttling sono obbligatori
-                      
+            The server was able to verify the validity of the subject id.
+          # header di throttling requires
+          headers:
+            <<: *ratelimit-headers
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VerificaOrganizationId'
-              examples:    # Esempi per ogni casistica
-                Invalida:
+                $ref: '#/components/schemas/VerificaCodiceFiscale'
+              examples:    # Examples for each case
+                ValidIdSubject:
                   value:
-                    organizationId: '01043931007'
-                    valida: false
-                Attiva:
-                  value:  &example_organizationId
-                    organizationId: '06363391001'
-                    valida: true
-                    stato: 'ATTIVA'
-                    denominazione: 'AGENZIA DELLE ENTRATE'
-                    dataInizioAttivita: '2001-01-02'
-                Sospesa:
+                    idSubject: '06363391001'
+                    valid: true
+                    message: "Valid id subject"
+                NotUsableIdSubject:
                   value:
-                    <<: *example_organizationId
-                    stato: 'SOSPESA'
-                    dataInizioSospensione: '2013-03-15'
-                Cessata:
+                    idSubject: '***********'
+                    valid: true
+                    message: "Valid subject id, no longer usable"
+                NotValidUpdatedInOther:
                   value:
-                    <<: *example_organizationId
-                    stato: 'CESSATA'
-                    dataCessazioneAttivita: '1989-01-01'
-                GruppoIva:
+                    idSubject: '***********'
+                    valid: false
+                    message: "Valid subject id, no longer usable as it has been updated to another subject id"
+                NotValidIdSubject:
                   value:
-                    <<: *example_organizationId
-                    isGruppoIva: true
-                PartecipanteGruppoIva:
-                  value:
-                    <<: *example_organizationId
-                    isPartecipanteGruppoIva: true
-                    dataInizioPartecipazioneGruppoIva: '2018-10-27'
-                    partitaIvaGruppo: '06363391001'
-
+                    idSubject: 'AAAZZZ00H00T000Z'
+                    valid: false
+                    message: "Not valid id subject"
 components:
+
   schemas:
 
     DatapreparationTemplate:
       type: object
       properties:
-        organizationId:
-          $ref: '#/components/schemas/OrganizationId'
+        idSubject:
+          $ref: '#/components/schemas/CodiceFiscale'
 
     DataPreparationResponse:
       type: array
       items:
         type: object
         properties:
-          organizationId:
-            $ref: '#/components/schemas/OrganizationId'
+          idSubject:
+            $ref: '#/components/schemas/CodiceFiscale'
 
     Richiesta:
       type: object
       properties:
-        organizationId:
-          $ref: '#/components/schemas/OrganizationId'
-    OrganizationId:
-      type: string
-      maxLength: 11
-      minLength: 11
-      pattern: '^[0-9]+'
-      example: '06363391001'
+        idSubject:
+          $ref: '#/components/schemas/CodiceFiscale'
 
-    VerificaOrganizationId:
+
+    CodiceFiscale:
+      type: string
+      minLength: 11
+      maxLength: 16
+      pattern: '^[0-9]{11}|(?:^(?:[A-Z][AEIOU][AEIOUX]|[B-DF-HJ-NP-TV-Z]{2}[A-Z]){2}(?:[\dLMNP-V]{2}(?:[A-EHLMPR-T](?:[04LQ][1-9MNP-V]|[15MR][\dLMNP-V]|[26NS][0-8LMNP-U])|[DHPS][37PT][0L]|[ACELMRT][37PT][01LM]|[AC-EHLMPR-T][26NS][9V])|(?:[02468LNQSU][048LQU]|[13579MPRTV][26NS])B[26NS][9V])(?:[A-MZ][1-9MNP-V][\dLMNP-V]{2}|[A-M][0L](?:[1-9MNP-V][\dLMNP-V]|[0L][1-9MNP-V]))[A-Z]$)'
+
+      example: '06363391001'
+      description: 'it can take on an alphanumeric value of length 16 or a numeric value of length 11 (i.e. 06363391001)'
+
+
+    VerificaCodiceFiscale:
       type: object
       properties:
-        organizationId:
-          $ref: '#/components/schemas/OrganizationId'
-        valida:
+        idSubject:
+          $ref: '#/components/schemas/CodiceFiscale'
+        valid:
           type: boolean
           example: true
-        stato:
+        message:
           type: string
-          enum:
-            - ATTIVA
-            - CESSATA
-            - SOSPESA
-          example: 'ATTIVA'
-        denominazione:
-          type: string
-          example: 'AGENZIA DELLE ENTRATE'
-        dataInizioAttivita:
-          type: string
-          format: date
-          example: '1982-05-22'
-        dataCessazioneAttivita:
-          type: string
-          format: date
-          example: '1982-05-22'
-        dataInizioSospensione:
-          type: string
-          format: date
-          example: '1982-05-22'
-        isGruppoIva:
-          type: boolean
-          example: false
-        partitaIvaGruppo:
-          $ref: '#/components/schemas/OrganizationId'
-        dataInizioPartecipazioneGruppoIva:
-          type: string
-          format: date
-          example: '1982-05-22'
-        isPartecipanteGruppoIva:
-          type: boolean
-          example: false
+          example: "Codice fiscale valido"
+          description: "messaggio congurente con il serivizio a libero accesso di verifica codice fiscale sul sito istituzionale"
+
+
+    
     Problem:
       properties:
         detail:
@@ -529,7 +473,7 @@ components:
           $ref: '#/components/headers/X-RateLimit-Remaining'
         X-RateLimit-Reset:
           $ref: '#/components/headers/X-RateLimit-Reset'
-    500InternalServerError:
+    503ServiceUnavailable:
       content:
         application/problem+json:
           schema:
@@ -540,4 +484,3 @@ components:
           $ref: '#/components/headers/Retry-After'
     default:
       description: Unexpected error
- 

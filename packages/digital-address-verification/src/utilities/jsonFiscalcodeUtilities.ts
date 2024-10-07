@@ -55,14 +55,14 @@ export function convertStringToRichiesta(
     const parsed = JSON.parse(jsonString);
 
     return {
-      codiceFiscale: parsed.codiceFiscale,
-      since: parsed.since,
+      idSubject: parsed.idSubject,
+      from: parsed.from,
       digitalAddress: parsed.digitalAddress.map((item: any) => ({
         digitalAddress: item.digitalAddress,
-        practicedProfession: item.practicedProfession,
-        usageInfo: {
-          motivation: item.usageInfo.motivation,
-          dateEndValidity: item.usageInfo.dateEndValidity,
+        profession: item.profession,
+        information: {
+          reason: item.information.reason,
+          endDate: item.information.endDate,
         },
       })),
     };

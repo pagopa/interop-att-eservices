@@ -24,8 +24,8 @@ export type MotivationTerminationModel = z.infer<
 // 4. Usage_Info
 export const UsageInfoModel = z
   .object({
-    motivation: MotivationTerminationModel,
-    dateEndValidity: z.string().datetime({ offset: true }),
+    reason: MotivationTerminationModel,
+    endDate: z.string().datetime({ offset: true }),
   })
   .passthrough();
 export type UsageInfoModel = z.infer<typeof UsageInfoModel>;
@@ -36,23 +36,23 @@ export const ElementDigitalAddressModel = z
     digitalAddress: z
       .string()
       .regex(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/),
-    practicedProfession: z.string().optional(),
-    usageInfo: UsageInfoModel,
+    profession: z.string().optional(),
+    information: UsageInfoModel,
   })
   .passthrough();
 export type ElementDigitalAddressModel = z.infer<
   typeof ElementDigitalAddressModel
 >;
 
-// 6. Response_Request_Digital_Address
+// 6. ResponseRequestDigitalAddress
 export const ResponseRequestDigitalAddressModel = z
   .object({
-    codiceFiscale: z
+    idSubject: z
       .string()
       .regex(
         /^([0-9]{11})|([A-Za-z]{6}[0-9]{2}[A-Za-z]{1}[0-9]{2}[A-Za-z]{1}[0-9]{3}[A-Za-z]{1})$/
       ),
-    since: z.string().datetime({ offset: true }),
+    from: z.string().datetime({ offset: true }),
     digitalAddress: z.array(ElementDigitalAddressModel),
   })
   .passthrough();
@@ -79,8 +79,8 @@ export type PracticalReferenceModel = z.infer<typeof PracticalReferenceModel>;
 // 9. Request_List_Digital_Address
 export const RequestListDigitalAddressModel = z
   .object({
-    codiciFiscali: z.array(z.string()),
-    praticalReference: z.string(),
+    idSubjects: z.array(z.string()),
+    idRequest: z.string(),
   })
   .passthrough();
 export type RequestListDigitalAddressModel = z.infer<
@@ -111,7 +111,7 @@ export const ResponseRequestListDigitalAddressModel = z
       .min(20)
       .max(40)
       .regex(/^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$/),
-    dateTimeRequest: z.string().datetime({ offset: true }),
+    requestTimestamp: z.string().datetime({ offset: true }),
   })
   .passthrough();
 export type ResponseRequestListDigitalAddressModel = z.infer<
@@ -121,8 +121,8 @@ export type ResponseRequestListDigitalAddressModel = z.infer<
 // 13. Response_Verify_Digital_Address
 export const ResponseVerifyDigitalAddressModel = z
   .object({
-    outcome: z.boolean(),
-    dateTimeCheck: z.string().datetime({ offset: true }),
+    result: z.boolean(),
+    timestampCheck: z.string().datetime({ offset: true }),
   })
   .passthrough();
 export type ResponseVerifyDigitalAddressModel = z.infer<
@@ -132,7 +132,7 @@ export type ResponseVerifyDigitalAddressModel = z.infer<
 // 14. Response_Status_List_Digital_Address
 export const ResponseStatusListDigitalAddressModel = z
   .object({
-    state: StatusProcessingRequestModel,
+    status: StatusProcessingRequestModel,
     message: z.string(),
   })
   .passthrough();
