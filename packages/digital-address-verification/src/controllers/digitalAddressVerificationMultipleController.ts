@@ -26,7 +26,7 @@ class DigitalAddressVerificationSingleController {
     request: RequestListDigitalAddress
   ): Promise<ResponseRequestListDigitalAddress> {
     try {
-      if (request.codiciFiscali) {
+      if (request.idSubjects) {
         const jsonRequest = JSON.stringify(request);
         const count = getMaxNumber(); // presa in carico
 
