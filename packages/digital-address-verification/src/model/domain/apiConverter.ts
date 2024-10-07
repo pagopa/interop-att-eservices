@@ -69,18 +69,14 @@ export const motivationTerminationModelToMotivationTermination = (
 export const usageInfoToUsageInfoModel = (
   template: UsageInfo
 ): UsageInfoModel => ({
-  reason: MotivationTerminationToMotivationTerminationModel(
-    template?.reason
-  ),
+  reason: MotivationTerminationToMotivationTerminationModel(template?.reason),
   endDate: template?.endDate || "",
 });
 
 export const usageInfoModelTousageInfo = (
   model: UsageInfoModel
 ): UsageInfo => ({
-  reason: motivationTerminationModelToMotivationTermination(
-    model.reason
-  ),
+  reason: motivationTerminationModelToMotivationTermination(model.reason),
   endDate: model.endDate,
 });
 
@@ -246,7 +242,9 @@ export const ResponseStatusListDigitalAddressToResponseStatusListDigitalAddressM
   (
     object: ResponseStatusListDigitalAddress
   ): ResponseStatusListDigitalAddressModel => ({
-    status: StatusProcessingRequestToStatusProcessingRequestModel(object?.status),
+    status: StatusProcessingRequestToStatusProcessingRequestModel(
+      object?.status
+    ),
     message: object?.message || "",
   });
 

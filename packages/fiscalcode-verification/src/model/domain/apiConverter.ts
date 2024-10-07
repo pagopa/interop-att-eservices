@@ -40,13 +40,13 @@ export const fiscalcodeModelToVerificaCodiceFiscale = (
     return {
       idSubject: fiscalCode.fiscalCode || "",
       valid: isValid,
-      message: message,
+      message,
     };
   } else {
     return {
       idSubject: fiscalCodeNotFound,
       valid: isValid,
-      message: message,
+      message,
     };
   }
 };

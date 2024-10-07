@@ -28,13 +28,13 @@ export const partitaIvaModelToVerificaPartitaIva = (
     return {
       organizationId: partitaIva.organizationId || "",
       valid: isValid,
-      message: message,
+      message,
     };
   } else {
     return {
       organizationId: partitaIvaNotFound,
       valid: isValid,
-      message: message,
+      message,
     };
   }
 };

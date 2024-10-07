@@ -36,8 +36,8 @@ export const ElementDigitalAddressModel = z
     digitalAddress: z
       .string()
       .regex(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/),
-      profession: z.string().optional(),
-      information: UsageInfoModel,
+    profession: z.string().optional(),
+    information: UsageInfoModel,
   })
   .passthrough();
 export type ElementDigitalAddressModel = z.infer<

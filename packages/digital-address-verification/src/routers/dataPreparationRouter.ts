@@ -125,9 +125,7 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        await DataPreparationService.deleteByFiscalCode(
-          req.params.idSubject
-        );
+        await DataPreparationService.deleteByFiscalCode(req.params.idSubject);
         return res.status(200).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
