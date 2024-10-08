@@ -145,6 +145,7 @@ export const authenticationMiddleware: (
           .with("missingHeader", () => 400)
           .with("genericError", () => 400)
           .with("tokenNotValid", () => 401)
+          .with("missingBearer", () => 401)
           .otherwise(() => 500)
       );
       return res.status(problem.status).json(problem).end();
