@@ -52,14 +52,13 @@ const dataPreparationRouter = (
           throw ErrorHandling.invalidApiRequest();
         }
         const data = await DataPreparationService.getAll();
-        var result = data
+        const result = data
           ? convertArrayOfModelsToResponseListRequestDigitalAddress(data)
           : undefined;
         if (result) {
           return res.status(200).json(result).end();
         } else {
-          result = {}
-          return res.status(200).json(result).end();
+          return res.status(200).json({}).end();
         }
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
