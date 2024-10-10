@@ -20,9 +20,7 @@ export const authenticationMiddleware: (
     ExpressContext
   > = async (req, res, next): Promise<unknown> => {
     try {
-      const addCtxAuthData = async (
-        authHeader: string,
-      ): Promise<void> => {
+      const addCtxAuthData = async (authHeader: string): Promise<void> => {
         const authorizationHeader = authHeader.split(" ");
         if (
           authorizationHeader.length !== 2 ||

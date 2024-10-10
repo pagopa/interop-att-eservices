@@ -39,7 +39,9 @@ export const authenticationCorrelationMiddleware: (
 
         const valid = await verifyJwtToken(jwtToken);
         if (!valid) {
-          logger.error(`authenticationCorrelationMiddleware - The jwt token is not valid`);
+          logger.error(
+            `authenticationCorrelationMiddleware - The jwt token is not valid`
+          );
           throw ErrorHandling.tokenNotValid(
             "Authorizzation bearer token is not valid"
           );
