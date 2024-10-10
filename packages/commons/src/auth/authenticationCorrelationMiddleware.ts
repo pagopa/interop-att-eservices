@@ -13,15 +13,16 @@ import {
 
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 /* eslint-disable */
-export const authenticationMiddleware: (
+export const authenticationCorrelationMiddleware: (
   isEnableTrial: boolean
 ) => ZodiosRouterContextRequestHandler<ExpressContext> = (isEnableTrial) => {
-  const authMiddleware: ZodiosRouterContextRequestHandler<
+  const authCorrelationMiddleware: ZodiosRouterContextRequestHandler<
     ExpressContext
   > = async (req, res, next): Promise<unknown> => {
     try {
       const addCtxAuthData = async (
         authHeader: string,
+        correlationId: string
       ): Promise<void> => {
         const authorizationHeader = authHeader.split(" ");
         if (
@@ -29,7 +30,7 @@ export const authenticationMiddleware: (
           authorizationHeader[0] !== "Bearer"
         ) {
           logger.error(
-            `authenticationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`
+            `authenticationCorrelationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`
           );
           throw ErrorHandling.missingBearer();
         }
@@ -38,20 +39,20 @@ export const authenticationMiddleware: (
 
         const valid = await verifyJwtToken(jwtToken);
         if (!valid) {
-          logger.error(`authenticationMiddleware - The jwt token is not valid`);
+          logger.error(`authenticationCorrelationMiddleware - The jwt token is not valid`);
           throw ErrorHandling.tokenNotValid(
             "Authorizzation bearer token is not valid"
           );
         }
         logger.info(
-          `authenticationMiddleware - Bearer Token: isValid: ${valid}`
+          `authenticationCorrelationMiddleware - Bearer Token: isValid: ${valid}`
         );
 
         const authData = readAuthDataFromJwtToken(jwtToken);
         match(authData)
           .with(P.instanceOf(Error), (err) => {
             logger.warn(
-              `authenticationMiddleware - Invalid authentication provided: ${err.message}`
+              `authenticationCorrelationMiddleware - Invalid authentication provided: ${err.message}`
             );
             if (isEnableTrial) {
               sendCustomEvent("trialEvent", {
@@ -65,7 +66,7 @@ export const authenticationMiddleware: (
             /* eslint-disable */
             req.ctx = {
               authData: { ...claimsRes },
-              correlationId: "",
+              correlationId,
             };
             /* eslint-enable */
           });
@@ -78,7 +79,7 @@ export const authenticationMiddleware: (
         );
         if (!validPayloadAndHeader) {
           logger.error(
-            `authenticationMiddleware - The jwt bearer token header or payload is not valid`
+            `authenticationCorrelationMiddleware - The jwt bearer token header or payload is not valid`
           );
           throw ErrorHandling.genericError("The jwt bearer token not valid");
         }
@@ -102,23 +103,39 @@ export const authenticationMiddleware: (
         .with(
           {
             authorization: P.string,
+            "x-correlation-id": P.string,
           },
           async (headers) => {
             logger.info(
-              `authenticationMiddleware - Matching headers with authorization`
+              `authenticationCorrelationMiddleware - Matching headers with authorization, correlation ID`
             );
-            await addCtxAuthData(headers.authorization);
+            await addCtxAuthData(
+              headers.authorization,
+              headers["x-correlation-id"]
+            );
           }
         )
         .otherwise(() => {
-          logger.info(`authenticationMiddleware - No matching headers found`);
-          throw ErrorHandling.missingBearer();
+          logger.info(
+            `authenticationCorrelationMiddleware - No matching headers found`
+          );
+          if (
+            headers.data["x-correlation-id"] === null ||
+            headers.data["x-correlation-id"] === undefined
+          ) {
+            logger.error(
+              `authenticationCorrelationMiddleware - No matching headers found: x-correlation-id`
+            );
+            throw ErrorHandling.missingHeader("x-correlation-id");
+          } else {
+            throw ErrorHandling.missingBearer();
+          }
         });
     } catch (error) {
       if (error instanceof Object && !("code" in error)) {
         if ("message" in error) {
           logger.error(
-            `authenticationMiddleware - error not managed with message: ${error.message}`
+            `authenticationCorrelationMiddleware - error not managed with message: ${error.message}`
           );
         }
         return res.status(500).json().end();
@@ -137,6 +154,6 @@ export const authenticationMiddleware: (
     }
   };
 
-  return authMiddleware;
+  return authCorrelationMiddleware;
 };
 /* eslint-enable */

@@ -111,11 +111,6 @@ const endpoints = makeApi([
         type: "Header",
         schema: z.string(),
       },
-      {
-        name: "x-correlation-id",
-        type: "Header",
-        schema: z.string(),
-      },
     ],
     response: z.object({ message: z.string() }).partial().passthrough(),
     errors: [
@@ -135,11 +130,6 @@ const endpoints = makeApi([
     parameters: [
       {
         name: "apikey",
-        type: "Header",
-        schema: z.string(),
-      },
-      {
-        name: "x-correlation-id",
         type: "Header",
         schema: z.string(),
       },
@@ -228,11 +218,6 @@ const endpoints = makeApi([
       },
       {
         name: "apikey",
-        type: "Header",
-        schema: z.string(),
-      },
-      {
-        name: "x-correlation-id",
         type: "Header",
         schema: z.string(),
       },

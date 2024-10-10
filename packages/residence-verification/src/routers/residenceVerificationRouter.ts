@@ -2,10 +2,7 @@ import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
-import {
-  authenticationMiddleware,
-  uniquexCorrelationIdMiddleware,
-} from "pdnd-common";
+import { authenticationCorrelationMiddleware } from "pdnd-common";
 import { TrialService } from "trial";
 import ResidenceVerificationController from "../controllers/residenceVerificationController.js";
 import { api } from "../model/generated/api.js";
@@ -30,8 +27,7 @@ const residenceVerificationRouter = (
   residenceVerificationRouter.post(
     "/residence-verification",
     contextDataResidenceMiddleware,
-    uniquexCorrelationIdMiddleware(),
-    authenticationMiddleware(true),
+    authenticationCorrelationMiddleware(true),
     integrityValidationMiddleware(),
     auditValidationMiddleware(),
     async (req, res) => {
@@ -71,8 +67,7 @@ const residenceVerificationRouter = (
   residenceVerificationRouter.post(
     "/residence-verification/verify",
     contextDataResidenceMiddleware,
-    uniquexCorrelationIdMiddleware(),
-    authenticationMiddleware(true),
+    authenticationCorrelationMiddleware(true),
     integrityValidationMiddleware(),
     auditValidationMiddleware(),
     async (req, res) => {

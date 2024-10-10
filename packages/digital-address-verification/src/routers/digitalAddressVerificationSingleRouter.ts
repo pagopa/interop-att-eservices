@@ -2,10 +2,7 @@ import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
-import {
-  authenticationMiddleware,
-  uniquexCorrelationIdMiddleware,
-} from "pdnd-common";
+import { authenticationCorrelationMiddleware } from "pdnd-common";
 import { TrialService } from "trial";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -21,8 +18,7 @@ const DigitalAddressVerificationSingleRouter = (
     "/digital-address-verification/verify/:id_subject",
     // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
-    uniquexCorrelationIdMiddleware(),
-    authenticationMiddleware(true),
+    authenticationCorrelationMiddleware(true),
     async (req, res) => {
       try {
         logger.info(`[START] Post - '/verifica' : ${req.body}`);
@@ -65,8 +61,7 @@ const DigitalAddressVerificationSingleRouter = (
     "/digital-address-verification/retrieve/:id_subject",
     // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
-    uniquexCorrelationIdMiddleware(),
-    authenticationMiddleware(true),
+    authenticationCorrelationMiddleware(true),
     async (req, res) => {
       try {
         const { id_subject } = req.params;
