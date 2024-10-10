@@ -58,7 +58,7 @@ export const verifyCertValidity: ZodiosRouterContextRequestHandler<
         .with("operationForbidden", () => 403)
         .with("missingHeader", () => 400)
         .with("certNotValid", () => 401)
-        .with("apikeyNotValid", () => 500)
+        .with("apikeyNotValid", () => 400)
         .otherwise(() => 500)
     );
     void TrialService.insert(
