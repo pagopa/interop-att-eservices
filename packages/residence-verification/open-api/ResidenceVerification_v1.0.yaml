@@ -1,21 +1,21 @@
 openapi: 3.0.3
 info:
-  title: Consultazione API Accertamento Residenza AR001 
+  title: Residence Address Verification API
   description: |-
-    Servizio per la consultazione della residenza di un cittadino ai fini di un accertamento
+    Service for verifying a citizen's residence for the purposes of an investigation
   version: '1.0.0'
   termsOfService: 'http://swagger.io/terms/'
-  x-summary: Accertamento residenza
+  x-summary: Residence verification
 servers:
   - url: 'http://eservices.att.interop.pagopa.it/'
-    description: Ambiente di Attestazione
+    description: Attestation Environment
 tags:
-  - name: DataPreparation
-    description: Configurazione Data Preparation
-  - name: ResidenceVerification
-    description: Consultazione enti
-  - name: Health
-    description: Verifica stato applicativo
+  - name: Data Preparation
+    description: Data Preparation Verification
+  - name: Residence Address Check
+    description: Residence verification
+  - name: Health Check
+    description: Check application status
 security:
   - bearerAuth: []
     Agid-JWT-Signature: []
@@ -23,7 +23,7 @@ paths:
   /residence-verification/data-preparation:
     post:
       tags:
-        - DataPreparation
+        - Data Preparation
       summary: Insert data preparation residence-verification
       description: Insert data preparation residence-verification
       operationId: InsertAR001
@@ -66,12 +66,12 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/GeneralError'
-    
+
     get:
       tags:
-        - DataPreparation
-      summary: Elenco dei caso d'uso
-      description: Lista di tutti i casi d'uso dell'ente
+        - Data Preparation
+      summary: List of institution use cases
+      description: List of institution use cases
       operationId: GetAllAR001
       security:
         - bearerAuth: []
@@ -83,7 +83,7 @@ paths:
               schema:
                 type: array
                 items:
-                    $ref: '#/components/schemas/DataPreparationTemplateResponse'
+                  $ref: '#/components/schemas/DataPreparationTemplateResponse'
         '400':
           description: Bad request
           content:
@@ -108,18 +108,18 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/GeneralError'
-    
+
     delete:
       tags:
-        - DataPreparation
-      summary: Eliminazione di tutti i casi d'uso
-      description: Eliminazione di un insieme di casi d'uso dell'ente
+        - Data Preparation
+      summary: Delete institution use cases
+      description: Delete institution use cases
       operationId: DeleteAR001
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: operazione avvenuta con successo
+          description: Operation completed successfully
         '400':
           description: Bad request
           content:
@@ -144,13 +144,13 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/GeneralError'
-                
+
   /residence-verification/data-preparation/{uuid}:
     parameters:
       - $ref: '#/components/parameters/pathUUID'
     get:
       tags:
-        - DataPreparation
+        - Data Preparation
       summary: Insert data preparation residence-verification
       description: Insert data preparation residence-verification
       operationId: GetByIdAR001
@@ -189,15 +189,15 @@ paths:
                 $ref: '#/components/schemas/GeneralError'
     delete:
       tags:
-        - DataPreparation
-      summary: Eliminazione di un singolo caso d'uso
-      description: Eliminazione di un singolo caso d'uso dell'ente
+        - Data Preparation
+      summary: Remove a single use case
+      description: Remove a single use case
       operationId: DeleteByIdAR001
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: operazione avvenuta con successo
+          description: Operation completed successfully
         '400':
           description: Bad request
           content:
@@ -222,13 +222,13 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/GeneralError'
-                
+
   /residence-verification:
     post:
       tags:
-        - ARService001
-      summary: Trova caso d'uso
-      description: Consultazione di un caso d'uso dell'ente
+        - Residence Address Check
+      summary: Search for a residential address
+      description: Search for a residential address
       operationId: AR001
       security:
         - bearerAuth: []
@@ -237,7 +237,7 @@ paths:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/RichiestaAR001'
+              $ref: '#/components/schemas/RichiestaAR001'
       responses:
         '200':
           description: OK
@@ -269,37 +269,37 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/GeneralError'
-  /residence-verification/verify:
+  /residence-verification/check:
     post:
       tags:
-        - ARService002
-      summary: Trova caso d'uso
-      description: Consultazione di un caso d'uso
+        - Residence Address Check
+      summary: Check for a residential address
+      description: Check for a residential address
       operationId: AR002
       security:
         - bearerAuth: []
       requestBody:
         required: true
-        description: Richiesta da consultare
+        description: Request info
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/RichiestaAR002'
       responses:
         "200":
-          description: Caso d'uso trovato
+          description: Address found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RispostaAR002OK'
         "400":
-          description: Caso d'uso invalido
+          description: Not valid request
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/RispostaKO'
         "404":
-          description: Caso d'uso non trovato
+          description: Address not found
           content:
             application/problem+json:
               schema:
@@ -313,7 +313,7 @@ paths:
   /residence-verification/status:
     get:
       tags:
-        - Health
+        - Health Check
       summary: Health status endpoint
       description: Return ok
       operationId: getStatus
@@ -325,102 +325,101 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
-
 components:
   schemas:
     RichiestaAR002:
       type: object
       required:
-        - idOperazioneClient
-        - criteriRicerca
-        - datiRichiesta
+        - operationId
+        - criteria
+        - requestData
       properties:
-        idOperazioneClient:
+        operationId:
           type: string
-          description: Identificativo univoco attribuito all'operazione dall'ente.
-        criteriRicerca:
-          $ref: '#/components/schemas/TipoCriteriRicercaAR002'
-        verifica:
+          description: Unique identifier for the operation.
+        criteria:
+          $ref: '#/components/schemas/TipocriteriaAR002'
+        check:
           $ref: '#/components/schemas/TipoVerificaAR002'
-        datiRichiesta:
-          $ref: '#/components/schemas/TipoDatiRichiestaAR002'
+        requestData:
+          $ref: '#/components/schemas/TiporequestDataAR002'
     RispostaAR002OK:
       type: object
       properties:
-        idOperazione:
+        idOp:
           type: string
-        soggetti:
-          $ref: '#/components/schemas/VerifyTipoDatiSoggetti'
-        listaAnomalie:
+        subjects:
+          $ref: '#/components/schemas/VerifyTipoDatisubjects'
+        warnings:
           type: array
           items:
             $ref: '#/components/schemas/TipoErroriAnomalia'
     RispostaKO:
       type: object
       properties:
-        idOperazioneUN:
+        nationalUniqueIdentifier:
           type: string
-        listaErrori:
+        errors:
           type: array
           items:
             $ref: '#/components/schemas/TipoErroriAnomalia'
-    TipoCriteriRicercaAR002:
+    TipocriteriaAR002:
       type: object
       properties:
-        codiceFiscale:
+        fiscalCode:
           type: string
         id:
           type: string
-          description: Identificativo Unico Nazionale
-        cognome:
+          description: National Unique Identifier
+        surname:
           type: string
-        senzaCognome:
+        nosurname:
           type: string
-        nome:
+        name:
           type: string
-        senzaNome:
+        noname:
           type: string
-        sesso:
+        gender:
           type: string
-        datiNascita:
+        birthDate:
           $ref: '#/components/schemas/TipoDatiNascitaE000'
     TipoVerificaAR002:
       type: object
       properties:
-        residenza:
+        address:
           $ref: '#/components/schemas/TipoVerificaResidenza'
     TipoVerificaResidenza:
       type: object
       properties:
-        tipoIndirizzo:
+        addressType:
           type: string
-        indirizzo:
+        address:
           $ref: '#/components/schemas/TipoIndirizzo'
-        localitaEstera:
+        foreignState:
           $ref: '#/components/schemas/TipoLocalitaEstera'
     TipoLocalitaEstera:
       type: object
       properties:
-        indirizzoEstero:
+        foreignAddress:
           $ref: '#/components/schemas/TipoIndirizzoEstero'
-        consolato:
+        consulate:
           $ref: '#/components/schemas/TipoConsolato'
-    TipoDatiRichiestaAR002:
+    TiporequestDataAR002:
       type: object
       required:
-        - dataRiferimentoRichiesta
-        - casoUso
-        - motivoRichiesta
+        - dateOfRequest
+        - useCase
+        - motivation
       properties:
-        dataRiferimentoRichiesta:
+        dateOfRequest:
           type: string
-          description: Data cui deve essere riferita la versione della scheda anagrafica
+          description: Date to which the version of the personal data sheet must refer
           format: YYYY-MM-DD
           example: '2021-11-15'
-        motivoRichiesta:
+        motivation:
           type: string
-          description: campo per l’indicazione obbligatoria del numero di riferimento della pratica per quale è effettuata l’interrogazione (es. numero di protocollo, fascicolo, verbale, etc.)
-        casoUso:
+          description: Mandatory field for entering the reference number of the case for which the inquiry is made (e.g., protocol number, file, report, etc.).
+        useCase:
           type: string
           description: caso d'uso (es. C001)
     Problem:
@@ -469,14 +468,14 @@ components:
         - detail
 
     DataPreparationTemplateResponse:
-      description: Configurazione data preparation
+      description: Data Preparation Configuration
       type: object
       allOf:
         - type: object
           properties:
             uuid:
               description: >-
-                identificativo associato alla configurazione salvata
+                identifier associated with the saved configuration
               type: string
               format: uuid
         - $ref: '#/components/schemas/DataPreparationTemplate'
@@ -484,136 +483,136 @@ components:
     DataPreparationTemplate:
       type: object
       additionalProperties: false
-      title: DataPreparation
+      title: Data Preparation
       description: represents the details of data preparation template
       properties:
-        soggetto:
-          $ref: '#/components/schemas/TipoCriteriRicercaTemplateAR001'
-        residenza:
+        subject:
+          $ref: '#/components/schemas/TipocriteriaTemplateAR001'
+        address:
           $ref: '#/components/schemas/TipoResidenza'
-          
+
     DataPreparationResponse:
       type: object
       additionalProperties: false
-      title: Signal
-      description: represents the id of the signal just entered.
+      title: Data Prearation Response
+      description: represents the id of the data just entered.
       properties:
         uuid:
           type: string
           description: id of Operation
-          
+
     RichiestaAR001:
       type: object
       required:
-        - idOperazioneClient
-        - parametriRicerca
-        - richiesta
+        - operationId
+        - criteria
+        - requestData
       properties:
-        idOperazioneClient:
+        operationId:
           type: string
-        parametriRicerca:
+        criteria:
           $ref: '#/components/schemas/TipoParametriRicercaAR001'
-        richiesta:
+        requestData:
           $ref: '#/components/schemas/TipoRichiestaAR001'
     RispostaAR001:
       type: object
       properties:
-        idOperazione:
+        idOp:
           type: string
-        soggetti:
-          $ref: '#/components/schemas/TipoListaSoggetti'
-        listaAnomalie:
+        subjects:
+          $ref: '#/components/schemas/TipoListasubjects'
+        warnings:
           type: array
           items:
             $ref: '#/components/schemas/TipoErroriAnomalia'
-    TipoCriteriRicercaTemplateAR001:
+    TipocriteriaTemplateAR001:
       type: object
       properties:
-        codiceFiscale:
+        fiscalCode:
           type: string
         id:
           type: string
-          description: Identificativo Unico Nazionale
-        cognome:
+          description: National Unique Identifier
+        surname:
           type: string
-        nome:
+        name:
           type: string
-        sesso:
+        gender:
           type: string
-        datiNascita:
+        birthDate:
           $ref: '#/components/schemas/TipoDatiNascitaTemplateE000'
-          
+
     TipoParametriRicercaAR001:
       type: object
       properties:
-        codiceFiscale:
+        fiscalCode:
           type: string
         id:
           type: string
-          description: Identificativo Unico Nazionale
-        cognome:
+          description: National Unique Identifier
+        surname:
           type: string
-        senzaCognome:
+        noSurname:
           type: string
-        nome:
+        name:
           type: string
-        senzaNome:
+        noName:
           type: string
-        sesso:
+        gender:
           type: string
-        datiNascita:
+        birthDate:
           $ref: '#/components/schemas/TipoDatiNascitaE000'
     TipoRichiestaAR001:
       type: object
       required:
-        - dataRiferimentoRichiesta
-        - casoUso
-        - motivoRichiesta
+        - dateOfRequest
+        - useCase
+        - motivation
       properties:
-        dataRiferimentoRichiesta:
+        dateOfRequest:
           type: string
-          description: Data cui deve essere riferita la versione della scheda anagrafica
+          description: Date to which the version of the personal data sheet must refer
           format: YYYY-MM-DD
           example: '2021-11-15'
-        motivoRichiesta:
+        motivation:
           type: string
-          description: campo per l’indicazione obbligatoria del numero di riferimento della pratica per quale è effettuata l’interrogazione (es. numero di protocollo, fascicolo, verbale, etc.)
-        casoUso:
+          description: Mandatory field for entering the reference number of the case for which the inquiry is made (e.g., protocol number, file, report, etc.).
+        useCase:
           type: string
           description: caso d'uso (es. C001)
     TipoErroriAnomalia:
       type: object
       properties:
-        codiceErroreAnomalia:
+        warningErrorCode:
           type: string
-        tipoErroreAnomalia:
+        warningErrorType:
           type: string
-        testoErroreAnomalia:
+        warningErrorText:
           type: string
-        oggettoErroreAnomalia:
+        warningErrorObject:
           type: string
-        campoErroreAnomalia:
+        warningErrorField:
           type: string
-        valoreErroreAnomalia:
-          type: string    
-    TipoListaSoggetti:
+        warningErrorValue:
+          type: string
+    TipoListasubjects:
       type: object
       properties:
-        soggetto:
+        subject:
           type: array
           items:
-            $ref: '#/components/schemas/TipoDatiSoggettiEnte'
-    VerifyTipoDatiSoggetti:
+            $ref: '#/components/schemas/TipoDatisubjectsEnte'
+    VerifyTipoDatisubjects:
       type: object
       properties:
-        infoSoggetto:
+        infoSubject:
           type: array
           items:
             $ref: '#/components/schemas/InfoSoggettoEnte'
     InfoSoggettoEnte:
       type: object
       properties:
-        infoSoggettoEnte:
+        infoInstitution:
           type: array
           items:
             $ref: '#/components/schemas/TipoInfoSoggetto'
@@ -622,169 +621,169 @@ components:
       properties:
         id:
           type: string
-        chiave:
+        key:
           type: string
-        valore:
+        value:
           $ref: '#/components/schemas/TipoInfoValore'
-        valoreTesto:
+        textValue:
           type: string
-        valoreData:
+        dataValue:
           type: string
           format: YYYY-MM-DD
           example: '2021-11-15'
-        dettaglio:
-          type: string      
+        otherData:
+          type: string
     TipoInfoValore:
       enum:
-      - "A"
-      - "N"
-      - "S"
+        - "A"
+        - "N"
+        - "S"
       type: string
-    TipoDatiSoggettiEnte:
+    TipoDatisubjectsEnte:
       type: object
       properties:
-        generalita:
+        generality:
           $ref: '#/components/schemas/TipoGeneralita'
-        residenza:
+        address:
           type: array
           items:
             $ref: '#/components/schemas/TipoResidenza'
-        identificativi:
+        identifiers:
           $ref: '#/components/schemas/TipoIdentificativi'
-        datiDecesso:
+        deathDate:
           $ref: '#/components/schemas/TipoDatiEvento'
     TipoDatiNascitaTemplateE000:
       type: object
       properties:
-        dataEvento:
+        eventDate:
           type: string
           format: YYYY-MM-DD
           example: '2021-11-15'
-        senzaGiorno:
+        noDay:
           type: string
-        luogoNascita:
-          $ref: '#/components/schemas/TipoLuogoNascitaE000' 
-          
+        birthPlace:
+          $ref: '#/components/schemas/TipoLuogoNascitaE000'
+
     TipoDatiNascitaE000:
       type: object
       properties:
-        dataEvento:
+        eventDate:
           type: string
           format: YYYY-MM-DD
           example: '2021-11-15'
-        senzaGiorno:
+        noDay:
           type: string
-        senzaGiornoMese:
+        noMonth:
           type: string
-        luogoNascita:
-          $ref: '#/components/schemas/TipoLuogoNascitaE000'  
+        birthPlace:
+          $ref: '#/components/schemas/TipoLuogoNascitaE000'
     TipoLuogoNascitaE000:
       type: object
       properties:
-        luogoEccezionale:
+        exceptionalPlace:
           type: string
-        comune:
+        municipality:
           $ref: '#/components/schemas/TipoComune'
-        localita:
-          $ref: '#/components/schemas/TipoLocalita'  
+        place:
+          $ref: '#/components/schemas/TipoLocalita'
     TipoComune:
       type: object
       properties:
-        nomeComune:
+        nameMunicipality:
           type: string
-        codiceIstat:
+        istatCode:
           type: string
-        siglaProvinciaIstat:
+        acronymIstatProvince:
           type: string
-        descrizioneLocalita:
-          type: string          
+        placeDescription:
+          type: string
     TipoLocalita:
       type: object
       properties:
-        descrizioneLocalita:
+        placeDescription:
           type: string
-        descrizioneStato:
+        countryDescription:
           type: string
-        codiceStato:
+        codState:
           type: string
-        provinciaContea:
+        provinceCounty:
           type: string
     TipoGeneralita:
       type: object
       properties:
-        codiceFiscale:
+        fiscalCode:
           $ref: '#/components/schemas/TipoCodiceFiscale'
-        cognome:
+        surname:
           type: string
-        senzaCognome:
+        noSurname:
           type: string
-        nome:
+        name:
           type: string
-        senzaNome:
+        noName:
           type: string
-        sesso:
+        gender:
           type: string
-        dataNascita:
+        birthDate:
           type: string
           format: YYYY-MM-DD
           example: '2021-11-15'
-        senzaGiorno:
+        noDay:
           type: string
-        senzaGiornoMese:
+        noMonth:
           type: string
-        luogoNascita:
+        birthPlace:
           $ref: '#/components/schemas/TipoLuogoEvento'
-        soggettoAIRE:
+        AIRESubject:
           type: string
-        annoEspatrio:
+        yearExpatriation:
           type: string
-        idSchedaSoggettoComune:
+        idCommonSubjectData:
           $ref: '#/components/schemas/TipoIdSchedaSoggettoComune'
-        idSchedaSoggetto:
+        idSubjectData:
           type: string
         note:
-          type: string   
+          type: string
     TipoCodiceFiscale:
       type: object
       properties:
-        codFiscale:
+        fiscalCode:
           type: string
-        validitaCF:
+        fiscalCodeValidity:
           type: string
-        dataAttribuzioneValidita:
+        dataAttributionValidity:
           type: string
           format: YYYY-MM-DD
           example: '2021-11-15'
     TipoLuogoEvento:
       type: object
       properties:
-        luogoEccezionale:
+        exceptionalPlace:
           type: string
-        comune:
+        municipality:
           $ref: '#/components/schemas/TipoComune'
-        localita:
+        place:
           $ref: '#/components/schemas/TipoLocalita'
     TipoIdSchedaSoggettoComune:
       type: object
       properties:
-        idSchedaSoggettoComuneIstat:
+        idCommonSubjectDataIstat:
           type: string
-        idSchedaSoggetto:
+        idSubjectData:
           type: string
     TipoResidenza:
       type: object
       properties:
-        tipoIndirizzo:
+        addressType:
           type: string
-        noteIndirizzo:
+        noteaddress:
           type: string
-        indirizzo:
+        address:
           $ref: '#/components/schemas/TipoIndirizzo'
-        localitaEstera:
+        foreignState:
           $ref: '#/components/schemas/TipoLocalitaEstera1'
         presso:
           type: string
-        dataDecorrenzaResidenza:
+        addressStartDate:
           type: string
           format: YYYY-MM-DD
           example: '2021-11-15'
@@ -793,115 +792,115 @@ components:
       properties:
         cap:
           type: string
-        comune:
+        municipality:
           $ref: '#/components/schemas/TipoComune'
-        frazione:
+        fraction:
           type: string
-        toponimo:
+        toponym:
           $ref: '#/components/schemas/TipoToponimo'
-        numeroCivico:
+        civicNumber:
           $ref: '#/components/schemas/TipoNumeroCivico'
     TipoLocalitaEstera1:
       type: object
       properties:
-        indirizzoEstero:
+        foreignAddress:
           $ref: '#/components/schemas/TipoIndirizzoEstero'
-        consolato:
+        consulate:
           $ref: '#/components/schemas/TipoConsolato'
     TipoToponimo:
       type: object
       properties:
-        codSpecie:
+        codType:
           type: string
-        specie:
+        type:
           type: string
-        specieFonte:
+        originType:
           type: string
-        codToponimo:
+        toponymCod:
           type: string
-        denominazioneToponimo:
+        toponymDenomination:
           type: string
-        toponimoFonte:
+        toponymSource:
           type: string
     TipoNumeroCivico:
       type: object
       properties:
-        codiceCivico:
+        civicCod:
           type: string
-        civicoFonte:
+        civicSource:
           type: string
-        numero:
+        number:
           type: string
-        metrico:
+        metric:
           type: string
         progSNC:
           type: string
-        lettera:
+        letter:
           type: string
-        esponente1:
+        exponent1:
           type: string
-        colore:
+        color:
           type: string
-        civicoInterno:
+        internalCivic:
           $ref: '#/components/schemas/TipoCivicoInterno'
     TipoCivicoInterno:
       type: object
       properties:
-        corte:
+        court:
           type: string
-        scala:
+        stairs:
           type: string
-        interno1:
+        internal1:
           type: string
-        espInterno1:
+        espInternal1:
           type: string
-        interno2:
+        internal2:
           type: string
-        espInterno2:
+        espInternal2:
           type: string
-        scalaEsterna:
+        externalStairs:
           type: string
-        secondario:
+        secondary:
           type: string
-        piano:
+        floor:
           type: string
         nui:
           type: string
-        isolato:
+        isolated:
           type: string
     TipoIndirizzoEstero:
       type: object
       properties:
         cap:
           type: string
-        localita:
+        place:
           $ref: '#/components/schemas/TipoDatoLocalitaEstera'
-        toponimo:
+        toponym:
           $ref: '#/components/schemas/TipoToponimoEstero'
     TipoConsolato:
       type: object
       properties:
-        codiceConsolato:
+        consulateCod:
           type: string
-        descrizioneConsolato:
+        consulateDescription:
           type: string
     TipoDatoLocalitaEstera:
       type: object
       properties:
-        descrizioneLocalita:
+        placeDescription:
           type: string
-        descrizioneStato:
+        countryDescription:
           type: string
-        codiceStato:
+        countryState:
           type: string
-        provinciaContea:
+        provinceCounty:
           type: string
     TipoToponimoEstero:
       type: object
       properties:
-        denominazione:
+        denomination:
           type: string
-        numeroCivico:
+        civicNumber:
           type: string
     TipoIdentificativi:
       type: object
@@ -911,71 +910,71 @@ components:
     TipoDatiEvento:
       type: object
       properties:
-        dataEvento:
+        eventDate:
           type: string
           format: YYYY-MM-DD
           example: '2021-11-15'
-        senzaGiorno:
+        noDay:
           type: string
-        senzaGiornoMese:
+        noMonth:
           type: string
-        luogoEvento:
+        eventPlace:
           $ref: '#/components/schemas/TipoLuogoEvento'
-        attoEvento:
+        eventAct:
           $ref: '#/components/schemas/TipoAttoEvento'
     TipoAttoEvento:
       type: object
       properties:
-        atto:
+        act:
           $ref: '#/components/schemas/TipoAtto'
-        attoANSC:
+        actANSC:
           $ref: '#/components/schemas/TipoAttoANSC'
     TipoAttoANSC:
       type: object
       properties:
         idANSC:
           type: string
-        comuneRegistrazione:
+        municipalityRegistration:
           $ref: '#/components/schemas/TipoComune'
-        anno:
+        act:
           type: string
-        ufficioMunicipio:
+        municipalOffice:
           type: string
-        numeroComunale:
+        municipalNumber:
           type: string
-        dataFormazioneAtto:
+        dateFormationAct:
           type: string
           format: YYYY-MM-DD
           example: '2021-11-15'
-        trascritto:
+        transcribed:
           type: string
     TipoAtto:
       type: object
       properties:
-        comuneRegistrazione:
+        municipalityRegistration:
           $ref: '#/components/schemas/TipoComune'
-        ufficioMunicipio:
+        municipalOffice:
           type: string
-        anno:
+        year:
           type: string
-        parte:
+        part:
           type: string
-        serie:
+        series:
           type: string
-        numeroAtto:
+        actNumber:
           type: string
         volume:
           type: string
-        dataFormazioneAtto:
+        dateFormationAct:
           type: string
           format: YYYY-MM-DD
           example: '2021-11-15'
-        trascritto:
+        transcribed:
           type: string
     GeneralError:
       type: object
       properties:
-        idOperazione:
+        idOp:
           type: string
         errors:
           type: array
@@ -984,53 +983,48 @@ components:
     Error:
       type: object
       properties:
-        codiceErroreAnomalia:
+        warningErrorCode:
           type: string
-        tipoErroreAnomalia:
+        warningErrorType:
           type: string
-        testoErroreAnomalia:
+        warningErrorText:
           type: string
-        oggettoErroreAnomalia:
+        warningErrorObject:
           type: string
-        campoErroreAnomalia:
+        warningErrorField:
           type: string
-        valoreErroreAnomalia:
+        warningErrorValue:
           type: string
-          
+
   parameters:
     pathUUID:
       description: >-
-        Identificativo del caso d'uso salvato
+        Saved use case identifier
       name: uuid
       in: path
       required: true
       schema:
         type: string
         format: uuid
-        
+
   securitySchemes:
     bearerAuth:
       type: http
       description: 'A bearer token in the format of a JWS and conformed to the specifications included in [RFC8725](https://tools.ietf.org/html/RFC8725).'
       scheme: bearer
-      bearerFormat: JWT          
+      bearerFormat: JWT
     Agid-JWT-Signature:
       type: apiKey
       in: header
       name: Agid-JWT-Signature
       description: |-
-        Header della firma di JWS.
-        Il valore di questo header è una firma JWS.
-        Vedere Modi  [integrity_rest_02] Integrità del payload del messaggio REST in PDND
+        JWS signature header. The value of this header represents a JWS signature. Refer to [integrity_rest_02] for information on the integrity of the REST message payload in PDND
     Agid-JWT-TrackingEvidence:
       type: apiKey
       in: header
       name: Agid-JWT-TrackingEvidence
       description: |-
-        Header della firma di JWS.
-        Il valore di questo header è una firma JWS.
-        Vedere Modi  [audit_rest_02] Inoltro dati tracciati nel dominio del Fruitore REST con correlazione
-        Claim da includere:
-            userID, un identificativo univoco dell'utente interno al dominio del fruitore che ha determinato l'esigenza della request di accesso all'e-service dell'erogatore;
-            userLocation, un identificativo univoco della postazione interna al dominio del fruitore da cui è avviata l'esigenza della request di accesso all'e-service dell'erogatore;
-            LoA, livello di sicurezza o di garanzia adottato nel processo di autenticazione informatica nel dominio del fruitore.
+        JWS signature header. The value of this header is a JWS signature. Refer to [audit_rest_02] for the forwarding of tracked data within the REST consumer's domain with correlation. Claims to include:
+        userID: a unique identifier of the user within the consumer's domain who initiated the request for access to the provider's e-service;
+        userLocation: a unique identifier of the workstation within the consumer's domain from which the request for access to the provider's e-service originated;
+        LoA: the level of assurance or security adopted in the digital authentication process within the consumer's domain.
