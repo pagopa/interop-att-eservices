@@ -47,7 +47,7 @@ export const uniquexCorrelationIdMiddleware: () => ZodiosRouterContextRequestHan
             .with("tokenNotValid", () => 401)
             .with("genericBadRequest", () => 400)
             .with("genericError", () => 500)
-            .with("xCorrelationIdNotValid", () => 500)
+            .with("xCorrelationIdNotValid", () => 400)
             .otherwise(() => 500)
         );
         return res.status(problem.status).json(problem).end();

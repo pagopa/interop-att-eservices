@@ -55,8 +55,8 @@ export function deleteFiscalcodeModelByFiscaldode(
   existingArray: ResponseRequestDigitalAddressModel[] | null,
   fiscalCode: string
 ): ResponseRequestDigitalAddressModel[] | null {
-  // Verifica se l'array esistente è nullo o undefined
-  if (!existingArray) {
+  // Verifica se l'array esistente è nullo o undefined o vuoto
+  if (!existingArray || existingArray.length === 0) {
     throw fiscalcodeNotFound();
   }
   const result: ResponseRequestDigitalAddressModel[] = [];

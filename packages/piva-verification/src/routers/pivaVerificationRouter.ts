@@ -2,10 +2,7 @@ import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
-import {
-  authenticationMiddleware,
-  uniquexCorrelationIdMiddleware,
-} from "pdnd-common";
+import { authenticationCorrelationMiddleware } from "pdnd-common";
 import { TrialService } from "trial";
 import PivaVerificationController from "../controllers/pivaVerificationController.js";
 import { api } from "../model/generated/api.js";
@@ -24,14 +21,13 @@ const pivaVerificationRouter = (
     "/organization-id-verification/check",
     logHeadersMiddleware,
     contextDataPivaMiddleware,
-    uniquexCorrelationIdMiddleware(),
-    authenticationMiddleware(true),
+    authenticationCorrelationMiddleware(true),
     verifyCertValidity,
     async (req, res) => {
       try {
         logger.info("Request Headers:", req.headers);
 
-        logger.info(`[START] Post - '/verifica' : ${req.body.codiceFiscale}`);
+        logger.info(`[START] Post - '/check' : ${req.body.codiceFiscale}`);
         const data = await PivaVerificationController.findPiva(req.body);
         void TrialService.insert(
           req.url,
@@ -39,7 +35,7 @@ const pivaVerificationRouter = (
           "PIVA-VERIFICATION",
           "OK"
         );
-        logger.info(`[END] Post - '/verifica'`);
+        logger.info(`[END] Post - '/check'`);
         return res.status(200).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);

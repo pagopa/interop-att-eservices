@@ -25,12 +25,16 @@ const dataPreparationRouter = (
     authenticationMiddleware(false),
     async (req, res) => {
       try {
-        await DataPreparationService.saveList(
+        const responseData = await DataPreparationService.saveList(
           ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel(
             req.body
           )
         );
-        return res.status(200).end();
+        if (responseData) {
+          return res.status(200).end();
+        } else {
+          return res.status(201).end();
+        }
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();
@@ -54,7 +58,7 @@ const dataPreparationRouter = (
         if (result) {
           return res.status(200).json(result).end();
         } else {
-          return res.status(200).end();
+          return res.status(200).json({}).end();
         }
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
@@ -84,7 +88,7 @@ const dataPreparationRouter = (
         if (result) {
           return res.status(200).json(result).end();
         } else {
-          return res.status(200).end();
+          return res.status(404).end();
         }
       } catch (error) {
         logger.error(error);

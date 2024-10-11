@@ -114,11 +114,6 @@ and if successful, some personal information is added.
         type: "Header",
         schema: z.string(),
       },
-      {
-        name: "x-correlation-id",
-        type: "Header",
-        schema: z.string(),
-      },
     ],
     response: z.object({ message: z.string() }).partial().passthrough(),
     errors: [
@@ -138,11 +133,6 @@ and if successful, some personal information is added.
     parameters: [
       {
         name: "apikey",
-        type: "Header",
-        schema: z.string(),
-      },
-      {
-        name: "x-correlation-id",
         type: "Header",
         schema: z.string(),
       },
@@ -233,11 +223,6 @@ for maintenance or a technical problem.
       },
       {
         name: "apikey",
-        type: "Header",
-        schema: z.string(),
-      },
-      {
-        name: "x-correlation-id",
         type: "Header",
         schema: z.string(),
       },

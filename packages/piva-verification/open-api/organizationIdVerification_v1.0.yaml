@@ -145,12 +145,6 @@ paths:
           schema:
             type: string
           description: API key
-        - in: header
-          name: x-correlation-id
-          required: true
-          schema:
-            type: string
-          description: correlationId
       responses:
         '200':
           description: Operation completed successfully
@@ -178,12 +172,6 @@ paths:
           schema:
             type: string
           description: API key
-        - in: header
-          name: x-correlation-id
-          required: true
-          schema:
-            type: string
-          description: correlationId
       responses:
         '200':
           description: Operation completed successfully
@@ -242,12 +230,6 @@ paths:
           schema:
             type: string
           description: API key
-        - in: header
-          name: x-correlation-id
-          required: true
-          schema:
-            type: string
-          description: correlationId
       responses:
         '200':
           description: Operation completed successfully

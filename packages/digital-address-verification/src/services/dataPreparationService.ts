@@ -36,18 +36,20 @@ class DataPreparationService {
         persistedFiscalcodeData.length === 0
       ) {
         await dataPreparationRepository.saveList(fiscalCodeData, hash);
-      } else {
-        // esistono già chiavi, devo aggiungere la nuova, o sostituirla nel caso esista
-        const allFiscalcode = appendUniqueFiscalcodeModelsToArray(
-          persistedFiscalcodeData,
-          fiscalCodeData
-        );
-        // if (areFiscalCodesValid(allFiscalcode)) {
-        await dataPreparationRepository.saveList(allFiscalcode, hash);
-        // } else {
-        // throw ErrorHandling.invalidApiRequest();
-        // }
+        logger.info(`[END] datapreparation-saveList`);
+        return null;
       }
+
+      // esistono già chiavi, devo aggiungere la nuova, o sostituirla nel caso esista
+      const allFiscalcode = appendUniqueFiscalcodeModelsToArray(
+        persistedFiscalcodeData,
+        fiscalCodeData
+      );
+      // if (areFiscalCodesValid(allFiscalcode)) {
+      await dataPreparationRepository.saveList(allFiscalcode, hash);
+      // } else {
+      // throw ErrorHandling.invalidApiRequest();
+      // }
       const response = await dataPreparationRepository.findAllByKey(hash);
       logger.info(`[END] datapreparation-saveList`);
       return response;

@@ -2,10 +2,7 @@ import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
-import {
-  authenticationMiddleware,
-  uniquexCorrelationIdMiddleware,
-} from "pdnd-common";
+import { authenticationCorrelationMiddleware } from "pdnd-common";
 import { TrialService } from "trial";
 import FiscalcodeVerificationController from "../controllers/fiscalcodeVerificationController.js";
 import { api } from "../model/generated/api.js";
@@ -23,8 +20,7 @@ const fiscalcodeVerificationRouter = (
     "/subject-id-verification/check",
     // logHeadersMiddleware,
     contextDataFiscalCodeMiddleware,
-    uniquexCorrelationIdMiddleware(),
-    authenticationMiddleware(true),
+    authenticationCorrelationMiddleware(true),
     verifyCertValidity,
     async (req, res) => {
       try {
