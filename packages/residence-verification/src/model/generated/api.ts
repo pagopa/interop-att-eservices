@@ -3,145 +3,142 @@ import { z } from "zod";
 
 const TipoComune = z
   .object({
-    nomeComune: z.string(),
-    codiceIstat: z.string(),
-    siglaProvinciaIstat: z.string(),
-    descrizioneLocalita: z.string(),
+    nameMunicipality: z.string(),
+    istatCode: z.string(),
+    acronymIstatProvince: z.string(),
+    placeDescription: z.string(),
   })
   .partial()
   .passthrough();
 const TipoLocalita = z
   .object({
-    descrizioneLocalita: z.string(),
-    descrizioneStato: z.string(),
-    codiceStato: z.string(),
-    provinciaContea: z.string(),
+    placeDescription: z.string(),
+    countryDescription: z.string(),
+    codState: z.string(),
+    provinceCounty: z.string(),
   })
   .partial()
   .passthrough();
 const TipoLuogoNascitaE000 = z
   .object({
-    luogoEccezionale: z.string(),
-    comune: TipoComune,
-    localita: TipoLocalita,
+    exceptionalPlace: z.string(),
+    municipality: TipoComune,
+    place: TipoLocalita,
   })
   .partial()
   .passthrough();
 const TipoDatiNascitaTemplateE000 = z
   .object({
-    dataEvento: z.string(),
-    senzaGiorno: z.string(),
-    luogoNascita: TipoLuogoNascitaE000,
+    eventDate: z.string(),
+    noDay: z.string(),
+    birthPlace: TipoLuogoNascitaE000,
   })
   .partial()
   .passthrough();
-const TipoCriteriRicercaTemplateAR001 = z
+const TipoCriteriaTemplateAR001 = z
   .object({
-    codiceFiscale: z.string(),
+    fiscalCode: z.string(),
     id: z.string(),
-    cognome: z.string(),
-    nome: z.string(),
-    sesso: z.string(),
-    datiNascita: TipoDatiNascitaTemplateE000,
+    surname: z.string(),
+    name: z.string(),
+    gender: z.string(),
+    birthDate: TipoDatiNascitaTemplateE000,
   })
   .partial()
   .passthrough();
 const TipoToponimo = z
   .object({
-    codSpecie: z.string(),
-    specie: z.string(),
-    specieFonte: z.string(),
-    codToponimo: z.string(),
-    denominazioneToponimo: z.string(),
-    toponimoFonte: z.string(),
+    codType: z.string(),
+    type: z.string(),
+    originType: z.string(),
+    toponymCod: z.string(),
+    toponymDenomination: z.string(),
+    toponymSource: z.string(),
   })
   .partial()
   .passthrough();
 const TipoCivicoInterno = z
   .object({
-    corte: z.string(),
-    scala: z.string(),
-    interno1: z.string(),
-    espInterno1: z.string(),
-    interno2: z.string(),
-    espInterno2: z.string(),
-    scalaEsterna: z.string(),
-    secondario: z.string(),
-    piano: z.string(),
+    court: z.string(),
+    stairs: z.string(),
+    internal1: z.string(),
+    espInternal1: z.string(),
+    internal2: z.string(),
+    espInternal2: z.string(),
+    externalStairs: z.string(),
+    secondary: z.string(),
+    floor: z.string(),
     nui: z.string(),
-    isolato: z.string(),
+    isolated: z.string(),
   })
   .partial()
   .passthrough();
 const TipoNumeroCivico = z
   .object({
-    codiceCivico: z.string(),
-    civicoFonte: z.string(),
-    numero: z.string(),
-    metrico: z.string(),
+    civicCod: z.string(),
+    civicSource: z.string(),
+    number: z.string(),
+    metric: z.string(),
     progSNC: z.string(),
-    lettera: z.string(),
-    esponente1: z.string(),
-    colore: z.string(),
-    civicoInterno: TipoCivicoInterno,
+    letter: z.string(),
+    exponent1: z.string(),
+    color: z.string(),
+    internalCivic: TipoCivicoInterno,
   })
   .partial()
   .passthrough();
 const TipoIndirizzo = z
   .object({
     cap: z.string(),
-    comune: TipoComune,
-    frazione: z.string(),
-    toponimo: TipoToponimo,
-    numeroCivico: TipoNumeroCivico,
+    municipality: TipoComune,
+    fraction: z.string(),
+    toponym: TipoToponimo,
+    civicNumber: TipoNumeroCivico,
   })
   .partial()
   .passthrough();
 const TipoDatoLocalitaEstera = z
   .object({
-    descrizioneLocalita: z.string(),
-    descrizioneStato: z.string(),
-    codiceStato: z.string(),
-    provinciaContea: z.string(),
+    placeDescription: z.string(),
+    countryDescription: z.string(),
+    countryState: z.string(),
+    provinceCounty: z.string(),
   })
   .partial()
   .passthrough();
 const TipoToponimoEstero = z
-  .object({ denominazione: z.string(), numeroCivico: z.string() })
+  .object({ denomination: z.string(), civicNumber: z.string() })
   .partial()
   .passthrough();
 const TipoIndirizzoEstero = z
   .object({
     cap: z.string(),
-    localita: TipoDatoLocalitaEstera,
-    toponimo: TipoToponimoEstero,
+    place: TipoDatoLocalitaEstera,
+    toponym: TipoToponimoEstero,
   })
   .partial()
   .passthrough();
 const TipoConsolato = z
-  .object({ codiceConsolato: z.string(), descrizioneConsolato: z.string() })
+  .object({ consulateCod: z.string(), consulateDescription: z.string() })
   .partial()
   .passthrough();
 const TipoLocalitaEstera1 = z
-  .object({ indirizzoEstero: TipoIndirizzoEstero, consolato: TipoConsolato })
+  .object({ foreignAddress: TipoIndirizzoEstero, consulate: TipoConsolato })
   .partial()
   .passthrough();
 const TipoResidenza = z
   .object({
-    tipoIndirizzo: z.string(),
-    noteIndirizzo: z.string(),
-    indirizzo: TipoIndirizzo,
-    localitaEstera: TipoLocalitaEstera1,
+    addressType: z.string(),
+    noteaddress: z.string(),
+    address: TipoIndirizzo,
+    foreignState: TipoLocalitaEstera1,
     presso: z.string(),
-    dataDecorrenzaResidenza: z.string(),
+    addressStartDate: z.string(),
   })
   .partial()
   .passthrough();
 const DataPreparationTemplate = z
-  .object({
-    soggetto: TipoCriteriRicercaTemplateAR001,
-    residenza: TipoResidenza,
-  })
+  .object({ subject: TipoCriteriaTemplateAR001, address: TipoResidenza })
   .partial();
 const DataPreparationResponse = z.object({ uuid: z.string() }).partial();
 const DataPreparationTemplateResponse = z
@@ -151,79 +148,76 @@ const DataPreparationTemplateResponse = z
   .and(DataPreparationTemplate);
 const TipoDatiNascitaE000 = z
   .object({
-    dataEvento: z.string(),
-    senzaGiorno: z.string(),
-    senzaGiornoMese: z.string(),
-    luogoNascita: TipoLuogoNascitaE000,
+    eventDate: z.string(),
+    noDay: z.string(),
+    noMonth: z.string(),
+    birthPlace: TipoLuogoNascitaE000,
   })
   .partial()
   .passthrough();
 const TipoParametriRicercaAR001 = z
   .object({
-    codiceFiscale: z.string(),
+    fiscalCode: z.string(),
     id: z.string(),
-    cognome: z.string(),
-    senzaCognome: z.string(),
-    nome: z.string(),
-    senzaNome: z.string(),
-    sesso: z.string(),
-    datiNascita: TipoDatiNascitaE000,
+    surname: z.string(),
+    noSurname: z.string(),
+    name: z.string(),
+    noName: z.string(),
+    gender: z.string(),
+    birthDate: TipoDatiNascitaE000,
   })
   .partial()
   .passthrough();
 const TipoRichiestaAR001 = z
   .object({
-    dataRiferimentoRichiesta: z.string(),
-    motivoRichiesta: z.string(),
-    casoUso: z.string(),
+    dateOfRequest: z.string(),
+    motivation: z.string(),
+    useCase: z.string(),
   })
   .passthrough();
 const RichiestaAR001 = z
   .object({
-    idOperazioneClient: z.string(),
-    parametriRicerca: TipoParametriRicercaAR001,
-    richiesta: TipoRichiestaAR001,
+    operationId: z.string(),
+    criteria: TipoParametriRicercaAR001,
+    requestData: TipoRichiestaAR001,
   })
   .passthrough();
 const TipoCodiceFiscale = z
   .object({
-    codFiscale: z.string(),
-    validitaCF: z.string(),
-    dataAttribuzioneValidita: z.string(),
+    fiscalCode: z.string(),
+    fiscalCodeValidity: z.string(),
+    dataAttributionValidity: z.string(),
   })
   .partial()
   .passthrough();
 const TipoLuogoEvento = z
   .object({
-    luogoEccezionale: z.string(),
-    comune: TipoComune,
-    localita: TipoLocalita,
+    exceptionalPlace: z.string(),
+    municipality: TipoComune,
+    place: TipoLocalita,
   })
   .partial()
   .passthrough();
 const TipoIdSchedaSoggettoComune = z
-  .object({
-    idSchedaSoggettoComuneIstat: z.string(),
-    idSchedaSoggetto: z.string(),
-  })
+  .object({ idCommonSubjectDataIstat: z.string(), idSubjectData: z.string() })
   .partial()
   .passthrough();
 const TipoGeneralita = z
   .object({
-    codiceFiscale: TipoCodiceFiscale,
-    cognome: z.string(),
-    senzaCognome: z.string(),
-    nome: z.string(),
-    senzaNome: z.string(),
-    sesso: z.string(),
-    dataNascita: z.string(),
-    senzaGiorno: z.string(),
-    senzaGiornoMese: z.string(),
-    luogoNascita: TipoLuogoEvento,
-    soggettoAIRE: z.string(),
-    annoEspatrio: z.string(),
-    idSchedaSoggettoComune: TipoIdSchedaSoggettoComune,
-    idSchedaSoggetto: z.string(),
+    fiscalCode: TipoCodiceFiscale,
+    surname: z.string(),
+    noSurname: z.string(),
+    name: z.string(),
+    noName: z.string(),
+    gender: z.string(),
+    birthDate: z.string(),
+    noDay: z.string(),
+    noMonth: z.string(),
+    birthPlace: TipoLuogoEvento,
+    AIRESubject: z.string(),
+    yearExpatriation: z.string(),
+    idCommonSubjectData: TipoIdSchedaSoggettoComune,
+    idSubjectData: z.string(),
     note: z.string(),
   })
   .partial()
@@ -231,145 +225,145 @@ const TipoGeneralita = z
 const TipoIdentificativi = z.object({ id: z.string() }).partial().passthrough();
 const TipoAtto = z
   .object({
-    comuneRegistrazione: TipoComune,
-    ufficioMunicipio: z.string(),
-    anno: z.string(),
-    parte: z.string(),
-    serie: z.string(),
-    numeroAtto: z.string(),
+    municipalityRegistration: TipoComune,
+    municipalOffice: z.string(),
+    year: z.string(),
+    part: z.string(),
+    series: z.string(),
+    actNumber: z.string(),
     volume: z.string(),
-    dataFormazioneAtto: z.string(),
-    trascritto: z.string(),
+    dateFormationAct: z.string(),
+    transcribed: z.string(),
   })
   .partial()
   .passthrough();
 const TipoAttoANSC = z
   .object({
     idANSC: z.string(),
-    comuneRegistrazione: TipoComune,
-    anno: z.string(),
-    ufficioMunicipio: z.string(),
-    numeroComunale: z.string(),
-    dataFormazioneAtto: z.string(),
-    trascritto: z.string(),
+    municipalityRegistration: TipoComune,
+    act: z.string(),
+    municipalOffice: z.string(),
+    municipalNumber: z.string(),
+    dateFormationAct: z.string(),
+    transcribed: z.string(),
   })
   .partial()
   .passthrough();
 const TipoAttoEvento = z
-  .object({ atto: TipoAtto, attoANSC: TipoAttoANSC })
+  .object({ act: TipoAtto, actANSC: TipoAttoANSC })
   .partial()
   .passthrough();
 const TipoDatiEvento = z
   .object({
-    dataEvento: z.string(),
-    senzaGiorno: z.string(),
-    senzaGiornoMese: z.string(),
-    luogoEvento: TipoLuogoEvento,
-    attoEvento: TipoAttoEvento,
+    eventDate: z.string(),
+    noDay: z.string(),
+    noMonth: z.string(),
+    eventPlace: TipoLuogoEvento,
+    eventAct: TipoAttoEvento,
   })
   .partial()
   .passthrough();
-const TipoDatiSoggettiEnte = z
+const TipoDatiSubjectsEnte = z
   .object({
-    generalita: TipoGeneralita,
-    residenza: z.array(TipoResidenza),
-    identificativi: TipoIdentificativi,
-    datiDecesso: TipoDatiEvento,
+    generality: TipoGeneralita,
+    address: z.array(TipoResidenza),
+    identifiers: TipoIdentificativi,
+    deathDate: TipoDatiEvento,
   })
   .partial()
   .passthrough();
-const TipoListaSoggetti = z
-  .object({ soggetto: z.array(TipoDatiSoggettiEnte) })
+const TipoListaSubjects = z
+  .object({ subject: z.array(TipoDatiSubjectsEnte) })
   .partial()
   .passthrough();
 const TipoErroriAnomalia = z
   .object({
-    codiceErroreAnomalia: z.string(),
-    tipoErroreAnomalia: z.string(),
-    testoErroreAnomalia: z.string(),
-    oggettoErroreAnomalia: z.string(),
-    campoErroreAnomalia: z.string(),
-    valoreErroreAnomalia: z.string(),
+    warningErrorCode: z.string(),
+    warningErrorType: z.string(),
+    warningErrorText: z.string(),
+    warningErrorObject: z.string(),
+    warningErrorField: z.string(),
+    warningErrorValue: z.string(),
   })
   .partial()
   .passthrough();
 const RispostaAR001 = z
   .object({
-    idOperazione: z.string(),
-    soggetti: TipoListaSoggetti,
-    listaAnomalie: z.array(TipoErroriAnomalia),
+    idOp: z.string(),
+    subjects: TipoListaSubjects,
+    warnings: z.array(TipoErroriAnomalia),
   })
   .partial()
   .passthrough();
-const TipoCriteriRicercaAR002 = z
+const TipocriteriaAR002 = z
   .object({
-    codiceFiscale: z.string(),
+    fiscalCode: z.string(),
     id: z.string(),
-    cognome: z.string(),
-    senzaCognome: z.string(),
-    nome: z.string(),
-    senzaNome: z.string(),
-    sesso: z.string(),
-    datiNascita: TipoDatiNascitaE000,
+    surname: z.string(),
+    nosurname: z.string(),
+    name: z.string(),
+    noname: z.string(),
+    gender: z.string(),
+    birthDate: TipoDatiNascitaE000,
   })
   .partial()
   .passthrough();
 const TipoLocalitaEstera = z
-  .object({ indirizzoEstero: TipoIndirizzoEstero, consolato: TipoConsolato })
+  .object({ foreignAddress: TipoIndirizzoEstero, consulate: TipoConsolato })
   .partial()
   .passthrough();
 const TipoVerificaResidenza = z
   .object({
-    tipoIndirizzo: z.string(),
-    indirizzo: TipoIndirizzo,
-    localitaEstera: TipoLocalitaEstera,
+    addressType: z.string(),
+    address: TipoIndirizzo,
+    foreignState: TipoLocalitaEstera,
   })
   .partial()
   .passthrough();
 const TipoVerificaAR002 = z
-  .object({ residenza: TipoVerificaResidenza })
+  .object({ address: TipoVerificaResidenza })
   .partial()
   .passthrough();
-const TipoDatiRichiestaAR002 = z
+const TipoRequestDataAR002 = z
   .object({
-    dataRiferimentoRichiesta: z.string(),
-    motivoRichiesta: z.string(),
-    casoUso: z.string(),
+    dateOfRequest: z.string(),
+    motivation: z.string(),
+    useCase: z.string(),
   })
   .passthrough();
 const RichiestaAR002 = z
   .object({
-    idOperazioneClient: z.string(),
-    criteriRicerca: TipoCriteriRicercaAR002,
-    verifica: TipoVerificaAR002.optional(),
-    datiRichiesta: TipoDatiRichiestaAR002,
+    operationId: z.string(),
+    criteria: TipocriteriaAR002,
+    check: TipoVerificaAR002.optional(),
+    requestData: TipoRequestDataAR002,
   })
   .passthrough();
 const TipoInfoValore = z.enum(["A", "N", "S"]);
 const TipoInfoSoggetto = z
   .object({
     id: z.string(),
-    chiave: z.string(),
-    valore: TipoInfoValore,
-    valoreTesto: z.string(),
-    valoreData: z.string(),
-    dettaglio: z.string(),
+    key: z.string(),
+    value: TipoInfoValore,
+    textValue: z.string(),
+    dataValue: z.string(),
+    otherData: z.string(),
   })
   .partial()
   .passthrough();
 const InfoSoggettoEnte = z
-  .object({ infoSoggettoEnte: z.array(TipoInfoSoggetto) })
+  .object({ infoInstitution: z.array(TipoInfoSoggetto) })
   .partial()
   .passthrough();
-const VerifyTipoDatiSoggetti = z
-  .object({ infoSoggetto: z.array(InfoSoggettoEnte) })
+const VerifyTipoDatiSubjects = z
+  .object({ infoSubject: z.array(InfoSoggettoEnte) })
   .partial()
   .passthrough();
 const RispostaAR002OK = z
   .object({
-    idOperazione: z.string(),
-    soggetti: VerifyTipoDatiSoggetti,
-    listaAnomalie: z.array(TipoErroriAnomalia),
+    idOp: z.string(),
+    subjects: VerifyTipoDatiSubjects,
+    warnings: z.array(TipoErroriAnomalia),
   })
   .partial()
   .passthrough();
@@ -392,7 +386,7 @@ export const schemas = {
   TipoLocalita,
   TipoLuogoNascitaE000,
   TipoDatiNascitaTemplateE000,
-  TipoCriteriRicercaTemplateAR001,
+  TipoCriteriaTemplateAR001,
   TipoToponimo,
   TipoCivicoInterno,
   TipoNumeroCivico,
@@ -419,20 +413,20 @@ export const schemas = {
   TipoAttoANSC,
   TipoAttoEvento,
   TipoDatiEvento,
-  TipoDatiSoggettiEnte,
-  TipoListaSoggetti,
+  TipoDatiSubjectsEnte,
+  TipoListaSubjects,
   TipoErroriAnomalia,
   RispostaAR001,
-  TipoCriteriRicercaAR002,
+  TipocriteriaAR002,
   TipoLocalitaEstera,
   TipoVerificaResidenza,
   TipoVerificaAR002,
-  TipoDatiRichiestaAR002,
+  TipoRequestDataAR002,
   RichiestaAR002,
   TipoInfoValore,
   TipoInfoSoggetto,
   InfoSoggettoEnte,
-  VerifyTipoDatiSoggetti,
+  VerifyTipoDatiSubjects,
   RispostaAR002OK,
   ProblemError,
   Problem,
@@ -443,7 +437,7 @@ const endpoints = makeApi([
     method: "post",
     path: "/residence-verification",
     alias: "AR001",
-    description: `Consultazione di un caso d&#x27;uso dell&#x27;ente`,
+    description: `Search for a residential address`,
     requestFormat: "json",
     parameters: [
       {
@@ -472,6 +466,39 @@ const endpoints = makeApi([
       {
         status: 429,
         description: `Too Many Requests`,
+        schema: z.void(),
+      },
+    ],
+  },
+  {
+    method: "post",
+    path: "/residence-verification/check",
+    alias: "AR002",
+    description: `Check for a residential address`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        description: `Request info`,
+        type: "Body",
+        schema: RichiestaAR002,
+      },
+    ],
+    response: RispostaAR002OK,
+    errors: [
+      {
+        status: 400,
+        description: `Not valid request`,
+        schema: z.void(),
+      },
+      {
+        status: 404,
+        description: `Address not found`,
+        schema: z.void(),
+      },
+      {
+        status: 500,
+        description: `Internal Server Error`,
         schema: z.void(),
       },
     ],
@@ -517,7 +544,7 @@ const endpoints = makeApi([
     method: "get",
     path: "/residence-verification/data-preparation",
     alias: "GetAllAR001",
-    description: `Lista di tutti i casi d&#x27;uso dell&#x27;ente`,
+    description: `List of institution use cases`,
     requestFormat: "json",
     response: z.array(DataPreparationTemplateResponse),
     errors: [
@@ -547,7 +574,7 @@ const endpoints = makeApi([
     method: "delete",
     path: "/residence-verification/data-preparation",
     alias: "DeleteAR001",
-    description: `Eliminazione di un insieme di casi d&#x27;uso dell&#x27;ente`,
+    description: `Delete institution use cases`,
     requestFormat: "json",
     response: z.void(),
     errors: [
@@ -614,7 +641,7 @@ const endpoints = makeApi([
     method: "delete",
     path: "/residence-verification/data-preparation/:uuid",
     alias: "DeleteByIdAR001",
-    description: `Eliminazione di un singolo caso d&#x27;uso dell&#x27;ente`,
+    description: `Remove a single use case`,
     requestFormat: "json",
     parameters: [
       {
@@ -663,39 +690,6 @@ const endpoints = makeApi([
         errors: z.array(ProblemError).min(1),
       })
       .passthrough(),
-  },
-  {
-    method: "post",
-    path: "/residence-verification/verify",
-    alias: "AR002",
-    description: `Consultazione di un caso d&#x27;uso`,
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "body",
-        description: `Richiesta da consultare`,
-        type: "Body",
-        schema: RichiestaAR002,
-      },
-    ],
-    response: RispostaAR002OK,
-    errors: [
-      {
-        status: 400,
-        description: `Caso d&#x27;uso invalido`,
-        schema: z.void(),
-      },
-      {
-        status: 404,
-        description: `Caso d&#x27;uso non trovato`,
-        schema: z.void(),
-      },
-      {
-        status: 500,
-        description: `Internal Server Error`,
-        schema: z.void(),
-      },
-    ],
   },
 ]);
 

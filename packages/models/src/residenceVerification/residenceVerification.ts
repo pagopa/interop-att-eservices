@@ -1,140 +1,140 @@
 import { z } from "zod";
 
 export const TipoComuneModel = z.object({
-  nomeComune: z.string(),
-  codiceIstat: z.string(),
-  siglaProvinciaIstat: z.string(),
-  descrizioneLocalita: z.string(),
+  nameMunicipality: z.string(),
+  istatCode: z.string(),
+  acronymIstatProvince: z.string(),
+  placeDescription: z.string(),
 });
 export type TipoComuneModel = z.infer<typeof TipoComuneModel>;
 
 export const TipoLocalitaModel = z.object({
-  descrizioneLocalita: z.string(),
-  descrizioneStato: z.string(),
-  codiceStato: z.string(),
-  provinciaContea: z.string(),
+  placeDescription: z.string(),
+  countryDescription: z.string(),
+  codState: z.string(),
+  provinceCounty: z.string(),
 });
 export type TipoLocalitaModel = z.infer<typeof TipoLocalitaModel>;
 
 export const TipoLuogoNascitaModel = z.object({
-  luogoEccezionale: z.string(),
-  comune: TipoComuneModel,
-  localita: TipoLocalitaModel,
+  exceptionalPlace: z.string(),
+  municipality: TipoComuneModel,
+  place: TipoLocalitaModel,
 });
 export type TipoLuogoNascitaModel = z.infer<typeof TipoLuogoNascitaModel>;
 
 export const TipoDataNascitaModel = z.object({
-  dataEvento: z.string(),
-  luogoNascita: TipoLuogoNascitaModel,
+  eventDate: z.string(),
+  birthPlace: TipoLuogoNascitaModel,
 });
 export type TipoDataNascitaModel = z.infer<typeof TipoDataNascitaModel>;
 
 export const SoggettoModel = z.object({
-  codiceFiscale: z.string(),
+  fiscalCode: z.string(),
   id: z.string(),
-  cognome: z.string(),
-  nome: z.string(),
-  sesso: z.string(),
-  datiNascita: TipoDataNascitaModel,
+  surname: z.string(),
+  name: z.string(),
+  gender: z.string(),
+  birthDate: TipoDataNascitaModel,
 });
 export type SoggettoModel = z.infer<typeof SoggettoModel>;
 
 export const TipoToponimoModel = z.object({
-  codSpecie: z.string(),
-  specie: z.string(),
-  specieFonte: z.string(),
-  codToponimo: z.string(),
-  denominazioneToponimo: z.string(),
-  toponimoFonte: z.string(),
+  codType: z.string(),
+  type: z.string(),
+  originType: z.string(),
+  toponymCod: z.string(),
+  toponymDenomination: z.string(),
+  toponymSource: z.string(),
 });
 export type TipoToponimoModel = z.infer<typeof TipoToponimoModel>;
 
 export const TipoCivicoInternoModel = z.object({
-  corte: z.string(),
-  scala: z.string(),
-  interno1: z.string(),
-  espInterno1: z.string(),
-  interno2: z.string(),
-  espInterno2: z.string(),
-  scalaEsterna: z.string(),
-  secondario: z.string(),
-  piano: z.string(),
+  court: z.string(),
+  stairs: z.string(),
+  internal1: z.string(),
+  espInternal1: z.string(),
+  internal2: z.string(),
+  espInternal2: z.string(),
+  externalStairs: z.string(),
+  secondary: z.string(),
+  floor: z.string(),
   nui: z.string(),
-  isolato: z.string(),
+  isolated: z.string(),
 });
 export type TipoCivicoInternoModel = z.infer<typeof TipoCivicoInternoModel>;
 
 export const TipoNumeroCivicoModel = z.object({
-  codiceCivico: z.string(),
-  civicoFonte: z.string(),
-  numero: z.string(),
-  metrico: z.string(),
+  civicCod: z.string(),
+  civicSource: z.string(),
+  number: z.string(),
+  metric: z.string(),
   progSNC: z.string(),
-  lettera: z.string(),
-  esponente1: z.string(),
-  colore: z.string(),
-  civicoInterno: TipoCivicoInternoModel,
+  letter: z.string(),
+  exponent1: z.string(),
+  color: z.string(),
+  internalCivic: TipoCivicoInternoModel,
 });
 export type TipoNumeroCivicoModel = z.infer<typeof TipoNumeroCivicoModel>;
 
 export const TipoIndirizzoModel = z.object({
   cap: z.string(),
-  comune: TipoComuneModel,
-  frazione: z.string(),
-  toponimo: TipoToponimoModel,
-  numeroCivico: TipoNumeroCivicoModel,
+  municipality: TipoComuneModel,
+  fraction: z.string(),
+  toponym: TipoToponimoModel,
+  civicNumber: TipoNumeroCivicoModel,
 });
 export type TipoIndirizzoModel = z.infer<typeof TipoIndirizzoModel>;
 
 export const TipoDatoLocalitaEsteraModel = z.object({
-  descrizioneLocalita: z.string(),
-  descrizioneStato: z.string(),
-  codiceStato: z.string(),
-  provinciaContea: z.string(),
+  placeDescription: z.string(),
+  countryDescription: z.string(),
+  countryState: z.string(),
+  provinceCounty: z.string(),
 });
 export type TipoDatoLocalitaEsteraModel = z.infer<
   typeof TipoDatoLocalitaEsteraModel
 >;
 
 export const TipoToponimoEsteroModel = z.object({
-  denominazione: z.string(),
-  numeroCivico: z.string(),
+  denomination: z.string(),
+  civicNumber: z.string(),
 });
 export type TipoToponimoEsteroModel = z.infer<typeof TipoToponimoEsteroModel>;
 
 export const TipoIndirizzoEsteroModel = z.object({
   cap: z.string(),
-  localita: TipoDatoLocalitaEsteraModel,
-  toponimo: TipoToponimoEsteroModel,
+  place: TipoDatoLocalitaEsteraModel,
+  toponym: TipoToponimoEsteroModel,
 });
 export type TipoIndirizzoEsteroModel = z.infer<typeof TipoIndirizzoEsteroModel>;
 
 export const TipoConsolatoModel = z.object({
-  codiceConsolato: z.string(),
-  descrizioneConsolato: z.string(),
+  consulateCod: z.string(),
+  consulateDescription: z.string(),
 });
 export type TipoConsolatoModel = z.infer<typeof TipoConsolatoModel>;
 
 export const TipoLocalitaEsteraModel = z.object({
-  indirizzoEstero: TipoIndirizzoEsteroModel,
-  consolato: TipoConsolatoModel,
+  foreignAddress: TipoIndirizzoEsteroModel,
+  consulate: TipoConsolatoModel,
 });
 export type TipoLocalitaEsteraModel = z.infer<typeof TipoLocalitaEsteraModel>;
 
 export const TipoResidenzaModel = z.object({
-  tipoIndirizzo: z.string(),
-  noteIndirizzo: z.string(),
-  indirizzo: TipoIndirizzoModel,
-  localitaEstera: TipoLocalitaEsteraModel,
+  addressType: z.string(),
+  noteaddress: z.string(),
+  address: TipoIndirizzoModel,
+  foreignState: TipoLocalitaEsteraModel,
   presso: z.string(),
-  dataDecorrenzaResidenza: z.string(),
+  addressStartDate: z.string(),
 });
 export type TipoResidenzaModel = z.infer<typeof TipoResidenzaModel>;
 
 export const UserModel = z.object({
   uuid: z.string(),
-  soggetto: SoggettoModel,
-  residenza: TipoResidenzaModel,
+  subject: SoggettoModel,
+  address: TipoResidenzaModel,
 });
 export type UserModel = z.infer<typeof UserModel>;
 
@@ -186,9 +186,9 @@ export type TipoParametriRicercaModel = z.infer<
 
 export const TipoRichiestaModel = z
   .object({
-    dataRiferimentoRichiesta: z.string(),
-    motivoRichiesta: z.string(),
-    casoUso: z.string(),
+    dateOfRequest: z.string(),
+    motivation: z.string(),
+    useCase: z.string(),
   })
   .passthrough();
 export type TipoRichiestaModel = z.infer<typeof TipoRichiestaModel>;

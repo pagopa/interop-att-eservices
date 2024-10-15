@@ -22,17 +22,17 @@ class ResidenceVerificationController {
   ): Promise<RispostaAR001 | null | undefined> {
     try {
       logger.info(`post request: ${request}`);
-      if (request.parametriRicerca.codiceFiscale) {
+      if (request.criteria.fiscalCode) {
         const data = await ResidenceVerificationService.getByFiscalCode(
-          request.parametriRicerca.codiceFiscale
+          request.criteria.fiscalCode
         );
 
         const list: UserModel[] = data ? [data] : [];
 
         const result: RispostaAR001 = {
-          idOperazione: request.idOperazioneClient,
-          soggetti: {
-            soggetto: list.map((element) =>
+          idOp: request.operationId,
+          subjects: {
+            subject: list.map((element) =>
               UserModelToApiTipoDatiSoggettiEnte(element)
             ),
           },
@@ -40,31 +40,31 @@ class ResidenceVerificationController {
         return result;
       } else if (checkPersonalInfo(request)) {
         const data = await ResidenceVerificationService.getByPersonalInfo(
-          request.parametriRicerca
+          request.criteria
         );
 
         const result: RispostaAR001 = {
-          idOperazione: request.idOperazioneClient,
-          soggetti: {
-            soggetto: data.map((element) =>
+          idOp: request.operationId,
+          subjects: {
+            subject: data.map((element) =>
               UserModelToApiTipoDatiSoggettiEnte(element)
             ),
           },
         };
 
         return result;
-      } else if (request.parametriRicerca.id) {
-        if (request.parametriRicerca.id) {
+      } else if (request.criteria.id) {
+        if (request.criteria.id) {
           const data = await ResidenceVerificationService.getById(
-            request.parametriRicerca.id
+            request.criteria.id
           );
 
           const list: UserModel[] = data ? [data] : [];
 
           const result: RispostaAR001 = {
-            idOperazione: request.idOperazioneClient,
-            soggetti: {
-              soggetto: list.map((element) =>
+            idOp: request.operationId,
+            subjects: {
+              subject: list.map((element) =>
                 UserModelToApiTipoDatiSoggettiEnte(element)
               ),
             },
@@ -89,46 +89,46 @@ class ResidenceVerificationController {
     try {
       logger.info(`post request: ${request}`);
       let resultData;
-      if (request.criteriRicerca.codiceFiscale) {
+      if (request.criteria.fiscalCode) {
         const data = await ResidenceVerificationService.getByFiscalCode(
-          request.criteriRicerca.codiceFiscale
+          request.criteria.fiscalCode
         );
 
         const list: UserModel[] = data ? [data] : [];
 
         resultData = {
-          idOperazione: request.idOperazioneClient,
-          soggetti: {
-            soggetto: list.map((element) =>
+          idOp: request.operationId,
+          subjects: {
+            subject: list.map((element) =>
               UserModelToApiTipoDatiSoggettiEnte(element)
             ),
           },
         };
       } else if (checkPersonalInfoVerify(request)) {
         const data = await ResidenceVerificationService.getByPersonalInfo(
-          request.criteriRicerca
+          request.criteria
         );
 
         resultData = {
-          idOperazione: request.idOperazioneClient,
-          soggetti: {
-            soggetto: data.map((element) =>
+          idOp: request.operationId,
+          subjects: {
+            subject: data.map((element) =>
               UserModelToApiTipoDatiSoggettiEnte(element)
             ),
           },
         };
-      } else if (request.criteriRicerca.id) {
-        if (request.criteriRicerca.id) {
+      } else if (request.criteria.id) {
+        if (request.criteria.id) {
           const data = await ResidenceVerificationService.getById(
-            `${request.criteriRicerca.id}`
+            `${request.criteria.id}`
           );
 
           const list: UserModel[] = data ? [data] : [];
 
           resultData = {
-            idOperazione: request.idOperazioneClient,
-            soggetti: {
-              soggetto: list.map((element) =>
+            idOp: request.operationId,
+            subjects: {
+              subject: list.map((element) =>
                 UserModelToApiTipoDatiSoggettiEnte(element)
               ),
             },
@@ -141,16 +141,16 @@ class ResidenceVerificationController {
       }
 
       const response: RispostaAR002OK = {};
-      response.idOperazione = request.idOperazioneClient;
-      if (!resultData || resultData.soggetti?.soggetto?.length === 0) {
+      response.idOp = request.operationId;
+      if (!resultData || resultData.subjects?.subject?.length === 0) {
         throw userModelNotFound();
       } else {
         // vado a vedere se qualcuno ha la residenza richiesta in oggetto
-        response.soggetti = { infoSoggetto: [] };
-        resultData?.soggetti?.soggetto.forEach((oggetto) => {
-          oggetto.residenza?.forEach((residenza) => {
-            response.soggetti?.infoSoggetto?.push(
-              checkInfoSoggettoEquals(request.verifica?.residenza, residenza)
+        response.subjects = { infoSubject: [] };
+        resultData?.subjects?.subject.forEach((oggetto) => {
+          oggetto.address?.forEach((address) => {
+            response.subjects?.infoSubject?.push(
+              checkInfoSoggettoEquals(request.check?.address, address)
             );
           });
         });
@@ -165,20 +165,20 @@ class ResidenceVerificationController {
 }
 
 const checkPersonalInfo = (request: RichiestaAR001): boolean =>
-  !!request.parametriRicerca.nome &&
-  !!request.parametriRicerca.cognome &&
-  !!request.parametriRicerca.datiNascita &&
-  !!request.parametriRicerca.datiNascita.dataEvento &&
-  !!request.parametriRicerca.datiNascita.luogoNascita &&
-  !!request.parametriRicerca?.datiNascita?.luogoNascita?.comune?.nomeComune &&
-  !!request.parametriRicerca?.datiNascita?.luogoNascita?.localita?.codiceStato;
+  !!request.criteria.name &&
+  !!request.criteria.surname &&
+  !!request.criteria.birthDate &&
+  !!request.criteria.birthDate.eventDate &&
+  !!request.criteria.birthDate.birthPlace &&
+  !!request.criteria?.birthDate?.birthPlace?.municipality?.nameMunicipality &&
+  !!request.criteria?.birthDate?.birthPlace?.place?.codState;
 
 const checkPersonalInfoVerify = (request: RichiestaAR002): boolean =>
-  !!request.criteriRicerca.nome &&
-  !!request.criteriRicerca.cognome &&
-  !!request.criteriRicerca.datiNascita &&
-  !!request.criteriRicerca.datiNascita.dataEvento &&
-  !!request.criteriRicerca.datiNascita.luogoNascita &&
-  !!request.criteriRicerca?.datiNascita?.luogoNascita?.comune?.nomeComune &&
-  !!request.criteriRicerca?.datiNascita?.luogoNascita?.localita?.codiceStato;
+  !!request.criteria.name &&
+  !!request.criteria.surname &&
+  !!request.criteria.birthDate &&
+  !!request.criteria.birthDate.eventDate &&
+  !!request.criteria.birthDate.birthPlace &&
+  !!request.criteria?.birthDate?.birthPlace?.municipality?.nameMunicipality &&
+  !!request.criteria?.birthDate?.birthPlace?.place?.codState;
 export default new ResidenceVerificationController();

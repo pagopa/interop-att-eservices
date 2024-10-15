@@ -342,14 +342,14 @@ components:
         check:
           $ref: '#/components/schemas/TipoVerificaAR002'
         requestData:
-          $ref: '#/components/schemas/TiporequestDataAR002'
+          $ref: '#/components/schemas/TipoRequestDataAR002'
     RispostaAR002OK:
       type: object
       properties:
         idOp:
           type: string
         subjects:
-          $ref: '#/components/schemas/VerifyTipoDatisubjects'
+          $ref: '#/components/schemas/VerifyTipoDatiSubjects'
         warnings:
           type: array
           items:
@@ -404,7 +404,7 @@ components:
           $ref: '#/components/schemas/TipoIndirizzoEstero'
         consulate:
           $ref: '#/components/schemas/TipoConsolato'
-    TiporequestDataAR002:
+    TipoRequestDataAR002:
       type: object
       required:
         - dateOfRequest
@@ -487,7 +487,7 @@ components:
       description: represents the details of data preparation template
       properties:
         subject:
-          $ref: '#/components/schemas/TipocriteriaTemplateAR001'
+          $ref: '#/components/schemas/TipoCriteriaTemplateAR001'
         address:
           $ref: '#/components/schemas/TipoResidenza'
 
@@ -520,12 +520,12 @@ components:
         idOp:
           type: string
         subjects:
-          $ref: '#/components/schemas/TipoListasubjects'
+          $ref: '#/components/schemas/TipoListaSubjects'
         warnings:
           type: array
           items:
             $ref: '#/components/schemas/TipoErroriAnomalia'
-    TipocriteriaTemplateAR001:
+    TipoCriteriaTemplateAR001:
       type: object
       properties:
         fiscalCode:
@@ -595,14 +595,14 @@ components:
           type: string
         warningErrorValue:
           type: string
-    TipoListasubjects:
+    TipoListaSubjects:
       type: object
       properties:
         subject:
           type: array
           items:
-            $ref: '#/components/schemas/TipoDatisubjectsEnte'
-    VerifyTipoDatisubjects:
+            $ref: '#/components/schemas/TipoDatiSubjectsEnte'
+    VerifyTipoDatiSubjects:
       type: object
       properties:
         infoSubject:
@@ -639,7 +639,7 @@ components:
         - "N"
         - "S"
       type: string
-    TipoDatisubjectsEnte:
+    TipoDatiSubjectsEnte:
       type: object
       properties:
         generality:
