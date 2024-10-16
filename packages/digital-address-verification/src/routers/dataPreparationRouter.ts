@@ -129,6 +129,10 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
+        const data = await DataPreparationService.findByFiscalCode(req.params.idSubject);
+        if (data == null) {
+          return res.status(404).end();
+        }
         await DataPreparationService.deleteByFiscalCode(req.params.idSubject);
         return res.status(200).end();
       } catch (error) {
