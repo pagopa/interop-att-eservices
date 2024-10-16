@@ -78,7 +78,7 @@ export const authenticationMiddleware: (
           logger.error(
             `authenticationMiddleware - The jwt bearer token header or payload is not valid`
           );
-          throw ErrorHandling.genericError("The jwt bearer token not valid");
+          throw ErrorHandling.missingBearer();
         }
 
         if (isEnableTrial) {

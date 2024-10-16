@@ -133,8 +133,8 @@ export class ErrorHandling {
   public static missingBearer(): ApiError<CommonErrorCodes> {
     return new ApiError({
       code: "missingBearer",
-      title: "Bearer token has not been passed",
-      detail: `Authorization bearer token has not been passed`,
+      title: "Bearer token has not been passed or is invalid",
+      detail: `Authorization bearer token has not been passed or is invalid`,
     });
   }
 
