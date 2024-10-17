@@ -29,11 +29,11 @@ const dataPreparationRouter = (
         const data = await DataPreparationService.saveList(req.body);
         const result = userModelToApiDataPreparationResponseCf(
           data,
-          req.body.soggetto?.codiceFiscale
+          req.body.subject?.fiscalCode
         );
         if (!result) {
           throw userModelNotFound(
-            `Data with fiscal code '${req.body.soggetto?.codiceFiscale}' not found`
+            `Data with fiscal code '${req.body.subject?.fiscalCode}' not found`
           );
         }
         return res.status(200).json(result).end();

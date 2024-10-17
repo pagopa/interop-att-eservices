@@ -15,7 +15,7 @@ class FiscalcodeVerificationController {
           request.idSubject
         );
         const result: VerificaCodiceFiscale = {
-          // idOperazione: request.idOperazioneClient,
+          // idOperazione: request.operationId,
           data,
         };
         return result;
