@@ -77,7 +77,7 @@ export const verifyJwtPayloadAndHeader = (
   operationMethod: string,
   isEnableTrial: boolean
 ): Promise<boolean> =>
-  new Promise((resolve, reject) => {
+  new Promise((resolve) => {
     const config = JWTConfig.parse(process.env);
     const decodedToken = jwt.decode(jwtToken, { complete: true }) as {
       header: JwtHeader;
@@ -95,7 +95,7 @@ export const verifyJwtPayloadAndHeader = (
           checkName: "VOUCHER_HEADER_NOT_PRESENT",
         });
       }
-      return reject(false);
+      resolve(false);
     }
 
     if (!decodedToken?.payload) {
@@ -109,7 +109,7 @@ export const verifyJwtPayloadAndHeader = (
           checkName: "VOUCHER_PAYLOAD_NOT_PRESENT",
         });
       }
-      return reject(false);
+      resolve(false);
     }
 
     if (decodedToken.header.typ !== config.typValue) {
@@ -123,7 +123,7 @@ export const verifyJwtPayloadAndHeader = (
           checkName: "VOUCHER_TYP_NOT_VALID",
         });
       }
-      return reject(false);
+      resolve(false);
     }
 
     if (decodedToken.payload.iss !== config.issValue) {
@@ -137,7 +137,7 @@ export const verifyJwtPayloadAndHeader = (
           checkName: "VOUCHER_ISS_NOT_VALID",
         });
       }
-      return reject(false);
+      resolve(false);
     }
 
     if (decodedToken.payload.aud !== config.audValue) {
@@ -152,7 +152,7 @@ export const verifyJwtPayloadAndHeader = (
           checkName: "VOUCHER_AUD_NOT_VALID",
         });
       }
-      return reject(false);
+      resolve(false);
     }
 
     resolve(true);
