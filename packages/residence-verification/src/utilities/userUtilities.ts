@@ -21,8 +21,7 @@ export function appendUniqueUserModelsToArray(
   for (const modelToAdd of modelsToAdd) {
     // Cerca se esiste già un UserModel con lo stesso codice fiscale nell'array esistente
     const existingModelIndex = newArray.findIndex(
-      (model) =>
-        model.soggetto.codiceFiscale === modelToAdd.soggetto.codiceFiscale
+      (model) => model.subject.fiscalCode === modelToAdd.subject.fiscalCode
     );
     if (existingModelIndex !== -1) {
       // Se esiste già un UserModel con lo stesso codice fiscale, aggiorna l'UUID dell'elemento da sostituire
@@ -40,7 +39,7 @@ export function appendUniqueUserModelsToArray(
 
 export function getUserModelByCodiceFiscale(
   userModels: UserModel[],
-  codiceFiscale: string
+  fiscalCode: string
 ): UserModel | null {
   // Verifica se l'array di UserModel è definito e non vuoto
   if (!userModels || userModels.length === 0) {
@@ -51,7 +50,7 @@ export function getUserModelByCodiceFiscale(
 
   // Cerca l'UserModel con il codice fiscale specificato
   const userModel = userModels.find(
-    (model) => model.soggetto.codiceFiscale === codiceFiscale
+    (model) => model.subject.fiscalCode === fiscalCode
   );
 
   return userModel || null; // Torna l'UserModel trovato o null se non trovato
@@ -60,7 +59,7 @@ export function getUserModelByCodiceFiscale(
 // Funzione che cerca un UserModel all'interno di un array esistente utilizzando il codice fiscale come criterio di ricerca
 export function findUserModelByFiscalCode(
   existingArray: UserModel[] | null,
-  codiceFiscale: string
+  fiscalCode: string
 ): UserModel | null {
   // Verifica se l'array esistente è nullo o undefined
   if (!existingArray) {
@@ -71,7 +70,7 @@ export function findUserModelByFiscalCode(
 
   // Cerca UserModel con lo stesso codice fiscale all'interno dell'array esistente
   for (const userModel of existingArray) {
-    if (userModel.soggetto.codiceFiscale === codiceFiscale) {
+    if (userModel.subject.fiscalCode === fiscalCode) {
       userModelFound = userModel;
       break; // Interrompi il ciclo una volta trovato il UserModel
     }
@@ -95,15 +94,14 @@ export function findUserModelByPersonalInfo(
   // Cerca UserModel con lo stesso codice fiscale all'interno dell'array esistente
   for (const userModel of existingArray) {
     if (
-      userModel.soggetto.nome !== pm.nome ||
-      userModel.soggetto.cognome !== pm.cognome ||
-      userModel.soggetto.sesso !== pm.sesso ||
-      userModel.soggetto.datiNascita.dataEvento !==
-        pm.datiNascita?.dataEvento ||
-      userModel.soggetto.datiNascita.luogoNascita.comune.nomeComune !==
-        pm.datiNascita?.luogoNascita?.comune?.nomeComune ||
-      userModel.soggetto.datiNascita.luogoNascita.localita.codiceStato !==
-        pm.datiNascita?.luogoNascita?.localita?.codiceStato
+      userModel.subject.name !== pm.name ||
+      userModel.subject.surname !== pm.surname ||
+      userModel.subject.gender !== pm.gender ||
+      userModel.subject.birthDate.eventDate !== pm.birthDate?.eventDate ||
+      userModel.subject.birthDate.birthPlace.municipality.nameMunicipality !==
+        pm.birthDate?.birthPlace?.municipality?.nameMunicipality ||
+      userModel.subject.birthDate.birthPlace.place.codState !==
+        pm.birthDate?.birthPlace?.place?.codState
     ) {
       continue;
     }
@@ -127,7 +125,7 @@ export function findUserModelById(
 
   // Cerca UserModel con lo stesso codice fiscale all'interno dell'array esistente
   for (const userModel of existingArray) {
-    if (userModel.soggetto.id === id) {
+    if (userModel.subject.id === id) {
       userModelFound = userModel;
       break; // Interrompi il ciclo una volta trovato il UserModel
     }
@@ -169,7 +167,7 @@ export function findUserModelByFiscalCodeOrUUID(
   // Cerca UserModel con lo stesso codice fiscale o UUID all'interno dell'array esistente
   for (const userModel of existingArray) {
     if (
-      userModel.soggetto.codiceFiscale === searchKey ||
+      userModel.subject.fiscalCode === searchKey ||
       userModel.uuid === searchKey
     ) {
       userModelFound = userModel;

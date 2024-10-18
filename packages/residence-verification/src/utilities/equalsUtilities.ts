@@ -38,7 +38,7 @@ export function deepEqual(obj1: any, obj2: any): boolean {
 
 export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
   const response: InfoSoggettoEnte = {
-    infoSoggettoEnte: [] as TipoInfoSoggetto[],
+    infoInstitution: [] as TipoInfoSoggetto[],
   };
   const listObj: TipoInfoSoggetto[] = [];
   // Se uno dei due oggetti è null o non è un oggetto, non sono uguali
@@ -87,7 +87,7 @@ export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
     }
   }
 
-  response.infoSoggettoEnte?.push(...listObj);
+  response.infoInstitution?.push(...listObj);
   return response;
 }
 /* eslint-enable */

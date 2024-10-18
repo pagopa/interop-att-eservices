@@ -34,7 +34,7 @@ const residenceVerificationRouter = (
       try {
         logger.info(`[START] residenceVerificationRouter: ${req.body}`);
         const data = await ResidenceVerificationController.findUser(req.body);
-        if (!data || data.soggetti?.soggetto?.length === 0) {
+        if (!data || data.subjects?.subject?.length === 0) {
           throw userModelNotFound();
         }
         void TrialService.insert(
@@ -65,14 +65,14 @@ const residenceVerificationRouter = (
   );
 
   residenceVerificationRouter.post(
-    "/residence-verification/verify",
+    "/residence-verification/check",
     contextDataResidenceMiddleware,
     authenticationCorrelationMiddleware(true),
     integrityValidationMiddleware(),
     auditValidationMiddleware(),
     async (req, res) => {
       try {
-        logger.info(`[START] Verfy ResidenceVerificationRouter: ${req.body}`);
+        logger.info(`[START] Check ResidenceVerificationRouter: ${req.body}`);
         const data = await ResidenceVerificationController.findUserVerify(
           req.body
         );
