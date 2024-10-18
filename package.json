@@ -1,0 +1,28 @@
+{
+  "private": true,
+  "name": "root",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start:residence-verification": "turbo start --filter residence-verification",
+    "start:fiscalcode-verification": "turbo start --filter fiscalcode-verification",
+    "start:piva-verification": "turbo start --filter piva-verification",
+    "start:trial-service": "turbo start --filter trial-service-api",
+    "start:digital-address-verification": "turbo start --filter digital-address-verification",
+    "test": "turbo test",
+    "test:it": "turbo test:it",
+    "check": "turbo check",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "lint:autofix": "turbo lint:autofix",
+    "format:check": "turbo format:check",
+    "format:write": "turbo format:write",
+    "generate-model": "turbo generate-model"
+  },
+  "devDependencies": {
+    "@tsconfig/node-lts": "^18.12.3",
+    "turbo": "^1.10.7"
+  },
+  "packageManager": "pnpm@8.6.3"
+}
