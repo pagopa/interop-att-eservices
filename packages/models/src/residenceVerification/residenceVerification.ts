@@ -67,7 +67,7 @@ export type TipoCivicoInternoModel = z.infer<typeof TipoCivicoInternoModel>;
 export const TipoNumeroCivicoModel = z.object({
   civicCod: z.string(),
   civicSource: z.string(),
-  number: z.string(),
+  civicNumber: z.string(),
   metric: z.string(),
   progSNC: z.string(),
   letter: z.string(),

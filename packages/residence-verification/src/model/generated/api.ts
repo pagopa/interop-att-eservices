@@ -77,7 +77,7 @@ const TipoNumeroCivico = z
   .object({
     civicCod: z.string(),
     civicSource: z.string(),
-    number: z.string(),
+    civicNumber: z.string(),
     metric: z.string(),
     progSNC: z.string(),
     letter: z.string(),

@@ -829,7 +829,7 @@ components:
           type: string
         civicSource:
           type: string
-        number:
+        civicNumber:
           type: string
         metric:
           type: string

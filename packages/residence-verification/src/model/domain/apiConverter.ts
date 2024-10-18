@@ -103,7 +103,9 @@ export const apiTipoLuogoNascitaToTipoLuogoNascitaModel = (
   tipoLuogoNascitaE000: TipoLuogoNascitaE000 | undefined
 ): TipoLuogoNascitaModel => ({
   exceptionalPlace: tipoLuogoNascitaE000?.exceptionalPlace || "",
-  municipality: apiTipoComuneToTipoComuneModel(tipoLuogoNascitaE000?.municipality),
+  municipality: apiTipoComuneToTipoComuneModel(
+    tipoLuogoNascitaE000?.municipality
+  ),
   place: apiTipoLocalitaToTipoLocalita(tipoLuogoNascitaE000?.place),
 });
 
@@ -161,7 +163,7 @@ export const apiTipoNumeroCivicoToTipoNumeroCivicoModel = (
 ): TipoNumeroCivicoModel => ({
   civicCod: tipoNumeroCivicoModel?.civicCod || "",
   civicSource: tipoNumeroCivicoModel?.civicSource || "",
-  number: tipoNumeroCivicoModel?.number || "",
+  civicNumber: tipoNumeroCivicoModel?.civicNumber || "",
   metric: tipoNumeroCivicoModel?.metric || "",
   progSNC: tipoNumeroCivicoModel?.progSNC || "",
   letter: tipoNumeroCivicoModel?.letter || "",
@@ -313,7 +315,9 @@ export const tipoLuogoNascitaModelToApiTipoLuogoNascita = (
   tipoLuogoNascitaModel: TipoLuogoNascitaModel
 ): TipoLuogoNascitaE000 => ({
   exceptionalPlace: tipoLuogoNascitaModel?.exceptionalPlace,
-  municipality: tipoComuneModelToApiTipoComune(tipoLuogoNascitaModel?.municipality),
+  municipality: tipoComuneModelToApiTipoComune(
+    tipoLuogoNascitaModel?.municipality
+  ),
   place: tipoLocalitaModelToApiTipoLocalita(tipoLuogoNascitaModel?.place),
 });
 
@@ -371,7 +375,7 @@ export const tipoNumeroCivicoModelToApiTipoNumeroCivico = (
 ): TipoNumeroCivico => ({
   civicCod: tipoNumeroCivicoModel?.civicCod,
   civicSource: tipoNumeroCivicoModel?.civicSource,
-  number: tipoNumeroCivicoModel?.number,
+  civicNumber: tipoNumeroCivicoModel?.civicNumber,
   metric: tipoNumeroCivicoModel?.metric,
   progSNC: tipoNumeroCivicoModel?.progSNC,
   letter: tipoNumeroCivicoModel?.letter,
@@ -386,7 +390,9 @@ export const tipoIndirizzoModelToApiTipoIndirizzo = (
   tipoIndirizzoModel: TipoIndirizzoModel
 ): TipoIndirizzo => ({
   cap: tipoIndirizzoModel?.cap,
-  municipality: tipoComuneModelToApiTipoComune(tipoIndirizzoModel?.municipality),
+  municipality: tipoComuneModelToApiTipoComune(
+    tipoIndirizzoModel?.municipality
+  ),
   fraction: tipoIndirizzoModel?.fraction,
   toponym: tipoToponimoModelToApiTipoToponimo(tipoIndirizzoModel?.toponym),
   civicNumber: tipoNumeroCivicoModelToApiTipoNumeroCivico(
@@ -444,9 +450,7 @@ export const tipoResidenzaModelToApiTipoResidenza = (
 ): TipoResidenza => ({
   addressType: tipoResidenzaModel?.addressType,
   noteaddress: tipoResidenzaModel?.noteaddress,
-  address: tipoIndirizzoModelToApiTipoIndirizzo(
-    tipoResidenzaModel?.address
-  ),
+  address: tipoIndirizzoModelToApiTipoIndirizzo(tipoResidenzaModel?.address),
   foreignState: tipoLocalitaEsteraModelToApiTipoLocalitaEstera1(
     tipoResidenzaModel?.foreignState
   ),
@@ -532,9 +536,8 @@ export const TipoLuogoEventoModelToApiTipoLuogoEvento = (
 export const TipoIdSchedaSoggettoComuneModelToApiTipoIdSchedaSoggettoComune = (
   tipoLuogoEventoModel: TipoIdSchedaSoggettoComuneModel
 ): TipoIdSchedaSoggettoComune => ({
-  idCommonSubjectDataIstat:
-    tipoLuogoEventoModel?.idSchedaSoggettoComuneIstat,
-    idSubjectData: tipoLuogoEventoModel?.idSchedaSoggetto,
+  idCommonSubjectDataIstat: tipoLuogoEventoModel?.idSchedaSoggettoComuneIstat,
+  idSubjectData: tipoLuogoEventoModel?.idSchedaSoggetto,
 });
 
 export const TipoGeneralitaModelToApiTipoGeneralita = (
@@ -657,9 +660,7 @@ export const TipoDataNascitaModelToApiTipoLuogoEvento = (
 export const SoggettoModelToApiTipoGeneralita = (
   soggettoModel: SoggettoModel
 ): TipoGeneralita => ({
-  fiscalCode: codiceFiscaleToApiTipoCodiceFiscale(
-    soggettoModel.fiscalCode
-  ),
+  fiscalCode: codiceFiscaleToApiTipoCodiceFiscale(soggettoModel.fiscalCode),
   surname: soggettoModel.surname,
   noSurname: soggettoModel.surname == null ? "true" : "false",
   name: soggettoModel.name,
@@ -668,9 +669,7 @@ export const SoggettoModelToApiTipoGeneralita = (
   birthDate: soggettoModel?.birthDate.eventDate,
   noDay: "",
   noMonth: "",
-  birthPlace: TipoDataNascitaModelToApiTipoLuogoEvento(
-    soggettoModel.birthDate
-  ),
+  birthPlace: TipoDataNascitaModelToApiTipoLuogoEvento(soggettoModel.birthDate),
   AIRESubject: "",
   yearExpatriation: "",
   // idCommonSubjectData: TipoIdSchedaSoggettoComuneModelToApiTipoIdSchedaSoggettoComune()),
@@ -696,9 +695,7 @@ export const TipoResidenzaModelToApiTipoResidenza = (
   {
     addressType: tipoResidenzaModel?.addressType,
     noteaddress: tipoResidenzaModel?.noteaddress,
-    address: TipoIndirizzoModelToApiTipoIndirizzo(
-      tipoResidenzaModel?.address
-    ),
+    address: TipoIndirizzoModelToApiTipoIndirizzo(tipoResidenzaModel?.address),
     foreignState: tipoLocalitaEsteraModelToApiTipoLocalitaEstera1(
       tipoResidenzaModel.foreignState
     ),

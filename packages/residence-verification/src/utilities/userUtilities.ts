@@ -21,8 +21,7 @@ export function appendUniqueUserModelsToArray(
   for (const modelToAdd of modelsToAdd) {
     // Cerca se esiste già un UserModel con lo stesso codice fiscale nell'array esistente
     const existingModelIndex = newArray.findIndex(
-      (model) =>
-        model.subject.fiscalCode === modelToAdd.subject.fiscalCode
+      (model) => model.subject.fiscalCode === modelToAdd.subject.fiscalCode
     );
     if (existingModelIndex !== -1) {
       // Se esiste già un UserModel con lo stesso codice fiscale, aggiorna l'UUID dell'elemento da sostituire
@@ -98,8 +97,7 @@ export function findUserModelByPersonalInfo(
       userModel.subject.name !== pm.name ||
       userModel.subject.surname !== pm.surname ||
       userModel.subject.gender !== pm.gender ||
-      userModel.subject.birthDate.eventDate !==
-        pm.birthDate?.eventDate ||
+      userModel.subject.birthDate.eventDate !== pm.birthDate?.eventDate ||
       userModel.subject.birthDate.birthPlace.municipality.nameMunicipality !==
         pm.birthDate?.birthPlace?.municipality?.nameMunicipality ||
       userModel.subject.birthDate.birthPlace.place.codState !==

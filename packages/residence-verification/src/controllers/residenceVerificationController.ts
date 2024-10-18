@@ -173,12 +173,13 @@ const checkPersonalInfo = (request: RichiestaAR001): boolean =>
   !!request.criteria?.birthDate?.birthPlace?.municipality?.nameMunicipality &&
   !!request.criteria?.birthDate?.birthPlace?.place?.codState;
 
-const checkPersonalInfoVerify = (request: RichiestaAR002): boolean =>
-  !!request.criteria.name &&
-  !!request.criteria.surname &&
-  !!request.criteria.birthDate &&
-  !!request.criteria.birthDate.eventDate &&
-  !!request.criteria.birthDate.birthPlace &&
-  !!request.criteria?.birthDate?.birthPlace?.municipality?.nameMunicipality &&
-  !!request.criteria?.birthDate?.birthPlace?.place?.codState;
+const checkPersonalInfoVerify = (request002: RichiestaAR002): boolean =>
+  !!request002.criteria.name &&
+  !!request002.criteria.surname &&
+  !!request002.criteria.birthDate &&
+  !!request002.criteria.birthDate.eventDate &&
+  !!request002.criteria.birthDate.birthPlace &&
+  !!request002.criteria?.birthDate?.birthPlace?.municipality
+    ?.nameMunicipality &&
+  !!request002.criteria?.birthDate?.birthPlace?.place?.codState;
 export default new ResidenceVerificationController();
