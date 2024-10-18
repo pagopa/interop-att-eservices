@@ -86,9 +86,12 @@ const dataPreparationRouter = (
     async (req, res) => {
       /* eslint-enable */
       try {
-        await DataPreparationService.deleteByPiva(
+        const data = await DataPreparationService.deleteByPiva(
           apiDatapreparationTemplateToPivaModel(req.body).organizationId
         );
+        if (data == null) {
+          return res.status(404).end();
+        }
         return res.status(200).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);

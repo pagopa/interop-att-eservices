@@ -108,6 +108,7 @@ class DataPreparationService {
         this.appContext.authData.purposeId,
       ]);
       const allSaved = await dataPreparationRepository.findAllByKey(hash);
+      if (allSaved == null ) return null;
       const datapreparation = deletePivaModelByPiva(allSaved, uuid);
       await this.deleteAllByKey();
       if (datapreparation) {
