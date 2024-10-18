@@ -56,14 +56,14 @@ export function requestParamNotValid(details?: string): ApiError<ErrorCodes> {
 
 export function pivaNotFound(details?: string): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: details != null ? details : "operationId not found",
+    detail: details != null ? details : "organizationId not found",
     code: "operationIdNotFound",
     title: "not found",
   });
 }
 export function pivaNotValid(details?: string): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: details != null ? details : "operationId not valid",
+    detail: details != null ? details : "organizationId not valid",
     code: "operationIdNotValid",
     title: "not valid",
   });
