@@ -24,10 +24,14 @@ const dataPreparationRouter = (
     authenticationMiddleware(false),
     async (req, res) => {
       try {
-        await DataPreparationService.saveList(
+        const responseData = await DataPreparationService.saveList(
           apiDatapreparationTemplateToFiscalcodeModel(req.body)
         );
-        return res.status(200).end();
+        if (responseData) {
+          return res.status(200).end();
+        } else {
+          return res.status(201).end();
+        }
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();

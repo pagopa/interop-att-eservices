@@ -33,6 +33,8 @@ class DataPreparationService {
         persistedFiscalcodeData.length === 0
       ) {
         await dataPreparationRepository.saveList(fiscalCodeData, hash);
+        logger.info(`[END] datapreparation-saveList`);
+        return null;
       } else {
         // esistono già chiavi, devo aggiungere la nuova, o sostituirla nel caso esista
         const allFiscalcode = appendUniqueFiscalcodeModelsToArray(
