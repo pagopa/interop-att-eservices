@@ -57,7 +57,7 @@ export function requestParamNotValid(details?: string): ApiError<ErrorCodes> {
 
 export function fiscalcodeNotFound(details?: string): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: details != null ? details : "Fiscalcode not foud",
+    detail: details != null ? details : "idSubject not foud",
     code: "fiscalcodeNotFoud",
     title: "not found",
   });

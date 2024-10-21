@@ -47,7 +47,7 @@ export const verifyCertValidity: ZodiosRouterContextRequestHandler<
         .with("unauthorizedError", () => 401)
         .with("operationForbidden", () => 403)
         .with("missingHeader", () => 400)
-        .with("certNotValid", () => 401)
+        .with("certNotValid", () => 400)
         .with("apikeyNotValid", () => 400)
         .otherwise(() => 500)
     ); /* eslint-enable */

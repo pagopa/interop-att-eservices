@@ -25,19 +25,19 @@ class PivaVerificationService {
         return partitaIvaModelToVerificaPartitaIva(
           found,
           true,
-          "operationId valido"
+          "organizationId valido"
         );
       } else {
         return partitaIvaModelToVerificaPartitaIva(
           found,
           false,
-          "operationId non valido",
+          "organizationId non valido",
           partitaIva
         );
       }
     } catch (error) {
       logger.error(
-        `PartitaIva service: Errore durante il recupero della operationId. `,
+        `PartitaIva service: Errore durante il recupero della organizationId. `,
         error
       );
       throw error;
