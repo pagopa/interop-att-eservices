@@ -39,8 +39,6 @@ class DataPreparationService {
       // se è vuota, la salvo senza ulteriori controlli
       if (persistedPivaData == null || persistedPivaData.length === 0) {
         await dataPreparationRepository.saveList(pivaData, hash);
-        logger.info(`[END] datapreparation-saveList`);
-        return null;
       } else {
         // esistono già chiavi, devo aggiungere la nuova, o sostituirla nel caso esista
         const allPiva = appendUniquePivaModelsToArray(
