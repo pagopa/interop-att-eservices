@@ -1,0 +1,94 @@
+name: "Build & Push"
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'develop'
+    tags:
+      - '*'
+    paths:
+      - 'packages/**'
+      - '!packages/*/scripts/**'
+  pull_request:
+    branches:
+      - 'develop'
+
+env:
+  AWS_REGION: 'eu-south-1'
+  IAM_ROLE_ARN: 'arn:aws:iam::248862543363:role/GitHubActionIACRole'
+
+jobs:
+  build_push_image:
+    name: ${{ matrix.image_name }}
+    runs-on: ubuntu-latest
+    environment: dev
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image_name: residence-verification
+            dockerfile_path: packages/residence-verification
+          - image_name: fiscalcode-verification
+            dockerfile_path: packages/fiscalcode-verification
+          - image_name: piva-verification
+            dockerfile_path: packages/piva-verification
+          - image_name: trial-service-api
+            dockerfile_path: packages/trial-service-api
+          - image_name: digital-address-verification
+            dockerfile_path: packages/digital-address-verification
+          - image_name: data-migration
+            dockerfile_path: migrations
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ env.IAM_ROLE_ARN }}
+          role-session-name: att-eservices-build-push-${{ github.run_number }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: (latest) Docker metadata
+        id: meta_latest
+        if: ${{ github.ref_type == 'branch' }}
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ steps.login-ecr.outputs.registry }}/interop-att-eservice-${{ matrix.image_name }}
+          flavor: |
+            latest=false
+            prefix=
+            suffix=
+          tags: |
+             type=raw,value=${{ github.head_ref || github.ref_name }}
+
+      - name: (tag) Docker metadata
+        id: meta_tag
+        if: ${{ github.ref_type == 'tag' }}
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ steps.login-ecr.outputs.registry }}/interop-att-eservice-${{ matrix.image_name }}
+          flavor: |
+            latest=false
+            prefix=
+            suffix=
+          tags: |
+            type=ref,event=tag
+
+      - name: Build and push Docker image
+        id: build_push
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: .
+          file: ${{ matrix.dockerfile_path }}/Dockerfile
+          push: true
+          tags: ${{ github.ref_type == 'branch' && steps.meta_latest.outputs.tags || steps.meta_tag.outputs.tags }}
+          labels: ${{ github.ref_type == 'branch' && steps.meta_latest.outputs.labels || steps.meta_tag.outputs.labels }}

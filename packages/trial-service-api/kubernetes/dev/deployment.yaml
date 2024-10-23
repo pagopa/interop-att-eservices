@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: interop-att-trial-service-api
+  namespace: {{NAMESPACE}}
+  labels:
+    app: interop-att-trial-service-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: interop-att-trial-service-api
+  template:
+    metadata:
+      labels:
+        app: interop-att-trial-service-api
+    spec:
+      serviceAccountName: {{SERVICEACCOUNT}}
+      initContainers:
+        - name: interop-att-data-migration
+          image: {{DATAMIGRATIONIMAGE}}
+          args: [ "-connectRetries=5", "migrate" ]
+          volumeMounts:
+            - name: flyway-conf
+              mountPath: /flyway/conf/flyway.conf
+              readOnly: true
+              subPath: flyway.conf
+          envFrom:
+            - configMapRef:
+                name: trial-service-api-configmap
+      containers:
+        - name: interop-att-trial-service-api
+#          image: ghcr.io/pagopa/interop-att-trial-service-api:{{TRIALSERVICEAPIIMAGE}}
+          image: {{TRIALSERVICEAPIIMAGE}}
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 1.0
+              memory: 2Gi
+            limits:
+              cpu: 1.0
+              memory: 2Gi
+          livenessProbe:
+            httpGet:
+              path: /trial/status
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 120
+          readinessProbe:
+            httpGet:
+              path: /trial/status
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          env:
+            - name: PORT
+              value: "3000"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: LOG_LEVEL
+              value: info
+          envFrom:
+            - configMapRef:
+                name: trial-service-api-configmap
+      volumes:
+        - name: flyway-conf
+          configMap:
+            defaultMode: 256
+            name: flyway-configmap
+            optional: false

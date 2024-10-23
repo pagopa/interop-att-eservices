@@ -1,0 +1,20 @@
+curl --location 'http://localhost:3001/user/saveList?clientId=client_id_2&serviceId=service_id' \
+--header 'Content-Type: application/json' \
+--data '[
+  {
+    "request": {
+      "codiceFiscale": "bccdd",
+      "indirizzo": "via roma"
+    },
+    "response": {
+      "status": "ok"
+    }
+  }
+]'
+
+curl --location 'http://localhost:3001/user/findOne?clientId=client_id&serviceId=service_id' \
+--header 'Content-Type: application/json' \
+--data ' {
+      "codiceFiscale": "bccdd",
+      "indirizzo": "via roma"
+    }'
