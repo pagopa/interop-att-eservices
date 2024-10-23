@@ -17,7 +17,7 @@ export const createEserviceDataPreparation = (
 ): number =>
   match(error.code)
     .with("eServiceNotFound", () => HTTP_STATUS_BAD_REQUEST)
-    .with("certNotValid", () => HTTP_STATUS_UNAUTHORIZED)
+    .with("certNotValid", () => HTTP_STATUS_BAD_REQUEST)
     .with("requestParamNotValid", () => HTTP_STATUS_BAD_REQUEST)
     .with("tokenNotValid", () => HTTP_STATUS_UNAUTHORIZED)
     .with("fiscalcodeNotFoud", () => HTTP_STATUS_NOT_FOUND)
