@@ -34,7 +34,7 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
             req.method,
             "SIGNATURE_NOT_PRESENT"
           );
-          throw ErrorHandling.missingHeader("Header attribute not found");
+          throw ErrorHandling.missingHeader("agid-jwt-signature");
         }
         const signatureToken = Array.isArray(req.headers["agid-jwt-signature"])
           ? req.headers["agid-jwt-signature"][0]
@@ -44,7 +44,7 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
             `integrityValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`
           );
           void TrialService.insert(req.url, req.method, "SIGNATURE_NOT_VALID");
-          throw ErrorHandling.missingHeader();
+          throw ErrorHandling.missingHeader("agid-jwt-signature");
         }
         if (!(await tokenValidation(signatureToken, "signatureToken"))) {
           logger.error(`integrityValidationMiddleware - token not valid`);

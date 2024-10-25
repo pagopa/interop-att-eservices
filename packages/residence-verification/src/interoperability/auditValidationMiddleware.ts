@@ -33,7 +33,7 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
             req.method,
             "TRACKING_EVIDENCE_NOT_PRESENT"
           );
-          throw ErrorHandling.missingHeader("Header attribute not found");
+          throw ErrorHandling.missingHeader("agid-jwt-trackingevidence");
         }
         const trackingEvidenceToken = Array.isArray(
           req.headers["agid-jwt-trackingevidence"]
@@ -49,7 +49,7 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
             req.method,
             "TRACKING_EVIDENCE_NOT_VALID"
           );
-          throw ErrorHandling.missingHeader();
+          throw ErrorHandling.missingHeader("agid-jwt-trackingevidence");
         }
         if (
           !(await tokenValidation(

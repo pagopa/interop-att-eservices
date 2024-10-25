@@ -143,7 +143,7 @@ export class ErrorHandling {
       code: "missingHeader",
       title: "Missing header",
       detail: headerName
-        ? `Header ${headerName} not existing in this request`
+        ? `Header ${headerName} missing in this request or not valid`
         : "Missing header",
     });
   }
