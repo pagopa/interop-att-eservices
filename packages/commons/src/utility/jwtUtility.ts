@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken"; // , { Algorithm }
+import { ErrorHandling } from "pdnd-models";
 import { logger } from "../index.js";
 
 export const verifyJwtTokenUtility = (
@@ -34,6 +35,8 @@ export const getKidFromJWTToken = (token: string): Promise<string> =>
       // Controlla se il token è stato decodificato correttamente e se l'header contiene il "kid"
       if (decodedToken?.header?.kid) {
         resolve(decodedToken.header.kid);
+      } else {
+        throw ErrorHandling.tokenNotValid();
       }
     } catch (error) {
       logger.error(`Error decoding token: ${error}`);
