@@ -54,6 +54,46 @@ const fiscalcodeVerificationRouter = (
       }
     }
   );
+
+  fiscalcodeVerificationRouter.post(
+    "/subject-id-verification/check-with-payload-signature",
+    // logHeadersMiddleware,
+    contextDataFiscalCodeMiddleware,
+    authenticationCorrelationMiddleware(true),
+    verifyCertValidity,
+    async (req, res) => {
+      try {
+        logger.info(`[START] Post - '/check-with-payload-signature' : ${req.body.idSubject}`);
+        const data = await FiscalcodeVerificationController.findFiscalcode(
+          req.body
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "FISCALCODE_VERIFICATION",
+          "OK"
+        );
+        //TODO: INSERT HEADERS
+        logger.info(`[END] Post - '/check-with-payload-signature'`);
+        return res.status(200).json(data).end();
+      } catch (error) {
+        const errorRes = makeApiProblem(error, createEserviceDataPreparation);
+        const correlationId = req.headers["x-correlation-id"] as string;
+        const generalErrorResponse = mapGeneralErrorModel(
+          correlationId,
+          errorRes
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "FISCALCODE_VERIFICATION",
+          "KO",
+          JSON.stringify(generalErrorResponse)
+        );
+        return res.status(errorRes.status).json(generalErrorResponse).end();
+      }
+    }
+  );
   return fiscalcodeVerificationRouter;
 };
 

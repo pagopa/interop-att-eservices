@@ -8,6 +8,20 @@ x-commons:
       $ref: '#/components/headers/X-RateLimit-Remaining'
     X-RateLimit-Reset:
       $ref: '#/components/headers/X-RateLimit-Reset'
+  ratelimit-keychain-headers: &ratelimit-keychain-headers
+    X-RateLimit-Limit:
+      $ref: '#/components/headers/X-RateLimit-Limit'
+    X-RateLimit-Remaining:
+      $ref: '#/components/headers/X-RateLimit-Remaining'
+    X-RateLimit-Reset:
+      $ref: '#/components/headers/X-RateLimit-Reset'
+    X-Payload-Signature-Kid:
+      $ref: '#/components/parameters/X-Payload-Signature-Kid'
+    X-Payload-Signature:
+      $ref: '#/components/parameters/X-Payload-Signature'
+    X-Payload-Signature-Algorythm:
+      $ref: '#/components/parameters/X-Payload-Signature-Algorythm'
+
   common-responses: &common-responses
     '400':
       $ref: '#/components/responses/400BadRequest'
@@ -306,6 +320,62 @@ paths:
                     idSubject: 'AAAZZZ00H00T000Z'
                     valid: false
                     message: "Not valid id subject"
+  
+  /subject-id-verification/check-with-payload-signature:
+    post:
+      summary: Carry out a validation of the input subject id.
+      operationId: post_verifica_codiceFiscale
+      tags:
+        - Check
+      description: |
+        Returns information about the validity of the input subject id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Richiesta'
+            examples:
+              alphanumericIdSubject:
+                value:
+                  idSubject: 'AAAZZZ00H00T000Z'
+              numericIdSubject:
+                value:
+                  idSubject: '06363391001'
+      responses:
+        <<: *common-responses
+        '200':
+          description: |
+            The server was able to verify the validity of the subject id.
+          # header di throttling requires
+          headers:
+            <<: *ratelimit-keychain-headers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificaCodiceFiscale'
+              examples:    # Examples for each case
+                ValidIdSubject:
+                  value:
+                    idSubject: '06363391001'
+                    valid: true
+                    message: "Valid id subject"
+                NotUsableIdSubject:
+                  value:
+                    idSubject: '***********'
+                    valid: true
+                    message: "Valid subject id, no longer usable"
+                NotValidUpdatedInOther:
+                  value:
+                    idSubject: '***********'
+                    valid: false
+                    message: "Valid subject id, no longer usable as it has been updated to another subject id"
+                NotValidIdSubject:
+                  value:
+                    idSubject: 'AAAZZZ00H00T000Z'
+                    valid: false
+                    message: "Not valid id subject"
+
 components:
 
   schemas:
@@ -397,7 +467,26 @@ components:
           type: string
       type: object
 
-
+  parameters:
+    X-Payload-Signature-Kid:
+      in: header
+      name: X-Payload-Signature-Kid
+      required: true
+      schema:
+        type: string
+    X-Payload-Signature:
+      in: header
+      name: X-Payload-Signature
+      required: true
+      schema:
+        type: string
+    X-Payload-Signature-Algorythm:
+      in: header
+      name: X-Payload-Signature-Algorythm
+      required: true
+      schema:
+        type: string
+  
   headers:
     Retry-After:
       description: |-

@@ -96,6 +96,44 @@ const endpoints = makeApi([
   },
   {
     method: "post",
+    path: "/subject-id-verification/check-with-payload-signature",
+    alias: "post_verifica_codiceFiscale",
+    description: `Returns information about the validity of the input subject id
+`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: Richiesta,
+      },
+    ],
+    response: VerificaCodiceFiscale,
+    errors: [
+      {
+        status: 400,
+        description: `Bad Request`,
+        schema: z.void(),
+      },
+      {
+        status: 401,
+        description: `Not authorized`,
+        schema: z.void(),
+      },
+      {
+        status: 429,
+        description: `Too many requests`,
+        schema: z.void(),
+      },
+      {
+        status: 503,
+        description: `Service Unavailable`,
+        schema: z.void(),
+      },
+    ],
+  },
+  {
+    method: "post",
     path: "/subject-id-verification/data-preparation",
     alias: "postSubjectIdVerificationdataPreparation",
     description: `upload your valid subject id`,
