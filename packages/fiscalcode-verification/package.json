@@ -45,6 +45,7 @@
     "vitest": "^0.33.0"
   },
   "dependencies": {
+    "@aws-sdk/client-kms": "^3.515.0",
     "@protobuf-ts/runtime": "^2.9.1",
     "@zodios/core": "^10.9.2",
     "@zodios/express": "^10.6.1",

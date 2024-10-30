@@ -10,6 +10,8 @@ import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { verifyCertValidity } from "../security/certValidityMiddleware.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataFiscalCodeMiddleware } from "../context/context.js";
+import { keychainSignatureUtility } from "../utilities/keychainSignatureUtility.js";
+import { keychainSignerConfig } from "../config/keychainSignerConfig.js";
 
 const fiscalcodeVerificationRouter = (
   ctx: ZodiosContext
@@ -63,7 +65,14 @@ const fiscalcodeVerificationRouter = (
     verifyCertValidity,
     async (req, res) => {
       try {
-        logger.info(`[START] Post - '/check-with-payload-signature' : ${req.body.idSubject}`);
+        const keychainConfig = keychainSignerConfig();
+        const signatureUtility = new keychainSignatureUtility(
+          keychainConfig.kmsKeychainKeyId
+        );
+
+        logger.info(
+          `[START] Post - '/check-with-payload-signature' : ${req.body.idSubject}`
+        );
         const data = await FiscalcodeVerificationController.findFiscalcode(
           req.body
         );
@@ -75,6 +84,14 @@ const fiscalcodeVerificationRouter = (
         );
         //TODO: INSERT HEADERS
         logger.info(`[END] Post - '/check-with-payload-signature'`);
+        const signature = await signatureUtility.signData(JSON.stringify(data));
+        res.setHeader("x-payload-signature", signature);
+        res.setHeader(
+          "x-payload-signature-kid",
+          keychainConfig.kmsKeychainKeyId
+        );
+        res.setHeader("x-payload-signature-algorythm", "SHA256withRSA");
+
         return res.status(200).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);

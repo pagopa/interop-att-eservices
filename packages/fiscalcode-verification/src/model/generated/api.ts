@@ -97,7 +97,7 @@ const endpoints = makeApi([
   {
     method: "post",
     path: "/subject-id-verification/check-with-payload-signature",
-    alias: "post_verifica_codiceFiscale",
+    alias: "post_verifica_codiceFiscale_with_payload_signature",
     description: `Returns information about the validity of the input subject id
 `,
     requestFormat: "json",

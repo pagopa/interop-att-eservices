@@ -324,7 +324,7 @@ paths:
   /subject-id-verification/check-with-payload-signature:
     post:
       summary: Carry out a validation of the input subject id.
-      operationId: post_verifica_codiceFiscale
+      operationId: post_verifica_codiceFiscale_with_payload_signature
       tags:
         - Check
       description: |
