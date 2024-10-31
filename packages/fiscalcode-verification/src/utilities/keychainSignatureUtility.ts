@@ -32,7 +32,10 @@ export class keychainSignatureUtility {
 
       // Esegui il comando di firma
       const response = await this.kmsClient.send(signCommand);
-      const signature = response.Signature?.toString(); // Converti in base64
+      // Converti la firma in base64 solo se esiste
+      const signature = response.Signature
+        ? Buffer.from(Uint8Array.from(response.Signature)).toString("base64")
+        : null;
 
       if (!signature) {
         throw new Error("La firma non è stata generata correttamente");
