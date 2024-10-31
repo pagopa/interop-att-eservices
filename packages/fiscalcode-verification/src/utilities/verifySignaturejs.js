@@ -20,7 +20,8 @@ const data = JSON.stringify({
   },
 });
 // Firma come array di byte
-const signatureBase64 = "qxeH+j+kGvgloLK+0/8Ac+MeZS9QFokyS/W2nH7fH/veAu27eXdUGlIfcDjwSBizIM6j4TIWdwJLS0PR6vBA2FyaLl93k7szJ0/xXnj7bJROy2+2mVtvBUzpdLHljWmAfAb2HT07Boef5PX/KxuGcG9TuqR/jZzspJx9yjmxh9fxDvgNIkJkYP0teu/FiNG0kHRZHnU87fN8L2FkKsD2lAP5SDJNiEXN/JbPkJsPP8vrYgMri4ZK7iUBpfAiILBFCo7Tadf5FoBL24Gi0yiGk1XhdZRkRUECiN9+OYJdJg7/2fgW5+SBjb4pQpUJpmeETNYCvikWAgjbBZtfkFKA1w==";
+const signatureBase64 =
+  "qxeH+j+kGvgloLK+0/8Ac+MeZS9QFokyS/W2nH7fH/veAu27eXdUGlIfcDjwSBizIM6j4TIWdwJLS0PR6vBA2FyaLl93k7szJ0/xXnj7bJROy2+2mVtvBUzpdLHljWmAfAb2HT07Boef5PX/KxuGcG9TuqR/jZzspJx9yjmxh9fxDvgNIkJkYP0teu/FiNG0kHRZHnU87fN8L2FkKsD2lAP5SDJNiEXN/JbPkJsPP8vrYgMri4ZK7iUBpfAiILBFCo7Tadf5FoBL24Gi0yiGk1XhdZRkRUECiN9+OYJdJg7/2fgW5+SBjb4pQpUJpmeETNYCvikWAgjbBZtfkFKA1w==";
 
 // Converti la firma base64 in un Buffer
 const signature = Buffer.from(signatureBase64, "base64");
