@@ -10,6 +10,7 @@
     "start:piva-verification": "turbo start --filter piva-verification",
     "start:trial-service": "turbo start --filter trial-service-api",
     "start:digital-address-verification": "turbo start --filter digital-address-verification",
+    "start:keychain-mock": "turbo start --filter keychain-mock",
     "test": "turbo test",
     "test:it": "turbo test:it",
     "check": "turbo check",
