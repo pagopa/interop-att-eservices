@@ -28,7 +28,7 @@ const fiscalcodeVerificationRouter = (
           keychainConfig.kmsKeychainKeyId
         );
 
-        logger.info(`[START] Post - '/keychain-mock/signature' `);
+        logger.info(`[START] Get - '/keychain-mock/signature' `);
 
         void TrialService.insert(
           req.url,
@@ -41,8 +41,7 @@ const fiscalcodeVerificationRouter = (
           message: "risposta generata con successo",
         };
 
-        // TODO: INSERT HEADERS
-        logger.info(`[END] Post - '/check-with-payload-signature'`);
+        logger.info(`[END] Get - '/keychain-mock/signature'`);
         const signature = await signatureUtility.signData(
           JSON.stringify(responseBody)
         );
@@ -94,12 +93,12 @@ const fiscalcodeVerificationRouter = (
           return res.status(200).json(responseBodyError).end();
         }
         logger.info(
-          `[START] Post - '/check-with-payload-signature' : ${req.body}`
+          `[START] Post - '/keychain-mock/verify'`
         );
 
         const responseBody = {
           status: "OK",
-          message: "DONE",
+          message: "X-Payload-Signature verificata",
         };
         void TrialService.insert(
           req.url,
@@ -107,7 +106,6 @@ const fiscalcodeVerificationRouter = (
           "KEYCHAIN_MOCK_VERIFY",
           "OK"
         );
-        // TODO: INSERT HEADERS
         logger.info(`[END] Post - '/keychain-mock/verify'`);
 
         return res.status(200).json(responseBody).end();
