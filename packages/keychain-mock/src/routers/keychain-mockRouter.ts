@@ -92,9 +92,7 @@ const fiscalcodeVerificationRouter = (
           // Solleva un errore 500 se l'header non è presente
           return res.status(200).json(responseBodyError).end();
         }
-        logger.info(
-          `[START] Post - '/keychain-mock/verify'`
-        );
+        logger.info(`[START] Post - '/keychain-mock/verify'`);
 
         const responseBody = {
           status: "OK",
