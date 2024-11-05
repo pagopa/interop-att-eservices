@@ -120,6 +120,7 @@ export const checkValuesMap: { [key: string]: number } = {
   DIGITAL_ADDRESS_VERIFICATION_LIST_STATE: 55,
   DIGITAL_ADDRESS_VERIFICATION_LIST_RESPONSE: 56,
   RESIDENCE_VERIFICATION_002: 57,
+  FAMILY_STATUS: 58,
 };
 
 const getCheckValue = (key: string): number | undefined => checkValuesMap[key];
