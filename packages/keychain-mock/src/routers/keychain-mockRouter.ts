@@ -2,7 +2,7 @@ import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
-// import { authenticationCorrelationMiddleware } from "pdnd-common";
+import { authenticationCorrelationMiddleware } from "pdnd-common";
 import { TrialService } from "trial";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
@@ -11,47 +11,45 @@ import { keychainSignatureUtility } from "../utilities/keychainSignatureUtility.
 import { keychainSignerConfig } from "../config/keychainSignerConfig.js";
 import { api } from "../model/generated/api.js";
 
-const fiscalcodeVerificationRouter = (
+const keychainMockRouter = (
   ctx: ZodiosContext
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
-  const fiscalcodeVerificationRouter = ctx.router(api.api);
+  const keychainMockRouter = ctx.router(api.api);
 
-  fiscalcodeVerificationRouter.get(
+  keychainMockRouter.get(
     "/keychain-mock/signature",
     // logHeadersMiddleware,
     contextDataKeychainMockMiddleware,
-    // authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(true),
     async (req, res) => {
       try {
+        logger.info(`[START] Get - '/keychain-mock/signature' `);
         const keychainConfig = keychainSignerConfig();
         const signatureUtility = new keychainSignatureUtility(
           keychainConfig.kmsKeychainKeyId
         );
 
-        logger.info(`[START] Get - '/keychain-mock/signature' `);
-
-        void TrialService.insert(
-          req.url,
-          req.method,
-          "KEYCHAIN_MOCK_SIGNATURE",
-          "OK"
-        );
-        // Dati originali
         const responseBody = {
           message: "risposta generata con successo",
         };
 
-        logger.info(`[END] Get - '/keychain-mock/signature'`);
         const signature = await signatureUtility.signData(
           JSON.stringify(responseBody)
         );
+
         res.setHeader("x-payload-signature", signature);
         res.setHeader(
           "x-payload-signature-kid",
           keychainConfig.kmsKeychainKeyId
         );
         res.setHeader("x-payload-signature-algorythm", "SHA256withRSA");
-
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "KEYCHAIN_MOCK_SIGNATURE",
+          "OK"
+        );
+        logger.info(`[END] Get - '/keychain-mock/signature'`);
         return res.status(200).json(responseBody).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
@@ -72,13 +70,14 @@ const fiscalcodeVerificationRouter = (
     }
   );
 
-  fiscalcodeVerificationRouter.post(
+  keychainMockRouter.post(
     "/keychain-mock/verify",
     // logHeadersMiddleware,
     contextDataKeychainMockMiddleware,
-    // authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(true),
     async (req, res) => {
       try {
+        logger.info(`[START] Post - '/keychain-mock/verify'`);
         // Recupera il valore dell'header X-Payload-Signature
         const payloadSignature = req.headers["x-payload-signature"];
 
@@ -92,7 +91,6 @@ const fiscalcodeVerificationRouter = (
           // Solleva un errore 500 se l'header non è presente
           return res.status(200).json(responseBodyError).end();
         }
-        logger.info(`[START] Post - '/keychain-mock/verify'`);
 
         const responseBody = {
           status: "OK",
@@ -105,7 +103,6 @@ const fiscalcodeVerificationRouter = (
           "OK"
         );
         logger.info(`[END] Post - '/keychain-mock/verify'`);
-
         return res.status(200).json(responseBody).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
@@ -125,7 +122,7 @@ const fiscalcodeVerificationRouter = (
       }
     }
   );
-  return fiscalcodeVerificationRouter;
+  return keychainMockRouter;
 };
 
-export default fiscalcodeVerificationRouter;
+export default keychainMockRouter;
