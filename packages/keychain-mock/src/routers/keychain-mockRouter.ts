@@ -40,7 +40,7 @@ const keychainMockRouter = (
         res.setHeader("x-payload-signature", signature);
         res.setHeader(
           "x-payload-signature-kid",
-          keychainConfig.kmsKeychainKeyId
+          keychainConfig.KeychainKeyId
         );
         res.setHeader("x-payload-signature-algorythm", "SHA256withRSA");
         void TrialService.insert(
