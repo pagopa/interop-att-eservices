@@ -12,10 +12,11 @@ import { CriteriaTypeFS001, UserModel } from "../model/domain/models.js";
 
 class ResidenceVerificationService {
   public appContext = getContext();
+  public eService: string = "family-status";
 
   public async getByFiscalCode(fiscalCode: string): Promise<UserModel | null> {
     try {
-      const hash = generateHash([this.appContext.authData.purposeId]);
+      const hash = generateHash([this.eService, this.appContext.authData.purposeId]);
       const result = await dataPreparationRepository.findAllByKey(hash);
       const users = result;
       return findUserModelByFiscalCode(users, fiscalCode);
@@ -30,7 +31,7 @@ class ResidenceVerificationService {
 
   public async getById(id: string): Promise<UserModel | null> {
     try {
-      const hash = generateHash([this.appContext.authData.purposeId]);
+      const hash = generateHash([this.eService, this.appContext.authData.purposeId]);
       const result = await dataPreparationRepository.findAllByKey(hash);
       const users = result;
       return findUserModelById(users, id);
@@ -47,7 +48,7 @@ class ResidenceVerificationService {
     parametriRicerca: CriteriaTypeFS001
   ): Promise<UserModel[]> {
     try {
-      const hash = generateHash([this.appContext.authData.purposeId]);
+      const hash = generateHash([this.eService, this.appContext.authData.purposeId]);
       const result = await dataPreparationRepository.findAllByKey(hash);
       const users = result;
       const userModelFound = findUserModelByPersonalInfo(
