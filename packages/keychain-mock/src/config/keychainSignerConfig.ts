@@ -13,13 +13,13 @@ export const KeychainSignerConfig = z.preprocess(
         KMS_KEYCHAIN_LOCAL_CONFIG: z.literal("true"),
         KMS_KEYCHAIN_MAX_ACQUISITION_TIMEOUT_SECONDS: z.coerce.number(),
         KMS_KEYID: z.string(),
-        KEYCHAIN_KEYID: z.string(),
+        KMS_KEYCHAIN_PUBLICKEY_KID: z.string(),
         KMS_KEYCHAIN_ENDPOINT: z.string(),
       }),
       z.object({
         KMS_KEYCHAIN_LOCAL_CONFIG: z.literal("false"),
         KMS_KEYCHAIN_MAX_ACQUISITION_TIMEOUT_SECONDS: z.coerce.number(),
-        KEYCHAIN_KEYID: z.string(),
+        KMS_KEYCHAIN_PUBLICKEY_KID: z.string(),
         KMS_KEYID: z.string(),
         KMS_KEYCHAIN_ENDPOINT: z.undefined(),
       }),
@@ -29,7 +29,7 @@ export const KeychainSignerConfig = z.preprocess(
       maxAcquisitionTimeoutSeconds:
         c.KMS_KEYCHAIN_MAX_ACQUISITION_TIMEOUT_SECONDS,
       kmsKeychainKeyId: c.KMS_KEYID,
-      KeychainKeyId: c.KEYCHAIN_KEYID,
+      KeychainKeyId: c.KMS_KEYCHAIN_PUBLICKEY_KID,
       kmsKeychainEndpoint: c.KMS_KEYCHAIN_ENDPOINT,
       localKeychainConfig: c.KMS_KEYCHAIN_LOCAL_CONFIG,
     }))

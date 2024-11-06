@@ -18,7 +18,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 
 COPY tsconfig.json /app/
 COPY turbo.json /app/
-COPY ./packages/keychain-mock/app/packages/keychain-mock
+COPY ./packages/keychain-mock /app/packages/keychain-mock
 COPY ./packages/commons /app/packages/commons
 COPY ./packages/models /app/packages/models
 COPY ./packages/interoperability-api /app/packages/interoperability-api

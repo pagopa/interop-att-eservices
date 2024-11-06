@@ -86,10 +86,7 @@ const fiscalcodeVerificationRouter = (
         logger.info(`[END] Post - '/check-with-payload-signature'`);
         const signature = await signatureUtility.signData(JSON.stringify(data));
         res.setHeader("x-payload-signature", signature);
-        res.setHeader(
-          "x-payload-signature-kid",
-          keychainConfig.kmsKeychainKeyId
-        );
+        res.setHeader("x-payload-signature-kid", keychainConfig.KeychainKeyId);
         res.setHeader("x-payload-signature-algorythm", "SHA256withRSA");
 
         return res.status(200).json(data).end();

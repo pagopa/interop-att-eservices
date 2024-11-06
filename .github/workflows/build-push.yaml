@@ -42,6 +42,8 @@ jobs:
             dockerfile_path: packages/digital-address-verification
           - image_name: data-migration
             dockerfile_path: migrations
+          - image_name: keychain-mock
+            dockerfile_path: packages/keychain-mock
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
