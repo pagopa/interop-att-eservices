@@ -14,7 +14,7 @@ AwIDAQAB
 // Dati originali
 const data = JSON.stringify({
   data: {
-    idSubject: "BTTFBB88R61A125U",
+    idSubject: "BCCBBB88R61A125U",
     valid: false,
     message: "Codice fiscale non valido",
   },
