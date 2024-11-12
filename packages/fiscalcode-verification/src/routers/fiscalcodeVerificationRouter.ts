@@ -83,7 +83,7 @@ const fiscalcodeVerificationRouter = (
           "OK"
         );
         // TODO: INSERT HEADERS
-        logger.info(`[END] Post - '/check-with-payload-signature'`);
+        logger.info(`[END] Post - '/check-with-payload-signature' `);
         const signature = await signatureUtility.signData(JSON.stringify(data));
         res.setHeader("x-payload-signature", signature);
         res.setHeader("x-payload-signature-kid", keychainConfig.KeychainKeyId);
