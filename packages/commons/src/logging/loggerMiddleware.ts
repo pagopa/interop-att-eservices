@@ -35,7 +35,7 @@ const getLoggerMetadata = (): SessionMetaData => {
 
 const logFormat = (
   msg: string,
-  timestamp: string,
+  timestamp: string | undefined,
   level: string,
   userId: string | undefined,
   organizationId: string | undefined,
@@ -62,7 +62,7 @@ export const customFormat = (serviceName?: string) =>
         )
       );
     return lines.join("\n");
-});
+  });
 
 const getLogger = (serviceName?: string) =>
   winston.createLogger({
