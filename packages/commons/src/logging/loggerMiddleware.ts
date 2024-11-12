@@ -35,7 +35,7 @@ const getLoggerMetadata = (): SessionMetaData => {
 
 const logFormat = (
   msg: string,
-  timestamp: string | undefined,
+  timestamp: string,
   level: string,
   userId: string | undefined,
   organizationId: string | undefined,
@@ -48,12 +48,13 @@ export const customFormat = (serviceName?: string) =>
   winston.format.printf(({ level, message, timestamp }) => {
     const { userId, organizationId, correlationId } = getLoggerMetadata();
     const msg = (message as string).toString();
+    const time = (timestamp ?? '').toString();
     const lines = msg
       .split("\n")
       .map((line: string) =>
         logFormat(
           line,
-          timestamp ?? '',
+          time,
           level,
           userId,
           organizationId,
