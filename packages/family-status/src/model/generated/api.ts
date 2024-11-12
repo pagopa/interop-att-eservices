@@ -384,7 +384,7 @@ const endpoints = makeApi([
     method: "get",
     path: "/family-status/data-preparation/:uuid",
     alias: "GetByIdAR001",
-    description: `Insert data preparation residence-verification`,
+    description: `Get data preparation family status by UUID`,
     requestFormat: "json",
     parameters: [
       {

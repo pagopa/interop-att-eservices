@@ -3,7 +3,11 @@ import {
   requestParamNotValid,
   userModelNotFound,
 } from "../exceptions/errors.js";
-import { RequestFS001, ResponseFS001, UserModel } from "../model/domain/models.js";
+import {
+  RequestFS001,
+  ResponseFS001,
+  UserModel,
+} from "../model/domain/models.js";
 import { UserModelToDataSubjectsInstitution } from "../model/domain/apiConverter.js";
 import familyStatusService from "../services/familyStatusService.js";
 
@@ -48,9 +52,7 @@ class FamilyStatusController {
         return result;
       } else if (request.criteria.id) {
         if (request.criteria.id) {
-          const data = await familyStatusService.getById(
-            request.criteria.id
-          );
+          const data = await familyStatusService.getById(request.criteria.id);
 
           const list: UserModel[] = data ? [data] : [];
 
@@ -76,9 +78,7 @@ class FamilyStatusController {
     }
   }
   /* eslint-disable */
-  public async findUserVerify(
-    request: RequestFS001
-  ): Promise<ResponseFS001> {
+  public async findUserVerify(request: RequestFS001): Promise<ResponseFS001> {
     try {
       logger.info(`post request: ${request}`);
       let resultData;

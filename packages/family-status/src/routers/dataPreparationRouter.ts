@@ -8,9 +8,15 @@ import DataPreparationService from "../services/dataPreparationService.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, userModelNotFound } from "../exceptions/errors.js";
-import { DataPreparationTemplateResponse, UserModel } from "../model/domain/models.js";
+import {
+  DataPreparationTemplateResponse,
+  UserModel,
+} from "../model/domain/models.js";
 import { contextDataFamilyMiddleware } from "../context/context.js";
-import { userModelToApiDataPreparationResponseCf, userModelToApiDataPreparationTemplateResponse } from "../model/domain/apiConverter.js";
+import {
+  userModelToApiDataPreparationResponseCf,
+  userModelToApiDataPreparationTemplateResponse,
+} from "../model/domain/apiConverter.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext

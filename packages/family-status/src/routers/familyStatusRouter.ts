@@ -34,12 +34,7 @@ const familyStatusRouter = (
         if (!data || data.subjects?.subject?.length === 0) {
           throw userModelNotFound();
         }
-        void TrialService.insert(
-          req.url,
-          req.method,
-          "FAMILY_STATUS",
-          "OK"
-        );
+        void TrialService.insert(req.url, req.method, "FAMILY_STATUS", "OK");
         logger.info(`[END] familyStatusRouter`);
         return res.status(200).json(data).end();
       } catch (error) {

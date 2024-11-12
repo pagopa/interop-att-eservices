@@ -97,7 +97,8 @@ export function findUserModelByPersonalInfo(
       userModel.subject.surname !== pm.surname ||
       userModel.subject.gender !== pm.gender ||
       userModel.subject.birthDate?.eventDate !== pm.birthDate?.eventDate ||
-      userModel.subject.birthDate?.placeOfBirth?.municipality?.nameMunicipality !==
+      userModel.subject.birthDate?.placeOfBirth?.municipality
+        ?.nameMunicipality !==
         pm.birthDate?.placeOfBirth?.municipality?.nameMunicipality ||
       userModel.subject.birthDate?.placeOfBirth?.place?.codState !==
         pm.birthDate?.placeOfBirth?.place?.codState

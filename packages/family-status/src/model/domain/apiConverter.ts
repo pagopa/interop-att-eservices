@@ -1,9 +1,19 @@
 import { getUserModelByCodiceFiscale } from "../../utilities/userUtilities.js";
-import { generateRandomUUID, isValidUUID } from "../../utilities/uuidUtilities.js";
+import {
+  generateRandomUUID,
+  isValidUUID,
+} from "../../utilities/uuidUtilities.js";
 import {
   BirthDateType,
   CriteriaTypeFS001,
-  DataPreparationResponse, DataPreparationTemplate, DataPreparationTemplateResponse, DataSubjectsInstitution, EventPlaceType, FiscalCodeType, GeneralityType, UserModel,
+  DataPreparationResponse,
+  DataPreparationTemplate,
+  DataPreparationTemplateResponse,
+  DataSubjectsInstitution,
+  EventPlaceType,
+  FiscalCodeType,
+  GeneralityType,
+  UserModel,
 } from "./models.js";
 
 export const dataPreparationTemplateToUserModel = (
@@ -16,8 +26,8 @@ export const dataPreparationTemplateToUserModel = (
     isValidUUID(existingUUID)
       ? existingUUID
       : generateRandomUUID(),
-  subject: dataPreparationTemplate?.subject!,
-  subjectLink: dataPreparationTemplate?.subjectLink!,
+  subject: dataPreparationTemplate?.subject ?? {},
+  subjectLink: dataPreparationTemplate?.subjectLink ?? {},
 });
 
 export const userModelToApiDataPreparationResponse = (
@@ -58,7 +68,7 @@ export const userModelToApiDataPreparationTemplateResponse = (
   subjectLink: userModel?.subjectLink,
 });
 
-//*********************************************************************************************************** */
+//* ********************************************************************************************************** */
 
 export const UserModelToDataSubjectsInstitution = (
   userModel: UserModel
@@ -89,7 +99,7 @@ export const CriteriaTypeToGeneralityType = (
 export const codiceFiscaleToApiTipoCodiceFiscale = (
   fiscalCode: string
 ): FiscalCodeType => ({
-  fiscalCode: fiscalCode,
+  fiscalCode,
   fiscalCodeValidity: "",
   dataAttributionValidity: "",
 });
@@ -102,4 +112,4 @@ export const BirthDateTypeToEventPlaceType = (
   place: birthDateType.placeOfBirth?.place,
 });
 
-//*********************************************************************************************************** */
+//* ********************************************************************************************************** */

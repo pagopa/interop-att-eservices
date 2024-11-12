@@ -23,7 +23,10 @@ class DataPreparationService {
       const userData: UserModel[] = [
         dataPreparationTemplateToUserModel(request, uuidv4()),
       ];
-      const hash = generateHash([this.eService, this.appContext.authData.purposeId]);
+      const hash = generateHash([
+        this.eService,
+        this.appContext.authData.purposeId,
+      ]);
       const persistedUserData = await dataPreparationRepository.findAllByKey(
         hash
       );
@@ -51,7 +54,10 @@ class DataPreparationService {
   public async getAll(): Promise<UserModel[] | null> {
     try {
       logger.info(`[START] getAll`);
-      const hash = generateHash([this.eService, this.appContext.authData.purposeId]);
+      const hash = generateHash([
+        this.eService,
+        this.appContext.authData.purposeId,
+      ]);
       const response = await dataPreparationRepository.findAllByKey(hash);
       logger.info(`[END] getAll`);
       return response;
@@ -64,7 +70,10 @@ class DataPreparationService {
   public async getByUUID(uuid: string): Promise<UserModel | null> {
     try {
       logger.info(`[START] getByUUID`);
-      const hash = generateHash([this.eService, this.appContext.authData.purposeId]);
+      const hash = generateHash([
+        this.eService,
+        this.appContext.authData.purposeId,
+      ]);
       const result = await dataPreparationRepository.findAllByUuid(hash, uuid);
       const response = findUserModelByUUID(result, uuid);
       logger.info(`[START] getByUUID`);
@@ -81,7 +90,10 @@ class DataPreparationService {
   public async deleteAllByKey(): Promise<number | null> {
     try {
       logger.info(`[START] deleteAllByKey`);
-      const hash = generateHash([this.eService, this.appContext.authData.purposeId]);
+      const hash = generateHash([
+        this.eService,
+        this.appContext.authData.purposeId,
+      ]);
       const response = await dataPreparationRepository.deleteAllByKey(hash);
       logger.info(`[END] deleteAllByKey`);
       return response;
@@ -97,7 +109,10 @@ class DataPreparationService {
   public async deleteByUUID(uuid: string): Promise<UserModel[] | null> {
     try {
       logger.info(`[START] deleteByUUID`);
-      const hash = generateHash([this.eService, this.appContext.authData.purposeId]);
+      const hash = generateHash([
+        this.eService,
+        this.appContext.authData.purposeId,
+      ]);
       const allSaved = await dataPreparationRepository.findAllByKey(hash);
       const user = deleteUserModelByUUID(allSaved, uuid);
       await this.deleteAllByKey();
