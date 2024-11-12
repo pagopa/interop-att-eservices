@@ -10,7 +10,7 @@ import {
 import { userModelNotFound } from "../exceptions/errors.js";
 import { CriteriaTypeFS001, UserModel } from "../model/domain/models.js";
 
-class ResidenceVerificationService {
+class FamilyStatusService {
   public appContext = getContext();
   public eService: string = "family-status";
 
@@ -69,4 +69,4 @@ class ResidenceVerificationService {
   }
 }
 
-export default new ResidenceVerificationService();
+export default new FamilyStatusService();

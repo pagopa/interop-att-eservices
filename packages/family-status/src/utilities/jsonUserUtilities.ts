@@ -1,6 +1,6 @@
-import { UserModel } from "pdnd-models";
 import { classToPlain } from "class-transformer";
 import { logger } from "pdnd-common";
+import { UserModel } from "../model/domain/models.js";
 
 // Funzione che converte una stringa JSON in un oggetto della struttura specificata
 export function parseJsonToUser(inputString: string | null): UserModel | null {

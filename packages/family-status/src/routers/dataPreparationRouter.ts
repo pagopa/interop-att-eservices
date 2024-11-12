@@ -9,7 +9,7 @@ import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, userModelNotFound } from "../exceptions/errors.js";
 import { DataPreparationTemplateResponse, UserModel } from "../model/domain/models.js";
-import { contextDataResidenceMiddleware } from "../context/context.js";
+import { contextDataFamilyMiddleware } from "../context/context.js";
 import { userModelToApiDataPreparationResponseCf, userModelToApiDataPreparationTemplateResponse } from "../model/domain/apiConverter.js";
 
 const dataPreparationRouter = (
@@ -19,7 +19,7 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.post(
     "/family-status/data-preparation",
-    contextDataResidenceMiddleware,
+    contextDataFamilyMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
@@ -43,7 +43,7 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.get(
     "/family-status/data-preparation",
-    contextDataResidenceMiddleware,
+    contextDataFamilyMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
@@ -67,7 +67,7 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.get(
     "/family-status/data-preparation/:uuid",
-    contextDataResidenceMiddleware,
+    contextDataFamilyMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
@@ -90,7 +90,7 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.delete(
     "/family-status/data-preparation",
-    contextDataResidenceMiddleware,
+    contextDataFamilyMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {
@@ -113,7 +113,7 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.delete(
     "/family-status/data-preparation/:uuid",
-    contextDataResidenceMiddleware,
+    contextDataFamilyMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
       try {

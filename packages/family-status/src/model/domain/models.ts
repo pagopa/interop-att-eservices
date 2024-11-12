@@ -32,5 +32,6 @@ export type DataPreparationTemplateResponse = z.infer<typeof api.schemas.DataPre
 export const UserModel = z.object({
     uuid: z.string(),
     subject: api.schemas.CriteriaTypeFS001,
+    subjectLink: api.schemas.CompleteSubjectBindingType,
 });
 export type UserModel = z.infer<typeof UserModel>;

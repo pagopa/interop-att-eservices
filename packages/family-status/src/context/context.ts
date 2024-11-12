@@ -1,14 +1,14 @@
 /* eslint-disable functional/immutable-data */
 import { NextFunction, Request, Response } from "express";
 import { getContext } from "pdnd-common";
-import { readHeadersResidenceVerification } from "./headers.js";
+import { readHeadersFamilyVerification } from "./headers.js";
 
-export const contextDataResidenceMiddleware = (
+export const contextDataFamilyMiddleware = (
   req: Request,
   _res: Response,
   next: NextFunction
 ): void => {
-  const headers = readHeadersResidenceVerification(req);
+  const headers = readHeadersFamilyVerification(req);
   if (headers) {
     const context = getContext();
     context.authData = {

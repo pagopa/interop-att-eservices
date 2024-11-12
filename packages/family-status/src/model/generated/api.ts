@@ -49,8 +49,21 @@ const CriteriaTypeFS001 = z
   })
   .partial()
   .passthrough();
+const CompleteSubjectBindingType = z
+  .object({
+    relationshipType: z.string(),
+    startDate: z.string(),
+    relationshipCode: z.string(),
+    memberSequence: z.string(),
+    startDateRelationship: z.string(),
+  })
+  .partial()
+  .passthrough();
 const DataPreparationTemplate = z
-  .object({ subject: CriteriaTypeFS001 })
+  .object({
+    subject: CriteriaTypeFS001,
+    subjectLink: CompleteSubjectBindingType,
+  })
   .partial()
   .passthrough();
 const DataPreparationResponse = z.object({ uuid: z.string() }).partial();
@@ -157,16 +170,6 @@ const EventDataType = z
   })
   .partial()
   .passthrough();
-const CompleteSubjectBindingType = z
-  .object({
-    relationshipType: z.string(),
-    startDate: z.string(),
-    relationshipCode: z.string(),
-    memberSequence: z.string(),
-    startDateRelationship: z.string(),
-  })
-  .partial()
-  .passthrough();
 const TypeInfoValue = z.enum(["A", "N", "S"]);
 const InfoInstitutionType = z
   .object({
@@ -223,6 +226,7 @@ export const schemas = {
   DataBirthType,
   BirthDateType,
   CriteriaTypeFS001,
+  CompleteSubjectBindingType,
   DataPreparationTemplate,
   DataPreparationResponse,
   DataPreparationTemplateResponse,
@@ -237,7 +241,6 @@ export const schemas = {
   ActANSC,
   ActType,
   EventDataType,
-  CompleteSubjectBindingType,
   TypeInfoValue,
   InfoInstitutionType,
   DataSubjectsInstitution,

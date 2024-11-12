@@ -1,11 +1,11 @@
 import { logger, getContext } from "pdnd-common";
-import ResidenceVerificationService from "../services/familyStatusService.js";
 import {
   requestParamNotValid,
   userModelNotFound,
 } from "../exceptions/errors.js";
 import { RequestFS001, ResponseFS001, UserModel } from "../model/domain/models.js";
 import { UserModelToDataSubjectsInstitution } from "../model/domain/apiConverter.js";
+import familyStatusService from "../services/familyStatusService.js";
 
 class FamilyStatusController {
   public appContext = getContext();
@@ -16,7 +16,7 @@ class FamilyStatusController {
     try {
       logger.info(`post request: ${request}`);
       if (request.criteria.fiscalCode) {
-        const data = await ResidenceVerificationService.getByFiscalCode(
+        const data = await familyStatusService.getByFiscalCode(
           request.criteria.fiscalCode
         );
 
@@ -32,7 +32,7 @@ class FamilyStatusController {
         };
         return result;
       } else if (checkPersonalInfo(request)) {
-        const data = await ResidenceVerificationService.getByPersonalInfo(
+        const data = await familyStatusService.getByPersonalInfo(
           request.criteria
         );
 
@@ -48,7 +48,7 @@ class FamilyStatusController {
         return result;
       } else if (request.criteria.id) {
         if (request.criteria.id) {
-          const data = await ResidenceVerificationService.getById(
+          const data = await familyStatusService.getById(
             request.criteria.id
           );
 
@@ -83,7 +83,7 @@ class FamilyStatusController {
       logger.info(`post request: ${request}`);
       let resultData;
       if (request.criteria.fiscalCode) {
-        const data = await ResidenceVerificationService.getByFiscalCode(
+        const data = await familyStatusService.getByFiscalCode(
           request.criteria.fiscalCode
         );
 
@@ -98,7 +98,7 @@ class FamilyStatusController {
           },
         };
       } else if (checkPersonalInfoVerify(request)) {
-        const data = await ResidenceVerificationService.getByPersonalInfo(
+        const data = await familyStatusService.getByPersonalInfo(
           request.criteria
         );
 
@@ -112,7 +112,7 @@ class FamilyStatusController {
         };
       } else if (request.criteria.id) {
         if (request.criteria.id) {
-          const data = await ResidenceVerificationService.getById(
+          const data = await familyStatusService.getById(
             `${request.criteria.id}`
           );
 

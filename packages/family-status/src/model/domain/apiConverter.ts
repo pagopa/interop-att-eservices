@@ -17,6 +17,7 @@ export const dataPreparationTemplateToUserModel = (
       ? existingUUID
       : generateRandomUUID(),
   subject: dataPreparationTemplate?.subject!,
+  subjectLink: dataPreparationTemplate?.subjectLink!,
 });
 
 export const userModelToApiDataPreparationResponse = (
@@ -54,6 +55,7 @@ export const userModelToApiDataPreparationTemplateResponse = (
 ): DataPreparationTemplateResponse => ({
   uuid: userModel?.uuid,
   subject: userModel?.subject,
+  subjectLink: userModel?.subjectLink,
 });
 
 //*********************************************************************************************************** */
@@ -62,6 +64,7 @@ export const UserModelToDataSubjectsInstitution = (
   userModel: UserModel
 ): DataSubjectsInstitution => ({
   generality: CriteriaTypeToGeneralityType(userModel.subject),
+  subjectLink: userModel.subjectLink,
 });
 
 export const CriteriaTypeToGeneralityType = (

@@ -155,8 +155,8 @@ paths:
     get:
       tags:
         - Data Preparation
-      summary: Insert data preparation residence-verification
-      description: Insert data preparation residence-verification
+      summary: Get data preparation family status by UUID
+      description: Get data preparation family status by UUID
       operationId: GetByIdAR001
       security:
         - bearerAuth: []
@@ -613,6 +613,8 @@ components:
       properties:
         subject:
           $ref: '#/components/schemas/CriteriaTypeFS001'
+        subjectLink:
+          $ref: '#/components/schemas/CompleteSubjectBindingType'
     DataPreparationResponse:
       type: object
       additionalProperties: false
