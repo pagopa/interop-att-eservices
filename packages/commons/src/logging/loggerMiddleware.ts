@@ -53,7 +53,7 @@ export const customFormat = (serviceName?: string) =>
       .map((line: string) =>
         logFormat(
           line,
-          timestamp,
+          timestamp ?? '',
           level,
           userId,
           organizationId,
