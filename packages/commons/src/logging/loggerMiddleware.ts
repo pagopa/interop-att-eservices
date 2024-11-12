@@ -48,7 +48,7 @@ export const customFormat = (serviceName?: string) =>
   winston.format.printf(({ level, message, timestamp }) => {
     const { userId, organizationId, correlationId } = getLoggerMetadata();
     const msg = (message as string).toString();
-    const time = (timestamp ?? '').toString();
+    const time = (timestamp ?? "").toString();
     const lines = msg
       .split("\n")
       .map((line: string) =>
