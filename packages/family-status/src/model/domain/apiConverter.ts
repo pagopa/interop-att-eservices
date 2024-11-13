@@ -11,7 +11,7 @@ import {
   DataPreparationTemplateResponse,
   DataSubjectsInstitution,
   EventPlaceType,
-  FiscalCodeType,
+  SubjectIdType,
   GeneralityType,
   UserModel,
 } from "./models.js";
@@ -80,7 +80,7 @@ export const UserModelToDataSubjectsInstitution = (
 export const CriteriaTypeToGeneralityType = (
   subject: CriteriaTypeFS001
 ): GeneralityType => ({
-  fiscalCode: codiceFiscaleToApiTipoCodiceFiscale(subject.fiscalCode!),
+  subjectId: codiceFiscaleToApiTipoCodiceFiscale(subject.subjectId!),
   surname: subject.surname,
   noSurname: subject.surname == null ? "true" : "false",
   name: subject.name,
@@ -97,10 +97,10 @@ export const CriteriaTypeToGeneralityType = (
 });
 
 export const codiceFiscaleToApiTipoCodiceFiscale = (
-  fiscalCode: string
-): FiscalCodeType => ({
-  fiscalCode,
-  fiscalCodeValidity: "",
+  subjectId: string
+): SubjectIdType => ({
+  subjectId,
+  subjectIdValidity: "",
   dataAttributionValidity: "",
 });
 

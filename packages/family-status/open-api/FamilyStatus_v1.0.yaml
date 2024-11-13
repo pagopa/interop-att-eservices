@@ -321,7 +321,7 @@ components:
     CriteriaTypeFS001:
       type: object
       properties:
-        fiscalCode:
+        subjectId:
           type: string
         id:
           type: string
@@ -480,8 +480,8 @@ components:
     GeneralityType:
       type: object
       properties:
-        fiscalCode:
-          $ref: '#/components/schemas/FiscalCodeType'
+        subjectId:
+          $ref: '#/components/schemas/SubjectIdType'
         surname:
           type: string
         noSurname:
@@ -512,12 +512,12 @@ components:
           type: string
         note:
           type: string   
-    FiscalCodeType:
+    SubjectIdType:
       type: object
       properties:
-        fiscalCode:
+        subjectId:
           type: string
-        fiscalCodeValidity:
+        subjectIdValidity:
           type: string
         dataAttributionValidity:
           type: string

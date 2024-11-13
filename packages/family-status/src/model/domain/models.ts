@@ -24,7 +24,7 @@ export type DataBirthType = z.infer<typeof api.schemas.DataBirthType>;
 export type MunicipalityType = z.infer<typeof api.schemas.MunicipalityType>;
 export type PlaceType = z.infer<typeof api.schemas.PlaceType>;
 export type GeneralityType = z.infer<typeof api.schemas.GeneralityType>;
-export type FiscalCodeType = z.infer<typeof api.schemas.FiscalCodeType>;
+export type SubjectIdType = z.infer<typeof api.schemas.SubjectIdType>;
 export type EventPlaceType = z.infer<typeof api.schemas.EventPlaceType>;
 export type TypeIdSubjectCardCommon = z.infer<
   typeof api.schemas.TypeIdSubjectCardCommon

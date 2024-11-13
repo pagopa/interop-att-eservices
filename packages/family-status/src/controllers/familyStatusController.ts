@@ -19,9 +19,9 @@ class FamilyStatusController {
   ): Promise<ResponseFS001 | null | undefined> {
     try {
       logger.info(`[START] findUser: ${request}`);
-      if (request.criteria.fiscalCode) {
-        const data = await familyStatusService.getByFiscalCode(
-          request.criteria.fiscalCode
+      if (request.criteria.subjectId) {
+        const data = await familyStatusService.getBySubjectId(
+          request.criteria.subjectId
         );
 
         const list: UserModel[] = data ? [data] : [];
@@ -82,9 +82,9 @@ class FamilyStatusController {
     try {
       logger.info(`post request: ${request}`);
       let resultData;
-      if (request.criteria.fiscalCode) {
-        const data = await familyStatusService.getByFiscalCode(
-          request.criteria.fiscalCode
+      if (request.criteria.subjectId) {
+        const data = await familyStatusService.getBySubjectId(
+          request.criteria.subjectId
         );
 
         const list: UserModel[] = data ? [data] : [];

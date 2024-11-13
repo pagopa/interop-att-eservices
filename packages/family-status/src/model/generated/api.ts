@@ -38,7 +38,7 @@ const BirthDateType = z
   .passthrough();
 const CriteriaTypeFS001 = z
   .object({
-    fiscalCode: z.string(),
+    subjectId: z.string(),
     id: z.string(),
     surname: z.string(),
     nosurname: z.string(),
@@ -86,10 +86,10 @@ const RequestFS001 = z
     requestData: DataTypeRquestFS001,
   })
   .passthrough();
-const FiscalCodeType = z
+const SubjectIdType = z
   .object({
-    fiscalCode: z.string(),
-    fiscalCodeValidity: z.string(),
+    subjectId: z.string(),
+    subjectIdValidity: z.string(),
     dataAttributionValidity: z.string(),
   })
   .partial()
@@ -108,7 +108,7 @@ const TypeIdSubjectCardCommon = z
   .passthrough();
 const GeneralityType = z
   .object({
-    fiscalCode: FiscalCodeType,
+    subjectId: SubjectIdType,
     surname: z.string(),
     noSurname: z.string(),
     name: z.string(),
@@ -232,7 +232,7 @@ export const schemas = {
   DataPreparationTemplateResponse,
   DataTypeRquestFS001,
   RequestFS001,
-  FiscalCodeType,
+  SubjectIdType,
   EventPlaceType,
   TypeIdSubjectCardCommon,
   GeneralityType,
