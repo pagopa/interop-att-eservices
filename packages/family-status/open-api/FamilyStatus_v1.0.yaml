@@ -1,0 +1,695 @@
+openapi: 3.0.3
+info:
+  title: Check Family Status API
+  description: |-
+    Service for accessing household member data for verification purposes.
+    Pattern Models applied:
+    - [AUDIT_REST_02 ] Forwarding tracked data into the REST user domain with correlation
+    - [BLOCK_REST] Blocking REST
+    - [INTEGRITY_REST_02] REST message payload integrity in PDND
+  version: '1.0.0'
+  termsOfService: 'http://swagger.io/terms/'
+  x-summary: Check of family status
+servers:
+  - url: http://eservices.att.interop.pagopa.it/
+    description: Attestation Environment
+tags:
+  - name: Data Preparation
+    description: Data Preparation Verification
+  - name: Family Status Check
+    description: Family status verification
+  - name: Health Check
+    description: Check application status
+security:
+  - bearerAuth: []
+    Agid-JWT-Signature: []
+paths:
+  /family-status/data-preparation:
+    post:
+      tags:
+        - Data Preparation
+      summary: Insert data preparation family-status
+      description: Insert data preparation family-status
+      operationId: InsertFS001
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataPreparationTemplate'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataPreparationResponse'
+        '400':
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+
+    get:
+      tags:
+        - Data Preparation
+      summary: List of institution use cases
+      description: List of institution use cases
+      operationId: GetAllFS001
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DataPreparationTemplateResponse'
+        '400':
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+
+    delete:
+      tags:
+        - Data Preparation
+      summary: Delete institution use cases
+      description: Delete institution use cases
+      operationId: DeleteAR001
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operation completed successfully
+        '400':
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+
+  /family-status/data-preparation/{uuid}:
+    parameters:
+      - $ref: '#/components/parameters/pathUUID'
+    get:
+      tags:
+        - Data Preparation
+      summary: Get data preparation family status by UUID
+      description: Get data preparation family status by UUID
+      operationId: GetByIdAR001
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataPreparationTemplate'
+        '400':
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+    delete:
+      tags:
+        - Data Preparation
+      summary: Remove a single use case
+      description: Remove a single use case
+      operationId: DeleteByIdAR001
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operation completed successfully
+        '400':
+          description: Bad request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+
+  /family-status:
+    post:
+      tags:
+        - Family Status Check
+      summary: Search family status
+      description: Search family status
+      operationId: FS001
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestFS001'
+      responses:
+        "200":
+          description: Usage case found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseFS001'
+        "400":
+          description: Invalid request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResponseKO'
+        "404":
+          description: Usage case not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResponseKO'
+        "500":
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResponseKO'
+  /family-status/status:
+    get:
+      tags:
+        - Health Check
+      summary: Health status endpoint
+      description: Return ok
+      operationId: getStatus
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseKO"
+
+components:
+  schemas:
+    RequestFS001:
+      type: object
+      required:
+        - operationId
+        - criteria
+        - requestData
+      properties:
+        operationId:
+          type: string
+          description: Unique identifier assigned to the operation by the organization, which must be alphanumeric. It is recommended to use a timestamp or a workstation identifier along with the timestamp.
+        criteria:
+          $ref: '#/components/schemas/CriteriaTypeFS001'
+        requestData:
+          $ref: '#/components/schemas/DataTypeRquestFS001'
+    ResponseFS001:
+      type: object
+      properties:
+        idOp:
+          type: string
+        subjects:
+          $ref: '#/components/schemas/TypeSubjects'
+        warnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorsType'
+    ResponseKO:
+      type: object
+      properties:
+        idOp:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorsType'
+    CriteriaTypeFS001:
+      type: object
+      properties:
+        fiscalCode:
+          type: string
+        id:
+          type: string
+          description: National Unique Identifier
+        surname:
+          type: string
+        nosurname:
+          type: string
+        name:
+          type: string
+        noname:
+          type: string
+        gender:
+          type: string
+        birthDate:
+          $ref: '#/components/schemas/BirthDateType'
+    DataTypeRquestFS001:
+      type: object
+      required:
+        - dateOfRequest
+        - useCase
+        - motivation
+      properties:
+        dateOfRequest:
+          type: string
+          description: Date to which the version of the personal data sheet must refer
+          format: YYYY-MM-DD
+          example: '2021-11-15'
+        motivation:
+          type: string
+          description: Mandatory field for entering the reference number of the case for which the inquiry is made (e.g., protocol number, file, report, etc.).
+        useCase:
+          type: string
+          description: caso d'uso (es. C001)
+    ErrorsType:
+      type: object
+      properties:
+        warningErrorCode:
+          type: string
+        warningErrorType:
+          type: string
+        warningErrorText:
+          type: string
+        warningErrorObject:
+          type: string
+        warningErrorField:
+          type: string
+        warningErrorValue:
+          type: string   
+    TypeSubjects:
+      type: object
+      properties:
+        subject:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataSubjectsInstitution'
+    DataSubjectsInstitution:
+      type: object
+      properties:
+        generality:
+          $ref: '#/components/schemas/GeneralityType'
+        identifiers:
+          $ref: '#/components/schemas/IdentifiersType'
+        deathDate:
+          $ref: '#/components/schemas/EventDataType'
+        subjectLink:
+          $ref: '#/components/schemas/CompleteSubjectBindingType'
+        infoInstitution:
+          type: array
+          items:
+            $ref: '#/components/schemas/InfoInstitutionType'
+    InfoInstitutionType:
+      type: object
+      properties:
+        id:
+          type: string
+        key:
+          type: string
+        value:
+          $ref: '#/components/schemas/TypeInfoValue'
+        valueText:
+          type: string
+        valueData:
+          type: string
+          format: YYYY-MM-DD
+          example: '2021-11-15'
+        details:
+          type: string
+    TypeInfoValue:
+      enum:
+      - A
+      - N
+      - S
+      type: string
+    CompleteSubjectBindingType:
+      type: object
+      properties:
+        relationshipType:
+          type: string
+        startDate:
+          type: string
+          format: YYYY-MM-DD
+          example: '2021-11-15'
+        relationshipCode:
+          type: string
+        memberSequence:
+          type: string
+        startDateRelationship:
+          type: string
+          format: YYYY-MM-DD
+          example: '2021-11-15'
+    BirthDateType:
+      type: object
+      properties:
+        eventDate:
+          type: string
+          format: YYYY-MM-DD
+          example: '2021-11-15'
+        noDay:
+          type: string
+        noMonth:
+          type: string
+        placeOfBirth:
+          $ref: '#/components/schemas/DataBirthType'  
+    DataBirthType:
+      type: object
+      properties:
+        exceptionalPlace:
+          type: string
+        municipality:
+          $ref: '#/components/schemas/MunicipalityType'
+        place:
+          $ref: '#/components/schemas/PlaceType'  
+    MunicipalityType:
+      type: object
+      properties:
+        nameMunicipality:
+          type: string
+        istatCode:
+          type: string
+        acronymIstatProvince:
+          type: string
+        placeDescription:
+          type: string        
+    PlaceType:
+      type: object
+      properties:
+        placeDescription:
+          type: string
+        countryDescription:
+          type: string
+        codState:
+          type: string
+        provinceCounty:
+          type: string
+    GeneralityType:
+      type: object
+      properties:
+        fiscalCode:
+          $ref: '#/components/schemas/FiscalCodeType'
+        surname:
+          type: string
+        noSurname:
+          type: string
+        name:
+          type: string
+        noName:
+          type: string
+        gender:
+          type: string
+        birthDate:
+          type: string
+          format: YYYY-MM-DD
+          example: '2021-11-15'
+        noDay:
+          type: string
+        noMonth:
+          type: string
+        placeOfBirth:
+          $ref: '#/components/schemas/EventPlaceType'
+        AIRESubject:
+          type: string
+        yearExpatriation:
+          type: string
+        idCommonSubjectData:
+          $ref: '#/components/schemas/TypeIdSubjectCardCommon'
+        idSubjectData:
+          type: string
+        note:
+          type: string   
+    FiscalCodeType:
+      type: object
+      properties:
+        fiscalCode:
+          type: string
+        fiscalCodeValidity:
+          type: string
+        dataAttributionValidity:
+          type: string
+          format: YYYY-MM-DD
+          example: '2021-11-15'
+    EventPlaceType:
+      type: object
+      properties:
+        exceptionalPlace:
+          type: string
+        municipality:
+          $ref: '#/components/schemas/MunicipalityType'
+        place:
+          $ref: '#/components/schemas/PlaceType'
+    TypeIdSubjectCardCommon:
+      type: object
+      properties:
+        idCommonSubjectDataIstat:
+          type: string
+        idSubjectData:
+          type: string
+    IdentifiersType:
+      type: object
+      properties:
+        idANPR:
+          type: string
+    EventDataType:
+      type: object
+      properties:
+        eventDate:
+          type: string
+          format: YYYY-MM-DD
+          example: '2021-11-15'
+        noDay:
+          type: string
+        noMonth:
+          type: string
+        eventPlace:
+          $ref: '#/components/schemas/EventPlaceType'
+        eventAct:
+          $ref: '#/components/schemas/ActType'
+    ActType:
+      type: object
+      properties:
+        act:
+          $ref: '#/components/schemas/Act'
+        actANSC:
+          $ref: '#/components/schemas/ActANSC'
+    ActANSC:
+      type: object
+      properties:
+        idANSC:
+          type: string
+        municipalityRegistration:
+          $ref: '#/components/schemas/MunicipalityType'
+        year:
+          type: string
+        municipalityOffice:
+          type: string
+        municipalityNumber:
+          type: string
+        actDate:
+          type: string
+          format: YYYY-MM-DD
+          example: '2021-11-15'
+        transcript:
+          type: string
+    Act:
+      type: object
+      properties:
+        municipalityRegistration:
+          $ref: '#/components/schemas/MunicipalityType'
+        municipalityOffice:
+          type: string
+        year:
+          type: string
+        part:
+          type: string
+        serie:
+          type: string
+        actNumber:
+          type: string
+        volume:
+          type: string
+        actDate:
+          type: string
+          format: YYYY-MM-DD
+          example: '2021-11-15'
+        transcript:
+          type: string
+    DataPreparationTemplate:
+      type: object
+      properties:
+        subject:
+          $ref: '#/components/schemas/CriteriaTypeFS001'
+        subjectLink:
+          $ref: '#/components/schemas/CompleteSubjectBindingType'
+    DataPreparationResponse:
+      type: object
+      additionalProperties: false
+      title: Data Prearation Response
+      description: represents the id of the data just entered.
+      properties:
+        uuid:
+          type: string
+          description: id of Operation
+    DataPreparationTemplateResponse:
+      description: Data Preparation Configuration
+      type: object
+      allOf:
+        - type: object
+          properties:
+            uuid:
+              description: >-
+                identifier associated with the saved configuration
+              type: string
+              format: uuid
+        - $ref: '#/components/schemas/DataPreparationTemplate'
+    GeneralError:
+      type: object
+      properties:
+        idOp:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    Error:
+      type: object
+      properties:
+        warningErrorCode:
+          type: string
+        warningErrorType:
+          type: string
+        warningErrorText:
+          type: string
+        warningErrorObject:
+          type: string
+        warningErrorField:
+          type: string
+        warningErrorValue:
+          type: string
+  
+  parameters:
+    pathUUID:
+      description: >-
+        Saved use case identifier
+      name: uuid
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: 'A bearer token in the format of a JWS and conformed to the specifications included in [RFC8725](https://tools.ietf.org/html/RFC8725).'
+      scheme: bearer
+      bearerFormat: JWT
+    Agid-JWT-Signature:
+      type: apiKey
+      in: header
+      name: Agid-JWT-Signature
+      description: |-
+        JWS signature header. The value of this header represents a JWS signature. Refer to [integrity_rest_02] for information on the integrity of the REST message payload in PDND
+    Agid-JWT-TrackingEvidence:
+      type: apiKey
+      in: header
+      name: Agid-JWT-TrackingEvidence
+      description: |-
+        JWS signature header. The value of this header is a JWS signature. Refer to [audit_rest_02] for the forwarding of tracked data within the REST consumer's domain with correlation. Claims to include:
+        userID: a unique identifier of the user within the consumer's domain who initiated the request for access to the provider's e-service;
+        userLocation: a unique identifier of the workstation within the consumer's domain from which the request for access to the provider's e-service originated;
+        LoA: the level of assurance or security adopted in the digital authentication process within the consumer's domain.
