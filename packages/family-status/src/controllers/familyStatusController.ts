@@ -18,7 +18,7 @@ class FamilyStatusController {
     request: RequestFS001
   ): Promise<ResponseFS001 | null | undefined> {
     try {
-      logger.info(`post request: ${request}`);
+      logger.info(`[START] findUser: ${request}`);
       if (request.criteria.fiscalCode) {
         const data = await familyStatusService.getByFiscalCode(
           request.criteria.fiscalCode
@@ -48,7 +48,7 @@ class FamilyStatusController {
             ),
           },
         };
-
+        logger.info(`[END] findUser: ${request}`);
         return result;
       } else if (request.criteria.id) {
         if (request.criteria.id) {

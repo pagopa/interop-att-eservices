@@ -44,6 +44,8 @@ jobs:
             dockerfile_path: migrations
           - image_name: keychain-mock
             dockerfile_path: packages/keychain-mock
+          - image_name: family-status
+            dockerfile_path: packages/family-status
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
