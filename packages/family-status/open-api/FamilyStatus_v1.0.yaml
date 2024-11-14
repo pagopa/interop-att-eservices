@@ -267,6 +267,46 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ResponseKO'
+  /family-status/check-with-payload-signature:
+    post:
+      tags:
+        - Family Status Check
+      summary: Search family status
+      description: Search family status
+      operationId: FS002
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestFS001'
+      responses:
+        "200":
+          description: Usage case found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseFS001'
+        "400":
+          description: Invalid request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResponseKO'
+        "404":
+          description: Usage case not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResponseKO'
+        "500":
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ResponseKO'
   /family-status/status:
     get:
       tags:
@@ -662,6 +702,24 @@ components:
           type: string
   
   parameters:
+    X-Payload-Signature-Kid:
+      in: header
+      name: X-Payload-Signature-Kid
+      required: true
+      schema:
+        type: string
+    X-Payload-Signature:
+      in: header
+      name: X-Payload-Signature
+      required: true
+      schema:
+        type: string
+    X-Payload-Signature-Algorythm:
+      in: header
+      name: X-Payload-Signature-Algorythm
+      required: true
+      schema:
+        type: string
     pathUUID:
       description: >-
         Saved use case identifier

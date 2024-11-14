@@ -285,6 +285,38 @@ const endpoints = makeApi([
   },
   {
     method: "post",
+    path: "/family-status/check-with-payload-signature",
+    alias: "FS002",
+    description: `Search family status`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: RequestFS001,
+      },
+    ],
+    response: ResponseFS001,
+    errors: [
+      {
+        status: 400,
+        description: `Invalid request`,
+        schema: z.void(),
+      },
+      {
+        status: 404,
+        description: `Usage case not found`,
+        schema: z.void(),
+      },
+      {
+        status: 500,
+        description: `Internal Server Error`,
+        schema: z.void(),
+      },
+    ],
+  },
+  {
+    method: "post",
     path: "/family-status/data-preparation",
     alias: "InsertFS001",
     description: `Insert data preparation family-status`,
