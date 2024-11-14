@@ -121,7 +121,7 @@ export const apiTipoDatiNascitaTemplateE000ToTipoDataNascitaModel = (
 export const apiTipoCriteriRicercaTemplateAR001ToSoggettoModel = (
   tipoCriteriRicercaTemplateAR001: TipoCriteriRicercaTemplateAR001 | undefined
 ): SoggettoModel => ({
-  fiscalCode: tipoCriteriRicercaTemplateAR001?.fiscalCode || "",
+  subjectId: tipoCriteriRicercaTemplateAR001?.subjectId || "",
   id: tipoCriteriRicercaTemplateAR001?.id || "",
   surname: tipoCriteriRicercaTemplateAR001?.surname || "",
   name: tipoCriteriRicercaTemplateAR001?.name || "",
@@ -333,7 +333,7 @@ export const tipoDataNascitaModelToApiTipoDatiNascitaTemplateE000 = (
 export const soggettoModelToApiTipoCriteriRicercaTemplateAR001 = (
   soggettoModel: SoggettoModel
 ): TipoCriteriRicercaTemplateAR001 => ({
-  fiscalCode: soggettoModel?.fiscalCode,
+  subjectId: soggettoModel?.subjectId,
   id: soggettoModel?.id,
   surname: soggettoModel?.surname,
   name: soggettoModel?.name,
@@ -491,7 +491,7 @@ export const TipoDatiNascitaModelToApiTipoDatiNascita = (
 export const TipoParametriRicercaModelToApiTipoParametriRicerca = (
   tipoParametriRicercaModel: TipoParametriRicercaModel
 ): TipoParametriRicercaAR001 => ({
-  fiscalCode: tipoParametriRicercaModel?.codiceFiscale,
+  subjectId: tipoParametriRicercaModel?.soggettoId,
   id: tipoParametriRicercaModel?.id,
   surname: tipoParametriRicercaModel?.cognome,
   noSurname: tipoParametriRicercaModel?.senzaCognome,
@@ -520,8 +520,8 @@ export const RichiestaModelToApiRichiestaAR001 = (
 export const TipoCodiceFiscaleModelToApiTipoCodiceFiscale = (
   tipoCodiceFiscaleModel: TipoCodiceFiscaleModel
 ): TipoCodiceFiscale => ({
-  fiscalCode: tipoCodiceFiscaleModel?.codFiscale,
-  fiscalCodeValidity: tipoCodiceFiscaleModel?.validitaCF,
+  subjectId: tipoCodiceFiscaleModel?.soggettoId,
+  subjectIdValidity: tipoCodiceFiscaleModel?.validitaSoggettoId,
   dataAttributionValidity: tipoCodiceFiscaleModel?.dataAttribuzioneValidita,
 });
 
@@ -543,7 +543,7 @@ export const TipoIdSchedaSoggettoComuneModelToApiTipoIdSchedaSoggettoComune = (
 export const TipoGeneralitaModelToApiTipoGeneralita = (
   tipoGeneralitaModel: TipoGeneralitaModel
 ): TipoGeneralita => ({
-  fiscalCode: tipoGeneralitaModel?.codiceFiscale,
+  subjectId: tipoGeneralitaModel?.soggettoId,
   surname: tipoGeneralitaModel?.cognome,
   noSurname: tipoGeneralitaModel?.senzaCognome,
   name: tipoGeneralitaModel?.nome,
@@ -638,10 +638,10 @@ export const TipoErroriAnomaliaModelToApiTipoErroriAnomalia = (
 /** *************************************** */
 
 export const codiceFiscaleToApiTipoCodiceFiscale = (
-  codiceFiscale: string
+  soggettoId: string
 ): TipoCodiceFiscale => ({
-  fiscalCode: codiceFiscale,
-  fiscalCodeValidity: "",
+  subjectId: soggettoId,
+  subjectIdValidity: "",
   dataAttributionValidity: "",
 });
 
@@ -660,7 +660,7 @@ export const TipoDataNascitaModelToApiTipoLuogoEvento = (
 export const SoggettoModelToApiTipoGeneralita = (
   soggettoModel: SoggettoModel
 ): TipoGeneralita => ({
-  fiscalCode: codiceFiscaleToApiTipoCodiceFiscale(soggettoModel.fiscalCode),
+  subjectId: codiceFiscaleToApiTipoCodiceFiscale(soggettoModel.subjectId),
   surname: soggettoModel.surname,
   noSurname: soggettoModel.surname == null ? "true" : "false",
   name: soggettoModel.name,

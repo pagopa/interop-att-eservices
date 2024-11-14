@@ -37,7 +37,7 @@ const TipoDatiNascitaTemplateE000 = z
   .passthrough();
 const TipoCriteriaTemplateAR001 = z
   .object({
-    fiscalCode: z.string(),
+    subjectId: z.string(),
     id: z.string(),
     surname: z.string(),
     name: z.string(),
@@ -157,7 +157,7 @@ const TipoDatiNascitaE000 = z
   .passthrough();
 const TipoParametriRicercaAR001 = z
   .object({
-    fiscalCode: z.string(),
+    subjectId: z.string(),
     id: z.string(),
     surname: z.string(),
     noSurname: z.string(),
@@ -184,8 +184,8 @@ const RichiestaAR001 = z
   .passthrough();
 const TipoCodiceFiscale = z
   .object({
-    fiscalCode: z.string(),
-    fiscalCodeValidity: z.string(),
+    subjectId: z.string(),
+    subjectIdValidity: z.string(),
     dataAttributionValidity: z.string(),
   })
   .partial()
@@ -204,7 +204,7 @@ const TipoIdSchedaSoggettoComune = z
   .passthrough();
 const TipoGeneralita = z
   .object({
-    fiscalCode: TipoCodiceFiscale,
+    subjectId: TipoCodiceFiscale,
     surname: z.string(),
     noSurname: z.string(),
     name: z.string(),
@@ -297,7 +297,7 @@ const RispostaAR001 = z
   .passthrough();
 const TipocriteriaAR002 = z
   .object({
-    fiscalCode: z.string(),
+    subjectId: z.string(),
     id: z.string(),
     surname: z.string(),
     nosurname: z.string(),

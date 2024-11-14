@@ -21,7 +21,7 @@ export function appendUniqueUserModelsToArray(
   for (const modelToAdd of modelsToAdd) {
     // Cerca se esiste già un UserModel con lo stesso codice fiscale nell'array esistente
     const existingModelIndex = newArray.findIndex(
-      (model) => model.subject.fiscalCode === modelToAdd.subject.fiscalCode
+      (model) => model.subject.subjectId === modelToAdd.subject.subjectId
     );
     if (existingModelIndex !== -1) {
       // Se esiste già un UserModel con lo stesso codice fiscale, aggiorna l'UUID dell'elemento da sostituire
@@ -39,7 +39,7 @@ export function appendUniqueUserModelsToArray(
 
 export function getUserModelByCodiceFiscale(
   userModels: UserModel[],
-  fiscalCode: string
+  subjectId: string
 ): UserModel | null {
   // Verifica se l'array di UserModel è definito e non vuoto
   if (!userModels || userModels.length === 0) {
@@ -50,16 +50,16 @@ export function getUserModelByCodiceFiscale(
 
   // Cerca l'UserModel con il codice fiscale specificato
   const userModel = userModels.find(
-    (model) => model.subject.fiscalCode === fiscalCode
+    (model) => model.subject.subjectId === subjectId
   );
 
   return userModel || null; // Torna l'UserModel trovato o null se non trovato
 }
 
 // Funzione che cerca un UserModel all'interno di un array esistente utilizzando il codice fiscale come criterio di ricerca
-export function findUserModelByFiscalCode(
+export function findUserModelBySubjectId(
   existingArray: UserModel[] | null,
-  fiscalCode: string
+  subjectId: string
 ): UserModel | null {
   // Verifica se l'array esistente è nullo o undefined
   if (!existingArray) {
@@ -70,7 +70,7 @@ export function findUserModelByFiscalCode(
 
   // Cerca UserModel con lo stesso codice fiscale all'interno dell'array esistente
   for (const userModel of existingArray) {
-    if (userModel.subject.fiscalCode === fiscalCode) {
+    if (userModel.subject.subjectId === subjectId) {
       userModelFound = userModel;
       break; // Interrompi il ciclo una volta trovato il UserModel
     }
@@ -153,7 +153,7 @@ export function findUserModelByUUID(
 }
 
 // Funzione che cerca un UserModel all'interno di un array esistente utilizzando il codice fiscale o l'UUID come criterio di ricerca
-export function findUserModelByFiscalCodeOrUUID(
+export function findUserModelBySubjectIdOrUUID(
   existingArray: UserModel[] | null,
   searchKey: string
 ): UserModel | null {
@@ -167,7 +167,7 @@ export function findUserModelByFiscalCodeOrUUID(
   // Cerca UserModel con lo stesso codice fiscale o UUID all'interno dell'array esistente
   for (const userModel of existingArray) {
     if (
-      userModel.subject.fiscalCode === searchKey ||
+      userModel.subject.subjectId === searchKey ||
       userModel.uuid === searchKey
     ) {
       userModelFound = userModel;

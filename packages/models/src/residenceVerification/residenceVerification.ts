@@ -30,7 +30,7 @@ export const TipoDataNascitaModel = z.object({
 export type TipoDataNascitaModel = z.infer<typeof TipoDataNascitaModel>;
 
 export const SoggettoModel = z.object({
-  fiscalCode: z.string(),
+  subjectId: z.string(),
   id: z.string(),
   surname: z.string(),
   name: z.string(),
@@ -169,7 +169,7 @@ export type TipoDatiNascitaModel = z.infer<typeof TipoDatiNascitaModel>;
 
 export const TipoParametriRicercaModel = z
   .object({
-    codiceFiscale: z.string(),
+    soggettoId: z.string(),
     id: z.string(),
     cognome: z.string(),
     senzaCognome: z.string(),
@@ -223,8 +223,8 @@ export type RichiestaModel = z.infer<typeof RichiestaModel>;
 
 export const TipoCodiceFiscaleModel = z
   .object({
-    codFiscale: z.string(),
-    validitaCF: z.string(),
+    soggettoId: z.string(),
+    validitaSoggettoId: z.string(),
     dataAttribuzioneValidita: z.string(),
   })
   .partial()
@@ -254,7 +254,7 @@ export type TipoIdSchedaSoggettoComuneModel = z.infer<
 
 export const TipoGeneralitaModel = z
   .object({
-    codiceFiscale: TipoCodiceFiscaleModel,
+    soggettoId: TipoCodiceFiscaleModel,
     cognome: z.string(),
     senzaCognome: z.string(),
     nome: z.string(),

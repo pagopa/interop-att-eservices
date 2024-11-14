@@ -22,9 +22,9 @@ class ResidenceVerificationController {
   ): Promise<RispostaAR001 | null | undefined> {
     try {
       logger.info(`post request: ${request}`);
-      if (request.criteria.fiscalCode) {
-        const data = await ResidenceVerificationService.getByFiscalCode(
-          request.criteria.fiscalCode
+      if (request.criteria.subjectId) {
+        const data = await ResidenceVerificationService.getBySubjectId(
+          request.criteria.subjectId
         );
 
         const list: UserModel[] = data ? [data] : [];
@@ -89,9 +89,9 @@ class ResidenceVerificationController {
     try {
       logger.info(`post request: ${request}`);
       let resultData;
-      if (request.criteria.fiscalCode) {
-        const data = await ResidenceVerificationService.getByFiscalCode(
-          request.criteria.fiscalCode
+      if (request.criteria.subjectId) {
+        const data = await ResidenceVerificationService.getBySubjectId(
+          request.criteria.subjectId
         );
 
         const list: UserModel[] = data ? [data] : [];
