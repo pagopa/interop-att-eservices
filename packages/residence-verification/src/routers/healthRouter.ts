@@ -13,7 +13,6 @@ const healthRouter = (
     if (!req) {
       return res.status(500);
     }
-    // RispostaAR001
     const data = await healtService.status();
     if (data) {
       return res.status(200).end();
