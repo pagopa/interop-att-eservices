@@ -83,6 +83,12 @@ export const TipoIndirizzoModel = z.object({
   fraction: z.string(),
   toponym: TipoToponimoModel,
   civicNumber: TipoNumeroCivicoModel,
+  coords: z
+    .object({
+      latitude: z.string(),
+      longitude: z.string(),
+    })
+    .optional(),
 });
 export type TipoIndirizzoModel = z.infer<typeof TipoIndirizzoModel>;
 
