@@ -5,5 +5,5 @@ package-lock.json
 .vscode/
 pnpm-lock.yaml
 .idea/
-packages/residence-verification/src/model/generated/api.ts
+packages/*/src/model/generated
 packages/residence-verification/aws.config.local
