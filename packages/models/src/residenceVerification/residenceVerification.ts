@@ -77,19 +77,21 @@ export const TipoNumeroCivicoModel = z.object({
 });
 export type TipoNumeroCivicoModel = z.infer<typeof TipoNumeroCivicoModel>;
 
+export const CoordinatesModel = z.object({
+  latitude: z.string(),
+  longitude: z.string(),
+});
+export type CoordinatesModel = z.infer<typeof CoordinatesModel>;
+
 export const TipoIndirizzoModel = z.object({
   cap: z.string(),
   municipality: TipoComuneModel,
   fraction: z.string(),
   toponym: TipoToponimoModel,
   civicNumber: TipoNumeroCivicoModel,
-  coords: z
-    .object({
-      latitude: z.string(),
-      longitude: z.string(),
-    })
-    .optional(),
+  coords: CoordinatesModel.optional(),
 });
+
 export type TipoIndirizzoModel = z.infer<typeof TipoIndirizzoModel>;
 
 export const TipoDatoLocalitaEsteraModel = z.object({

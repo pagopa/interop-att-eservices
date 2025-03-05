@@ -87,6 +87,13 @@ const TipoNumeroCivico = z
   })
   .partial()
   .passthrough();
+const Coordinates = z
+  .object({
+    latitude: z.string(),
+    longitude: z.string(),
+  })
+  .partial()
+  .passthrough();
 const TipoIndirizzo = z
   .object({
     cap: z.string(),
@@ -94,6 +101,7 @@ const TipoIndirizzo = z
     fraction: z.string(),
     toponym: TipoToponimo,
     civicNumber: TipoNumeroCivico,
+    coords: Coordinates.optional(),
   })
   .partial()
   .passthrough();

@@ -680,13 +680,19 @@ export const SoggettoModelToApiTipoGeneralita = (
 export const TipoIndirizzoModelToApiTipoIndirizzo = (
   tipoIndirizzoModel: TipoIndirizzoModel
 ): TipoIndirizzo => ({
-  cap: tipoIndirizzoModel?.cap,
+  cap: tipoIndirizzoModel.cap,
   municipality: tipoComuneModelToApiTipoComune(tipoIndirizzoModel.municipality),
-  fraction: tipoIndirizzoModel?.fraction,
+  fraction: tipoIndirizzoModel.fraction,
   toponym: tipoToponimoModelToApiTipoToponimo(tipoIndirizzoModel.toponym),
   civicNumber: tipoNumeroCivicoModelToApiTipoNumeroCivico(
     tipoIndirizzoModel.civicNumber
   ),
+  coords: tipoIndirizzoModel.coords
+    ? {
+        latitude: tipoIndirizzoModel.coords.latitude,
+        longitude: tipoIndirizzoModel.coords.longitude,
+      }
+    : undefined,
 });
 
 export const TipoResidenzaModelToApiTipoResidenza = (
