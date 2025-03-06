@@ -14,6 +14,8 @@ import {
 } from "../model/domain/models.js";
 import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
 import { checkInfoSoggettoEquals } from "../utilities/equalsUtilities.js";
+import residenceVerificationRouter from "../routers/residenceVerificationRouter.js";
+import residenceVerificationService from "../services/residenceVerificationService.js";
 
 class ResidenceVerificationController {
   public appContext = getContext();
@@ -24,13 +26,13 @@ class ResidenceVerificationController {
     try {
       logger.info(`Post findUser: ${request}`);
       if (request.criteria.subjectId) {
-        const data = await C.getBySubjectId(
+        const data = await residenceVerificationService.getBySubjectId(
           request.criteria.subjectId,
         );
 
         const list: UserModel[] = data ? [data] : [];
 
-        const fullAddress = `${data[0].address.address.toponym?.toponymDenomination} ${data[0].address.address.civicNumber?.civicNumber}, ${data[0].address.address.municipality?.nameMunicipality}, ${data[0].address.address.municipality?.acronymIstatProvince}, ${data[0].address.address.cap}`;
+        const fullAddress = data ? `${data.address.address.toponym?.toponymDenomination} ${data.address.address.civicNumber?.civicNumber}, ${data.address.address.municipality?.nameMunicipality}, ${data.address.address.municipality?.acronymIstatProvince}, ${data.address.address.cap}` : "";
         let coordinates = await coordinatesService.getCoordinates(fullAddress);
 
         const result: RispostaAR001 = {
