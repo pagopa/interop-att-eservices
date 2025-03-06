@@ -1,6 +1,7 @@
 import { UserModel } from "pdnd-models";
 import { logger, getContext } from "pdnd-common";
 import ResidenceVerificationService from "../services/residenceVerificationService.js";
+import coordinatesService from "../services/coordinateService.js";
 import {
   requestParamNotValid,
   userModelNotFound,
@@ -23,18 +24,22 @@ class ResidenceVerificationController {
     try {
       logger.info(`Post findUser: ${request}`);
       if (request.criteria.subjectId) {
-        const data = await ResidenceVerificationService.getBySubjectId(
-          request.criteria.subjectId
+        const data = await C.getBySubjectId(
+          request.criteria.subjectId,
         );
 
         const list: UserModel[] = data ? [data] : [];
 
+        const fullAddress = `${data[0].address.address.toponym?.toponymDenomination} ${data[0].address.address.civicNumber?.civicNumber}, ${data[0].address.address.municipality?.nameMunicipality}, ${data[0].address.address.municipality?.acronymIstatProvince}, ${data[0].address.address.cap}`;
+        let coordinates = await coordinatesService.getCoordinates(fullAddress);
+
         const result: RispostaAR001 = {
           idOp: request.operationId,
           subjects: {
-            subject: list.map((element) =>
-              UserModelToApiTipoDatiSoggettiEnte(element)
-            ),
+            subject: list.map((element) => {
+              element.address.address.coords = coordinates;
+              return UserModelToApiTipoDatiSoggettiEnte(element);
+            }),
           },
         };
         return result;
