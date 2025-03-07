@@ -3,8 +3,7 @@ import { CoordinatesModel } from "pdnd-models";
 
 
 const geocoder = NodeGeocoder({
-  provider: "google",
-  apiKey: process.env.GOOGLE_API,
+  provider: "openstreetmap",
 });
 
  class coordinatesService {
