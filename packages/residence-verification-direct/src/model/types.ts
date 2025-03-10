@@ -6,7 +6,7 @@ type Api = typeof api.api;
 export type ApiDataPreparation = ZodiosBodyByPath<
   Api,
   "post",
-  "/residence-verification/data-preparation"
+  "/residence-verification-direct/data-preparation"
 >;
 
 export type GenericJSON = Record<string, string>;

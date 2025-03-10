@@ -20,12 +20,12 @@ security:
   - bearerAuth: []
     Agid-JWT-Signature: []
 paths:
-  /residence-verification/data-preparation:
+  /residence-verification-direct/data-preparation:
     post:
       tags:
         - Data Preparation
-      summary: Insert data preparation residence-verification
-      description: Insert data preparation residence-verification
+      summary: Insert data preparation residence-verification-direct
+      description: Insert data preparation residence-verification-direct
       operationId: InsertAR001
       security:
         - bearerAuth: []
@@ -145,14 +145,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/GeneralError'
 
-  /residence-verification/data-preparation/{uuid}:
+  /residence-verification-direct/data-preparation/{uuid}:
     parameters:
       - $ref: '#/components/parameters/pathUUID'
     get:
       tags:
         - Data Preparation
-      summary: Insert data preparation residence-verification
-      description: Insert data preparation residence-verification
+      summary: Insert data preparation residence-verification-direct
+      description: Insert data preparation residence-verification-direct
       operationId: GetByIdAR001
       security:
         - bearerAuth: []
@@ -223,7 +223,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/GeneralError'
 
-  /residence-verification:
+  /residence-verification-direct:
     post:
       tags:
         - Residence Address Check
@@ -269,7 +269,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/GeneralError'
-  /residence-verification/check:
+  /residence-verification-direct/check:
     post:
       tags:
         - Residence Address Check
@@ -310,7 +310,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/RispostaKO'
-  /residence-verification/status:
+  /residence-verification-direct/status:
     get:
       tags:
         - Health Check

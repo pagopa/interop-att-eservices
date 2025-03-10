@@ -21,9 +21,9 @@ const dataPreparationRouter = (
   const dataPreparationRouter = ctx.router(api.api);
 
   dataPreparationRouter.post(
-    "/residence-verification/data-preparation",
+    "/residence-verification-direct/data-preparation",
     contextDataResidenceMiddleware,
-    //authenticationMiddleware(false),
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         const data = await DataPreparationService.saveList(req.body);
@@ -45,9 +45,9 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.get(
-    "/residence-verification/data-preparation",
-    //contextDataResidenceMiddleware,
-    //authenticationMiddleware(false),
+    "/residence-verification-direct/data-preparation",
+    contextDataResidenceMiddleware,
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {
@@ -69,7 +69,7 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.get(
-    "/residence-verification/data-preparation/:uuid",
+    "/residence-verification-direct/data-preparation/:uuid",
     contextDataResidenceMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -92,7 +92,7 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.delete(
-    "/residence-verification/data-preparation",
+    "/residence-verification-direct/data-preparation",
     contextDataResidenceMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {
@@ -115,7 +115,7 @@ const dataPreparationRouter = (
   );
 
   dataPreparationRouter.delete(
-    "/residence-verification/data-preparation/:uuid",
+    "/residence-verification-direct/data-preparation/:uuid",
     contextDataResidenceMiddleware,
     authenticationMiddleware(false),
     async (req, res) => {

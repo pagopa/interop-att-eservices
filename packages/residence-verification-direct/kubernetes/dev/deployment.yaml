@@ -34,13 +34,13 @@ spec:
               memory: 2Gi
           livenessProbe:
             httpGet:
-              path: /residence-verification/status
+              path: /residence-verification-direct/status
               port: http
             initialDelaySeconds: 15
             periodSeconds: 120
           readinessProbe:
             httpGet:
-              path: /residence-verification/status
+              path: /residence-verification-direct/status
               port: http
             initialDelaySeconds: 15
             periodSeconds: 5
@@ -53,4 +53,4 @@ spec:
               value: info
           envFrom:
             - configMapRef:
-                name: residence-verification-configmap
+                name: residence-verification-direct-configmap
