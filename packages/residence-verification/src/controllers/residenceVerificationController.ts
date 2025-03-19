@@ -27,12 +27,14 @@ class ResidenceVerificationController {
       logger.info(`Post findUser: ${request}`);
       if (request.criteria.subjectId) {
         const data = await residenceVerificationService.getBySubjectId(
-          request.criteria.subjectId,
+          request.criteria.subjectId
         );
 
         const list: UserModel[] = data ? [data] : [];
 
-        const fullAddress = data ? `${data.address.address.toponym?.toponymDenomination} ${data.address.address.civicNumber?.civicNumber}, ${data.address.address.municipality?.nameMunicipality}, ${data.address.address.municipality?.acronymIstatProvince}, ${data.address.address.cap}` : "";
+        const fullAddress = data
+          ? `${data.address.address.toponym?.toponymDenomination} ${data.address.address.civicNumber?.civicNumber}, ${data.address.address.municipality?.nameMunicipality}, ${data.address.address.municipality?.acronymIstatProvince}, ${data.address.address.cap}`
+          : "";
         let coordinates = await coordinatesService.getCoordinates(fullAddress);
 
         const result: RispostaAR001 = {
@@ -96,6 +98,7 @@ class ResidenceVerificationController {
     try {
       logger.info(`post request: ${request}`);
       let resultData;
+
       if (request.criteria.subjectId) {
         const data = await ResidenceVerificationService.getBySubjectId(
           request.criteria.subjectId
@@ -103,12 +106,18 @@ class ResidenceVerificationController {
 
         const list: UserModel[] = data ? [data] : [];
 
+        const fullAddress = data
+          ? `${data.address.address.toponym?.toponymDenomination} ${data.address.address.civicNumber?.civicNumber}, ${data.address.address.municipality?.nameMunicipality}, ${data.address.address.municipality?.acronymIstatProvince}, ${data.address.address.cap}`
+          : "";
+        let coordinates = await coordinatesService.getCoordinates(fullAddress);
+
         resultData = {
           idOp: request.operationId,
           subjects: {
-            subject: list.map((element) =>
-              UserModelToApiTipoDatiSoggettiEnte(element)
-            ),
+            subject: list.map((element) => {
+              element.address.address.coords = coordinates;
+              return UserModelToApiTipoDatiSoggettiEnte(element);
+            }),
           },
         };
       } else if (checkPersonalInfoVerify(request)) {
@@ -119,8 +128,15 @@ class ResidenceVerificationController {
         resultData = {
           idOp: request.operationId,
           subjects: {
-            subject: data.map((element) =>
-              UserModelToApiTipoDatiSoggettiEnte(element)
+            subject: await Promise.all(
+              data.map(async (element) => {
+                const fullAddress = `${element.address.address.toponym?.toponymDenomination} ${element.address.address.civicNumber?.civicNumber}, ${element.address.address.municipality?.nameMunicipality}, ${element.address.address.municipality?.acronymIstatProvince}, ${element.address.address.cap}`;
+                let coordinates = await coordinatesService.getCoordinates(
+                  fullAddress
+                );
+                element.address.address.coords = coordinates;
+                return UserModelToApiTipoDatiSoggettiEnte(element);
+              })
             ),
           },
         };
@@ -132,12 +148,20 @@ class ResidenceVerificationController {
 
           const list: UserModel[] = data ? [data] : [];
 
+          const fullAddress = data
+            ? `${data.address.address.toponym?.toponymDenomination} ${data.address.address.civicNumber?.civicNumber}, ${data.address.address.municipality?.nameMunicipality}, ${data.address.address.municipality?.acronymIstatProvince}, ${data.address.address.cap}`
+            : "";
+          let coordinates = await coordinatesService.getCoordinates(
+            fullAddress
+          );
+
           resultData = {
             idOp: request.operationId,
             subjects: {
-              subject: list.map((element) =>
-                UserModelToApiTipoDatiSoggettiEnte(element)
-              ),
+              subject: list.map((element) => {
+                element.address.address.coords = coordinates;
+                return UserModelToApiTipoDatiSoggettiEnte(element);
+              }),
             },
           };
         }
@@ -152,7 +176,6 @@ class ResidenceVerificationController {
       if (!resultData || resultData.subjects?.subject?.length === 0) {
         throw userModelNotFound();
       } else {
-        // vado a vedere se qualcuno ha la residenza richiesta in oggetto
         response.subjects = { infoSubject: [] };
         resultData?.subjects?.subject.forEach((oggetto) => {
           oggetto.address?.forEach((address) => {
@@ -162,10 +185,13 @@ class ResidenceVerificationController {
           });
         });
       }
-      /* eslint-enable */
+      /* eslint-disable */
       return response;
     } catch (error) {
-      logger.error(`Error during in method controller 'findUser': `, error);
+      logger.error(
+        `Error during in method controller 'findUserVerify': `,
+        error
+      );
       throw error;
     }
   }
