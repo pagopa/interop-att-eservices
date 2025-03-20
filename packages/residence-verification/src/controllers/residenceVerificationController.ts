@@ -91,7 +91,7 @@ class ResidenceVerificationController {
       throw error;
     }
   }
-  /* eslint-disable */
+  /* eslint-enable */
   public async findUserVerify(
     request: RichiestaAR002
   ): Promise<RispostaAR002OK> {
