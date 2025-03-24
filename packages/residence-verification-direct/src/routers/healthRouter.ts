@@ -9,17 +9,20 @@ const healthRouter = (
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const healthRouter = ctx.router(api.api);
 
-  healthRouter.get("/-direct/status", async (req, res) => {
-    if (!req) {
-      return res.status(500);
+  healthRouter.get(
+    "/residence-verification-direct/status",
+    async (req, res) => {
+      if (!req) {
+        return res.status(500);
+      }
+      const data = await healtService.status();
+      if (data) {
+        return res.status(200).end();
+      } else {
+        return res.status(500);
+      }
     }
-    const data = await healtService.status();
-    if (data) {
-      return res.status(200).end();
-    } else {
-      return res.status(500);
-    }
-  });
+  );
 
   return healthRouter;
 };
