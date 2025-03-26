@@ -46,7 +46,6 @@ export type TipoParametriRicercaAR001 = z.infer<
 >;
 
 export type TipoRichiestaAR001 = z.infer<typeof api.schemas.TipoRichiestaAR001>;
-// export type TipoVerificaAR002 = z.infer<typeof api.schemas.TipoVerificaAR002>;
 export type TipoVerificaResidenza = z.infer<
   typeof api.schemas.TipoVerificaResidenza
 >;
@@ -75,45 +74,3 @@ export type RichiestaAR002 = z.infer<typeof api.schemas.RichiestaAR002>;
 export type RispostaAR002OK = z.infer<typeof api.schemas.RispostaAR002OK>;
 export type ProblemError = z.infer<typeof api.schemas.ProblemError>;
 export type Problem = z.infer<typeof api.schemas.Problem>;
-
-/* export const schemas = {
-    TipoComune,
-    TipoLocalita,
-    TipoLuogoNascitaE000,
-    TipoDatiNascitaTemplateE000,
-    TipoCriteriRicercaTemplateAR001,
-    TipoToponimo,
-    TipoCivicoInterno,
-    TipoNumeroCivico,
-    TipoIndirizzo,
-    TipoDatoLocalitaEstera,
-    TipoToponimoEstero,
-    TipoIndirizzoEstero,
-    TipoConsolato,
-    TipoLocalitaEstera1,
-    TipoResidenza,
-    DataPreparationTemplate,
-    DataPreparationResponse,
-    DataPreparationTemplateResponse,
-
-    TipoDatiNascitaE000,
-    TipoParametriRicercaAR001,
-    TipoRichiestaAR001,
-    RichiestaAR001,
-    TipoCodiceFiscale,
-    TipoLuogoEvento,
-    TipoIdSchedaSoggettoComune,
-    TipoGeneralita,
-    TipoIdentificativi,
-    TipoAtto,
-    TipoAttoANSC,
-    TipoAttoEvento,
-    TipoDatiEvento,
-    TipoDatiSoggettiEnte,
-    TipoListaSoggetti,
-    TipoErroriAnomalia,
-    RispostaAR001,
-    ProblemError,
-    Problem,
-};
- */

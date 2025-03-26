@@ -1,8 +1,11 @@
-import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
-import { ExpressContext, ZodiosContext } from "pdnd-common";
-import { authenticationCorrelationMiddleware } from "pdnd-common";
+import {
+  authenticationCorrelationMiddleware,
+  logger,
+  ExpressContext,
+  ZodiosContext,
+} from "pdnd-common";
 import { TrialService } from "trial";
 import ResidenceVerificationController from "../controllers/residenceVerificationController.js";
 import { api } from "../model/generated/api.js";
@@ -20,9 +23,6 @@ const residenceVerificationRouter = (
   ctx: ZodiosContext
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const residenceVerificationRouter = ctx.router(api.api);
-  /*   residenceVerificationRouter.use(contextDataMiddleware);
-
-  residenceVerificationRouter.use(authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware()); */
 
   residenceVerificationRouter.post(
     "/residence-verification-direct",
@@ -32,7 +32,9 @@ const residenceVerificationRouter = (
     auditValidationMiddleware(),
     async (req, res) => {
       try {
-        logger.info(`[START] residenceVerificationRouter: ${req.body}`);
+        logger.info(
+          `[START] residenceVerificationRouter: ${JSON.stringify(req.body)}`
+        );
         const data = await ResidenceVerificationController.findUser(req.body);
         if (!data || data.subjects?.subject?.length === 0) {
           throw userModelNotFound();
@@ -46,12 +48,14 @@ const residenceVerificationRouter = (
         logger.info(`[END] residenceVerificationRouter`);
         return res.status(200).json(data).end();
       } catch (error) {
+        logger.info("error find user", error);
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;
         const generalErrorResponse = mapGeneralErrorModel(
           correlationId,
           errorRes
         );
+
         void TrialService.insert(
           req.url,
           req.method,
@@ -72,13 +76,15 @@ const residenceVerificationRouter = (
     auditValidationMiddleware(),
     async (req, res) => {
       try {
-        logger.info(`[START] Check ResidenceVerificationRouter: ${req.body}`);
+        logger.info(
+          `[START] Check ResidenceVerificationRouter: ${JSON.stringify(
+            req.body
+          )}`
+        );
         const data = await ResidenceVerificationController.findUserVerify(
           req.body
         );
-        /* if (!data) {
-          throw userModelNotFound();
-        } */
+
         void TrialService.insert(
           req.url,
           req.method,

@@ -1,7 +1,7 @@
 import { UserModel } from "pdnd-models";
 import { logger, getContext } from "pdnd-common";
 import ResidenceVerificationService from "../services/residenceVerificationService.js";
-import coordinatesService from "../services/coordinateService.js";
+import CoordinatesService from "../services/coordinateService.js";
 import {
   requestParamNotValid,
   userModelNotFound,
@@ -14,8 +14,6 @@ import {
 } from "../model/domain/models.js";
 import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
 import { checkInfoSoggettoEquals } from "../utilities/equalsUtilities.js";
-import residenceVerificationRouter from "../routers/residenceVerificationRouter.js";
-import residenceVerificationService from "../services/residenceVerificationService.js";
 
 class ResidenceVerificationController {
   public appContext = getContext();
@@ -24,195 +22,120 @@ class ResidenceVerificationController {
     request: RichiestaAR001
   ): Promise<RispostaAR001 | null | undefined> {
     try {
-      logger.info(`Post findUser: ${request}`);
-      if (request.criteria.subjectId) {
-        const data = await residenceVerificationService.getBySubjectId(
-          request.criteria.subjectId
-        );
+      logger.info(`Post findUser: ${JSON.stringify(request)}`);
+      const data = await this.getUserData(request);
 
-        const list: UserModel[] = data ? [data] : [];
-
-        const fullAddress = data
-          ? `${data.address.address.toponym?.toponymDenomination} ${data.address.address.civicNumber?.civicNumber}, ${data.address.address.municipality?.nameMunicipality}, ${data.address.address.municipality?.acronymIstatProvince}, ${data.address.address.cap}`
-          : "";
-        let coordinates = await coordinatesService.getCoordinates(fullAddress);
-
-        const result: RispostaAR001 = {
-          idOp: request.operationId,
-          subjects: {
-            subject: list.map((element) => {
-              element.address.address.coords = coordinates;
-              return UserModelToApiTipoDatiSoggettiEnte(element);
-            }),
-          },
-        };
-        return result;
-      } else if (checkPersonalInfo(request)) {
-        const data = await ResidenceVerificationService.getByPersonalInfo(
-          request.criteria
-        );
-
-        const result: RispostaAR001 = {
-          idOp: request.operationId,
-          subjects: {
-            subject: data.map((element) =>
-              UserModelToApiTipoDatiSoggettiEnte(element)
-            ),
-          },
-        };
-
-        return result;
-      } else if (request.criteria.id) {
-        if (request.criteria.id) {
-          const data = await ResidenceVerificationService.getById(
-            request.criteria.id
-          );
-
-          const list: UserModel[] = data ? [data] : [];
-
-          const result: RispostaAR001 = {
-            idOp: request.operationId,
-            subjects: {
-              subject: list.map((element) =>
-                UserModelToApiTipoDatiSoggettiEnte(element)
-              ),
-            },
-          };
-          return result;
-        }
-        return null;
-      } else {
+      if (!data || data.length === 0) {
         throw requestParamNotValid(
           "The request body has one or more required param not valid"
         );
       }
+
+      return {
+        idOp: request.operationId,
+        subjects: {
+          subject: data.map(UserModelToApiTipoDatiSoggettiEnte),
+        },
+      };
     } catch (error) {
-      logger.error(`Error during in method controller 'findUser': `, error);
+      logger.error(`Error in 'findUser': `, error);
       throw error;
     }
   }
-  /* eslint-disable */
+
   public async findUserVerify(
     request: RichiestaAR002
   ): Promise<RispostaAR002OK> {
     try {
-      logger.info(`post request: ${request}`);
-      let resultData;
+      logger.info(`Post findUserVerify: ${JSON.stringify(request)}`);
+      const data = await this.getUserData(request);
 
-      if (request.criteria.subjectId) {
-        const data = await ResidenceVerificationService.getBySubjectId(
-          request.criteria.subjectId
-        );
-
-        const list: UserModel[] = data ? [data] : [];
-
-        const fullAddress = data
-          ? `${data.address.address.toponym?.toponymDenomination} ${data.address.address.civicNumber?.civicNumber}, ${data.address.address.municipality?.nameMunicipality}, ${data.address.address.municipality?.acronymIstatProvince}, ${data.address.address.cap}`
-          : "";
-        let coordinates = await coordinatesService.getCoordinates(fullAddress);
-
-        resultData = {
-          idOp: request.operationId,
-          subjects: {
-            subject: list.map((element) => {
-              element.address.address.coords = coordinates;
-              return UserModelToApiTipoDatiSoggettiEnte(element);
-            }),
-          },
-        };
-      } else if (checkPersonalInfoVerify(request)) {
-        const data = await ResidenceVerificationService.getByPersonalInfo(
-          request.criteria
-        );
-
-        resultData = {
-          idOp: request.operationId,
-          subjects: {
-            subject: await Promise.all(
-              data.map(async (element) => {
-                const fullAddress = `${element.address.address.toponym?.toponymDenomination} ${element.address.address.civicNumber?.civicNumber}, ${element.address.address.municipality?.nameMunicipality}, ${element.address.address.municipality?.acronymIstatProvince}, ${element.address.address.cap}`;
-                let coordinates = await coordinatesService.getCoordinates(
-                  fullAddress
-                );
-                element.address.address.coords = coordinates;
-                return UserModelToApiTipoDatiSoggettiEnte(element);
-              })
-            ),
-          },
-        };
-      } else if (request.criteria.id) {
-        if (request.criteria.id) {
-          const data = await ResidenceVerificationService.getById(
-            `${request.criteria.id}`
-          );
-
-          const list: UserModel[] = data ? [data] : [];
-
-          const fullAddress = data
-            ? `${data.address.address.toponym?.toponymDenomination} ${data.address.address.civicNumber?.civicNumber}, ${data.address.address.municipality?.nameMunicipality}, ${data.address.address.municipality?.acronymIstatProvince}, ${data.address.address.cap}`
-            : "";
-          let coordinates = await coordinatesService.getCoordinates(
-            fullAddress
-          );
-
-          resultData = {
-            idOp: request.operationId,
-            subjects: {
-              subject: list.map((element) => {
-                element.address.address.coords = coordinates;
-                return UserModelToApiTipoDatiSoggettiEnte(element);
-              }),
-            },
-          };
-        }
-      } else {
-        throw requestParamNotValid(
-          "The request body has one or more required param not valid"
-        );
-      }
-
-      const response: RispostaAR002OK = {};
-      response.idOp = request.operationId;
-      if (!resultData || resultData.subjects?.subject?.length === 0) {
+      if (!data || data.length === 0) {
         throw userModelNotFound();
-      } else {
-        response.subjects = { infoSubject: [] };
-        resultData?.subjects?.subject.forEach((oggetto) => {
-          oggetto.address?.forEach((address) => {
-            response.subjects?.infoSubject?.push(
-              checkInfoSoggettoEquals(request.check?.address, address)
-            );
-          });
-        });
       }
-      /* eslint-disable */
-      return response;
+
+      return {
+        idOp: request.operationId,
+        subjects: {
+          infoSubject: data.map((user) =>
+            checkInfoSoggettoEquals(
+              request.check?.address,
+              user.address.address.coords
+            )
+          ),
+        },
+      };
     } catch (error) {
-      logger.error(
-        `Error during in method controller 'findUserVerify': `,
-        error
-      );
+      logger.error(`Error in 'findUserVerify': `, error);
       throw error;
     }
   }
+
+  private async getUserData(
+    request: RichiestaAR001 | RichiestaAR002
+  ): Promise<UserModel[] | undefined> {
+    const { subjectId, id } = request.criteria;
+
+    if (subjectId) {
+      return this.fetchAndUpdateUser(
+        ResidenceVerificationService.getBySubjectId(subjectId)
+      );
+    }
+
+    if (this.checkPersonalInfo(request)) {
+      const users = await ResidenceVerificationService.getByPersonalInfo(
+        request.criteria
+      );
+      return Promise.all(users.map(this.getUpdatedUserModel.bind(this)));
+    }
+
+    if (id) {
+      return this.fetchAndUpdateUser(
+        ResidenceVerificationService.getById(`${id}`)
+      );
+    }
+
+    return undefined;
+  }
+
+  private async fetchAndUpdateUser(
+    fetchUser: Promise<UserModel | null>
+  ): Promise<UserModel[] | undefined> {
+    const user = await fetchUser;
+    return user ? [await this.getUpdatedUserModel(user)] : [];
+  }
+
+  private getFullAddress(data: UserModel): string {
+    return data
+      ? `${data.address.address.toponym?.toponymDenomination} ${data.address.address.civicNumber?.civicNumber}, ${data.address.address.municipality?.nameMunicipality}, ${data.address.address.municipality?.acronymIstatProvince}, ${data.address.address.cap}`
+      : "";
+  }
+
+  private async getUpdatedUserModel(user: UserModel): Promise<UserModel> {
+    const fullAddress = this.getFullAddress(user);
+    const coordinates = await CoordinatesService.getCoordinates(fullAddress);
+    return {
+      ...user,
+      address: {
+        ...user.address,
+        address: {
+          ...user.address.address,
+          coords: coordinates,
+        },
+      },
+    };
+  }
+
+  private checkPersonalInfo(request: RichiestaAR001 | RichiestaAR002): boolean {
+    return (
+      !!request.criteria.name &&
+      !!request.criteria.surname &&
+      !!request.criteria.birthDate?.eventDate &&
+      !!request.criteria.birthDate?.birthPlace?.municipality
+        ?.nameMunicipality &&
+      !!request.criteria.birthDate?.birthPlace?.place?.codState
+    );
+  }
 }
 
-const checkPersonalInfo = (request: RichiestaAR001): boolean =>
-  !!request.criteria.name &&
-  !!request.criteria.surname &&
-  !!request.criteria.birthDate &&
-  !!request.criteria.birthDate.eventDate &&
-  !!request.criteria.birthDate.birthPlace &&
-  !!request.criteria?.birthDate?.birthPlace?.municipality?.nameMunicipality &&
-  !!request.criteria?.birthDate?.birthPlace?.place?.codState;
-
-const checkPersonalInfoVerify = (request002: RichiestaAR002): boolean =>
-  !!request002.criteria.name &&
-  !!request002.criteria.surname &&
-  !!request002.criteria.birthDate &&
-  !!request002.criteria.birthDate.eventDate &&
-  !!request002.criteria.birthDate.birthPlace &&
-  !!request002.criteria?.birthDate?.birthPlace?.municipality
-    ?.nameMunicipality &&
-  !!request002.criteria?.birthDate?.birthPlace?.place?.codState;
 export default new ResidenceVerificationController();

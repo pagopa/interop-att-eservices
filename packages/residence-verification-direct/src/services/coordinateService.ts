@@ -1,11 +1,12 @@
 import NodeGeocoder from "node-geocoder";
+import { logger } from "pdnd-common";
 import { CoordinatesModel } from "pdnd-models";
 
 const geocoder = NodeGeocoder({
   provider: "openstreetmap",
 });
 
-class coordinatesService {
+class CoordinatesService {
   public async getCoordinates(
     address: string
   ): Promise<CoordinatesModel | undefined> {
@@ -18,14 +19,14 @@ class coordinatesService {
         };
         return coordinates;
       } else {
-        console.log("Nessun risultato trovato.");
+        logger.info("Nessun risultato trovato.");
         return undefined;
       }
     } catch (error) {
-      console.error("Errore durante la geocodifica:", error);
+      logger.error("Errore durante la geocodifica:", error);
       return undefined;
     }
   }
 }
 
-export default new coordinatesService();
+export default new CoordinatesService();
