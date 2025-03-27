@@ -87,13 +87,6 @@ const TipoNumeroCivico = z
   })
   .partial()
   .passthrough();
-const Coordinates = z
-  .object({
-    latitude: z.string(),
-    longitude: z.string(),
-  })
-  .partial()
-  .passthrough();
 const TipoIndirizzo = z
   .object({
     cap: z.string(),
@@ -101,7 +94,6 @@ const TipoIndirizzo = z
     fraction: z.string(),
     toponym: TipoToponimo,
     civicNumber: TipoNumeroCivico,
-    coords: Coordinates.optional(),
   })
   .partial()
   .passthrough();
@@ -348,6 +340,10 @@ const RichiestaAR002 = z
   })
   .passthrough();
 const TipoInfoValore = z.enum(["A", "N", "S"]);
+const TipoCoordinates = z.object({
+  latitude: z.string(),
+  longitude: z.string(),
+});
 const TipoInfoSoggetto = z
   .object({
     id: z.string(),
@@ -356,6 +352,7 @@ const TipoInfoSoggetto = z
     textValue: z.string(),
     dataValue: z.string(),
     otherData: z.string(),
+    coords: TipoCoordinates,
   })
   .partial()
   .passthrough();

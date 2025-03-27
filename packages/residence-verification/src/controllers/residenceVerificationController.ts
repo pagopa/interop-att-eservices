@@ -18,6 +18,9 @@ import { checkInfoSoggettoEquals } from "../utilities/equalsUtilities.js";
 class ResidenceVerificationController {
   public appContext = getContext();
 
+  /**
+   * Trova utenti basandosi sui criteri forniti.
+   */
   public async findUser(
     request: RichiestaAR001
   ): Promise<RispostaAR001 | null | undefined> {
@@ -43,6 +46,9 @@ class ResidenceVerificationController {
     }
   }
 
+  /**
+   * Verifica un utente confrontando i suoi dati con quelli richiesti.
+   */
   public async findUserVerify(
     request: RichiestaAR002
   ): Promise<RispostaAR002OK> {
@@ -58,10 +64,7 @@ class ResidenceVerificationController {
         idOp: request.operationId,
         subjects: {
           infoSubject: data.map((user) =>
-            checkInfoSoggettoEquals(
-              request.check?.address,
-              user.address.address.coords
-            )
+            checkInfoSoggettoEquals(request.check?.address, user)
           ),
         },
       };
@@ -71,33 +74,44 @@ class ResidenceVerificationController {
     }
   }
 
+  /**
+   * Recupera i dati dell'utente e aggiunge le coordinate all'indirizzo.
+   */
   private async getUserData(
     request: RichiestaAR001 | RichiestaAR002
   ): Promise<UserModel[] | undefined> {
     const { subjectId, id } = request.criteria;
+    try {
+      logger.info(`id ${JSON.stringify(id)}`);
+      logger.info(`subjectId ${JSON.stringify(subjectId)}`);
 
-    if (subjectId) {
-      return this.fetchAndUpdateUser(
-        ResidenceVerificationService.getBySubjectId(subjectId)
-      );
+      if (subjectId) {
+        return this.fetchAndUpdateUser(
+          ResidenceVerificationService.getBySubjectId(subjectId)
+        );
+      }
+
+      if (this.checkPersonalInfo(request)) {
+        const users = await ResidenceVerificationService.getByPersonalInfo(
+          request.criteria
+        );
+        return Promise.all(users.map(this.getUpdatedUserModel.bind(this)));
+      }
+
+      if (id) {
+        return this.fetchAndUpdateUser(
+          ResidenceVerificationService.getById(`${id}`)
+        );
+      }
+    } catch (error) {
+      logger.error(`Error retrieving user data: ${JSON.stringify(error)}`);
     }
-
-    if (this.checkPersonalInfo(request)) {
-      const users = await ResidenceVerificationService.getByPersonalInfo(
-        request.criteria
-      );
-      return Promise.all(users.map(this.getUpdatedUserModel.bind(this)));
-    }
-
-    if (id) {
-      return this.fetchAndUpdateUser(
-        ResidenceVerificationService.getById(`${id}`)
-      );
-    }
-
     return undefined;
   }
 
+  /**
+   * Recupera un utente e aggiorna le sue coordinate.
+   */
   private async fetchAndUpdateUser(
     fetchUser: Promise<UserModel | null>
   ): Promise<UserModel[] | undefined> {
@@ -105,15 +119,23 @@ class ResidenceVerificationController {
     return user ? [await this.getUpdatedUserModel(user)] : [];
   }
 
+  /**
+   * Costruisce l'indirizzo completo di un utente.
+   */
   private getFullAddress(data: UserModel): string {
-    return data
-      ? `${data.address.address.toponym?.toponymDenomination} ${data.address.address.civicNumber?.civicNumber}, ${data.address.address.municipality?.nameMunicipality}, ${data.address.address.municipality?.acronymIstatProvince}, ${data.address.address.cap}`
+    const address = data?.address?.address;
+    return address
+      ? `${address.toponym?.toponymDenomination} ${address.civicNumber?.civicNumber}, ${address.municipality?.nameMunicipality}, ${address.municipality?.acronymIstatProvince}, ${address.cap}`
       : "";
   }
 
+  /**
+   * Aggiorna il modello utente con le coordinate basate sull'indirizzo.
+   */
   private async getUpdatedUserModel(user: UserModel): Promise<UserModel> {
     const fullAddress = this.getFullAddress(user);
     const coordinates = await CoordinatesService.getCoordinates(fullAddress);
+
     return {
       ...user,
       address: {
@@ -126,14 +148,17 @@ class ResidenceVerificationController {
     };
   }
 
+  /**
+   * Controlla se la richiesta contiene informazioni personali valide.
+   */
   private checkPersonalInfo(request: RichiestaAR001 | RichiestaAR002): boolean {
+    const birthDate = request.criteria.birthDate;
     return (
       !!request.criteria.name &&
       !!request.criteria.surname &&
-      !!request.criteria.birthDate?.eventDate &&
-      !!request.criteria.birthDate?.birthPlace?.municipality
-        ?.nameMunicipality &&
-      !!request.criteria.birthDate?.birthPlace?.place?.codState
+      !!birthDate?.eventDate &&
+      !!birthDate?.birthPlace?.municipality?.nameMunicipality &&
+      !!birthDate?.birthPlace?.place?.codState
     );
   }
 }
