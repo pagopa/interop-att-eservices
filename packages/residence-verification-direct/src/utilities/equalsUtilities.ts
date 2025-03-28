@@ -59,48 +59,50 @@ export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
     dateNow.getMonth() + 1
   }-${dateNow.getDate()}`;
 
+  // Confronto ricorsivo delle chiavi e dei valori degli oggetti
   for (const key of keys1) {
     if (!keys2.includes(key)) {
       listObj.push({
         id: uuidv4(),
-        key: key,
-        value: "A",
-        textValue: "",
-        dataValue: formattedDate,
-        otherData: "-",
+        chiave: key,
+        valore: "A",
+        valoreTesto: "",
+        valoreData: formattedDate,
+        dettaglio: "-",
       });
     } else if (!deepEqual(obj1[key], obj2[key])) {
       listObj.push({
         id: uuidv4(),
-        key: key,
-        value: "N",
-        textValue: obj2[key],
-        dataValue: formattedDate,
-        otherData: "-",
+        chiave: key,
+        valore: "N",
+        valoreTesto: obj2[key],
+        valoreData: formattedDate,
+        dettaglio: "-",
       });
     } else {
       listObj.push({
         id: uuidv4(),
-        key: key,
-        value: "S",
-        textValue: obj2[key],
-        dataValue: formattedDate,
-        otherData: "-",
+        chiave: key,
+        valore: "S",
+        valoreTesto: obj2[key],
+        valoreData: formattedDate,
+        dettaglio: "-",
       });
     }
   }
 
+  // **Aggiunta delle coordinate senza stravolgere il codice**
   const coords1 = obj1?.address?.address?.coords;
   const coords2 = obj2?.address?.address?.coords;
 
   if (coords2) {
     listObj.push({
       id: uuidv4(),
-      key: "coordinates",
-      value: coords1 && deepEqual(coords1, coords2) ? "S" : "N",
-      textValue: coords2 ? `${coords2.latitude}, ${coords2.longitude}` : "",
-      dataValue: formattedDate,
-      otherData: "-",
+      chiave: "coordinates",
+      valore: coords1 && deepEqual(coords1, coords2) ? "S" : "N",
+      valoreTesto: coords2 ? `${coords2.latitude}, ${coords2.longitude}` : "",
+      valoreData: formattedDate,
+      dettaglio: "-",
     });
   }
 
