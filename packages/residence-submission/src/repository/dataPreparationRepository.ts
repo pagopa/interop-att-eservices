@@ -35,6 +35,22 @@ class DataPreparationRepository {
     const result = await pool.query(query, [request]);
     return result.rows[0];
   }
+
+  async findAllByKey(key: string, value: any) {
+    const query = `SELECT * FROM users WHERE ${key} = $1`;
+    const result = await pool.query(query, [value]);
+    return result.rows;
+  }
+
+  async saveAllByKey(key: string, value: any, data: RichiestaAR001[]) {
+    const query = `UPDATE users SET data = $1 WHERE ${key} = $2 RETURNING *`;
+    const results = [];
+    for (const item of data) {
+      const result = await pool.query(query, [item, value]);
+      results.push(result.rows[0]);
+    }
+    return results;
+  }
 }
 
 export default new DataPreparationRepository();
