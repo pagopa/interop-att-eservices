@@ -53,7 +53,7 @@ class ResidenceSubmissionController {
         message: "Residenza caricata correttamente",
       };
     } catch (error) {
-      logger.error(`❌ Errore in 'upsertUser': `, error);
+      logger.error(` Errore in 'upsertUser': `, error);
 
       return {
         status: "KO",
