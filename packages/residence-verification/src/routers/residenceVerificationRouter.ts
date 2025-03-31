@@ -105,6 +105,47 @@ const residenceVerificationRouter = (
       }
     }
   );
+  residenceVerificationRouter.put(
+    "/residence-submission",
+    contextDataResidenceMiddleware,
+    authenticationCorrelationMiddleware(true),
+    integrityValidationMiddleware(),
+    auditValidationMiddleware(),
+    async (req, res) => {
+      try {
+        logger.info(`[START] residenceSubissionController: ${req.body}`);
+        const data: any = await ResidenceVerificationController.upsertUser(
+          req.body,
+        ); // TODO: da gestire il tipo della costante "data"
+        if (!data || data.subjects?.subject?.length === 0) {
+          throw userModelNotFound();
+        }
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "RESIDENCE_VERIFICATION_001",
+          "OK",
+        );
+        logger.info(`[END] residenceSubissionController`);
+        return res.status(200).json(data).end();
+      } catch (error) {
+        const errorRes = makeApiProblem(error, createEserviceDataPreparation);
+        const correlationId = req.headers["x-correlation-id"] as string;
+        const generalErrorResponse = mapGeneralErrorModel(
+          correlationId,
+          errorRes,
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "RESIDENCE_VERIFICATION_001",
+          "KO",
+          JSON.stringify(generalErrorResponse),
+        );
+        return res.status(errorRes.status).json(generalErrorResponse).end();
+      }
+    },
+  );
   return residenceVerificationRouter;
 };
 export default residenceVerificationRouter;

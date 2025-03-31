@@ -67,6 +67,42 @@ class ResidenceVerificationService {
       throw error;
     }
   }
+
+  public async createUser(user: UserModel): Promise<UserModel> {
+    try {
+      const hash = generateHash([this.appContext.authData.purposeId]);
+      const result = await dataPreparationRepository.save(hash, user);
+      return result;
+    } catch (error) {
+      logger.error(
+        `UserService: Errore durante la creazione dell'utente. `,
+        error
+      );
+      throw error;
+    }
+  }
+
+  public async updateUser(user: UserModel): Promise<UserModel> {
+    try {
+      const hash = generateHash([this.appContext.authData.purposeId]);
+      const existingUsers = await dataPreparationRepository.findAllByKey(hash);
+      const existingUser = findUserModelById(existingUsers, user.id);
+
+      if (!existingUser) {
+        throw userModelNotFound(`User with id ${user.id} not found`);
+      }
+
+      const updatedUser = { ...existingUser, ...user };
+      await dataPreparationRepository.update(hash, updatedUser);
+      return updatedUser;
+    } catch (error) {
+      logger.error(
+        `UserService: Errore durante l'aggiornamento dell'utente. `,
+        error
+      );
+      throw error;
+    }
+  }
 }
 
 export default new ResidenceVerificationService();
