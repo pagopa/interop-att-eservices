@@ -23,7 +23,7 @@ class ResidenceVerificationService {
     } catch (error) {
       logger.error(
         `UserService: Errore durante il salvataggio della lista. `,
-        error
+        error,
       );
       throw error;
     }
@@ -38,14 +38,14 @@ class ResidenceVerificationService {
     } catch (error) {
       logger.error(
         `UserService: Errore durante il salvataggio della lista. `,
-        error
+        error,
       );
       throw error;
     }
   }
 
   public async getByPersonalInfo(
-    parametriRicerca: TipoParametriRicercaAR001
+    parametriRicerca: TipoParametriRicercaAR001,
   ): Promise<UserModel[]> {
     try {
       const hash = generateHash([this.appContext.authData.purposeId]);
@@ -53,7 +53,7 @@ class ResidenceVerificationService {
       const users = result;
       const userModelFound = findUserModelByPersonalInfo(
         users,
-        parametriRicerca
+        parametriRicerca,
       );
       if (!userModelFound) {
         throw userModelNotFound("Not found");
@@ -62,7 +62,7 @@ class ResidenceVerificationService {
     } catch (error) {
       logger.error(
         `UserService: Errore durante il salvataggio della lista. `,
-        error
+        error,
       );
       throw error;
     }

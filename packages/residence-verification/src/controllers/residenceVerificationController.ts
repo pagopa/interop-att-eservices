@@ -18,13 +18,13 @@ class ResidenceVerificationController {
   public appContext = getContext();
 
   public async findUser(
-    request: RichiestaAR001,
+    request: RichiestaAR001
   ): Promise<RispostaAR001 | null | undefined> {
     try {
       logger.info(`Post findUser: ${request}`);
       if (request.criteria.subjectId) {
         const data = await ResidenceVerificationService.getBySubjectId(
-          request.criteria.subjectId,
+          request.criteria.subjectId
         );
 
         const list: UserModel[] = data ? [data] : [];
@@ -33,21 +33,21 @@ class ResidenceVerificationController {
           idOp: request.operationId,
           subjects: {
             subject: list.map((element) =>
-              UserModelToApiTipoDatiSoggettiEnte(element),
+              UserModelToApiTipoDatiSoggettiEnte(element)
             ),
           },
         };
         return result;
       } else if (checkPersonalInfo(request)) {
         const data = await ResidenceVerificationService.getByPersonalInfo(
-          request.criteria,
+          request.criteria
         );
 
         const result: RispostaAR001 = {
           idOp: request.operationId,
           subjects: {
             subject: data.map((element) =>
-              UserModelToApiTipoDatiSoggettiEnte(element),
+              UserModelToApiTipoDatiSoggettiEnte(element)
             ),
           },
         };
@@ -56,7 +56,7 @@ class ResidenceVerificationController {
       } else if (request.criteria.id) {
         if (request.criteria.id) {
           const data = await ResidenceVerificationService.getById(
-            request.criteria.id,
+            request.criteria.id
           );
 
           const list: UserModel[] = data ? [data] : [];
@@ -65,7 +65,7 @@ class ResidenceVerificationController {
             idOp: request.operationId,
             subjects: {
               subject: list.map((element) =>
-                UserModelToApiTipoDatiSoggettiEnte(element),
+                UserModelToApiTipoDatiSoggettiEnte(element)
               ),
             },
           };
@@ -74,7 +74,7 @@ class ResidenceVerificationController {
         return null;
       } else {
         throw requestParamNotValid(
-          "The request body has one or more required param not valid",
+          "The request body has one or more required param not valid"
         );
       }
     } catch (error) {
@@ -82,46 +82,16 @@ class ResidenceVerificationController {
       throw error;
     }
   }
-  
-  public async upsertUser(
-    request: { subjects: { subject: UserModel[] } },
-  ): Promise<void> {
-    try {
-      logger.info(`Post upsertUser: ${JSON.stringify(request)}`);
-      const subjects = request.subjects.subject;
-
-      for (const subject of subjects) {
-        const existingUser = await ResidenceVerificationService.getBySubjectId(
-          request.criteria.subjectId,
-        );
-
-        if (existingUser) {
-          logger.info(
-            `Updating existing user with subjectId: ${subject.generality.subjectId.subjectId}`,
-          );
-          await ResidenceVerificationService.updateUser(subject);
-        } else {
-          logger.info(
-            `Creating new user with subjectId: ${subject.generality.subjectId.subjectId}`,
-          );
-          await ResidenceVerificationService.createUser(subject);
-        }
-      }
-    } catch (error) {
-      logger.error(`Error during in method controller 'upsertUser': `, error);
-      throw error;
-    }
-  }
   /* eslint-disable */
   public async findUserVerify(
-    request: RichiestaAR002,
+    request: RichiestaAR002
   ): Promise<RispostaAR002OK> {
     try {
       logger.info(`post request: ${request}`);
       let resultData;
       if (request.criteria.subjectId) {
         const data = await ResidenceVerificationService.getBySubjectId(
-          request.criteria.subjectId,
+          request.criteria.subjectId
         );
 
         const list: UserModel[] = data ? [data] : [];
@@ -130,27 +100,27 @@ class ResidenceVerificationController {
           idOp: request.operationId,
           subjects: {
             subject: list.map((element) =>
-              UserModelToApiTipoDatiSoggettiEnte(element),
+              UserModelToApiTipoDatiSoggettiEnte(element)
             ),
           },
         };
       } else if (checkPersonalInfoVerify(request)) {
         const data = await ResidenceVerificationService.getByPersonalInfo(
-          request.criteria,
+          request.criteria
         );
 
         resultData = {
           idOp: request.operationId,
           subjects: {
             subject: data.map((element) =>
-              UserModelToApiTipoDatiSoggettiEnte(element),
+              UserModelToApiTipoDatiSoggettiEnte(element)
             ),
           },
         };
       } else if (request.criteria.id) {
         if (request.criteria.id) {
           const data = await ResidenceVerificationService.getById(
-            `${request.criteria.id}`,
+            `${request.criteria.id}`
           );
 
           const list: UserModel[] = data ? [data] : [];
@@ -159,14 +129,14 @@ class ResidenceVerificationController {
             idOp: request.operationId,
             subjects: {
               subject: list.map((element) =>
-                UserModelToApiTipoDatiSoggettiEnte(element),
+                UserModelToApiTipoDatiSoggettiEnte(element)
               ),
             },
           };
         }
       } else {
         throw requestParamNotValid(
-          "The request body has one or more required param not valid",
+          "The request body has one or more required param not valid"
         );
       }
 
@@ -180,7 +150,7 @@ class ResidenceVerificationController {
         resultData?.subjects?.subject.forEach((oggetto) => {
           oggetto.address?.forEach((address) => {
             response.subjects?.infoSubject?.push(
-              checkInfoSoggettoEquals(request.check?.address, address),
+              checkInfoSoggettoEquals(request.check?.address, address)
             );
           });
         });

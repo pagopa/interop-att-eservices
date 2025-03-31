@@ -28,7 +28,23 @@ const endpoints = makeApi([
     response: z.object({ message: z.string() }).partial().passthrough(),
     errors: [
       {
-        status: NaN,
+        status: 400,
+        description: `Bad Request`,
+        schema: z.void(),
+      },
+      {
+        status: 401,
+        description: `Not authorized`,
+        schema: z.void(),
+      },
+      {
+        status: 429,
+        description: `Too many requests`,
+        schema: z.void(),
+      },
+      {
+        status: 503,
+        description: `Service Unavailable`,
         schema: z.void(),
       },
     ],
@@ -45,7 +61,23 @@ for maintenance or a technical problem.
     response: z.void(),
     errors: [
       {
-        status: NaN,
+        status: 400,
+        description: `Bad Request`,
+        schema: z.void(),
+      },
+      {
+        status: 401,
+        description: `Not authorized`,
+        schema: z.void(),
+      },
+      {
+        status: 429,
+        description: `Too many requests`,
+        schema: z.void(),
+      },
+      {
+        status: 503,
+        description: `Service Unavailable`,
         schema: z.void(),
       },
     ],
@@ -68,7 +100,23 @@ whether the message verification was successful or not.
     response: VerificationResponse,
     errors: [
       {
-        status: NaN,
+        status: 400,
+        description: `Bad Request`,
+        schema: z.void(),
+      },
+      {
+        status: 401,
+        description: `Not authorized`,
+        schema: z.void(),
+      },
+      {
+        status: 429,
+        description: `Too many requests`,
+        schema: z.void(),
+      },
+      {
+        status: 503,
+        description: `Service Unavailable`,
         schema: z.void(),
       },
     ],

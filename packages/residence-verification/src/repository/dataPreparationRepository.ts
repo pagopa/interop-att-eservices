@@ -79,52 +79,6 @@ class dataPreparationRepository {
       throw error; // Rilancia l'errore per gestione superiore
     }
   }
-
-  public async save(key: string, user: UserModel): Promise<string | null> {
-    try {
-      const existingData = await this.findAllByKey(key);
-      const updatedData = existingData ? [...existingData, user] : [user];
-      await cacheManager.setObject(key, JSON.stringify(updatedData));
-      logger.info(`dataPreparationRepository: Utente salvato con successo.`);
-      return key;
-    } catch (error) {
-      logger.error(
-        `dataPreparationRepository: Errore durante il salvataggio dell'utente: `,
-        error
-      );
-      throw error;
-    }
-  }
-
-  public async update(
-    key: string,
-    uuid: string,
-    updatedUser: UserModel
-  ): Promise<UserModel[] | null> {
-    try {
-      const existingData = await this.findAllByKey(key);
-      if (!existingData) {
-        logger.warn(
-          `dataPreparationRepository: Nessun dato trovato per la chiave fornita.`
-        );
-        return null;
-      }
-
-      const updatedData = existingData.map((user) =>
-        user.uuid === uuid ? updatedUser : user
-      );
-
-      await cacheManager.setObject(key, JSON.stringify(updatedData));
-      logger.info(`dataPreparationRepository: Utente aggiornato con successo.`);
-      return updatedData;
-    } catch (error) {
-      logger.error(
-        `dataPreparationRepository: Errore durante l'aggiornamento dell'utente: `,
-        error
-      );
-      throw error;
-    }
-  }
 }
 
 export default new dataPreparationRepository();
