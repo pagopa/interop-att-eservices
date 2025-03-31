@@ -295,6 +295,14 @@ const RispostaAR001 = z
   })
   .partial()
   .passthrough();
+const RichiestaAR003 = z
+  .object({
+    idOp: z.string(),
+    subjects: TipoListaSubjects,
+    warnings: z.array(TipoErroriAnomalia),
+  })
+  .partial()
+  .passthrough();
 const TipocriteriaAR002 = z
   .object({
     subjectId: z.string(),
@@ -428,6 +436,7 @@ export const schemas = {
   InfoSoggettoEnte,
   VerifyTipoDatiSubjects,
   RispostaAR002OK,
+  RichiestaAR003,
   ProblemError,
   Problem,
 };

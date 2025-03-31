@@ -1,4 +1,4 @@
-// import { UserModel } from "pdnd-models";
+import { UserModel } from "pdnd-models";
 import { logger, getContext } from "pdnd-common";
 import ResidenceSubmissionService from "../services/residenceSubmissionService.js";
 // import {
@@ -7,20 +7,24 @@ import ResidenceSubmissionService from "../services/residenceSubmissionService.j
 // } from "../exceptions/errors.js";
 import {
   RichiestaAR001,
+  RichiestaAR003,
   RispostaAR001,
 } from "../model/domain/models.js";
+import { requestParamNotValid } from "../exceptions/errors.js";
+import dataPreparationRepository from "../repository/dataPreparationRepository.js";
+import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
 // import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
 // import { checkInfoSoggettoEquals } from "../utilities/equalsUtilities.js";
 
 class ResidenceSubmissionController {
-  
   public appContext = getContext();
 
   public async upsertUser(
-    request: RichiestaAR001
-  ): Promise<RispostaAR001 | null | undefined> {
+    request: RichiestaAR003
+  ): Promise<{ status: string; message: string }> {
     try {
-      logger.info(`PUT upsertUser: ${request}`);
+      logger.info(`PUT upsertUser: ${JSON.stringify(request)}`);
+
       let data;
       if (request.criteria.subjectId) {
         data = await ResidenceSubmissionService.getBySubjectId(
@@ -31,9 +35,7 @@ class ResidenceSubmissionController {
           request.criteria
         );
       } else if (request.criteria.id) {
-        data = await ResidenceSubmissionService.getById(
-          request.criteria.id
-        );
+        data = await ResidenceSubmissionService.getById(request.criteria.id);
       } else {
         throw requestParamNotValid(
           "The request body has one or more required param not valid"
@@ -41,32 +43,23 @@ class ResidenceSubmissionController {
       }
 
       if (data) {
-        // Update existing user
-        data = await ResidenceSubmissionService.updateById(
-          data.id,
-          request
-        );
+        await dataPreparationRepository.updateById(data.id, request);
       } else {
-        // Create new user
-        data = await ResidenceSubmissionService.create(
-          request
-        );
+        await dataPreparationRepository.create(request);
       }
 
-      const list: UserModel[] = data ? [data] : [];
-
-      const result: RispostaAR001 = {
-        idOp: request.operationId,
-        subjects: {
-          subject: list.map((element) =>
-            UserModelToApiTipoDatiSoggettiEnte(element)
-          ),
-        },
+      return {
+        status: "OK",
+        message: "Residenza caricata correttamente",
       };
-      return result;
     } catch (error) {
-      logger.error(`Error during in method controller 'upsertUser': `, error);
-      throw error;
+      logger.error(`❌ Errore in 'upsertUser': `, error);
+
+      return {
+        status: "KO",
+        message:
+          error.message || "Errore durante il caricamento della residenza",
+      };
     }
   }
 }
