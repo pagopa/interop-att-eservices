@@ -1,12 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
-import { ErrorHandling } from "pdnd-models";
-import jose from "node-jose";
 import { logger } from "pdnd-common";
 import {
   decodePublicKey,
   generateRSAPublicKey,
   verify,
-} from "../../../src/utilities/rsaUtility";
+} from "../../../src/utilities/rsaUtility.js";
 
 // Mock the logger
 vi.mock("pdnd-common", () => ({

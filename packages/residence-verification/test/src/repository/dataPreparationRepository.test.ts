@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import dataPreparationRepository from "../../../src/repository/dataPreparationRepository";
+import dataPreparationRepository from "../../../src/repository/dataPreparationRepository.js";
 import { logger, cacheManager } from "pdnd-common";
-import { parseJsonToUserArray } from "../../../src/utilities/jsonUserUtilities";
+import { parseJsonToUserArray } from "../../../src/utilities/jsonUserUtilities.js";
 import { FiscalcodeModel } from "pdnd-models";
 
 // Mock delle dipendenze
@@ -73,7 +73,7 @@ describe("dataPreparationRepository", () => {
     });
   });
 
-   describe('findAllByKey', () => {
+  describe('findAllByKey', () => {
     it('should retrieve and parse the saved object', async () => {
       const mockKey = 'testKey';
       const mockSavedData = '[{ fiscalCode: bccccc44r61w122 }]';
@@ -101,7 +101,7 @@ describe("dataPreparationRepository", () => {
     });
   });
 
- 
+
   describe('deleteAllByKey', () => {
     it('should delete the object and return the length of deleted items', async () => {
       const mockKey = 'testKey';

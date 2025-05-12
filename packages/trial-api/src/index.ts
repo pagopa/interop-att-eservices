@@ -1,12 +1,15 @@
-export * from "./client.js";
-export * from "./model/trial.js";
-export * from "./model/check.js";
-export * from "./model/category.js";
-export * from "./repository/trialRepository.js";
+export { db } from "./db/client.js";
+export { Trial } from "./db/schema/trial.js";
+export { Check } from "./db/schema/check.js";
+export { Category } from "./db/schema/category.js";
+export { TrialRepository } from "./repositories/trialRepository.js";
+export { getCheckValue } from "./utils/checkValues.js"
+export { testDbConnection } from "./utils/testDbConnection.js"
+
 export { TrialService } from "./services/trialService.js";
 import { logger } from "pdnd-common";
 import { eventManager, syncEventEmitter } from "pdnd-common";
-import { TrialService, existCorrelationId } from "./services/trialService.js";
+import { TrialService } from "./services/trialService.js";
 
 const startlistner = async (): Promise<void> => {
   try {
@@ -33,7 +36,7 @@ const startlistner = async (): Promise<void> => {
     "checkCorrelationId",
     async ({ resolve, reject, args }: any) => {
       try {
-        const result = await existCorrelationId(args[0]);
+        const result = await TrialService.existCorrelationId(args[0]);
         logger.info(`[result] result: ${result}`);
         resolve(result);
       } catch (error) {
