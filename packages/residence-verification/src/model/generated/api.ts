@@ -340,10 +340,6 @@ const RichiestaAR002 = z
   })
   .passthrough();
 const TipoInfoValore = z.enum(["A", "N", "S"]);
-const TipoCoordinates = z.object({
-  latitude: z.string(),
-  longitude: z.string(),
-});
 const TipoInfoSoggetto = z
   .object({
     id: z.string(),
@@ -352,7 +348,6 @@ const TipoInfoSoggetto = z
     textValue: z.string(),
     dataValue: z.string(),
     otherData: z.string(),
-    coords: TipoCoordinates,
   })
   .partial()
   .passthrough();

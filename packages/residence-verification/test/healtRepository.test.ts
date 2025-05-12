@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import healtRepository from "../../../src/repository/healtRepository";
+import healtRepository from "../src/repository/healtRepository";
 import { cacheManager } from "pdnd-common";
 
 // Mock di cacheManager

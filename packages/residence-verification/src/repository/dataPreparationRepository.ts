@@ -1,6 +1,5 @@
-import { logger } from "pdnd-common";
 import { UserModel } from "pdnd-models";
-import { cacheManager } from "pdnd-common";
+import { cacheManager, logger } from "pdnd-common";
 import { parseJsonToUserArray } from "../utilities/jsonUserUtilities.js";
 
 class dataPreparationRepository {
