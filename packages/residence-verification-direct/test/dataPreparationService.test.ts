@@ -11,8 +11,7 @@ import {
 } from "vitest";
 import DataPreparationServiceInstance from "../src/services/DataPreparationService";
 import { DataPreparationTemplate } from "../src/model/domain/models.js";
-import { UserModel } from "pdnd-models";
-import { setupTestDb } from "./setUpTestDb";
+import { populateBaseTestData, setupTestDb } from "./setUpTestDb";
 import { TEST_POSTGRES_SCHEMA } from "./config";
 import { eq, or } from "drizzle-orm";
 import { Purpose as PurposeTable } from "../src/model/db/purpose.model.js";
@@ -52,7 +51,6 @@ const EXISTING_SUBJECT_ID_S1 = "s1";
 const EXISTING_SUBJECT_UUID_S1 = "fedcba98-7654-3210-fedc-ba9876543210";
 const EXISTING_USECASE_ID_S1 = "f8b2c1d0-e6a7-4493-a9b5-2c07d8e1f35a";
 
-const MOCK_ANOTHER_PURPOSE_ID = "a1b2c3d4-a1b2-a1b2-a1b2-a1b2c3d4e5f6";
 const MOCK_UNUSED_UUID_FOR_NOT_FOUND = "b2c3d4e5-b2c3-b2c3-b2c3-b2c3d4e5f6a7";
 
 describe("DataPreparationService - Integration Tests", () => {
@@ -119,29 +117,6 @@ describe("DataPreparationService - Integration Tests", () => {
   afterEach(() => {
     vi.clearAllMocks();
   });
-
-  async function populateBaseTestData(client: any) {
-    try {
-      await client.query("BEGIN");
-      await client.query(
-        `INSERT INTO ${TEST_POSTGRES_SCHEMA}.subjects (uuid, id, subject_id, surname, name, gender, birth_event_date, birth_exceptional_place, birth_municipality_name, birth_municipality_istat_code, birth_municipality_acronym_istat_province, birth_municipality_place_description, birth_place_description, birth_country_description, birth_cod_state, birth_province_county) VALUES ('fedcba98-7654-3210-fedc-ba9876543210', 'SUB001', 's1', 'Rossi', 'Mario', 'M', '1980-01-01', NULL, 'Roma', '058091', 'RM', 'Municipio I', 'Roma', 'Italia', 'IT', 'Lazio') ON CONFLICT (uuid) DO NOTHING;`
-      );
-      await client.query(
-        `INSERT INTO ${TEST_POSTGRES_SCHEMA}.addresses (id, address_type, toponym_denomination, civic_number, address_municipality_name, address_municipality_istat_code, address_municipality_acronym_istat_province) VALUES ('12345678-9abc-def0-1234-567890abcdef', 'RESIDENZA', 'VIA MAGNOLIA','12B','Roma','058091','RM') ON CONFLICT (id) DO NOTHING;`
-      );
-      await client.query(
-        `INSERT INTO ${TEST_POSTGRES_SCHEMA}.purposes (id) VALUES ('abcdef01-2345-6789-abcd-ef0123456789') ON CONFLICT (id) DO NOTHING;`
-      );
-      await client.query(
-        `INSERT INTO ${TEST_POSTGRES_SCHEMA}.usecases (id, purpose_id, subject_id, address_id) VALUES ('f8b2c1d0-e6a7-4493-a9b5-2c07d8e1f35a', 'abcdef01-2345-6789-abcd-ef0123456789', 'fedcba98-7654-3210-fedc-ba9876543210', '12345678-9abc-def0-1234-567890abcdef') ON CONFLICT (id) DO NOTHING;`
-      );
-      await client.query("COMMIT");
-    } catch (error) {
-      await client.query("ROLLBACK");
-      console.error("Errore durante il ripopolamento DB:", error);
-      throw error;
-    }
-  }
 
   const createCorrectSampleGenericRequest = (
     subjectIdVal: string,
