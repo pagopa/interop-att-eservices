@@ -36,13 +36,15 @@ export function deepEqual(obj1: any, obj2: any): boolean {
   return true;
 }
 
-export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
+export function checkInfoSoggettoEquals(
+  obj1: any,
+  obj2: any
+): InfoSoggettoEnte | {} {
   const response: InfoSoggettoEnte = {
     infoInstitution: [] as TipoInfoSoggetto[],
   };
   const listObj: TipoInfoSoggetto[] = [];
 
-  // Se uno dei due oggetti è null o non è un oggetto, non sono uguali
   if (
     obj1 === null ||
     obj2 === null ||
@@ -59,7 +61,6 @@ export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
     dateNow.getMonth() + 1
   }-${dateNow.getDate()}`;
 
-  // Confronto ricorsivo delle chiavi e dei valori degli oggetti
   for (const key of keys1) {
     if (!keys2.includes(key)) {
       listObj.push({
@@ -89,21 +90,6 @@ export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
         dettaglio: "-",
       });
     }
-  }
-
-  // **Aggiunta delle coordinate senza stravolgere il codice**
-  const coords1 = obj1?.address?.address?.coords;
-  const coords2 = obj2?.address?.address?.coords;
-
-  if (coords2) {
-    listObj.push({
-      id: uuidv4(),
-      chiave: "coordinates",
-      valore: coords1 && deepEqual(coords1, coords2) ? "S" : "N",
-      valoreTesto: coords2 ? `${coords2.latitude}, ${coords2.longitude}` : "",
-      valoreData: formattedDate,
-      dettaglio: "-",
-    });
   }
 
   response.infoInstitution?.push(...listObj);

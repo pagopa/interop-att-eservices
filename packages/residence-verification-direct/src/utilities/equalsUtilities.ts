@@ -42,7 +42,6 @@ export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
   };
   const listObj: TipoInfoSoggetto[] = [];
 
-  // Se uno dei due oggetti è null o non è un oggetto, non sono uguali
   if (
     obj1 === null ||
     obj2 === null ||
@@ -59,7 +58,6 @@ export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
     dateNow.getMonth() + 1
   }-${dateNow.getDate()}`;
 
-  // Confronto ricorsivo delle chiavi e dei valori degli oggetti
   for (const key of keys1) {
     if (!keys2.includes(key)) {
       listObj.push({
@@ -91,7 +89,6 @@ export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
     }
   }
 
-  // **Aggiunta delle coordinate senza stravolgere il codice**
   const coords1 = obj1?.address?.address?.coords;
   const coords2 = obj2?.address?.address?.coords;
 

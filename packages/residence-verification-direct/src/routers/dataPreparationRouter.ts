@@ -1,17 +1,16 @@
-// import { zodiosRouter } from "@zodios/express";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ErrorHandling, UserModel } from "pdnd-models";
-import { ExpressContext, ZodiosContext } from "pdnd-common";
-import { authenticationMiddleware } from "pdnd-common";
-import DataPreparationService from "../services/dataPreparationService.js";
 import {
-  userModelToApiDataPreparationResponseCf,
-  userModelToApiDataPreparationTemplateResponse,
-} from "../model/domain/apiConverter.js";
+  authenticationMiddleware,
+  ExpressContext,
+  ZodiosContext,
+} from "pdnd-common";
+import DataPreparationService from "../services/dataPreparationService.js";
+import { userModelToApiDataPreparationTemplateResponse } from "../model/domain/apiConverter.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
-import { makeApiProblem, userModelNotFound } from "../exceptions/errors.js";
+import { makeApiProblem } from "../exceptions/errors.js";
 import { DataPreparationTemplateResponse } from "../model/domain/models.js";
 import { contextDataResidenceMiddleware } from "../context/context.js";
 
@@ -26,16 +25,7 @@ const dataPreparationRouter = (
     authenticationMiddleware(false),
     async (req, res) => {
       try {
-        const data = await DataPreparationService.saveList(req.body);
-        const result = userModelToApiDataPreparationResponseCf(
-          data,
-          req.body.subject?.subjectId
-        );
-        if (!result) {
-          throw userModelNotFound(
-            `Data with subjectId '${req.body.subject?.subjectId}' not found`
-          );
-        }
+        const result = await DataPreparationService.create(req.body);
         return res.status(200).json(result).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
@@ -77,10 +67,7 @@ const dataPreparationRouter = (
         if (!req) {
           return res.status(500);
         }
-        const data = await DataPreparationService.getByUUID(req.params.uuid);
-        const result: DataPreparationTemplateResponse | null = data
-          ? userModelToApiDataPreparationTemplateResponse(data)
-          : null;
+        const result = await DataPreparationService.getByUUID(req.params.uuid);
         return result
           ? res.status(200).json(result).end()
           : res.status(200).end();

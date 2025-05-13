@@ -48,14 +48,12 @@ const residenceVerificationRouter = (
         logger.info(`[END] residenceVerificationRouter`);
         return res.status(200).json(data).end();
       } catch (error) {
-        logger.info("error find user", error);
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;
         const generalErrorResponse = mapGeneralErrorModel(
           correlationId,
           errorRes
         );
-
         void TrialService.insert(
           req.url,
           req.method,
@@ -84,7 +82,6 @@ const residenceVerificationRouter = (
         const data = await ResidenceVerificationController.findUserVerify(
           req.body
         );
-
         void TrialService.insert(
           req.url,
           req.method,

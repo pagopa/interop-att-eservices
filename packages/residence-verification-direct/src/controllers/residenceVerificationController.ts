@@ -1,6 +1,10 @@
 import { UserModel } from "pdnd-models";
 import { logger, getContext } from "pdnd-common";
-import ResidenceVerificationService from "../services/residenceVerificationService.js";
+import {
+  getById,
+  getByPersonalInfo,
+  getUserBySubjectId,
+} from "../services/residenceVerificationService.js";
 import CoordinatesService from "../services/coordinateService.js";
 import {
   requestParamNotValid,
@@ -19,7 +23,7 @@ class ResidenceVerificationController {
   public appContext = getContext();
 
   /**
-   * Trova utenti basandosi sui criteri forniti.
+   * Find users based on the provided criteria.
    */
   public async findUser(
     request: RichiestaAR001
@@ -47,7 +51,7 @@ class ResidenceVerificationController {
   }
 
   /**
-   * Verifica un utente confrontando i suoi dati con quelli richiesti.
+   * Verifies a user by comparing provided info with stored data.
    */
   public async findUserVerify(
     request: RichiestaAR002
@@ -75,7 +79,7 @@ class ResidenceVerificationController {
   }
 
   /**
-   * Recupera i dati dell'utente e aggiunge le coordinate all'indirizzo.
+   * Retrieves user data and adds geolocation coordinates.
    */
   private async getUserData(
     request: RichiestaAR001 | RichiestaAR002
@@ -86,22 +90,16 @@ class ResidenceVerificationController {
       logger.info(`subjectId ${JSON.stringify(subjectId)}`);
 
       if (subjectId) {
-        return this.fetchAndUpdateUser(
-          ResidenceVerificationService.getBySubjectId(subjectId)
-        );
+        return this.fetchAndUpdateUser(getUserBySubjectId(subjectId));
       }
 
       if (this.checkPersonalInfo(request)) {
-        const users = await ResidenceVerificationService.getByPersonalInfo(
-          request.criteria
-        );
+        const users = await getByPersonalInfo(request.criteria);
         return Promise.all(users.map(this.getUpdatedUserModel.bind(this)));
       }
 
       if (id) {
-        return this.fetchAndUpdateUser(
-          ResidenceVerificationService.getById(`${id}`)
-        );
+        return this.fetchAndUpdateUser(getById(`${id}`));
       }
     } catch (error) {
       logger.error(`Error retrieving user data: ${JSON.stringify(error)}`);
@@ -110,7 +108,7 @@ class ResidenceVerificationController {
   }
 
   /**
-   * Recupera un utente e aggiorna le sue coordinate.
+   * Fetches a single user and updates their address with coordinates.
    */
   private async fetchAndUpdateUser(
     fetchUser: Promise<UserModel | null>
@@ -120,7 +118,7 @@ class ResidenceVerificationController {
   }
 
   /**
-   * Costruisce l'indirizzo completo di un utente.
+   * Builds a full address string from the user model.
    */
   private getFullAddress(data: UserModel): string {
     const address = data?.address?.address;
@@ -130,7 +128,7 @@ class ResidenceVerificationController {
   }
 
   /**
-   * Aggiorna il modello utente con le coordinate basate sull'indirizzo.
+   * Updates the user model with geolocation coordinates based on address.
    */
   private async getUpdatedUserModel(user: UserModel): Promise<UserModel> {
     const fullAddress = this.getFullAddress(user);
@@ -149,7 +147,7 @@ class ResidenceVerificationController {
   }
 
   /**
-   * Controlla se la richiesta contiene informazioni personali valide.
+   * Checks if the request contains valid personal info for matching.
    */
   private checkPersonalInfo(request: RichiestaAR001 | RichiestaAR002): boolean {
     const birthDate = request.criteria.birthDate;

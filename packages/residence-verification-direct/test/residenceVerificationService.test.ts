@@ -145,7 +145,7 @@ describe("ResidenceVerificationService (Integration with DB and Mapper)", () => 
     });
 
     mockUserModelNotFound.mockImplementation((message?: string) => {
-      const error = new Error(message || "User model not found from mock");
+      const error = new Error(message ?? "User model not found from mock");
       (error as any).isUserModelNotFound = true;
       throw error;
     });
