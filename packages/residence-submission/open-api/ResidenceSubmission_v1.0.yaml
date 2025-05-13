@@ -30,14 +30,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RichiestaAR001'
+              $ref: '#/components/schemas/RichiestaAR003'
       responses:
         '200':
           description: Operazione completata con successo
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RispostaAR001'
         '400':
           description: Parametri della richiesta non validi
           content:
@@ -64,21 +60,11 @@ paths:
                 $ref: '#/components/schemas/GeneralError'
 components:
   schemas:
-    RichiestaAR001:
+    RichiestaAR003:
       type: object
       required:
-        - operationId
-        - criteria
-        - requestData
-      properties:
-        operationId:
-          type: string
-        criteria:
-          $ref: '#/components/schemas/TipoParametriRicercaAR001'
-        requestData:
-          $ref: '#/components/schemas/TipoRichiestaAR001'
-    RispostaAR001:
-      type: object
+        - idOp
+        - subjects
       properties:
         idOp:
           type: string
@@ -88,68 +74,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TipoErroriAnomalia'
-    TipoParametriRicercaAR001:
-      type: object
-      properties:
-        subjectId:
-          type: string
-        id:
-          type: string
-          description: National Unique Identifier
-        surname:
-          type: string
-        noSurname:
-          type: string
-        name:
-          type: string
-        noName:
-          type: string
-        gender:
-          type: string
-        birthDate:
-          $ref: '#/components/schemas/TipoDatiNascitaE000'
-    TipoRichiestaAR001:
-      type: object
-      required:
-        - dateOfRequest
-        - useCase
-        - motivation
-      properties:
-        dateOfRequest:
-          type: string
-          description: Date to which the version of the personal data sheet must refer
-          format: YYYY-MM-DD
-          example: '2021-11-15'
-        motivation:
-          type: string
-          description: Mandatory field for entering the reference number of the case for which the inquiry is made (e.g., protocol number, file, report, etc.).
-        useCase:
-          type: string
-          description: caso d'uso (es. C001)
-    TipoErroriAnomalia:
-      type: object
-      properties:
-        warningErrorCode:
-          type: string
-        warningErrorType:
-          type: string
-        warningErrorText:
-          type: string
-        warningErrorObject:
-          type: string
-        warningErrorField:
-          type: string
-        warningErrorValue:
-          type: string
+        criteria:
+          $ref: '#/components/schemas/TipoParametriRicercaAR001'
     TipoListaSubjects:
       type: object
+      required:
+        - subject
       properties:
         subject:
           type: array
-          items:
-            $ref: '#/components/schemas/TipoDatiSubjectsEnte'
+          $ref: '#/components/schemas/TipoDatiSubjectsEnte'
     TipoDatiSubjectsEnte:
       type: object
+      required:
+        - generality
+        - address
+        - identifiers
+        - deathDate
       properties:
         generality:
           $ref: '#/components/schemas/TipoGeneralita'
@@ -163,8 +104,20 @@ components:
           $ref: '#/components/schemas/TipoDatiEvento'
     TipoGeneralita:
       type: object
+      required:
+        - subjectId
+        - surname
+        - name
+        - gender
+        - birthDate
+        - birthPlace
+        - AIRESubject
+        - yearExpatriation
+        - idCommonSubjectData
+        - idSubjectData
       properties:
         subjectId:
+          type: object
           $ref: '#/components/schemas/TipoCodiceFiscale'
         surname:
           type: string
@@ -178,14 +131,12 @@ components:
           type: string
         birthDate:
           type: string
-          format: YYYY-MM-DD
-          example: '2021-11-15'
         noDay:
           type: string
         noMonth:
           type: string
         birthPlace:
-          $ref: '#/components/schemas/TipoLuogoNascitaE000'
+          $ref: '#/components/schemas/TipoLuogoEvento'
         AIRESubject:
           type: string
         yearExpatriation:
@@ -198,6 +149,10 @@ components:
           type: string
     TipoCodiceFiscale:
       type: object
+      required:
+        - subjectId
+        - subjectIdValidity
+        - dataAttributionValidity
       properties:
         subjectId:
           type: string
@@ -205,17 +160,34 @@ components:
           type: string
         dataAttributionValidity:
           type: string
-          format: YYYY-MM-DD
-          example: '2021-11-15'
-    TipoLuogoNascitaE000:
+    TipoResidenza:
       type: object
       properties:
-        exceptionalPlace:
-          type: string
-        municipality:
-          $ref: '#/components/schemas/TipoComune'
-        place:
-          $ref: '#/components/schemas/TipoLocalita'
+      addressType:
+        type: string
+      noteaddress:
+        type: string
+      address:
+        $ref: '#/components/schemas/TipoIndirizzo'
+      foreignState:
+        $ref: '#/components/schemas/TipoLocalitaEstera1'
+      presso:
+        type: string
+      addressStartDate:
+        type: string
+    TipoIndirizzo:
+      type: object
+      properties:
+      cap:
+        type: string
+      municipality:
+        $ref: '#/components/schemas/TipoComune'
+      fraction:
+        type: string
+      toponym:
+        $ref: '#/components/schemas/TipoToponimo'
+      civicNumber:
+        $ref: '#/components/schemas/TipoNumeroCivico'
     TipoComune:
       type: object
       properties:
@@ -227,61 +199,7 @@ components:
           type: string
         placeDescription:
           type: string
-    TipoLocalita:
-      type: object
-      properties:
-        placeDescription:
-          type: string
-        countryDescription:
-          type: string
-        codState:
-          type: string
-        provinceCounty:
-          type: string
-    TipoIdSchedaSoggettoComune:
-      type: object
-      properties:
-        idCommonSubjectDataIstat:
-          type: string
-        idSubjectData:
-          type: string
-    TipoResidenza:
-      type: object
-      properties:
-        addressType:
-          type: string
-        noteaddress:
-          type: string
-        address:
-          $ref: '#/components/schemas/TipoIndirizzo'
-        foreignState:
-          $ref: '#/components/schemas/TipoLocalitaEstera1'
-        presso:
-          type: string
-        addressStartDate:
-          type: string
-          format: YYYY-MM-DD
-          example: '2021-11-15'
-    TipoIndirizzo:
-      type: object
-      properties:
-        cap:
-          type: string
-        municipality:
-          $ref: '#/components/schemas/TipoComune'
-        fraction:
-          type: string
-        toponym:
-          $ref: '#/components/schemas/TipoToponimo'
-        civicNumber:
-          $ref: '#/components/schemas/TipoNumeroCivico'
-    TipoLocalitaEstera1:
-      type: object
-      properties:
-        foreignAddress:
-          $ref: '#/components/schemas/TipoIndirizzoEstero'
-        consulate:
-          $ref: '#/components/schemas/TipoConsolato'
+      additionalProperties: true
     TipoToponimo:
       type: object
       properties:
@@ -297,52 +215,62 @@ components:
           type: string
         toponymSource:
           type: string
+      additionalProperties: true
     TipoNumeroCivico:
       type: object
       properties:
-        civicCod:
-          type: string
-        civicSource:
-          type: string
-        civicNumber:
-          type: string
-        metric:
-          type: string
-        progSNC:
-          type: string
-        letter:
-          type: string
-        exponent1:
-          type: string
-        color:
-          type: string
-        internalCivic:
-          $ref: '#/components/schemas/TipoCivicoInterno'
+      civicCod:
+        type: string
+      civicSource:
+        type: string
+      civicNumber:
+        type: string
+      metric:
+        type: string
+      progSNC:
+        type: string
+      letter:
+        type: string
+      exponent1:
+        type: string
+      color:
+        type: string
+      internalCivic:
+        $ref: '#/components/schemas/TipoCivicoInterno'
     TipoCivicoInterno:
       type: object
       properties:
-        court:
-          type: string
-        stairs:
-          type: string
-        internal1:
-          type: string
-        espInternal1:
-          type: string
-        internal2:
-          type: string
-        espInternal2:
-          type: string
-        externalStairs:
-          type: string
-        secondary:
-          type: string
-        floor:
-          type: string
-        nui:
-          type: string
-        isolated:
-          type: string
+      court:
+        type: string
+      stairs:
+        type: string
+      internal1:
+        type: string
+      espInternal1:
+        type: string
+      internal2:
+        type: string
+      espInternal2:
+        type: string
+      externalStairs:
+        type: string
+      secondary:
+        type: string
+      floor:
+        type: string
+      nui:
+        type: string
+      isolated:
+        type: string
+      additionalProperties: true
+    TipoLocalitaEstera1:
+      type: object
+      properties:
+      foreignAddress:
+        $ref: '#/components/schemas/TipoIndirizzoEstero'
+      consulate:
+        $ref: '#/components/schemas/TipoConsolato'
+      additionalProperties: true
     TipoIndirizzoEstero:
       type: object
       properties:
@@ -352,6 +280,7 @@ components:
           $ref: '#/components/schemas/TipoDatoLocalitaEstera'
         toponym:
           $ref: '#/components/schemas/TipoToponimoEstero'
+      additionalProperties: true
     TipoConsolato:
       type: object
       properties:
@@ -359,6 +288,7 @@ components:
           type: string
         consulateDescription:
           type: string
+      additionalProperties: true
     TipoDatoLocalitaEstera:
       type: object
       properties:
@@ -370,6 +300,7 @@ components:
           type: string
         provinceCounty:
           type: string
+      additionalProperties: true
     TipoToponimoEstero:
       type: object
       properties:
@@ -377,35 +308,31 @@ components:
           type: string
         civicNumber:
           type: string
-    TipoIdentificativi:
-      type: object
-      properties:
-        id:
-          type: string
+      additionalProperties: true
     TipoDatiEvento:
       type: object
       properties:
-        eventDate:
-          type: string
-          format: YYYY-MM-DD
-          example: '2021-11-15'
-        noDay:
-          type: string
-        noMonth:
-          type: string
-        eventPlace:
-          $ref: '#/components/schemas/TipoLuogoEvento'
-        eventAct:
-          $ref: '#/components/schemas/TipoAttoEvento'
+      eventDate:
+        type: string
+      noDay:
+        type: string
+      noMonth:
+        type: string
+      eventPlace:
+        $ref: '#/components/schemas/TipoLuogoEvento'
+      eventAct:
+        $ref: '#/components/schemas/TipoAttoEvento'
+      additionalProperties: true
     TipoLuogoEvento:
       type: object
       properties:
-        exceptionalPlace:
-          type: string
-        municipality:
-          $ref: '#/components/schemas/TipoComune'
-        place:
-          $ref: '#/components/schemas/TipoLocalita'
+      exceptionalPlace:
+        type: string
+      municipality:
+        $ref: '#/components/schemas/TipoComune'
+      place:
+        $ref: '#/components/schemas/TipoLocalita'
+      additionalProperties: true
     TipoAttoEvento:
       type: object
       properties:
@@ -413,25 +340,7 @@ components:
           $ref: '#/components/schemas/TipoAtto'
         actANSC:
           $ref: '#/components/schemas/TipoAttoANSC'
-    TipoAttoANSC:
-      type: object
-      properties:
-        idANSC:
-          type: string
-        municipalityRegistration:
-          $ref: '#/components/schemas/TipoComune'
-        act:
-          type: string
-        municipalOffice:
-          type: string
-        municipalNumber:
-          type: string
-        dateFormationAct:
-          type: string
-          format: YYYY-MM-DD
-          example: '2021-11-15'
-        transcribed:
-          type: string
+      additionalProperties: true
     TipoAtto:
       type: object
       properties:
@@ -451,19 +360,110 @@ components:
           type: string
         dateFormationAct:
           type: string
-          format: YYYY-MM-DD
-          example: '2021-11-15'
         transcribed:
           type: string
+      additionalProperties: true
+    TipoAttoANSC:
+      type: object
+      properties:
+        idANSC:
+          type: string
+        municipalityRegistration:
+          $ref: '#/components/schemas/TipoComune'
+        act:
+          type: string
+        municipalOffice:
+          type: string
+        municipalNumber:
+          type: string
+        dateFormationAct:
+          type: string
+        transcribed:
+          type: string
+      additionalProperties: true
+    TipoIdSchedaSoggettoComune:
+      type: object
+      properties:
+      idCommonSubjectDataIstat:
+        type: string
+      idSubjectData:
+        type: string
+      additionalProperties: true
+    TipoIdentificativi:
+      type: object
+      properties:
+        id:
+          type: string
+      additionalProperties: true
+    TipoErroriAnomalia:
+      type: object
+      properties:
+      warningErrorCode:
+        type: string
+      warningErrorType:
+        type: string
+      warningErrorText:
+        type: string
+      warningErrorObject:
+        type: string
+      warningErrorField:
+        type: string
+      warningErrorValue:
+        type: string
+      additionalProperties: true
+    # Qui resto degli oggetti
     GeneralError:
       type: object
       properties:
-        idOp:
+        code:
           type: string
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
+        message:
+          type: string
+    TipoParametriRicercaAR001:
+      type: object
+      properties:
+        subjectId:
+          type: string
+        id:
+          type: string
+        surname:
+          type: string
+        name:
+          type: string
+        gender:
+          type: string
+        birthDate:
+          $ref: '#/components/schemas/TipoDatiNascitaE000'
+    TipoDatiNascitaE000:
+      type: object
+      properties:
+        eventDate:
+          type: string
+          format: date
+        noDay:
+          type: string
+        noMonth:
+          type: string
+        birthPlace:
+          $ref: '#/components/schemas/TipoLuogoNascitaE000'
+    TipoLuogoNascitaE000:
+      type: object
+      properties:
+        exceptionalPlace:
+          type: string
+        municipality:
+          $ref: '#/components/schemas/TipoComune'
+        place:
+          $ref: '#/components/schemas/TipoLocalita'
+    TipoLocalita:
+      type: object
+      properties:
+        placeDescription:
+          type: string
+        countryDescription:
+          type: string
+        codState:
+          type: string
     Error:
       type: object
       properties:
