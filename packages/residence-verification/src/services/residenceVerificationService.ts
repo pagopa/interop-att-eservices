@@ -9,7 +9,15 @@ import { Usecase } from "../model/db/usecase.model.js";
 import { Address } from "../model/db/address.model.js";
 import { mapUserModel } from "../utilities/mapUserModelUtilities.js";
 
-const getAppContext = () => getContext();
+type AppContextType = {
+  correlationId: string;
+  authData: {
+    purposeId: string;
+    clientId?: string;
+  };
+};
+
+const getAppContext = (): AppContextType => getContext();
 
 export const getUserBySubjectId = async (
   subjectId: string

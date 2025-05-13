@@ -1,45 +1,58 @@
-import { vi } from "vitest";
-import { z } from "zod";
+import { readFileSync } from "fs";
+import * as path from "path";
+import {
+  PostgreSqlContainer,
+  StartedPostgreSqlContainer,
+} from "@testcontainers/postgresql";
+import { drizzle, NodePgDatabase } from "drizzle-orm/node-postgres";
+import { Client } from "pg";
+
+import { Subject } from "../src/model/db/subject.model";
+import { Address } from "../src/model/db/address.model";
+import { Usecase } from "../src/model/db/usecase.model";
 import {
   TEST_POSTGRES_DB_NAME,
   TEST_POSTGRES_DB_PASSWORD,
   TEST_POSTGRES_DB_USER,
   TEST_POSTGRES_SCHEMA,
 } from "./config";
-import { Client } from "pg";
-import { PostgreSqlContainer } from "@testcontainers/postgresql";
-import { readFileSync } from "fs";
-import * as path from "path";
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Subject } from "../src/model/db/subject.model";
-import { Address } from "../src/model/db/address.model";
-import { Usecase } from "../src/model/db/usecase.model";
 
-let startedPostgreSqlContainer: any;
+const drizzleSchema = {
+  Subject,
+  Address,
+  Usecase,
+};
 
-export async function setupTestDb() {
-  startedPostgreSqlContainer = await new PostgreSqlContainer("postgres:15")
-    .withDatabase(TEST_POSTGRES_DB_NAME)
-    .withUsername(TEST_POSTGRES_DB_USER)
-    .withPassword(TEST_POSTGRES_DB_PASSWORD)
-    .start();
+type SetupTestDbReturnType = {
+  db: NodePgDatabase<typeof drizzleSchema>;
+  container: StartedPostgreSqlContainer;
+  client: Client;
+};
 
-  const host = startedPostgreSqlContainer.getHost();
-  const port = startedPostgreSqlContainer.getPort();
+export async function setupTestDb(): Promise<SetupTestDbReturnType> {
+  const startedContainer: StartedPostgreSqlContainer =
+    await new PostgreSqlContainer("postgres:15")
+      .withDatabase(TEST_POSTGRES_DB_NAME)
+      .withUsername(TEST_POSTGRES_DB_USER)
+      .withPassword(TEST_POSTGRES_DB_PASSWORD)
+      .start();
+
+  const host = startedContainer.getHost();
+  const port = startedContainer.getPort();
 
   const client = new Client({
     host,
     port,
-    user: startedPostgreSqlContainer.getUsername(),
-    password: startedPostgreSqlContainer.getPassword(),
-    database: startedPostgreSqlContainer.getDatabase(),
+    user: startedContainer.getUsername(),
+    password: startedContainer.getPassword(),
+    database: startedContainer.getDatabase(),
   });
 
   await client.connect();
 
   const sqlFilePath = path.join(__dirname, "init-db.sql");
-  const sql = readFileSync(sqlFilePath, "utf-8");
-  await client.query(sql);
+  const sqlScript = readFileSync(sqlFilePath, "utf-8");
+  await client.query(sqlScript);
 
   try {
     await client.query("BEGIN");
@@ -115,16 +128,11 @@ export async function setupTestDb() {
     throw error;
   }
 
-  const drizzleSchema = {
-    Subject,
-    Address,
-    Usecase,
-  };
   const db = drizzle(client, { schema: drizzleSchema });
 
   return {
     db,
-    container: startedPostgreSqlContainer,
+    container: startedContainer,
     client,
   };
 }

@@ -85,8 +85,7 @@ class ResidenceVerificationController {
       }
 
       if (this.checkPersonalInfo(request)) {
-        const users = await getByPersonalInfo(request.criteria);
-        return users;
+        return getByPersonalInfo(request.criteria);
       }
 
       if (id) {
