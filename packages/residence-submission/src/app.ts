@@ -6,7 +6,7 @@ import { logger } from "pdnd-common";
 const app = zodiosCtx.app();
 
 import residenceSubmissionRouter from "./routers/residenceSubmissionRouter.js";
-// import healthRouter from "./routers/healthRouter.js";
+import healthRouter from "./routers/healthRouter.js";
 
 app.use(express.json());
 const config = InteroperabilityConfig.parse(process.env);
@@ -19,7 +19,7 @@ logger.info(
   app.use("/residence-verification/data-preparation", authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware());
 } */
 
-// app.use("/", healthRouter(zodiosCtx));
+app.use("/", healthRouter(zodiosCtx));
 app.use("/", residenceSubmissionRouter(zodiosCtx));
 
 export default app;
