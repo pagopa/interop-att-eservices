@@ -1,20 +1,8 @@
-import { UserModel } from "pdnd-models";
 import { logger, getContext } from "pdnd-common";
 import ResidenceSubmissionService from "../services/residenceSubmissionService.js";
-// import {
-//   requestParamNotValid,
-//   userModelNotFound,
-// } from "../exceptions/errors.js";
-import {
-  RichiestaAR001,
-  RichiestaAR003,
-  RispostaAR001,
-} from "../model/domain/models.js";
+import { RichiestaAR003 } from "../model/domain/models.js";
 import { requestParamNotValid } from "../exceptions/errors.js";
 import dataPreparationRepository from "../repository/dataPreparationRepository.js";
-import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
-// import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
-// import { checkInfoSoggettoEquals } from "../utilities/equalsUtilities.js";
 
 class ResidenceSubmissionController {
   public appContext = getContext();
@@ -23,29 +11,42 @@ class ResidenceSubmissionController {
     request: RichiestaAR003
   ): Promise<{ status: string; message: string }> {
     try {
+      // TODO: controllare se sia il caso di loggare questi dati
+      logger.info("resquest: ", JSON.stringify(request));
       logger.info(`PUT upsertUser: ${JSON.stringify(request)}`);
 
-      let data;
-      if (request.criteria.subjectId) {
-        data = await ResidenceSubmissionService.getBySubjectId(
-          request.criteria.subjectId
-        );
-      } else if (checkPersonalInfo(request)) {
-        data = await ResidenceSubmissionService.getByPersonalInfo(
-          request.criteria
-        );
-      } else if (request.criteria.id) {
-        data = await ResidenceSubmissionService.getById(request.criteria.id);
-      } else {
-        throw requestParamNotValid(
-          "The request body has one or more required param not valid"
-        );
+      console.log("request.instanceof", request.instanceof);
+
+      const subjectId = getSubjectId(request);
+
+      if (!subjectId) {
+        throw requestParamNotValid("The subjectId is missing or invalid");
       }
 
-      if (data) {
-        await dataPreparationRepository.updateById(data.id, request);
-      } else {
-        await dataPreparationRepository.create(request);
+      if (request.subjects && Array.isArray(request.subjects.subject)) {
+        await Promise.all(
+          request.subjects.subject.map(async (subject) => {
+            const subjectId = subject?.generality?.subjectId?.subjectId; // TODO: da gestire il tipo di subjectId
+
+            if (!subjectId) {
+              throw requestParamNotValid("The subjectId is missing or invalid");
+            }
+
+            const data = await ResidenceSubmissionService.getBySubjectId(
+              subjectId,
+            );
+
+            if (data) {
+              // Aggiorna il record esistente
+              await dataPreparationRepository.updateSubjectByUuid(
+                data.uuid,
+                subject,
+              );
+            } else {
+              await dataPreparationRepository.createSubject(subject);
+            }
+          }),
+        );
       }
 
       return {
@@ -54,23 +55,25 @@ class ResidenceSubmissionController {
       };
     } catch (error) {
       logger.error(` Errore in 'upsertUser': `, error);
-
       return {
         status: "KO",
-        message:
-          error.message || "Errore durante il caricamento della residenza",
+        message: "Errore durante il caricamento della residenza",
       };
     }
   }
 }
 
-const checkPersonalInfo = (request: RichiestaAR001): boolean =>
-  !!request.criteria.name &&
-  !!request.criteria.surname &&
-  !!request.criteria.birthDate &&
-  !!request.criteria.birthDate.eventDate &&
-  !!request.criteria.birthDate.birthPlace &&
-  !!request.criteria?.birthDate?.birthPlace?.municipality?.nameMunicipality &&
-  !!request.criteria?.birthDate?.birthPlace?.place?.codState;
+const getSubjectId = (request: RichiestaAR003): string | undefined => {
+  if (
+    request &&
+    request.subjects &&
+    Array.isArray(request.subjects.subject) &&
+    request.subjects.subject.length > 0 &&
+    request.subjects.subject[0]?.generality?.subjectId?.subjectId
+  ) {
+    return request.subjects.subject[0].generality.subjectId.subjectId;
+  }
+  return undefined;
+};
 
 export default new ResidenceSubmissionController();

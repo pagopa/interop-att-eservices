@@ -2,125 +2,81 @@ import { logger } from "pdnd-common";
 import { UserModel } from "pdnd-models";
 import { getContext } from "pdnd-common";
 import dataPreparationRepository from "../repository/dataPreparationRepository.js";
-import generateHash from "../utilities/hashUtilities.js";
-import {
-  findUserModelBySubjectId,
-  findUserModelById,
-  findUserModelByPersonalInfo,
-} from "../utilities/userUtilities.js";
-import { TipoParametriRicercaAR001 } from "../model/domain/models.js";
 import { userModelNotFound } from "../exceptions/errors.js";
 
-class ResidenceVerificationService {
+
+// TODO: da aggiungere il mapping qui
+class ResidenceSubmissionService {
   public appContext = getContext();
 
   public async getBySubjectId(subjectId: string): Promise<UserModel | null> {
     try {
-      const hash = generateHash([this.appContext.authData.purposeId]);
-      const result = await dataPreparationRepository.findAllByKey(
-        hash,
-        this.appContext.authData.purposeId,
-      );
-      const users = result;
-      return findUserModelBySubjectId(users, subjectId);
+      logger.info(`[START] getBySubjectId`);
+      const user = await dataPreparationRepository.findByUuid(subjectId);
+      if (!user) {
+        throw userModelNotFound(`User with subjectId ${subjectId} not found`);
+      }
+      logger.info(`[END] getBySubjectId`);
+      return user;
     } catch (error) {
-      logger.error(
-        `UserService: Errore durante il salvataggio della lista. `,
-        error,
-      );
+      logger.error(`Error during getBySubjectId.`, error);
       throw error;
     }
   }
 
   public async getById(id: string): Promise<UserModel | null> {
     try {
-      const hash = generateHash([this.appContext.authData.purposeId]);
-      const result = await dataPreparationRepository.findAllByKey(
-        hash,
-        this.appContext.authData.purposeId,
-      );
-      const users = result;
-      return findUserModelById(users, id);
+      logger.info(`[START] getById`);
+      const user = await dataPreparationRepository.findByUuid(id);
+      if (!user) {
+        throw userModelNotFound(`User with id ${id} not found`);
+      }
+      logger.info(`[END] getById`);
+      return user;
     } catch (error) {
-      logger.error(
-        `UserService: Errore durante il salvataggio della lista. `,
-        error,
-      );
+      logger.error(`Error during getById.`, error);
       throw error;
     }
   }
 
-  public async getByPersonalInfo(
-    parametriRicerca: TipoParametriRicercaAR001,
-  ): Promise<UserModel[]> {
-    try {
-      const hash = generateHash([this.appContext.authData.purposeId]);
-      const result = await dataPreparationRepository.findAllByKey(
-        hash,
-        this.appContext.authData.purposeId,
-      );
-      const users = result;
-      const userModelFound = findUserModelByPersonalInfo(
-        users,
-        parametriRicerca,
-      );
-      if (!userModelFound) {
-        throw userModelNotFound("Not found");
-      }
-      return userModelFound;
-    } catch (error) {
-      logger.error(
-        `UserService: Errore durante il salvataggio della lista. `,
-        error,
-      );
-      throw error;
-    }
-  }
   public async updateById(
     id: string,
-    updatedUser: UserModel,
+    updatedUser: UserModel
   ): Promise<UserModel | null> {
     try {
-      const hash = generateHash([this.appContext.authData.purposeId]);
-      const result = await dataPreparationRepository.findAllByKey(
-        hash,
-        this.appContext.authData.purposeId,
-      );
-      const users = result;
-
-      const userIndex = users.findIndex((user) => user.id === id);
-      if (userIndex === -1) {
+      logger.info(`[START] updateById`);
+      const existingUser = await this.getById(id);
+      if (!existingUser) {
         throw userModelNotFound(`User with id ${id} not found`);
       }
 
-      users[userIndex] = { ...users[userIndex], ...updatedUser };
-      await dataPreparationRepository.saveAllByKey(hash, users, users);
+      await dataPreparationRepository.updateSubjectByUuid(id, updatedUser);
 
-      return users[userIndex];
+      logger.info(`[END] updateById`);
+      return { ...existingUser, ...updatedUser };
     } catch (error) {
-      logger.error(`UserService: Error during user update by id. `, error);
+      logger.error(`Error during updateById.`, error);
       throw error;
     }
   }
 
-  public async save(newUser: UserModel): Promise<UserModel> {
-    try {
-      const hash = generateHash([this.appContext.authData.purposeId]);
-      const result = await dataPreparationRepository.findAllByKey(
-        hash,
-        this.appContext.authData.purposeId,
-      );
-      const users = result || [];
+  // public async save(newUser: UserModel): Promise<UserModel> {
+  //   try {
+  //     logger.info(`[START] save`);
+  //     const id = newUser.id || this.generateUuid();
+  //     await dataPreparationRepository.createSubject(id, newUser);
+  //     logger.info(`[END] save`);
+  //     return { ...newUser, id };
+  //   } catch (error) {
+  //     logger.error(`Error during save.`, error);
+  //     throw error;
+  //   }
+  // }
 
-      users.push(newUser);
-      await dataPreparationRepository.saveAllByKey(hash, users, users);
-
-      return newUser;
-    } catch (error) {
-      logger.error(`UserService: Error during user save. `, error);
-      throw error;
-    }
-  }
+  // Genera un UUID
+  // private generateUuid(): string {
+  //   return crypto.randomUUID();
+  // }
 }
 
-export default new ResidenceVerificationService();
+export default new ResidenceSubmissionService();

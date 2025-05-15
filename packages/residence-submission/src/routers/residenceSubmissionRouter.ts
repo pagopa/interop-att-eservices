@@ -33,18 +33,20 @@ const residenceSubissionController = (
     async (req, res) => {
       try {
         logger.info(`[START] residenceSubissionController: ${req.body}`);
-        const data: any = await ResidenceSubmissionController.upsertUser(req.body); // TODO: da gestire il tipo della costante "data"
+        const data: any = await ResidenceSubmissionController.upsertUser(
+          req.body
+        ); // TODO: da gestire il tipo della costante "data"
         if (!data || data.subjects?.subject?.length === 0) {
           throw userModelNotFound();
         }
         void TrialService.insert(
           req.url,
           req.method,
-          "RESIDENCE_VERIFICATION_001",
+          "RESIDENCE_VERIFICATION_001", // TODO: da controllare
           "OK"
         );
         logger.info(`[END] residenceSubissionController`);
-        return res.status(200).json(data).end();
+        return res.status(200).json(data).end(); // TODO: da controllare se sia il caso da ritornare l'oggetto salvato
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;
@@ -55,9 +57,9 @@ const residenceSubissionController = (
         void TrialService.insert(
           req.url,
           req.method,
-          "RESIDENCE_VERIFICATION_001",
+          "RESIDENCE_VERIFICATION_001", // TODO: da controllare
           "KO",
-          JSON.stringify(generalErrorResponse)
+          JSON.stringify(generalErrorResponse),
         );
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }

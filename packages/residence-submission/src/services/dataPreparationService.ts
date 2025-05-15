@@ -1,119 +1,70 @@
 import { logger } from "pdnd-common";
-import { UserModel } from "pdnd-models";
-import { v4 as uuidv4 } from "uuid";
 import { getContext } from "pdnd-common";
-import { DataPreparationTemplate } from "../model/domain/models.js";
 import dataPreparationRepository from "../repository/dataPreparationRepository.js";
-import { apiDataPreparationTemplateToUserModel } from "../model/domain/apiConverter.js";
-import generateHash from "../utilities/hashUtilities.js";
-import {
-  appendUniqueUserModelsToArray,
-  findUserModelByUUID,
-  deleteUserModelByUUID,
-} from "../utilities/userUtilities.js";
+// import { mapUserModel } from "../utilities/mapUserModelUtilities.js";
 
 class DataPreparationService {
   public appContext = getContext();
 
-  public async saveList(
-    genericRequest: DataPreparationTemplate
-  ): Promise<UserModel[] | null> {
+  public async findByUuid(uuid: string): Promise<any | null> {
     try {
-      logger.info(`[START] saveList`);
-      const userData: UserModel[] = [
-        apiDataPreparationTemplateToUserModel(genericRequest, uuidv4()),
-      ];
-      const hash = generateHash([this.appContext.authData.purposeId]);
-      const persistedUserData = await dataPreparationRepository.findAllByKey(
-        hash
+      logger.info(`[START] findByUuid`);
+      const result = await dataPreparationRepository.findByUuid(uuid);
+      logger.info(`[END] findByUuid`);
+      return result;
+    } catch (error) {
+      logger.error(
+        `findByUuid - Errore durante il recupero del record.`,
+        error
       );
-      if (persistedUserData == null || persistedUserData.length === 0) {
-        await dataPreparationRepository.saveList(userData, hash);
-      } else {
-        const allUser = appendUniqueUserModelsToArray(
-          persistedUserData,
-          userData
-        );
-        await dataPreparationRepository.saveList(allUser, hash);
+      throw error;
+    }
+  }
+
+  public async updateByUuid(uuid: string /* , body: any */): Promise<void> {
+    try {
+      logger.info(`[START] updateByUuid`);
+      const existingRecord = await this.findByUuid(uuid);
+
+      if (!existingRecord) {
+        throw new Error(`Record con UUID ${uuid} non trovato.`);
       }
-      const response = await dataPreparationRepository.findAllByKey(hash);
-      logger.info(`[END] saveList`);
-      return response;
+
+
+      // await dataPreparationRepository.updateSubjectByUuid(uuid, subjectData);
+
+      logger.info(`[END] updateByUuid`);
     } catch (error) {
       logger.error(
-        `saveList - Errore durante il salvataggio della lista.`,
+        `updateByUuid - Errore durante l'aggiornamento del record.`,
         error
       );
       throw error;
     }
   }
 
-  public async getAll(): Promise<UserModel[] | null> {
-    try {
-      logger.info(`[START] getAll`);
-      const hash = generateHash([this.appContext.authData.purposeId]);
-      const response = await dataPreparationRepository.findAllByKey(hash);
-      logger.info(`[END] getAll`);
-      return response;
-    } catch (error) {
-      logger.error(`getAll: Errore durante il recupero della lista.`, error);
-      throw error;
-    }
-  }
+  // private mapSubjectData(body: any): any {
+  //   const subject = body.subjects.subject[0].generality;
+  //   const birthPlace = subject.birthPlace;
 
-  public async getByUUID(uuid: string): Promise<UserModel | null> {
-    try {
-      logger.info(`[START] getByUUID`);
-      const hash = generateHash([this.appContext.authData.purposeId]);
-      const result = await dataPreparationRepository.findAllByUuid(hash, uuid);
-      const response = findUserModelByUUID(result, uuid);
-      logger.info(`[START] getByUUID`);
-      return response;
-    } catch (error) {
-      logger.error(
-        `UserService: Errore durante il salvataggio della lista. `,
-        error
-      );
-      throw error;
-    }
-  }
+  //   return {
+  //     // ...mapGeneralData(subject),
+  //     // subject_id: subject.subjectId.subjectId,
+  //     // ...mapBirthData(birthPlace),
+  //     // surname: subject.surname,
+  //     // birth_exceptional_place: birthPlace?.exceptionalPlace,
+  //     // municipality_name: birthPlace?.municipality?.nameMunicipality,
+  //     // istat_code: birthPlace?.municipality?.istatCode,
+  //     // province_acronym: birthPlace?.municipality?.acronymIstatProvince,
+  //     // place_description: birthPlace?.place?.placeDescription,
+  //     ...mapUserModel(subject)
+  //   };
+  // }
 
-  public async deleteAllByKey(): Promise<number | null> {
-    try {
-      logger.info(`[START] deleteAllByKey`);
-      const hash = generateHash([this.appContext.authData.purposeId]);
-      const response = await dataPreparationRepository.deleteAllByKey(hash);
-      logger.info(`[END] deleteAllByKey`);
-      return response;
-    } catch (error) {
-      logger.error(
-        `UserService: Errore durante la cancellazione della lista. `,
-        error
-      );
-      throw error;
-    }
-  }
-
-  public async deleteByUUID(uuid: string): Promise<UserModel[] | null> {
-    try {
-      logger.info(`[START] deleteByUUID`);
-      const hash = generateHash([this.appContext.authData.purposeId]);
-      const allSaved = await dataPreparationRepository.findAllByKey(hash);
-      const user = deleteUserModelByUUID(allSaved, uuid);
-      await this.deleteAllByKey();
-      if (user) {
-        await dataPreparationRepository.saveList(user, hash);
-      }
-      logger.info(`[END] deleteByUUID`);
-      return user;
-    } catch (error) {
-      logger.error(
-        `deleteByUUID - Errore durante l'aggiornamento della lista.`,
-        error
-      );
-      throw error;
-    }
-  }
+  // private mapAddressData(body: any): any[] {
+  //   const addresses = body.subjects.subject[0].address;
+  //   return addresses.map((address: any) => mapAddressData(address));
+  // }
 }
 
 export default new DataPreparationService();
