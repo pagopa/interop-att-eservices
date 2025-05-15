@@ -691,43 +691,6 @@ const endpoints = makeApi([
       })
       .passthrough(),
   },
-  {
-    method: "put",
-    path: "/residence-submission",
-    alias: "SubmitResidence",
-    description: `Submit a residential address`,
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "body",
-        type: "Body",
-        schema: TipoResidenza,
-      },
-    ],
-    response: z.object({ submissionId: z.string() }).partial(),
-    errors: [
-      {
-        status: 400,
-        description: `Bad request`,
-        schema: z.void(),
-      },
-      {
-        status: 401,
-        description: `Unauthorized`,
-        schema: z.void(),
-      },
-      {
-        status: 403,
-        description: `Forbidden`,
-        schema: z.void(),
-      },
-      {
-        status: 500,
-        description: `Internal Server Error`,
-        schema: z.void(),
-      },
-    ],
-  },
 ]);
 
 export const api = new Zodios(endpoints);
