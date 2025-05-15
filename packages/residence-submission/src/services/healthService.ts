@@ -1,3 +1,5 @@
+// TODO: da implementare il servizio di health
+
 import { getContext } from "pdnd-common";
 import {
   signerConfig,
@@ -7,7 +9,7 @@ import {
 } from "pdnd-common";
 import axios, { AxiosResponse } from "axios";
 import { sequelize } from "trial";
-import healtRepository from "../repository/healtRepository.js";
+import healtRepository from "../repository/healthRepository.js";
 
 class healtService {
   public appContext = getContext();
@@ -37,10 +39,8 @@ class healtService {
     }
 
     try {
-      // Prova a connetterti al database
       await sequelize.authenticate();
     } catch (error) {
-      // Se c'è un errore nella connessione, invia una risposta negativa
       logger.error(`Errore nella connessione al database: ${error}`);
       return false;
     }

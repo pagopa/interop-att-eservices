@@ -58,6 +58,22 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/GeneralError'
+    /residence-submission/status:
+    get:
+      tags:
+        - Health Check
+      summary: Health status endpoint
+      description: Return ok
+      operationId: getStatus
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+
+
 components:
   schemas:
     RichiestaAR003:
