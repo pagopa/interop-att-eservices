@@ -31,8 +31,7 @@ export class TrialRepository {
         check_code: Check.code,
         check_description: Check.description,
         check_order: Check.order,
-        category_id: Category.id,
-        category_name: Category.name,
+        category_id: Category.id
       })
       .from(Trial)
       .leftJoin(Check, eq(Trial.check_id, Check.id))
@@ -73,12 +72,7 @@ export class TrialRepository {
               code: trial.check_code,
               description: trial.check_description,
               order: trial.check_order,
-              category: trial.category_id
-                ? {
-                  id: trial.category_id,
-                  name: trial.category_name,
-                }
-                : undefined,
+              category: trial.category_id ? trial.category_id : undefined,
             },
           ]
           : [],

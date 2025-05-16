@@ -1,10 +1,11 @@
-import { pgTable, varchar, integer, bigserial, text } from "drizzle-orm/pg-core";
+import { varchar, integer, bigserial, pgSchema } from "drizzle-orm/pg-core";
 
-export const Category = pgTable("category", {
+export const customSchema = pgSchema('att');
+
+export const Category = customSchema.table('category', {
     id: bigserial('id', { mode: 'number' }).primaryKey(),
-    code: varchar("code", { length: 255 }).notNull(),
-    eservice: varchar("eservice", { length: 255 }).notNull(),
-    description: varchar("description", { length: 255 }),
-    order: integer("order").notNull(),
-    name: text("name")
+    code: varchar('code', { length: 255 }).notNull(),
+    eservice: varchar('eservice', { length: 255 }).notNull(),
+    description: varchar('description', { length: 255 }),
+    order: integer('order').notNull()
 });

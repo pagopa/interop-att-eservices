@@ -1,3 +1,3 @@
-export * from './category.js';
-export * from './check.js';
-export * from './trial.js';
+export { Category } from './category.js';
+export { Check } from './check.js';
+export { Trial } from './trial.js';

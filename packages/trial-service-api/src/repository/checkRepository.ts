@@ -16,7 +16,6 @@ export class CheckRepository {
           code: Category.code,
           description: Category.description,
           order: Category.order,
-          name: Category.name,
           eservice: Category.eservice,
         }
       })

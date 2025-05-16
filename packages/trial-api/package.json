@@ -15,7 +15,9 @@
     "format:write": "prettier --write src",
     "start": "node --no-warnings --loader ts-node/esm -r dotenv-flow/config ./src/index.ts",
     "build": "tsc",
-    "check": "tsc --project tsconfig.check.json"
+    "check": "tsc --project tsconfig.check.json",
+    "drizzle:generate": "pnpm build && drizzle-kit generate",
+    "drizzle:migrate": "drizzle-kit push"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +36,7 @@
     "@types/uuid": "^9.0.2",
     "class-transformer": "^0.5.1",
     "cpx": "^1.5.0",
+    "drizzle-kit": "^0.31.1",
     "openapi-zod-client": "1.15.1",
     "prettier": "^2.8.8",
     "testcontainers": "^10.2.2",
@@ -52,7 +55,6 @@
     "dns": "^0.2.2",
     "dotenv": "^16.4.5",
     "dotenv-flow": "^3.2.0",
-    "drizzle-kit": "^0.31.1",
     "drizzle-orm": "^0.43.1",
     "express": "^4.18.3",
     "express-validator": "^7.0.1",
