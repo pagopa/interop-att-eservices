@@ -128,8 +128,6 @@ class DataPreparationService {
           floor: userData.address.address.civicNumber.internalCivic.floor,
           nui: userData.address.address.civicNumber.internalCivic.nui,
           isolated: userData.address.address.civicNumber.internalCivic.isolated,
-          latitude: userData.address.address.coords?.latitude,
-          longitude: userData.address.address.coords?.longitude,
           foreign_cap: userData.address.foreignState.foreignAddress.cap,
           foreign_place_description:
             userData.address.foreignState.foreignAddress.place.placeDescription,

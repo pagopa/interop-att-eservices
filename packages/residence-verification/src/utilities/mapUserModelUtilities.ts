@@ -93,13 +93,6 @@ function mapAddressData(address: Address): TipoResidenzaModel {
       fraction: "",
       toponym: mapToponym(address),
       civicNumber: mapCivicNumber(address),
-      coords:
-        address.latitude && address.longitude
-          ? {
-              latitude: address.latitude,
-              longitude: address.longitude,
-            }
-          : undefined,
     },
     foreignState: mapForeignState(address),
   };

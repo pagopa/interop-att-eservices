@@ -11,7 +11,6 @@ import {
 } from "vitest";
 import DataPreparationServiceInstance from "../src/services/DataPreparationService";
 import { DataPreparationTemplate } from "../src/model/domain/models.js";
-import { UserModel } from "pdnd-models";
 import { populateBaseTestData, setupTestDb } from "./setUpTestDb";
 import { TEST_POSTGRES_SCHEMA } from "./config";
 import { eq, or } from "drizzle-orm";
