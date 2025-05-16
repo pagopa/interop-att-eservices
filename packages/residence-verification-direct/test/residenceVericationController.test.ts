@@ -1,4 +1,3 @@
-/// <reference types="vitest/globals" />
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
 vi.mock("pdnd-common", () => ({
@@ -223,9 +222,6 @@ describe("ResidenceVerificationController", () => {
       mockCoordinatesServiceResponse
     );
     (UserModelToApiTipoDatiSoggettiEnte as Mock).mockImplementation(
-      // Note: This mock implementation only uses the first argument it receives.
-      // If the controller sends more, they are ignored by this mock's logic
-      // but recorded by the spy wrapper for assertion purposes.
       (userWithCoords: UserModel) => {
         const expectedUserWithCoordsString = JSON.stringify(
           generatedMockUserModelWithCoords
@@ -290,7 +286,6 @@ describe("ResidenceVerificationController", () => {
 
       expect(normalizedActualArg).toEqual(normalizedExpectedArg);
 
-      // MODIFIED ASSERTION:
       expect(UserModelToApiTipoDatiSoggettiEnte).toHaveBeenCalledWith(
         expect.objectContaining(generatedMockUserModelWithCoords),
         expect.any(Number),
@@ -378,7 +373,6 @@ describe("ResidenceVerificationController", () => {
 
       expect(normalizedActualArg).toEqual(normalizedExpectedArg);
 
-      // MODIFIED ASSERTION:
       expect(UserModelToApiTipoDatiSoggettiEnte).toHaveBeenCalledWith(
         expect.objectContaining(generatedMockUserModelWithCoords),
         expect.any(Number),
@@ -482,9 +476,7 @@ describe("ResidenceVerificationController", () => {
 
       expect(checkInfoSoggettoEquals).toHaveBeenCalledWith(
         request.check?.address,
-        generatedMockUserModelWithCoords // Assuming findUserVerify also calls the mapper internally in a similar way if it processes a list
-        // or if UserModelToApiTipoDatiSoggettiEnte is not involved here, this part is fine.
-        // The primary failing tests are in findUser.
+        generatedMockUserModelWithCoords
       );
       expect(response.subjects?.infoSubject[0]).toEqual(
         mockVerificationResultOK
