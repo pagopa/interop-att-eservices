@@ -161,6 +161,25 @@ const endpoints = makeApi([
       },
     ],
   },
+  {
+    method: "get",
+    path: "/residence-submission/status",
+    alias: "healthCheck",
+    description: `Verifica lo stato del servizio.`,
+    requestFormat: "json",
+    response: z.object({
+      status: z.string(),
+      uptime: z.number(),
+      timestamp: z.string(),
+    }),
+    errors: [
+      {
+        status: 500,
+        description: `Internal Server Error`,
+        schema: z.void(),
+      },
+    ],
+  },
 ]);
 
 export const api = new Zodios(endpoints);
