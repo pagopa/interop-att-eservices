@@ -10,31 +10,23 @@ class dataPreparationRepository {
     try {
       await cacheManager.setObject(key, JSON.stringify(genericRequest));
       const saved = await cacheManager.getObjectByKey(key);
-      logger.info(`dataPreparationRepository: Elemento salvato con successo.`);
+      logger.info(`dataPreparationRepository: Item saved successfully.`);
       return saved;
     } catch (error) {
-      logger.error(
-        `dataPreparationRepository: Errore durante il salvataggio del' elemento: `,
-        error
-      );
+      logger.error(`dataPreparationRepository: Error saving item: `, error);
       throw error;
     }
   }
 
   public async findAllByKey(key: string): Promise<UserModel[] | null> {
     try {
-      const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
+      const dataSaved = await cacheManager.getObjectByKey(key);
       const arrayUser = parseJsonToUserArray(dataSaved);
-      logger.info(
-        `dataPreparationRepository: Elemento recuperato con successo.`
-      );
+      logger.info(`dataPreparationRepository: Item retrieved successfully.`);
       return arrayUser;
     } catch (error) {
-      logger.error(
-        `userRepository: Errore durante il recupero dell'elemento: `,
-        error
-      );
-      throw error; // Rilancia l'errore per gestione superiore
+      logger.error(`userRepository: Error retrieving item: `, error);
+      throw error;
     }
   }
 
@@ -44,26 +36,21 @@ class dataPreparationRepository {
   ): Promise<UserModel[] | null> {
     try {
       logger.info(uuid);
-      const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
+      const dataSaved = await cacheManager.getObjectByKey(key);
       const datas = parseJsonToUserArray(dataSaved);
-      logger.info(
-        `dataPreparationRepository: Elemento recuperato con successo.`
-      );
+      logger.info(`dataPreparationRepository: Item retrieved successfully.`);
       return datas;
     } catch (error) {
-      logger.error(
-        `userRepository: Errore durante il recupero dell'elemento: `,
-        error
-      );
-      throw error; // Rilancia l'errore per gestione superiore
+      logger.error(`userRepository: Error retrieving item: `, error);
+      throw error;
     }
   }
 
   public async deleteAllByKey(key: string): Promise<number | null> {
     try {
-      await cacheManager.deleteAllObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
+      await cacheManager.deleteAllObjectByKey(key);
 
-      const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
+      const dataSaved = await cacheManager.getObjectByKey(key);
       const arrayUser = parseJsonToUserArray(dataSaved);
       if (arrayUser == null) {
         return 0;
@@ -71,11 +58,8 @@ class dataPreparationRepository {
         return arrayUser?.length;
       }
     } catch (error) {
-      logger.error(
-        `userRepository: Errore durante il recupero dell'elemento: `,
-        error
-      );
-      throw error; // Rilancia l'errore per gestione superiore
+      logger.error(`userRepository: Error retrieving item: `, error);
+      throw error;
     }
   }
 }

@@ -32,12 +32,7 @@ class DataPreparationService {
         .from(Purpose)
         .where(eq(Purpose.id, purposeId));
 
-      logger.info(`Purpose retrieved: ${JSON.stringify(purpose)}`);
-
       if (!purpose) {
-        logger.info(
-          `No purpose found, inserting new record with id: ${purposeId}`
-        );
         await db.insert(Purpose).values({ id: purposeId });
       } else {
         logger.info(`Purpose already exists: ${JSON.stringify(purpose)}`);
@@ -158,10 +153,7 @@ class DataPreparationService {
 
       return { uuid: usecaseUuid };
     } catch (error) {
-      logger.error(
-        "saveList - Errore durante il salvataggio della lista.",
-        error
-      );
+      logger.error("saveList - Error during list saving.", error);
       throw error;
     }
   }
@@ -212,7 +204,7 @@ class DataPreparationService {
         (userModel): userModel is UserModel => userModel !== null
       );
     } catch (error) {
-      logger.error("Errore in getAll:", error);
+      logger.error("Error in getAll:", error);
       return null;
     }
   }
@@ -245,7 +237,7 @@ class DataPreparationService {
 
       return userModel;
     } catch (error) {
-      logger.error("UserService: Errore in getByUUID", error);
+      logger.error("UserService: Error in getByUUID", error);
       throw error;
     }
   }
@@ -293,7 +285,7 @@ class DataPreparationService {
 
       return 0;
     } catch (error) {
-      logger.error("deleteAllByKey: errore nella cancellazione", error);
+      logger.error("deleteAllByKey: error during deletion", error);
       return null;
     }
   }
@@ -311,7 +303,7 @@ class DataPreparationService {
         .where(eq(Usecase.id, uuid));
 
       if (!useCase) {
-        logger.warn(`Usecase con UUID ${uuid} non trovato`);
+        logger.warn(`Usecase with UUID ${uuid} not found`);
         return;
       }
 
@@ -341,7 +333,7 @@ class DataPreparationService {
 
       logger.info(`[END] deleteByUUID`);
     } catch (error) {
-      logger.error(`deleteByUUID - Errore durante la cancellazione`, error);
+      logger.error(`deleteByUUID - Error during deletion`, error);
       throw error;
     }
   }

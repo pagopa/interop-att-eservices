@@ -1,6 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS att;
 
--- Creazione della tabella subjects
+
 CREATE TABLE IF NOT EXISTS att.subjects (
   uuid UUID PRIMARY KEY,
   id TEXT,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS att.subjects (
   birth_province_county TEXT
 );
 
--- Creazione della tabella addresses
+
 CREATE TABLE IF NOT EXISTS att.addresses (
   id UUID PRIMARY KEY,
   address_type TEXT,
@@ -68,12 +68,11 @@ CREATE TABLE IF NOT EXISTS att.addresses (
   consulate_cod TEXT,
   consulate_description TEXT
 );
--- Creazione della tabella purposes
+
 CREATE TABLE IF NOT EXISTS att.purposes (
   id UUID PRIMARY KEY
 );
 
--- Creazione della tabella users
 CREATE TABLE IF NOT EXISTS att.usecases (
   id UUID PRIMARY KEY,
   purpose_id UUID REFERENCES att.purposes(id),

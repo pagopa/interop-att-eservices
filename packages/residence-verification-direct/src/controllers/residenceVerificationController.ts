@@ -57,7 +57,6 @@ class ResidenceVerificationController {
     request: RichiestaAR002
   ): Promise<RispostaAR002OK> {
     try {
-      logger.info(`Post findUserVerify: ${JSON.stringify(request)}`);
       const data = await this.getUserData(request);
 
       if (!data || data.length === 0) {
@@ -86,9 +85,6 @@ class ResidenceVerificationController {
   ): Promise<UserModel[] | undefined> {
     const { subjectId, id } = request.criteria;
     try {
-      logger.info(`id ${JSON.stringify(id)}`);
-      logger.info(`subjectId ${JSON.stringify(subjectId)}`);
-
       if (subjectId) {
         return this.fetchAndUpdateUser(getUserBySubjectId(subjectId));
       }

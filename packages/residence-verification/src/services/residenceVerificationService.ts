@@ -59,7 +59,7 @@ export const getUserBySubjectId = async (
     return await mapUserModel(subject.uuid, subject, address);
   } catch (error) {
     logger.error(
-      `Errore durante getUserBySubjectId per subjectId: ${subjectId}`,
+      `Error during getUserBySubjectId for subjectId: ${subjectId}`,
       error
     );
     throw error;
@@ -94,7 +94,7 @@ export const getById = async (id: string): Promise<UserModel | null> => {
   } catch (error) {
     const appContext = getAppContext();
     logger.error(
-      `UserService: Errore durante il recupero dello user per id ${id} e purposeId ${appContext.authData.purposeId}.`,
+      `UserService: Error retrieving user by id ${id} and purposeId ${appContext.authData.purposeId}.`,
       error
     );
     throw error;
@@ -161,10 +161,7 @@ export const getByPersonalInfo = async (
 
     return userModels;
   } catch (error) {
-    logger.error(
-      `UserService: Errore durante la ricerca per info personali`,
-      error
-    );
+    logger.error(`UserService: Error during search by personal info`, error);
     throw error;
   }
 };

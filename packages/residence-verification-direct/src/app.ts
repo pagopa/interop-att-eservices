@@ -1,24 +1,16 @@
 import express from "express";
-import { InteroperabilityConfig } from "pdnd-common";
-import { zodiosCtx } from "pdnd-common";
-
-import { logger } from "pdnd-common";
-const app = zodiosCtx.app();
+import { Sequelize } from "sequelize";
+import { DatabaseConfig, InteroperabilityConfig, zodiosCtx } from "pdnd-common";
 import dataPreparationRouter from "./routers/dataPreparationRouter.js";
-import residenceVerificationRouter from "./routers/residenceVerificationRouter.js";
+
 import healthRouter from "./routers/healthRouter.js";
+import residenceVerificationRouter from "./routers/residenceVerificationRouter.js";
 
+const config = InteroperabilityConfig.and(DatabaseConfig).parse(process.env);
+export const dbInstance = new Sequelize(config.databaseUrl);
+
+const app = zodiosCtx.app();
 app.use(express.json());
-const config = InteroperabilityConfig.parse(process.env);
-logger.info(
-  `config.skipInteroperabilityVerification  ${config.skipInteroperabilityVerification}`
-);
-
-/* if (!config.skipInteroperabilityVerification) {
-  //app.use(authenticationMiddleware(),integrityValidationMiddleware(), auditValidationMiddleware() );
-  app.use("/residence-verification/data-preparation", authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware());
-} */
-
 app.use("/", healthRouter(zodiosCtx));
 app.use("/", dataPreparationRouter(zodiosCtx));
 app.use("/", residenceVerificationRouter(zodiosCtx));

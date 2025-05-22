@@ -25,7 +25,6 @@ class ResidenceVerificationController {
     request: RichiestaAR001
   ): Promise<RispostaAR001 | null | undefined> {
     try {
-      logger.info(`Post findUser: ${JSON.stringify(request)}`);
       const data = await this.getUserData(request);
 
       if (!data || data.length === 0) {
@@ -50,7 +49,6 @@ class ResidenceVerificationController {
     request: RichiestaAR002
   ): Promise<RispostaAR002OK> {
     try {
-      logger.info(`Post findUserVerify: ${JSON.stringify(request)}`);
       const data = await this.getUserData(request);
 
       if (!data || data.length === 0) {
@@ -76,9 +74,6 @@ class ResidenceVerificationController {
   ): Promise<UserModel[] | undefined> {
     const { subjectId, id } = request.criteria;
     try {
-      logger.info(`id ${JSON.stringify(id)}`);
-      logger.info(`subjectId ${JSON.stringify(subjectId)}`);
-
       if (subjectId) {
         const user = await getUserBySubjectId(subjectId);
         return user ? [user] : [];
@@ -92,7 +87,7 @@ class ResidenceVerificationController {
         const user = await getById(`${id}`);
         return user ? [user] : [];
       }
-      logger.warn("Nessun criterio di ricerca valido fornito a getUserData.");
+
       return [];
     } catch (error) {
       logger.error(`Error retrieving user data: ${JSON.stringify(error)}`);
