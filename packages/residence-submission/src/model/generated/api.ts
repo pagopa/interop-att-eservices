@@ -32,7 +32,9 @@ const TipoGeneralita = z
 const TipoResidenza = z
   .object({
     addressType: z.string(),
-    // noteAddress: z.string(),
+    noteAddress: z.string(),
+    presso: z.string(),
+    addressStartDate: z.string(),
   })
   .partial()
   .passthrough();
@@ -64,6 +66,7 @@ const TipoLocalita = z
     placeDescription: z.string(),
     countryDescription: z.string(),
     codState: z.string(),
+    provinceCounty: z.string()
   })
   .partial()
   .passthrough();
