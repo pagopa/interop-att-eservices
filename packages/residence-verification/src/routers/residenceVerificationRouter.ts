@@ -32,7 +32,7 @@ const residenceVerificationRouter = (
     auditValidationMiddleware(),
     async (req, res) => {
       try {
-        logger.info(`[START] residenceVerificationRouter: ${req.body}`);
+        logger.info(`[START] residenceVerificationRouter: ${JSON.stringify(req.body)}`);
         const data = await ResidenceVerificationController.findUser(req.body);
         if (!data || data.subjects?.subject?.length === 0) {
           throw userModelNotFound();
@@ -72,7 +72,7 @@ const residenceVerificationRouter = (
     auditValidationMiddleware(),
     async (req, res) => {
       try {
-        logger.info(`[START] Check ResidenceVerificationRouter: ${req.body}`);
+        logger.info(`[START] Check ResidenceVerificationRouter: ${JSON.stringify(req.body)}`);
         const data = await ResidenceVerificationController.findUserVerify(
           req.body
         );

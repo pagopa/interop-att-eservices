@@ -17,7 +17,7 @@
     "build": "tsc",
     "check": "tsc --project tsconfig.check.json",
     "drizzle:generate": "pnpm build && drizzle-kit generate",
-    "drizzle:migrate": "drizzle-kit push"
+    "drizzle:migrate": "drizzle-kit migrate"
   },
   "keywords": [],
   "author": "",
@@ -55,7 +55,7 @@
     "dns": "^0.2.2",
     "dotenv": "^16.4.5",
     "dotenv-flow": "^3.2.0",
-    "drizzle-orm": "^0.43.1",
+    "drizzle-orm": "^0.44.1",
     "express": "^4.18.3",
     "express-validator": "^7.0.1",
     "fs": "^0.0.1-security",

@@ -7,8 +7,7 @@ import { match } from "ts-pattern";
 import { logger } from "pdnd-common";
 import { ExpressContext, InteroperabilityConfig } from "pdnd-common";
 import { TrialService } from "trial";
-import { generateHashFromString } from "../utilities/hashUtilities.js";
-import { validate as tokenValidation } from "./interoperabilityValidationMiddleware.js";
+
 
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 
@@ -46,15 +45,7 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
           void TrialService.insert(req.url, req.method, "SIGNATURE_NOT_VALID");
           throw ErrorHandling.missingHeader("agid-jwt-signature");
         }
-        if (!(await tokenValidation(signatureToken, "signatureToken"))) {
-          logger.error(`integrityValidationMiddleware - token not valid`);
-          void TrialService.insert(
-            req.url,
-            req.method,
-            "SIGNATURE_PUBLIC_KEY_NOT_VALID"
-          );
-          throw ErrorHandling.tokenNotValid();
-        }
+
         if (process.env.SKIP_AGID_PAYLOAD_VERIFICATION !== "true") {
           verifyJwtPayload(signatureToken, req);
         }
@@ -176,16 +167,26 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
   }
 
   const signedHeaders = decodedToken.payload.signed_headers;
-  const requiredSignatureHeaders = [
-    "content-type",
-    "content-encoding",
-    "digest",
-  ];
-  for (const headerName of requiredSignatureHeaders) {
-    const signedHeaderExists = signedHeaders.some(
-      (header: SignedHeader) => header?.[headerName]
+
+  if (
+    typeof signedHeaders !== "object" ||
+    signedHeaders === null ||
+    Array.isArray(signedHeaders)
+  ) {
+    logger.error(
+      `verifyJwtPayload - "signed_headers" in token payload must be a non-null object`
     );
-    if (!signedHeaderExists) {
+    void TrialService.insert(
+      req.url,
+      req.method,
+      "SIGNATURE_SIGNED_HEADERS_INVALID"
+    );
+    throw ErrorHandling.tokenNotValid();
+  }
+
+  const requiredSignatureHeaders = ["content-type", "content-encoding", "digest"];
+  for (const headerName of requiredSignatureHeaders) {
+    if (!signedHeaders[headerName]) {
       logger.error(
         `verifyJwtPayload - The '${headerName}' value in token payload is required`
       );
@@ -194,12 +195,9 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     }
   }
 
-  const signedContentType = signedHeaders.find(
-    (header: SignedHeader) => header?.["content-type"]
-  );
-  if (signedContentType["content-type"] !== req.headers["content-type"]) {
+  if (signedHeaders["content-type"] !== req.headers["content-type"]) {
     logger.error(
-      `verifyJwtPayload - The content-type '${req.headers["content-type"]}' value in request header is different from the value in payload ${signedContentType["content-encoding"]}`
+      `verifyJwtPayload - The content-type '${req.headers["content-type"]}' in request header does not match payload value '${signedHeaders["content-type"]}'`
     );
     void TrialService.insert(
       req.url,
@@ -209,15 +207,9 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     throw ErrorHandling.tokenNotValid();
   }
 
-  const signedContentEncoding = signedHeaders.find(
-    (header: SignedHeader) => header?.["content-encoding"]
-  );
-  if (
-    signedContentEncoding["content-encoding"] !==
-    req.headers["content-encoding"]
-  ) {
+  if (signedHeaders["content-encoding"] !== req.headers["content-encoding"]) {
     logger.error(
-      `verifyJwtPayload - The content-encoding '${req.headers["content-encoding"]}' value in request header is different from the value in payload ${signedContentEncoding["content-encoding"]}`
+      `verifyJwtPayload - The content-encoding '${req.headers["content-encoding"]}' in request header does not match payload value '${signedHeaders["content-encoding"]}'`
     );
     void TrialService.insert(
       req.url,
@@ -227,12 +219,9 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     throw ErrorHandling.tokenNotValid();
   }
 
-  const signedDigest = signedHeaders.find(
-    (header: SignedHeader) => header?.["content-encoding"]
-  );
-  if (!signedDigest.digest.startsWith("SHA-256")) {
+  if (!signedHeaders["digest"].startsWith("SHA-256")) {
     logger.error(
-      `verifyJwtPayload - The digest '${signedDigest.digest}' value in token payload is invalid`
+      `verifyJwtPayload - The digest '${signedHeaders["digest"]}' in token payload is invalid`
     );
     void TrialService.insert(
       req.url,
@@ -242,17 +231,9 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     throw ErrorHandling.tokenNotValid();
   }
 
-  if (!req.headers.digest?.startsWith("SHA-256=")) {
+  if (signedHeaders["digest"] !== req.headers["digest"]) {
     logger.error(
-      `verifyJwtPayload - The digest '${req.headers.digest}' value in token payload is  invalid`
-    );
-    void TrialService.insert(req.url, req.method, "SIGNATURE_DIGEST_NOT_VALID");
-    throw ErrorHandling.tokenNotValid();
-  }
-
-  if (signedDigest.digest !== req.headers.digest) {
-    logger.error(
-      `verifyJwtPayload - The digest '${req.headers.digest}' value in request header is different from the value in payload ${signedDigest.digest}`
+      `verifyJwtPayload - The digest '${req.headers["digest"]}' in request header does not match payload value '${signedHeaders["digest"]}'`
     );
     void TrialService.insert(
       req.url,
@@ -262,18 +243,6 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     throw ErrorHandling.tokenNotValid();
   }
 
-  const hashBody = generateHashFromString(JSON.stringify(req.body));
-  if (hashBody !== signedDigest.digest.substring(8)) {
-    logger.error(
-      `verifyJwtPayload - Request body digest does not match the signed digest`
-    );
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_DIGEST_BODY_NOT_MATCH_SIGNED_DIGEST"
-    );
-    throw ErrorHandling.tokenNotValid();
-  }
 };
 
 export const checkValueTrial = (
@@ -302,7 +271,3 @@ export const checkValueTrial = (
     );
   }
 };
-
-interface SignedHeader {
-  [key: string]: string;
-}

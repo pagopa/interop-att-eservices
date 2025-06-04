@@ -1,17 +1,30 @@
 import { Config, defineConfig } from 'drizzle-kit';
-import 'dotenv/config';
+import { z } from 'zod';
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const envSchema = z.object({
+    DATABASE_HOST: z.string().default('localhost'),
+    DATABASE_PORT: z.coerce.number().default(5432),
+    DATABASE_USERNAME: z.string().min(1, 'DATABASE_USERNAME is required'),
+    DATABASE_PASSWORD: z.string().optional().default(''),
+    DATABASE_NAME: z.string().min(1, 'DATABASE_NAME is required'),
+    DATABASE_SSL: z.string().optional().default('false'),
+});
+
+const env = envSchema.parse(process.env);
 
 export default defineConfig({
     schema: './dist/db/schema/*.js',
     out: './drizzle',
     dialect: 'postgresql',
     dbCredentials: {
-        host: process.env.DATABASE_HOST ?? 'localhost',
-        port: Number(process.env.DATABASE_PORT ?? '5432'),
-        user: process.env.DATABASE_USERNAME ?? '',
-        password: process.env.DATABASE_PASSWORD ?? '',
-        database: process.env.DATABASE_NAME ?? '',
-        ssl: process.env.DATABASE_SSL == "true",
+        host: env.DATABASE_HOST,
+        port: env.DATABASE_PORT,
+        user: env.DATABASE_USERNAME,
+        password: env.DATABASE_PASSWORD,
+        database: env.DATABASE_NAME,
+        ssl: env.DATABASE_SSL.toLowerCase() === 'true',
     },
 }) satisfies Config;
-

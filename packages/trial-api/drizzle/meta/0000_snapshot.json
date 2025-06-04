@@ -1,5 +1,5 @@
 {
-  "id": "908db90b-494a-4592-afbe-e6218cc5bfd0",
+  "id": "33576558-7570-46a4-9e8b-e8be39d641f1",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -75,8 +75,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "category_id: ": {
-          "name": "category_id: ",
+        "category_id": {
+          "name": "category_id",
           "type": "bigserial",
           "primaryKey": false,
           "notNull": true
@@ -84,13 +84,13 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "check_category_id: _category_id_fk": {
-          "name": "check_category_id: _category_id_fk",
+        "check_category_id_category_id_fk": {
+          "name": "check_category_id_category_id_fk",
           "tableFrom": "check",
           "tableTo": "category",
           "schemaTo": "att",
           "columnsFrom": [
-            "category_id: "
+            "category_id"
           ],
           "columnsTo": [
             "id"
@@ -139,8 +139,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "check_id: ": {
-          "name": "check_id: ",
+        "check_id": {
+          "name": "check_id",
           "type": "bigint",
           "primaryKey": false,
           "notNull": false
@@ -166,13 +166,13 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "trial_check_id: _check_id_fk": {
-          "name": "trial_check_id: _check_id_fk",
+        "trial_check_id_check_id_fk": {
+          "name": "trial_check_id_check_id_fk",
           "tableFrom": "trial",
           "tableTo": "check",
           "schemaTo": "att",
           "columnsFrom": [
-            "check_id: "
+            "check_id"
           ],
           "columnsTo": [
             "id"
