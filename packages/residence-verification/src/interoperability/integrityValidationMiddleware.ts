@@ -7,6 +7,7 @@ import { match } from "ts-pattern";
 import { logger } from "pdnd-common";
 import { ExpressContext, InteroperabilityConfig } from "pdnd-common";
 import { TrialService } from "trial";
+import { encodeBase64, generateHashFromString } from "../utilities/hashUtilities.js";
 
 
 const makeApiProblem = makeApiProblemBuilder(logger, {});
@@ -231,18 +232,20 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     throw ErrorHandling.tokenNotValid();
   }
 
-  if (signedHeaders["digest"] !== req.headers["digest"]) {
+
+  const hashBody = encodeBase64(generateHashFromString(JSON.stringify(req.body)));
+
+  if (hashBody !== signedHeaders["digest"].substring(8)) {
     logger.error(
-      `verifyJwtPayload - The digest '${req.headers["digest"]}' in request header does not match payload value '${signedHeaders["digest"]}'`
+      `verifyJwtPayload - Request body digest does not match the signed digest ${hashBody} digest: ${signedHeaders["digest"].substring(8)}`
     );
     void TrialService.insert(
       req.url,
       req.method,
-      "SIGNATURE_DIGEST_NOT_MATCH_SIGNED_DIGEST"
+      "SIGNATURE_DIGEST_BODY_NOT_MATCH_SIGNED_DIGEST"
     );
     throw ErrorHandling.tokenNotValid();
   }
-
 };
 
 export const checkValueTrial = (

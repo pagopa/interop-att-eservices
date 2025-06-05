@@ -157,7 +157,7 @@ const verifyJwtPayload = (
   }
 
   if (!decodedToken.payload.userID) {
-    logger.error(`verifyJwtPayload - Request header 'purposeId' not present`);
+    logger.error(`verifyJwtPayload - Request header 'userID' not present`);
     void TrialService.insert(
       url,
       method,
@@ -167,7 +167,7 @@ const verifyJwtPayload = (
   }
 
   if (!decodedToken.payload.userLocation) {
-    logger.error(`verifyJwtPayload - Request header 'purposeId' not present`);
+    logger.error(`verifyJwtPayload - Request header 'userLocation' not present`);
     void TrialService.insert(
       url,
       method,
@@ -177,7 +177,7 @@ const verifyJwtPayload = (
   }
 
   if (!decodedToken.payload.LoA) {
-    logger.error(`verifyJwtPayload - Request header 'purposeId' not present`);
+    logger.error(`verifyJwtPayload - Request header 'LoA' not present`);
     void TrialService.insert(
       url,
       method,
