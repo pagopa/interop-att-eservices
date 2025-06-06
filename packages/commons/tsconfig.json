@@ -6,6 +6,8 @@
     "resolveJsonModule": true,
     "module": "nodenext",
     "outDir": "dist",
+    "types": ["node"],
+    "rootDir": "src"
   },
   "include": ["src"]
 }

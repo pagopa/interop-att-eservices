@@ -1,8 +1,7 @@
-import { logger } from "pdnd-common";
-import { cacheManager } from "pdnd-common";
+import { logger, persistenceService } from "pdnd-common";
 import { VerifyRequest } from "../model/digitalAddress/VerifyRequest.js";
-import { parseJsonToVerifyRequestArray } from "../utilities/jsonVerifyRequestUtilities.js";
 import { findRequestlByIdRequest } from "../utilities/verifyRequestUtilities.js";
+import { ResponseRequestDigitalAddressModel } from "pdnd-models";
 
 class digitalAddressRepository {
   public async saveRequest(
@@ -10,10 +9,12 @@ class digitalAddressRepository {
     key: string
   ): Promise<string | null> {
     try {
-      await cacheManager.setObject(key, JSON.stringify(genericRequest));
-      const saved = await cacheManager.getObjectByKey(key);
+      const savedListId = await persistenceService.saveDigitalAddressList(
+        genericRequest as unknown as ResponseRequestDigitalAddressModel[],
+        key
+      );
       logger.info(`DigitalAddressRepository: Elemento salvato con successo.`);
-      return saved;
+      return savedListId;
     } catch (error) {
       logger.error(
         `DigitalAddressRepository: Errore durante il salvataggio del' elemento: `,
@@ -24,19 +25,19 @@ class digitalAddressRepository {
   }
 
   public async findAllByKey(key: string): Promise<VerifyRequest[] | null> {
-    // pourposeId
     try {
-      const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
+      const dataSaved =
+        await persistenceService.findAllDigitalAddressesByPurpose(key);
       logger.info(
         `DigitalAddressRepository: Elemento recuperato con successo.`
       );
-      return parseJsonToVerifyRequestArray(dataSaved);
+      return dataSaved as unknown as VerifyRequest[];
     } catch (error) {
       logger.error(
         `DigitalAddressRepository: Errore durante il recupero dell'elemento: `,
         error
       );
-      throw error; // Rilancia l'errore per gestione superiore
+      throw error;
     }
   }
 
@@ -46,38 +47,42 @@ class digitalAddressRepository {
   ): Promise<VerifyRequest | null> {
     try {
       logger.info(fiscalCode);
-      const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
-      const datas = parseJsonToVerifyRequestArray(dataSaved);
+      const datas = await persistenceService.findAllDigitalAddressesByPurpose(
+        key
+      );
       logger.info(
         `DigitalAddressRepository: Elemento recuperato con successo.`
       );
-      return findRequestlByIdRequest(datas, fiscalCode);
+      return findRequestlByIdRequest(
+        datas as unknown as VerifyRequest[],
+        fiscalCode
+      );
     } catch (error) {
       logger.error(
         `DigitalAddressRepository: Errore durante il recupero dell'elemento: `,
         error
       );
-      throw error; // Rilancia l'errore per gestione superiore
+      throw error;
     }
   }
 
   public async deleteAllByKey(key: string): Promise<number | null> {
     try {
-      await cacheManager.deleteAllObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
-
-      const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
-      const arrayDataSaved = parseJsonToVerifyRequestArray(dataSaved);
-      if (arrayDataSaved == null) {
+      await persistenceService.deleteAllDigitalAddressesByPurpose(key);
+      const dataSaved =
+        await persistenceService.findAllDigitalAddressesByPurpose(key);
+      const arrayDataSaved = dataSaved as unknown as VerifyRequest[];
+      if (arrayDataSaved == null || arrayDataSaved.length === 0) {
         return 0;
       } else {
-        return arrayDataSaved?.length;
+        return arrayDataSaved.length;
       }
     } catch (error) {
       logger.error(
-        `DigitalAddressRepository: Errore durante il recupero dell'elemento: `,
+        `DigitalAddressRepository: Errore durante la cancellazione dell'elemento: `,
         error
       );
-      throw error; // Rilancia l'errore per gestione superiore
+      throw error;
     }
   }
 }
