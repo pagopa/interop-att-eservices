@@ -26,7 +26,7 @@ openapi: 3.0.1
 info:
   version: "3.0.0"
   title: |-
-    Check validity organization Id.
+    Attestazione - Verifica identificativo organizzazione
   x-summary: >-
     Check about validity of an organizationId and recovery of some personal data
 
