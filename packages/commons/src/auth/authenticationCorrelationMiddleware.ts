@@ -73,11 +73,18 @@ export const authenticationCorrelationMiddleware: (
             /* eslint-enable */
           });
 
+        let header = req.headers["agid-jwt-trackingevidence"];
+        const agidJwtTrackingEvidence =
+          typeof header === "string" ? header :
+            Array.isArray(header) ? header[0] :
+              "";
+
         const validPayloadAndHeader = await verifyJwtPayloadAndHeader(
           jwtToken,
           req.path,
           req.method,
-          isEnableTrial
+          isEnableTrial,
+          agidJwtTrackingEvidence
         );
         if (!validPayloadAndHeader) {
           logger.error(

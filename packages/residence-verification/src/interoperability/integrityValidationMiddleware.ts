@@ -7,7 +7,8 @@ import { match } from "ts-pattern";
 import { logger } from "pdnd-common";
 import { ExpressContext, InteroperabilityConfig } from "pdnd-common";
 import { TrialService } from "trial";
-import { encodeBase64, generateHashFromString } from "../utilities/hashUtilities.js";
+import { generateHashFromString } from "pdnd-common";
+import { encodeBase64 } from "../utilities/hashUtilities.js";
 
 
 const makeApiProblem = makeApiProblemBuilder(logger, {});

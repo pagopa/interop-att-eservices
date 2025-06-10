@@ -2,6 +2,7 @@ import jwt, { JwtHeader, JwtPayload, SigningKeyCallback } from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
 import { JWTConfig, logger, sendCustomEvent } from "../index.js";
 import { AuthData, AuthJWTToken } from "./authData.js";
+import { createHash } from "crypto";
 
 export const readAuthDataFromJwtToken = (
   jwtToken: string
@@ -28,54 +29,55 @@ const getKey =
   (
     clients: jwksClient.JwksClient[]
   ): ((header: JwtHeader, callback: SigningKeyCallback) => void) =>
-  (header, callback) => {
-    for (const { client, last } of clients.map((c, i) => ({
-      client: c,
-      last: i === clients.length - 1,
-    }))) {
-      client.getSigningKey(header.kid, function (err, key) {
-        if (err && last) {
-          logger.error(`Error getting signing key: ${err}`);
-          return callback(err, undefined);
-        } else {
-          return callback(null, key?.getPublicKey());
-        }
-      });
-    }
-  };
+    (header, callback) => {
+      for (const { client, last } of clients.map((c, i) => ({
+        client: c,
+        last: i === clients.length - 1,
+      }))) {
+        client.getSigningKey(header.kid, function (err, key) {
+          if (err && last) {
+            logger.error(`Error getting signing key: ${err}`);
+            return callback(err, undefined);
+          } else {
+            return callback(null, key?.getPublicKey());
+          }
+        });
+      }
+    };
 
 export const verifyJwtToken = (jwtToken: string): Promise<boolean> => {
   const config = JWTConfig.parse(process.env);
   const clients = !config.skipJWTVerification
     ? config.wellKnownUrls.map((url) =>
-        jwksClient({
-          jwksUri: url,
-        })
-      )
+      jwksClient({
+        jwksUri: url,
+      })
+    )
     : undefined;
   return clients === undefined
     ? Promise.resolve(true)
     : new Promise((resolve, _reject) => {
-        jwt.verify(
-          jwtToken,
-          getKey(clients),
-          undefined,
-          function (err, _decoded) {
-            if (err) {
-              logger.error(`Error verifying token: ${err}`);
-              return resolve(false);
-            }
-            return resolve(true);
+      jwt.verify(
+        jwtToken,
+        getKey(clients),
+        undefined,
+        function (err, _decoded) {
+          if (err) {
+            logger.error(`Error verifying token: ${err}`);
+            return resolve(false);
           }
-        );
-      });
+          return resolve(true);
+        }
+      );
+    });
 };
 
 export const verifyJwtPayloadAndHeader = (
   jwtToken: string,
   operationPath: string,
   operationMethod: string,
-  isEnableTrial: boolean
+  isEnableTrial: boolean,
+  tracking_jwt: string
 ): Promise<boolean> =>
   new Promise((resolve) => {
     const config = JWTConfig.parse(process.env);
@@ -150,6 +152,25 @@ export const verifyJwtPayloadAndHeader = (
           operationPath,
           operationMethod,
           checkName: "VOUCHER_AUD_NOT_VALID",
+        });
+      }
+      resolve(false);
+    }
+
+    const expectedDigest = createHash("sha256").update(tracking_jwt).digest("hex");
+    logger.info(
+      `verifyJwtPayloadAndHeader - expectedDigest: ${expectedDigest}, digest in token: ${decodedToken.payload.digest.value}`
+    );
+
+    if (decodedToken.payload.digest.value !== expectedDigest) {
+      logger.error(
+        `verifyJwtPayloadAndHeader - expectedDigest: ${expectedDigest}, digest in token: ${decodedToken.payload.digest.value}`
+      );
+      if (isEnableTrial) {
+        sendCustomEvent("trialEvent", {
+          operationPath,
+          operationMethod,
+          checkName: "SIGNATURE_SIGNED_DIGEST_NOT_VALID",
         });
       }
       resolve(false);

@@ -14,11 +14,6 @@ export default function generateHash(strings: string[]): string {
   return hash.digest("hex");
 }
 
-export function generateHashFromString(value: string): string {
-  // Crea un hash SHA-256
-  return crypto.createHash("sha256").update(value).digest("hex");
-}
-
 export const encodeBase64 = (input: string): string => {
   return Buffer.from(input, "utf-8").toString("base64");
 };
