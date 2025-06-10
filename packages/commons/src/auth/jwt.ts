@@ -2,7 +2,7 @@ import jwt, { JwtHeader, JwtPayload, SigningKeyCallback } from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
 import { JWTConfig, logger, sendCustomEvent } from "../index.js";
 import { AuthData, AuthJWTToken } from "./authData.js";
-import { createHash } from "crypto";
+import { generateHashFromString } from "../utility/hashUtility.js";
 
 export const readAuthDataFromJwtToken = (
   jwtToken: string
@@ -157,7 +157,7 @@ export const verifyJwtPayloadAndHeader = (
       resolve(false);
     }
 
-    const expectedDigest = createHash("sha256").update(tracking_jwt).digest("hex");
+    const expectedDigest = generateHashFromString(tracking_jwt);
     logger.info(
       `verifyJwtPayloadAndHeader - expectedDigest: ${expectedDigest}, digest in token: ${decodedToken.payload.digest.value}`
     );
@@ -170,7 +170,7 @@ export const verifyJwtPayloadAndHeader = (
         sendCustomEvent("trialEvent", {
           operationPath,
           operationMethod,
-          checkName: "SIGNATURE_SIGNED_DIGEST_NOT_VALID",
+          checkName: "VOUCHER_DIGEST_NOT_VALID",
         });
       }
       resolve(false);
