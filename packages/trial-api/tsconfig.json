@@ -8,5 +8,8 @@
     "resolveJsonModule": true,
     "module": "nodenext"
   },
-  "include": ["src"]
+  "include": [
+    "src/**/*",
+    "drizzle.config.ts"
+  ]
 }

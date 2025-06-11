@@ -3,8 +3,8 @@ export { Trial } from "./db/schema/trial.js";
 export { Check } from "./db/schema/check.js";
 export { Category } from "./db/schema/category.js";
 export { TrialRepository } from "./repositories/trialRepository.js";
-export { getCheckValue } from "./utils/checkValues.js"
-export { testDbConnection } from "./utils/testDbConnection.js"
+export { getCheckValue } from "./utils/checkValues.js";
+export { testDbConnection } from "./utils/testDbConnection.js";
 
 export { TrialService } from "./services/trialService.js";
 import { logger } from "pdnd-common";

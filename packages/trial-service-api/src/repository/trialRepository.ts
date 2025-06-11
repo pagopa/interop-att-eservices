@@ -1,6 +1,12 @@
+/* eslint-disable functional/no-let */
+/* eslint-disable functional/immutable-data */
+/* eslint-disable max-params */
 import { eq, and, asc } from "drizzle-orm";
 import { Trial, db, Check, Category } from "trial";
-import { PaginatedTrialResponse, PaginatedTrials } from "../model/domain/models.js";
+import {
+  PaginatedTrialResponse,
+  PaginatedTrials,
+} from "../model/domain/models.js";
 
 export class TrialRepository {
   public static async findPaginatedTrial(
@@ -14,9 +20,15 @@ export class TrialRepository {
     const offset = (page - 1) * pageSize;
 
     const filters = [eq(Trial.purpose_id, purposeId)];
-    if (correlationId) filters.push(eq(Trial.correlation_id, correlationId));
-    if (path) filters.push(eq(Trial.operation_path, path));
-    if (method) filters.push(eq(Trial.operation_method, method));
+    if (correlationId) {
+      filters.push(eq(Trial.correlation_id, correlationId));
+    }
+    if (path) {
+      filters.push(eq(Trial.operation_path, path));
+    }
+    if (method) {
+      filters.push(eq(Trial.operation_method, method));
+    }
 
     const trials = await db
       .select({
@@ -31,7 +43,7 @@ export class TrialRepository {
         check_code: Check.code,
         check_description: Check.description,
         check_order: Check.order,
-        category_id: Category.id
+        category_id: Category.id,
       })
       .from(Trial)
       .leftJoin(Check, eq(Trial.check_id, Check.id))
@@ -64,17 +76,19 @@ export class TrialRepository {
         operation_path: trial.operation_path,
         operation_method: trial.operation_method ?? undefined, // Convert null to undefined
         response: trial.response ?? undefined,
-        created_date: trial.created_date ? trial.created_date.toISOString() : undefined,
+        created_date: trial.created_date
+          ? trial.created_date.toISOString()
+          : undefined,
         checks: trial.check_id
           ? [
-            {
-              id: trial.check_id,
-              code: trial.check_code,
-              description: trial.check_description,
-              order: trial.check_order,
-              category: trial.category_id ? trial.category_id : undefined,
-            },
-          ]
+              {
+                id: trial.check_id,
+                code: trial.check_code,
+                description: trial.check_description,
+                order: trial.check_order,
+                category: trial.category_id ? trial.category_id : undefined,
+              },
+            ]
           : [],
       });
     }
@@ -89,4 +103,3 @@ export class TrialRepository {
     };
   }
 }
-

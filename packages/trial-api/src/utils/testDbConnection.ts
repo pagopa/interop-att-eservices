@@ -1,6 +1,6 @@
-import { db } from "../db/client.js"; // adjust to your actual drizzle instance path
 import { logger } from "pdnd-common";
 import { sql } from "drizzle-orm";
+import { db } from "../db/client.js"; // adjust to your actual drizzle instance path
 
 export const testDbConnection = async (): Promise<boolean> => {
   try {
