@@ -1,8 +1,8 @@
 import jwt, { JwtHeader, JwtPayload, SigningKeyCallback } from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
 import { JWTConfig, logger, sendCustomEvent } from "../index.js";
-import { AuthData, AuthJWTToken } from "./authData.js";
 import { generateHashFromString } from "../utility/hashUtility.js";
+import { AuthData, AuthJWTToken } from "./authData.js";
 
 export const readAuthDataFromJwtToken = (
   jwtToken: string
@@ -29,47 +29,47 @@ const getKey =
   (
     clients: jwksClient.JwksClient[]
   ): ((header: JwtHeader, callback: SigningKeyCallback) => void) =>
-    (header, callback) => {
-      for (const { client, last } of clients.map((c, i) => ({
-        client: c,
-        last: i === clients.length - 1,
-      }))) {
-        client.getSigningKey(header.kid, function (err, key) {
-          if (err && last) {
-            logger.error(`Error getting signing key: ${err}`);
-            return callback(err, undefined);
-          } else {
-            return callback(null, key?.getPublicKey());
-          }
-        });
-      }
-    };
+  (header, callback) => {
+    for (const { client, last } of clients.map((c, i) => ({
+      client: c,
+      last: i === clients.length - 1,
+    }))) {
+      client.getSigningKey(header.kid, function (err, key) {
+        if (err && last) {
+          logger.error(`Error getting signing key: ${err}`);
+          return callback(err, undefined);
+        } else {
+          return callback(null, key?.getPublicKey());
+        }
+      });
+    }
+  };
 
 export const verifyJwtToken = (jwtToken: string): Promise<boolean> => {
   const config = JWTConfig.parse(process.env);
   const clients = !config.skipJWTVerification
     ? config.wellKnownUrls.map((url) =>
-      jwksClient({
-        jwksUri: url,
-      })
-    )
+        jwksClient({
+          jwksUri: url,
+        })
+      )
     : undefined;
   return clients === undefined
     ? Promise.resolve(true)
     : new Promise((resolve, _reject) => {
-      jwt.verify(
-        jwtToken,
-        getKey(clients),
-        undefined,
-        function (err, _decoded) {
-          if (err) {
-            logger.error(`Error verifying token: ${err}`);
-            return resolve(false);
+        jwt.verify(
+          jwtToken,
+          getKey(clients),
+          undefined,
+          function (err, _decoded) {
+            if (err) {
+              logger.error(`Error verifying token: ${err}`);
+              return resolve(false);
+            }
+            return resolve(true);
           }
-          return resolve(true);
-        }
-      );
-    });
+        );
+      });
 };
 
 export const verifyJwtPayloadAndHeader = (

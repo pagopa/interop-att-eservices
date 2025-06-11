@@ -26,7 +26,8 @@ const defaultAppContext: AppContext = {
     purposeId: process.env.PURPOSE_ID || "92e1624b-91cb-4b05-b8c0-cad208a30656",
     clientId: process.env.CLIENT_ID || "7f9f24ca-78f5-4c69-9e4f-0efbeac7aa1a",
   },
-  correlationId: process.env.CORRELATION_ID || "bfbcb93c-58ab-4018-badf-d052294ac052",
+  correlationId:
+    process.env.CORRELATION_ID || "bfbcb93c-58ab-4018-badf-d052294ac052",
 };
 
 export const getContext = (): AppContext => {

@@ -10,7 +10,6 @@ import { TrialService } from "trial";
 import { generateHashFromString } from "pdnd-common";
 import { encodeBase64 } from "../utilities/hashUtilities.js";
 
-
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 
 export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHandler<ExpressContext> =
@@ -186,7 +185,11 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     throw ErrorHandling.tokenNotValid();
   }
 
-  const requiredSignatureHeaders = ["content-type", "content-encoding", "digest"];
+  const requiredSignatureHeaders = [
+    "content-type",
+    "content-encoding",
+    "digest",
+  ];
   for (const headerName of requiredSignatureHeaders) {
     if (!signedHeaders[headerName]) {
       logger.error(
@@ -221,9 +224,9 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     throw ErrorHandling.tokenNotValid();
   }
 
-  if (!signedHeaders["digest"].startsWith("SHA-256")) {
+  if (!signedHeaders.digest.startsWith("SHA-256")) {
     logger.error(
-      `verifyJwtPayload - The digest '${signedHeaders["digest"]}' in token payload is invalid`
+      `verifyJwtPayload - The digest '${signedHeaders.digest}' in token payload is invalid`
     );
     void TrialService.insert(
       req.url,
@@ -233,12 +236,15 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     throw ErrorHandling.tokenNotValid();
   }
 
+  const hashBody = encodeBase64(
+    generateHashFromString(JSON.stringify(req.body))
+  );
 
-  const hashBody = encodeBase64(generateHashFromString(JSON.stringify(req.body)));
-
-  if (hashBody !== signedHeaders["digest"].substring(8)) {
+  if (hashBody !== signedHeaders.digest.substring(8)) {
     logger.error(
-      `verifyJwtPayload - Request body digest does not match the signed digest ${hashBody} digest: ${signedHeaders["digest"].substring(8)}`
+      `verifyJwtPayload - Request body digest does not match the signed digest ${hashBody} digest: ${signedHeaders.digest.substring(
+        8
+      )}`
     );
     void TrialService.insert(
       req.url,

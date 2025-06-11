@@ -14,6 +14,5 @@ export default function generateHash(strings: string[]): string {
   return hash.digest("hex");
 }
 
-export const encodeBase64 = (input: string): string => {
-  return Buffer.from(input, "utf-8").toString("base64");
-};
+export const encodeBase64 = (input: string): string =>
+  Buffer.from(input, "utf-8").toString("base64");

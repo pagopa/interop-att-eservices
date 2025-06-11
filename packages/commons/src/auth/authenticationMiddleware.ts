@@ -68,12 +68,13 @@ export const authenticationMiddleware: (
             /* eslint-enable */
           });
 
-        let header = req.headers["agid-jwt-trackingevidence"];
+        const header = req.headers["agid-jwt-trackingevidence"];
         const agidJwtTrackingEvidence =
-          typeof header === "string" ? header :
-            Array.isArray(header) ? header[0] :
-              "";
-
+          typeof header === "string"
+            ? header
+            : Array.isArray(header)
+            ? header[0]
+            : "";
 
         const validPayloadAndHeader = await verifyJwtPayloadAndHeader(
           jwtToken,

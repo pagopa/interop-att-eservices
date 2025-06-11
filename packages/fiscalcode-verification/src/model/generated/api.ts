@@ -73,23 +73,7 @@ const endpoints = makeApi([
     response: VerificaCodiceFiscale,
     errors: [
       {
-        status: 400,
-        description: `Bad Request`,
-        schema: z.void(),
-      },
-      {
-        status: 401,
-        description: `Not authorized`,
-        schema: z.void(),
-      },
-      {
-        status: 429,
-        description: `Too many requests`,
-        schema: z.void(),
-      },
-      {
-        status: 503,
-        description: `Service Unavailable`,
+        status: NaN,
         schema: z.void(),
       },
     ],
@@ -111,23 +95,7 @@ const endpoints = makeApi([
     response: VerificaCodiceFiscale,
     errors: [
       {
-        status: 400,
-        description: `Bad Request`,
-        schema: z.void(),
-      },
-      {
-        status: 401,
-        description: `Not authorized`,
-        schema: z.void(),
-      },
-      {
-        status: 429,
-        description: `Too many requests`,
-        schema: z.void(),
-      },
-      {
-        status: 503,
-        description: `Service Unavailable`,
+        status: NaN,
         schema: z.void(),
       },
     ],
@@ -191,23 +159,7 @@ const endpoints = makeApi([
     response: z.void(),
     errors: [
       {
-        status: 400,
-        description: `Bad Request`,
-        schema: z.void(),
-      },
-      {
-        status: 401,
-        description: `Not authorized`,
-        schema: z.void(),
-      },
-      {
-        status: 429,
-        description: `Too many requests`,
-        schema: z.void(),
-      },
-      {
-        status: 503,
-        description: `Service Unavailable`,
+        status: NaN,
         schema: z.void(),
       },
     ],
@@ -281,23 +233,7 @@ for maintenance or a technical problem.
     response: z.void(),
     errors: [
       {
-        status: 400,
-        description: `Bad Request`,
-        schema: z.void(),
-      },
-      {
-        status: 401,
-        description: `Not authorized`,
-        schema: z.void(),
-      },
-      {
-        status: 429,
-        description: `Too many requests`,
-        schema: z.void(),
-      },
-      {
-        status: 503,
-        description: `Service Unavailable`,
+        status: NaN,
         schema: z.void(),
       },
     ],

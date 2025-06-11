@@ -167,7 +167,9 @@ const verifyJwtPayload = (
   }
 
   if (!decodedToken.payload.userLocation) {
-    logger.error(`verifyJwtPayload - Request header 'userLocation' not present`);
+    logger.error(
+      `verifyJwtPayload - Request header 'userLocation' not present`
+    );
     void TrialService.insert(
       url,
       method,
