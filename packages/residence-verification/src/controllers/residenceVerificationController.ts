@@ -89,8 +89,9 @@ class ResidenceVerificationController {
     try {
       let resultData;
       if (request.criteria.subjectId) {
-
-        const data = await ResidenceVerificationService.getBySubjectId(request.criteria.subjectId);
+        const data = await ResidenceVerificationService.getBySubjectId(
+          request.criteria.subjectId
+        );
 
         const list: UserModel[] = data ? [data] : [];
 
