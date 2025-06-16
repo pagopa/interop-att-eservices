@@ -1,87 +1,41 @@
-import { logger, cacheManager } from "pdnd-common";
-import { ResponseRequestDigitalAddressModel } from "pdnd-models";
-import { parseJsonToResponseRequestDigitalAddressArray } from "../utilities/jsonFiscalcodeUtilities.js";
-import { findFiscalcodeModelByFiscalcode } from "../utilities/fiscalcodeUtilities.js";
+// NOME FILE: dataPreparationRepository.ts
 
-class dataPreparationRepository {
+import { logger, persistenceService } from "pdnd-common";
+import { ResponseRequestDigitalAddressModel } from "pdnd-models";
+// Importa l'ISTANZA UNICA del persistenceService, non la classe
+
+class DataPreparationRepository {
+  // Il costruttore non serve più
+
   public async saveList(
     genericRequest: ResponseRequestDigitalAddressModel[],
     key: string
   ): Promise<string | null> {
-    try {
-      await cacheManager.setObject(key, JSON.stringify(genericRequest));
-      const saved = await cacheManager.getObjectByKey(key);
-      logger.info(`dataPreparationRepository: Elemento salvato con successo.`);
-      return saved;
-    } catch (error) {
-      logger.error(
-        `dataPreparationRepository: Errore durante il salvataggio del' elemento: `,
-        error
-      );
-      throw error;
-    }
+    // Chiama direttamente l'istanza importata
+    logger.info(`generic request ${JSON.stringify(genericRequest)}`);
+    return persistenceService.saveDataPreparationList(genericRequest, key);
   }
 
   public async findAllByKey(
     key: string
   ): Promise<ResponseRequestDigitalAddressModel[] | null> {
-    // pourposeId
-    try {
-      const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
-      logger.info(
-        `dataPreparationRepository: Elemento recuperato con successo.`
-      );
-      return parseJsonToResponseRequestDigitalAddressArray(dataSaved);
-    } catch (error) {
-      logger.error(
-        `dataPreparationRepository: Errore durante il recupero dell'elemento: `,
-        error
-      );
-      throw error; // Rilancia l'errore per gestione superiore
-    }
+    return persistenceService.findAllDataPreparationByPurpose(key);
   }
 
   public async findByPurposeId(
     key: string,
     fiscalCode: string
   ): Promise<ResponseRequestDigitalAddressModel | null> {
-    try {
-      logger.info(fiscalCode);
-      const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
-      const datas = parseJsonToResponseRequestDigitalAddressArray(dataSaved);
-      logger.info(
-        `dataPreparationRepository: Elemento recuperato con successo.`
-      );
-      return findFiscalcodeModelByFiscalcode(datas, fiscalCode);
-    } catch (error) {
-      logger.error(
-        `dataPreparationRepository: Errore durante il recupero dell'elemento: `,
-        error
-      );
-      throw error; // Rilancia l'errore per gestione superiore
-    }
+    return persistenceService.findSingleDataPreparationByFiscalCode(
+      key,
+      fiscalCode
+    );
   }
 
   public async deleteAllByKey(key: string): Promise<number | null> {
-    try {
-      await cacheManager.deleteAllObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
-
-      const dataSaved = await cacheManager.getObjectByKey(key); // Esegui un'operazione di recupero subito dopo aver salvato
-      const arrayDataSaved =
-        parseJsonToResponseRequestDigitalAddressArray(dataSaved);
-      if (arrayDataSaved == null) {
-        return 0;
-      } else {
-        return arrayDataSaved?.length;
-      }
-    } catch (error) {
-      logger.error(
-        `dataPreparationRepository: Errore durante il recupero dell'elemento: `,
-        error
-      );
-      throw error; // Rilancia l'errore per gestione superiore
-    }
+    await persistenceService.deleteAllDataPreparationByPurpose(key);
+    return 0;
   }
 }
 
-export default new dataPreparationRepository();
+export default new DataPreparationRepository();

@@ -23,7 +23,7 @@ export const zodiosCtx = zodiosContext(
 const globalStore = new AsyncLocalStorage<AppContext>();
 const defaultAppContext: AppContext = {
   authData: {
-    purposeId: "",
+    purposeId: "97bad55a-c5e1-454a-9921-4d8374d2a242",
     clientId: "",
   },
   correlationId: "",

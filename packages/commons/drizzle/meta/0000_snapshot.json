@@ -1,5 +1,5 @@
 {
-  "id": "f3aa07d1-e935-4ae5-9fba-bf71eef68965",
+  "id": "88f28112-63d3-40ca-b371-0da5ead28130",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -39,8 +39,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "usage_end_date": {
-          "name": "usage_end_date",
+        "usage_end_at": {
+          "name": "usage_end_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
@@ -85,7 +85,7 @@
       "checkConstraints": {
         "email_check": {
           "name": "email_check",
-          "value": "address ~ '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$'"
+          "value": "address ~ '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9.-]+)+$'"
         }
       },
       "isRLSEnabled": false
@@ -100,6 +100,12 @@
           "primaryKey": true,
           "notNull": true,
           "default": "gen_random_uuid()"
+        },
+        "purpose_id": {
+          "name": "purpose_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
         },
         "submitted_request_id": {
           "name": "submitted_request_id",
@@ -120,8 +126,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "created_at_timestamp": {
-          "name": "created_at_timestamp",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
@@ -142,9 +148,39 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "lr_purpose_id_idx": {
+          "name": "lr_purpose_id_idx",
+          "columns": [
+            {
+              "expression": "purpose_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
-      "foreignKeys": {},
+      "foreignKeys": {
+        "list_requests_purpose_id_purposes_id_fk": {
+          "name": "list_requests_purpose_id_purposes_id_fk",
+          "tableFrom": "list_requests",
+          "tableTo": "purposes",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "purpose_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "list_requests_submitted_request_id_unique": {
@@ -223,14 +259,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "id_subject": {
-          "name": "id_subject",
+        "subject_id": {
+          "name": "subject_id",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
-        "data_from_timestamp": {
-          "name": "data_from_timestamp",
+        "data_from": {
+          "name": "data_from",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
@@ -252,11 +288,11 @@
           "method": "btree",
           "with": {}
         },
-        "sdr_id_subject_idx": {
-          "name": "sdr_id_subject_idx",
+        "sdr_subject_id_idx": {
+          "name": "sdr_subject_id_idx",
           "columns": [
             {
-              "expression": "id_subject",
+              "expression": "subject_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -290,7 +326,7 @@
       "checkConstraints": {
         "id_subject_check": {
           "name": "id_subject_check",
-          "value": "id_subject ~ '^([0-9]{11})|([A-Za-z]{6}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{3}[A-Za-z]{1})$'"
+          "value": "subject_id ~ '^([0-9]{11})|([A-Za-z]{6}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{3}[A-Za-z]{1})$'"
         }
       },
       "isRLSEnabled": false
@@ -311,8 +347,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "timestamp_check": {
-          "name": "timestamp_check",
+        "checked_at": {
+          "name": "checked_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true

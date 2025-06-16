@@ -108,7 +108,7 @@ export const digitalAddressesTable = customSchema.table(
     sdrFkIdx: index("da_sdr_fk_idx").on(table.subjectDataResponseId),
     emailCheck: check(
       "email_check",
-      sql`address ~ '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$'`
+      sql`address ~ '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9.-]+)+$'`
     ),
   })
 );
