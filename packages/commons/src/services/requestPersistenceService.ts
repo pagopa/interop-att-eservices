@@ -31,7 +31,7 @@ export class PersistenceService {
           purposeId: purposeId,
           submittedRequestId: uuidv4(),
           status: "PRESA_IN_CARICO",
-          statusMessage: null,
+          statusMessage: "List request",
           createdAt: new Date(),
         })
         .returning({ listRequestId: listRequestsTable.id });

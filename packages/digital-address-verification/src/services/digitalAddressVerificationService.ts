@@ -1,6 +1,6 @@
 import { logger, getContext } from "pdnd-common";
 import digitalAddressRepository from "../repository/digitalAddressPreparationRepository.js";
-import generateHash from "../utilities/hashUtilities.js";
+// import generateHash from "../utilities/hashUtilities.js";
 import {
   appendUniqueVerifyRequestToArray,
   findRequestlByIdRequest,
@@ -11,7 +11,7 @@ import { getMaxNumber } from "../utilities/statusRequestUtility.js";
 class DigitalAddressVerificationService {
   public appContext = getContext();
   public eService: string = "digital-address-verification-request";
-
+  public purposeId: string = this.appContext.authData.purposeId;
   public async saveAll(
     fiscalCodeModel: VerifyRequest
   ): Promise<VerifyRequest[] | null> {
@@ -20,12 +20,12 @@ class DigitalAddressVerificationService {
       const fiscalCodeData: VerifyRequest[] = [fiscalCodeModel];
 
       // recupera tutte le chiavi di data preparation
-      const hash = generateHash([
-        this.eService,
-        this.appContext.authData.purposeId,
-      ]);
+      // const hash = generateHash([
+      //   this.eService,
+      //   this.appContext.authData.purposeId,
+      // ]);
       const persistedFiscalcodeData =
-        await digitalAddressRepository.findAllByKey(hash);
+        await digitalAddressRepository.findAllByKey(this.purposeId);
 
       // se è vuota, la salvo senza ulteriori controlli
       /* eslint-disable */
@@ -34,7 +34,10 @@ class DigitalAddressVerificationService {
         persistedFiscalcodeData.length === 0
       ) {
         /* eslint-enable */
-        await digitalAddressRepository.saveRequest(fiscalCodeData, hash);
+        await digitalAddressRepository.saveRequest(
+          fiscalCodeData,
+          this.purposeId
+        );
       } else {
         // esistono già chiavi, devo aggiungere la nuova, o sostituirla nel caso esista
         const allFiscalcode = appendUniqueVerifyRequestToArray(
@@ -42,12 +45,17 @@ class DigitalAddressVerificationService {
           fiscalCodeData
         );
         // if (areFiscalCodesValid(allFiscalcode)) {
-        await digitalAddressRepository.saveRequest(allFiscalcode, hash);
+        await digitalAddressRepository.saveRequest(
+          allFiscalcode,
+          this.purposeId
+        );
         // } else {
         // throw ErrorHandling.invalidApiRequest();
         // }
       }
-      const response = await digitalAddressRepository.findAllByKey(hash);
+      const response = await digitalAddressRepository.findAllByKey(
+        this.purposeId
+      );
       logger.info(`[END] datapreparation-saveList`);
       return response;
     } catch (error) {
@@ -63,11 +71,13 @@ class DigitalAddressVerificationService {
     idRequest: string
   ): Promise<VerifyRequest | null> {
     try {
-      const hash = generateHash([
-        this.eService,
-        this.appContext.authData.purposeId,
-      ]);
-      const result = await digitalAddressRepository.findAllByKey(hash);
+      // const hash = generateHash([
+      //   this.eService,
+      //   this.appContext.authData.purposeId,
+      // ]);
+      const result = await digitalAddressRepository.findAllByKey(
+        this.purposeId
+      );
       const requests = result;
       return findRequestlByIdRequest(requests, idRequest);
     } catch (error) {
