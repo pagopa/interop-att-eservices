@@ -35,19 +35,19 @@ import {
   ProblemErrorModel,
   ProblemModel,
 } from "pdnd-models";
-import { getUserModelByCodiceFiscale } from "../../utilities/userUtilities.js";
-import {
-  generateRandomUUID,
-  isValidUUID,
-} from "../../utilities/uuidUtilities.js";
+// import { getUserModelByCodiceFiscale } from "../../utilities/userUtilities.js";
+// import {
+//   generateRandomUUID,
+//   isValidUUID,
+// } from "../../utilities/uuidUtilities.js";
 
 import {
-  DataPreparationTemplate,
+  // DataPreparationTemplate,
   TipoLocalita,
   TipoComune,
   TipoLuogoNascitaE000,
-  TipoDatiNascitaTemplateE000,
-  TipoCriteriRicercaTemplateAR001,
+  // TipoDatiNascitaTemplateE000,
+  // TipoCriteriRicercaTemplateAR001,
   TipoToponimo,
   TipoCivicoInterno,
   TipoNumeroCivico,
@@ -58,8 +58,8 @@ import {
   TipoConsolato,
   TipoLocalitaEstera1,
   TipoResidenza,
-  DataPreparationResponse,
-  DataPreparationTemplateResponse,
+  // DataPreparationResponse,
+  // DataPreparationTemplateResponse,
   TipoDatiNascitaE000,
   TipoParametriRicercaAR001,
   TipoRichiestaAR001,
@@ -84,91 +84,95 @@ import {
 export const apiTipoComuneToTipoComuneModel = (
   tipoComune: TipoComune | undefined
 ): TipoComuneModel => ({
-  nameMunicipality: tipoComune?.nameMunicipality || "",
-  istatCode: tipoComune?.istatCode || "",
-  acronymIstatProvince: tipoComune?.acronymIstatProvince || "",
-  placeDescription: tipoComune?.placeDescription || "",
+  nameMunicipality: tipoComune?.nameMunicipality ?? "",
+  istatCode: tipoComune?.istatCode ?? "",
+  acronymIstatProvince: tipoComune?.acronymIstatProvince ?? "",
+  placeDescription: tipoComune?.placeDescription ?? "",
 });
 
 export const apiTipoLocalitaToTipoLocalita = (
   tipoLocalita: TipoLocalita | undefined
 ): TipoLocalitaModel => ({
-  placeDescription: tipoLocalita?.placeDescription || "",
-  countryDescription: tipoLocalita?.countryDescription || "",
-  codState: tipoLocalita?.codState || "",
-  provinceCounty: tipoLocalita?.provinceCounty || "",
+  placeDescription: tipoLocalita?.placeDescription ?? "",
+  countryDescription: tipoLocalita?.countryDescription ?? "",
+  codState: tipoLocalita?.codState ?? "",
+  provinceCounty: tipoLocalita?.provinceCounty ?? "",
 });
 
 export const apiTipoLuogoNascitaToTipoLuogoNascitaModel = (
   tipoLuogoNascitaE000: TipoLuogoNascitaE000 | undefined
 ): TipoLuogoNascitaModel => ({
-  exceptionalPlace: tipoLuogoNascitaE000?.exceptionalPlace || "",
+  exceptionalPlace: tipoLuogoNascitaE000?.exceptionalPlace ?? "",
   municipality: apiTipoComuneToTipoComuneModel(
     tipoLuogoNascitaE000?.municipality
   ),
   place: apiTipoLocalitaToTipoLocalita(tipoLuogoNascitaE000?.place),
 });
 
+/*
 export const apiTipoDatiNascitaTemplateE000ToTipoDataNascitaModel = (
   tipoDatiNascitaTemplateE000: TipoDatiNascitaTemplateE000 | undefined
 ): TipoDataNascitaModel => ({
-  eventDate: tipoDatiNascitaTemplateE000?.eventDate || "",
+  eventDate: tipoDatiNascitaTemplateE000?.eventDate ?? "",
   birthPlace: apiTipoLuogoNascitaToTipoLuogoNascitaModel(
     tipoDatiNascitaTemplateE000?.birthPlace
   ),
 });
+*/
 
+/*
 export const apiTipoCriteriRicercaTemplateAR001ToSoggettoModel = (
   tipoCriteriRicercaTemplateAR001: TipoCriteriRicercaTemplateAR001 | undefined
 ): SoggettoModel => ({
-  subjectId: tipoCriteriRicercaTemplateAR001?.subjectId || "",
-  id: tipoCriteriRicercaTemplateAR001?.id || "",
-  surname: tipoCriteriRicercaTemplateAR001?.surname || "",
-  name: tipoCriteriRicercaTemplateAR001?.name || "",
-  gender: tipoCriteriRicercaTemplateAR001?.gender || "",
+  subjectId: tipoCriteriRicercaTemplateAR001?.subjectId ?? "",
+  id: tipoCriteriRicercaTemplateAR001?.id ?? "",
+  surname: tipoCriteriRicercaTemplateAR001?.surname ?? "",
+  name: tipoCriteriRicercaTemplateAR001?.name ?? "",
+  gender: tipoCriteriRicercaTemplateAR001?.gender ?? "",
   birthDate: apiTipoDatiNascitaTemplateE000ToTipoDataNascitaModel(
     tipoCriteriRicercaTemplateAR001?.birthDate
   ),
 });
+*/
 
 export const apiTipoToponimoToTipoToponimoModel = (
   tipoToponimo: TipoToponimo | undefined
 ): TipoToponimoModel => ({
-  codType: tipoToponimo?.codType || "",
-  type: tipoToponimo?.type || "",
-  originType: tipoToponimo?.originType || "",
-  toponymCod: tipoToponimo?.toponymCod || "",
-  toponymDenomination: tipoToponimo?.toponymDenomination || "",
-  toponymSource: tipoToponimo?.toponymSource || "",
+  codType: tipoToponimo?.codType ?? "",
+  type: tipoToponimo?.type ?? "",
+  originType: tipoToponimo?.originType ?? "",
+  toponymCod: tipoToponimo?.toponymCod ?? "",
+  toponymDenomination: tipoToponimo?.toponymDenomination ?? "",
+  toponymSource: tipoToponimo?.toponymSource ?? "",
 });
 
 export const apiTipoCivicoInternoToTipoCivicoInternoModel = (
   tipoCivicoInterno: TipoCivicoInterno | undefined
 ): TipoCivicoInternoModel => ({
-  court: tipoCivicoInterno?.court || "",
-  stairs: tipoCivicoInterno?.stairs || "",
-  internal1: tipoCivicoInterno?.internal1 || "",
-  espInternal1: tipoCivicoInterno?.espInternal1 || "",
-  internal2: tipoCivicoInterno?.internal2 || "",
-  espInternal2: tipoCivicoInterno?.espInternal2 || "",
-  externalStairs: tipoCivicoInterno?.externalStairs || "",
-  secondary: tipoCivicoInterno?.secondary || "",
-  floor: tipoCivicoInterno?.floor || "",
-  nui: tipoCivicoInterno?.nui || "",
-  isolated: tipoCivicoInterno?.isolated || "",
+  court: tipoCivicoInterno?.court ?? "",
+  stairs: tipoCivicoInterno?.stairs ?? "",
+  internal1: tipoCivicoInterno?.internal1 ?? "",
+  espInternal1: tipoCivicoInterno?.espInternal1 ?? "",
+  internal2: tipoCivicoInterno?.internal2 ?? "",
+  espInternal2: tipoCivicoInterno?.espInternal2 ?? "",
+  externalStairs: tipoCivicoInterno?.externalStairs ?? "",
+  secondary: tipoCivicoInterno?.secondary ?? "",
+  floor: tipoCivicoInterno?.floor ?? "",
+  nui: tipoCivicoInterno?.nui ?? "",
+  isolated: tipoCivicoInterno?.isolated ?? "",
 });
 
 export const apiTipoNumeroCivicoToTipoNumeroCivicoModel = (
   tipoNumeroCivicoModel: TipoNumeroCivico | undefined
 ): TipoNumeroCivicoModel => ({
-  civicCod: tipoNumeroCivicoModel?.civicCod || "",
-  civicSource: tipoNumeroCivicoModel?.civicSource || "",
-  civicNumber: tipoNumeroCivicoModel?.civicNumber || "",
-  metric: tipoNumeroCivicoModel?.metric || "",
-  progSNC: tipoNumeroCivicoModel?.progSNC || "",
-  letter: tipoNumeroCivicoModel?.letter || "",
-  exponent1: tipoNumeroCivicoModel?.exponent1 || "",
-  color: tipoNumeroCivicoModel?.color || "",
+  civicCod: tipoNumeroCivicoModel?.civicCod ?? "",
+  civicSource: tipoNumeroCivicoModel?.civicSource ?? "",
+  civicNumber: tipoNumeroCivicoModel?.civicNumber ?? "",
+  metric: tipoNumeroCivicoModel?.metric ?? "",
+  progSNC: tipoNumeroCivicoModel?.progSNC ?? "",
+  letter: tipoNumeroCivicoModel?.letter ?? "",
+  exponent1: tipoNumeroCivicoModel?.exponent1 ?? "",
+  color: tipoNumeroCivicoModel?.color ?? "",
   internalCivic: apiTipoCivicoInternoToTipoCivicoInternoModel(
     tipoNumeroCivicoModel?.internalCivic
   ),
@@ -177,9 +181,9 @@ export const apiTipoNumeroCivicoToTipoNumeroCivicoModel = (
 export const apiTipoIndirizzoToTipoIndirizzoModel = (
   tipoIndirizzo: TipoIndirizzo | undefined
 ): TipoIndirizzoModel => ({
-  cap: tipoIndirizzo?.cap || "",
+  cap: tipoIndirizzo?.cap ?? "",
   municipality: apiTipoComuneToTipoComuneModel(tipoIndirizzo?.municipality),
-  fraction: tipoIndirizzo?.fraction || "",
+  fraction: tipoIndirizzo?.fraction ?? "",
   toponym: apiTipoToponimoToTipoToponimoModel(tipoIndirizzo?.toponym),
   civicNumber: apiTipoNumeroCivicoToTipoNumeroCivicoModel(
     tipoIndirizzo?.civicNumber
@@ -189,23 +193,23 @@ export const apiTipoIndirizzoToTipoIndirizzoModel = (
 export const apiTipoDatoLocalitaEsteraToTipoDatoLocalitaEsteraModel = (
   tipoDatoLocalitaEstera: TipoDatoLocalitaEstera | undefined
 ): TipoDatoLocalitaEsteraModel => ({
-  placeDescription: tipoDatoLocalitaEstera?.placeDescription || "",
-  countryDescription: tipoDatoLocalitaEstera?.countryDescription || "",
-  provinceCounty: tipoDatoLocalitaEstera?.provinceCounty || "",
-  countryState: tipoDatoLocalitaEstera?.countryState || "",
+  placeDescription: tipoDatoLocalitaEstera?.placeDescription ?? "",
+  countryDescription: tipoDatoLocalitaEstera?.countryDescription ?? "",
+  provinceCounty: tipoDatoLocalitaEstera?.provinceCounty ?? "",
+  countryState: tipoDatoLocalitaEstera?.countryState ?? "",
 });
 
 export const apiTipoToponimoEsteroToTipoToponimoEsteroModel = (
   tipoToponimoEstero: TipoToponimoEstero | undefined
 ): TipoToponimoEsteroModel => ({
-  denomination: tipoToponimoEstero?.denomination || "",
-  civicNumber: tipoToponimoEstero?.civicNumber || "",
+  denomination: tipoToponimoEstero?.denomination ?? "",
+  civicNumber: tipoToponimoEstero?.civicNumber ?? "",
 });
 
 export const apiTipoIndirizzoEsteroToTipoIndirizzoEsteroModel = (
   tipoIndirizzoEstero: TipoIndirizzoEstero | undefined
 ): TipoIndirizzoEsteroModel => ({
-  cap: tipoIndirizzoEstero?.cap || "",
+  cap: tipoIndirizzoEstero?.cap ?? "",
   place: apiTipoDatoLocalitaEsteraToTipoDatoLocalitaEsteraModel(
     tipoIndirizzoEstero?.place
   ),
@@ -217,8 +221,8 @@ export const apiTipoIndirizzoEsteroToTipoIndirizzoEsteroModel = (
 export const apiTipoConsolatoToTipoConsolatoModel = (
   tipoConsolato: TipoConsolato | undefined
 ): TipoConsolatoModel => ({
-  consulateCod: tipoConsolato?.consulateCod || "",
-  consulateDescription: tipoConsolato?.consulateDescription || "",
+  consulateCod: tipoConsolato?.consulateCod ?? "",
+  consulateDescription: tipoConsolato?.consulateDescription ?? "",
 });
 
 export const apiTipoLocalitaEstera1ToTipoLocalitaEsteraModel = (
@@ -235,16 +239,17 @@ export const apiTipoLocalitaEstera1ToTipoLocalitaEsteraModel = (
 export const apiTipoResidenzaToTipoResidenzaModel = (
   tipoResidenza: TipoResidenza | undefined
 ): TipoResidenzaModel => ({
-  addressType: tipoResidenza?.addressType || "",
-  noteaddress: tipoResidenza?.noteaddress || "",
+  addressType: tipoResidenza?.addressType ?? "",
+  noteaddress: tipoResidenza?.noteaddress ?? "",
   address: apiTipoIndirizzoToTipoIndirizzoModel(tipoResidenza?.address),
   foreignState: apiTipoLocalitaEstera1ToTipoLocalitaEsteraModel(
     tipoResidenza?.foreignState
   ),
-  presso: tipoResidenza?.presso || "",
-  addressStartDate: tipoResidenza?.addressStartDate || "",
+  presso: tipoResidenza?.presso ?? "",
+  addressStartDate: tipoResidenza?.addressStartDate ?? "",
 });
 
+/*
 export const apiDataPreparationTemplateToUserModel = (
   dataPreparationTemplate: DataPreparationTemplate | undefined,
   existingUUID?: string
@@ -262,13 +267,17 @@ export const apiDataPreparationTemplateToUserModel = (
     dataPreparationTemplate?.address
   ),
 });
+*/
 
+/*
 export const userModelToApiDataPreparationResponse = (
   userModel: UserModel | undefined
 ): DataPreparationResponse => ({
   uuid: userModel?.uuid,
 });
+*/
 
+/*
 export const userModelToApiDataPreparationResponseCf = (
   userModels: UserModel[] | null,
   codiceFiscale?: string | null
@@ -292,6 +301,7 @@ export const userModelToApiDataPreparationResponseCf = (
     uuid: userModel.uuid,
   };
 };
+*/
 
 //* ********************************************************************************************************** */
 export const tipoComuneModelToApiTipoComune = (
@@ -321,6 +331,7 @@ export const tipoLuogoNascitaModelToApiTipoLuogoNascita = (
   place: tipoLocalitaModelToApiTipoLocalita(tipoLuogoNascitaModel?.place),
 });
 
+/*
 export const tipoDataNascitaModelToApiTipoDatiNascitaTemplateE000 = (
   tipoDataNascitaModel: TipoDataNascitaModel
 ): TipoDatiNascitaTemplateE000 => ({
@@ -329,7 +340,9 @@ export const tipoDataNascitaModelToApiTipoDatiNascitaTemplateE000 = (
     tipoDataNascitaModel?.birthPlace
   ),
 });
+*/
 
+/*
 export const soggettoModelToApiTipoCriteriRicercaTemplateAR001 = (
   soggettoModel: SoggettoModel
 ): TipoCriteriRicercaTemplateAR001 => ({
@@ -342,6 +355,7 @@ export const soggettoModelToApiTipoCriteriRicercaTemplateAR001 = (
     soggettoModel?.birthDate
   ),
 });
+*/
 
 export const tipoToponimoModelToApiTipoToponimo = (
   tipoToponimoModel: TipoToponimoModel
@@ -458,6 +472,7 @@ export const tipoResidenzaModelToApiTipoResidenza = (
   addressStartDate: tipoResidenzaModel?.addressStartDate,
 });
 
+/*
 export const userModelToApiDataPreparationTemplate = (
   userModel: UserModel
 ): DataPreparationTemplate => ({
@@ -466,7 +481,9 @@ export const userModelToApiDataPreparationTemplate = (
   ),
   address: tipoResidenzaModelToApiTipoResidenza(userModel?.address),
 });
+*/
 
+/*
 export const userModelToApiDataPreparationTemplateResponse = (
   userModel: UserModel
 ): DataPreparationTemplateResponse => ({
@@ -476,6 +493,7 @@ export const userModelToApiDataPreparationTemplateResponse = (
   ),
   address: tipoResidenzaModelToApiTipoResidenza(userModel?.address),
 });
+*/
 
 //* ********************************************************************************************************** */
 
@@ -722,8 +740,8 @@ export const UserModelToApiTipoDatiSoggettiEnte = (
 export const ProblemErrorModelToApiProblemError = (
   problemErrorModel: ProblemErrorModel
 ): ProblemError => ({
-  code: problemErrorModel?.code || "",
-  detail: problemErrorModel?.detail || "",
+  code: problemErrorModel?.code ?? "",
+  detail: problemErrorModel?.detail ?? "",
 });
 
 export const ProblemModelToApiProblem = (

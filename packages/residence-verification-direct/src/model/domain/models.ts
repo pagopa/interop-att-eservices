@@ -1,23 +1,23 @@
 import { z } from "zod";
 import * as api from "../generated/api.js";
 
-export type DataPreparationTemplate = z.infer<
-  typeof api.schemas.DataPreparationTemplate
->;
-export type DataPreparationResponse = z.infer<
-  typeof api.schemas.DataPreparationResponse
->;
+// export type DataPreparationTemplate = z.infer<
+//   typeof api.schemas.DataPreparationTemplate
+// >;
+// export type DataPreparationResponse = z.infer<
+//   typeof api.schemas.DataPreparationResponse
+// >;
 export type TipoLocalita = z.infer<typeof api.schemas.TipoLocalita>;
 export type TipoComune = z.infer<typeof api.schemas.TipoComune>;
 export type TipoLuogoNascitaE000 = z.infer<
   typeof api.schemas.TipoLuogoNascitaE000
 >;
-export type TipoDatiNascitaTemplateE000 = z.infer<
-  typeof api.schemas.TipoDatiNascitaTemplateE000
->;
-export type TipoCriteriRicercaTemplateAR001 = z.infer<
-  typeof api.schemas.TipoCriteriaTemplateAR001
->;
+// export type TipoDatiNascitaTemplateE000 = z.infer<
+//   typeof api.schemas.TipoDatiNascitaTemplateE000
+// >;
+// export type TipoCriteriRicercaTemplateAR001 = z.infer<
+//   typeof api.schemas.TipoCriteriaTemplateAR001
+// >;
 export type TipoToponimo = z.infer<typeof api.schemas.TipoToponimo>;
 export type TipoCivicoInterno = z.infer<typeof api.schemas.TipoCivicoInterno>;
 export type TipoNumeroCivico = z.infer<typeof api.schemas.TipoNumeroCivico>;
@@ -34,9 +34,9 @@ export type TipoLocalitaEstera1 = z.infer<
   typeof api.schemas.TipoLocalitaEstera1
 >;
 export type TipoResidenza = z.infer<typeof api.schemas.TipoResidenza>;
-export type DataPreparationTemplateResponse = z.infer<
-  typeof api.schemas.DataPreparationTemplateResponse
->;
+// export type DataPreparationTemplateResponse = z.infer<
+//   typeof api.schemas.DataPreparationTemplateResponse
+// >;
 
 export type TipoDatiNascitaE000 = z.infer<
   typeof api.schemas.TipoDatiNascitaE000

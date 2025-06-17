@@ -35,19 +35,19 @@ import {
   ProblemErrorModel,
   ProblemModel,
 } from "pdnd-models";
-import { getUserModelByCodiceFiscale } from "../../utilities/userUtilities.js";
-import {
-  generateRandomUUID,
-  isValidUUID,
-} from "../../utilities/uuidUtilities.js";
+// import { getUserModelByCodiceFiscale } from "../../utilities/userUtilities.js";
+// import {
+//   generateRandomUUID,
+//   isValidUUID,
+// } from "../../utilities/uuidUtilities.js";
 
 import {
-  DataPreparationTemplate,
+  // DataPreparationTemplate,
   TipoLocalita,
   TipoComune,
   TipoLuogoNascitaE000,
-  TipoDatiNascitaTemplateE000,
-  TipoCriteriRicercaTemplateAR001,
+  // TipoDatiNascitaTemplateE000,
+  // TipoCriteriRicercaTemplateAR001,
   TipoToponimo,
   TipoCivicoInterno,
   TipoNumeroCivico,
@@ -58,8 +58,8 @@ import {
   TipoConsolato,
   TipoLocalitaEstera1,
   TipoResidenza,
-  DataPreparationResponse,
-  DataPreparationTemplateResponse,
+  // DataPreparationResponse,
+  // DataPreparationTemplateResponse,
   TipoDatiNascitaE000,
   TipoParametriRicercaAR001,
   TipoRichiestaAR001,
@@ -109,6 +109,7 @@ export const apiTipoLuogoNascitaToTipoLuogoNascitaModel = (
   place: apiTipoLocalitaToTipoLocalita(tipoLuogoNascitaE000?.place),
 });
 
+/*
 export const apiTipoDatiNascitaTemplateE000ToTipoDataNascitaModel = (
   tipoDatiNascitaTemplateE000: TipoDatiNascitaTemplateE000 | undefined
 ): TipoDataNascitaModel => ({
@@ -117,7 +118,9 @@ export const apiTipoDatiNascitaTemplateE000ToTipoDataNascitaModel = (
     tipoDatiNascitaTemplateE000?.birthPlace
   ),
 });
+*/
 
+/*
 export const apiTipoCriteriRicercaTemplateAR001ToSoggettoModel = (
   tipoCriteriRicercaTemplateAR001: TipoCriteriRicercaTemplateAR001 | undefined
 ): SoggettoModel => ({
@@ -130,6 +133,7 @@ export const apiTipoCriteriRicercaTemplateAR001ToSoggettoModel = (
     tipoCriteriRicercaTemplateAR001?.birthDate
   ),
 });
+*/
 
 export const apiTipoToponimoToTipoToponimoModel = (
   tipoToponimo: TipoToponimo | undefined
@@ -245,6 +249,7 @@ export const apiTipoResidenzaToTipoResidenzaModel = (
   addressStartDate: tipoResidenza?.addressStartDate ?? "",
 });
 
+/*
 export const apiDataPreparationTemplateToUserModel = (
   dataPreparationTemplate: DataPreparationTemplate | undefined,
   existingUUID?: string
@@ -262,13 +267,17 @@ export const apiDataPreparationTemplateToUserModel = (
     dataPreparationTemplate?.address
   ),
 });
+*/
 
+/*
 export const userModelToApiDataPreparationResponse = (
   userModel: UserModel | undefined
 ): DataPreparationResponse => ({
   uuid: userModel?.uuid,
 });
+*/
 
+/*
 export const userModelToApiDataPreparationResponseCf = (
   userModels: UserModel[] | null,
   codiceFiscale?: string | null
@@ -292,6 +301,7 @@ export const userModelToApiDataPreparationResponseCf = (
     uuid: userModel.uuid,
   };
 };
+*/
 
 //* ********************************************************************************************************** */
 export const tipoComuneModelToApiTipoComune = (
@@ -321,6 +331,7 @@ export const tipoLuogoNascitaModelToApiTipoLuogoNascita = (
   place: tipoLocalitaModelToApiTipoLocalita(tipoLuogoNascitaModel?.place),
 });
 
+/*
 export const tipoDataNascitaModelToApiTipoDatiNascitaTemplateE000 = (
   tipoDataNascitaModel: TipoDataNascitaModel
 ): TipoDatiNascitaTemplateE000 => ({
@@ -329,7 +340,9 @@ export const tipoDataNascitaModelToApiTipoDatiNascitaTemplateE000 = (
     tipoDataNascitaModel?.birthPlace
   ),
 });
+*/
 
+/*
 export const soggettoModelToApiTipoCriteriRicercaTemplateAR001 = (
   soggettoModel: SoggettoModel
 ): TipoCriteriRicercaTemplateAR001 => ({
@@ -342,6 +355,7 @@ export const soggettoModelToApiTipoCriteriRicercaTemplateAR001 = (
     soggettoModel?.birthDate
   ),
 });
+*/
 
 export const tipoToponimoModelToApiTipoToponimo = (
   tipoToponimoModel: TipoToponimoModel
@@ -458,6 +472,7 @@ export const tipoResidenzaModelToApiTipoResidenza = (
   addressStartDate: tipoResidenzaModel?.addressStartDate,
 });
 
+/*
 export const userModelToApiDataPreparationTemplate = (
   userModel: UserModel
 ): DataPreparationTemplate => ({
@@ -466,7 +481,9 @@ export const userModelToApiDataPreparationTemplate = (
   ),
   address: tipoResidenzaModelToApiTipoResidenza(userModel?.address),
 });
+*/
 
+/*
 export const userModelToApiDataPreparationTemplateResponse = (
   userModel: UserModel
 ): DataPreparationTemplateResponse => ({
@@ -476,6 +493,7 @@ export const userModelToApiDataPreparationTemplateResponse = (
   ),
   address: tipoResidenzaModelToApiTipoResidenza(userModel?.address),
 });
+*/
 
 //* ********************************************************************************************************** */
 

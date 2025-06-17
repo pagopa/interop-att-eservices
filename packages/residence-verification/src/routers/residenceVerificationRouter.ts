@@ -1,12 +1,12 @@
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import {
-  authenticationCorrelationMiddleware,
+  // authenticationCorrelationMiddleware,
   logger,
   ExpressContext,
   ZodiosContext,
 } from "pdnd-common";
-import { TrialService } from "trial";
+// import { TrialService } from "trial";
 import ResidenceVerificationController from "../controllers/residenceVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -15,9 +15,9 @@ import {
   mapGeneralErrorModel,
   userModelNotFound,
 } from "../exceptions/errors.js";
-import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
-import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
-import { contextDataResidenceMiddleware } from "../context/context.js";
+// import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
+// import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
+// import { contextDataResidenceMiddleware } from "../context/context.js";
 
 const residenceVerificationRouter = (
   ctx: ZodiosContext
@@ -26,10 +26,10 @@ const residenceVerificationRouter = (
 
   residenceVerificationRouter.post(
     "/residence-verification",
-    contextDataResidenceMiddleware,
-    authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
+    // contextDataResidenceMiddleware,
+    // authenticationCorrelationMiddleware(true),
+    // integrityValidationMiddleware(),
+    // auditValidationMiddleware(),
     async (req, res) => {
       try {
         logger.info(
@@ -39,12 +39,12 @@ const residenceVerificationRouter = (
         if (!data || data.subjects?.subject?.length === 0) {
           throw userModelNotFound();
         }
-        void TrialService.insert(
-          req.url,
-          req.method,
-          "RESIDENCE_VERIFICATION_001",
-          "OK"
-        );
+        // void TrialService.insert(
+        //   req.url,
+        //   req.method,
+        //   "RESIDENCE_VERIFICATION_001",
+        //   "OK"
+        // );
         logger.info(`[END] residenceVerificationRouter`);
         return res.status(200).json(data).end();
       } catch (error) {
@@ -54,13 +54,13 @@ const residenceVerificationRouter = (
           correlationId,
           errorRes
         );
-        void TrialService.insert(
-          req.url,
-          req.method,
-          "RESIDENCE_VERIFICATION_001",
-          "KO",
-          JSON.stringify(generalErrorResponse)
-        );
+        // void TrialService.insert(
+        //   req.url,
+        //   req.method,
+        //   "RESIDENCE_VERIFICATION_001",
+        //   "KO",
+        //   JSON.stringify(generalErrorResponse)
+        // );
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }
     }
@@ -68,10 +68,10 @@ const residenceVerificationRouter = (
 
   residenceVerificationRouter.post(
     "/residence-verification/check",
-    contextDataResidenceMiddleware,
-    authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
+    // contextDataResidenceMiddleware,
+    // authenticationCorrelationMiddleware(true),
+    // integrityValidationMiddleware(),
+    // auditValidationMiddleware(),
     async (req, res) => {
       try {
         logger.info(
@@ -82,12 +82,12 @@ const residenceVerificationRouter = (
         const data = await ResidenceVerificationController.findUserVerify(
           req.body
         );
-        void TrialService.insert(
-          req.url,
-          req.method,
-          "RESIDENCE_VERIFICATION_002",
-          "OK"
-        );
+        // void TrialService.insert(
+        //   req.url,
+        //   req.method,
+        //   "RESIDENCE_VERIFICATION_002",
+        //   "OK"
+        // );
         logger.info(`[END] Verfy ResidenceVerificationRouter`);
         return res.status(200).json(data).end();
       } catch (error) {
@@ -97,13 +97,13 @@ const residenceVerificationRouter = (
           correlationId,
           errorRes
         );
-        void TrialService.insert(
-          req.url,
-          req.method,
-          "RESIDENCE_VERIFICATION_002",
-          "KO",
-          JSON.stringify(generalErrorResponse)
-        );
+        // void TrialService.insert(
+        //   req.url,
+        //   req.method,
+        //   "RESIDENCE_VERIFICATION_002",
+        //   "KO",
+        //   JSON.stringify(generalErrorResponse)
+        // );
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }
     }
