@@ -1,9 +1,7 @@
-// NOME FILE: DataPreparationService.ts (Versione Corretta)
-
+import { logger, getContext } from "pdnd-common";
 import { ResponseRequestDigitalAddressModel } from "pdnd-models";
-import { getContext, logger } from "pdnd-common";
 import dataPreparationRepository from "../repository/dataPreparationRepository.js";
-// generateHash non è più necessario
+
 import {
   appendUniqueFiscalcodeModelsToArray,
   deleteFiscalcodeModelByFiscaldode,
@@ -12,7 +10,8 @@ import {
 
 class DataPreparationService {
   public appContext = getContext();
-
+  public eService: string = "digital-address-verification";
+  public purposeId = this.appContext.authData.purposeId;
   public async saveList(
     fiscalCodeModel: ResponseRequestDigitalAddressModel
   ): Promise<ResponseRequestDigitalAddressModel[] | null> {
@@ -22,16 +21,22 @@ class DataPreparationService {
         fiscalCodeModel,
       ];
 
-      const purposeId = this.appContext.authData.purposeId;
+      // const hash = generateHash([
+      //   this.eService,
+      //   this.appContext.authData.purposeId,
+      // ]);
 
       const persistedFiscalcodeData =
-        await dataPreparationRepository.findAllByKey(purposeId);
+        await dataPreparationRepository.findAllByKey(this.purposeId);
 
       if (
         persistedFiscalcodeData == null ||
         persistedFiscalcodeData.length === 0
       ) {
-        await dataPreparationRepository.saveList(fiscalCodeData, purposeId);
+        await dataPreparationRepository.saveList(
+          fiscalCodeData,
+          this.purposeId
+        );
         logger.info(`[END] datapreparation-saveList`);
         return null;
       }
@@ -41,10 +46,10 @@ class DataPreparationService {
         fiscalCodeData
       );
 
-      await dataPreparationRepository.saveList(allFiscalcode, purposeId);
-
-      const response = await dataPreparationRepository.findAllByKey(purposeId);
-      logger.info(`response ${JSON.stringify(response)}`);
+      await dataPreparationRepository.saveList(allFiscalcode, this.purposeId);
+      const response = await dataPreparationRepository.findAllByKey(
+        this.purposeId
+      );
       logger.info(`[END] datapreparation-saveList`);
       return response;
     } catch (error) {
@@ -59,8 +64,13 @@ class DataPreparationService {
   public async getAll(): Promise<ResponseRequestDigitalAddressModel[] | null> {
     try {
       logger.info(`[START] datapreparation-getAll`);
-      const purposeId = this.appContext.authData.purposeId;
-      const response = await dataPreparationRepository.findAllByKey(purposeId);
+      // const hash = generateHash([
+      //   this.eService,
+      //   this.appContext.authData.purposeId,
+      // ]);
+      const response = await dataPreparationRepository.findAllByKey(
+        this.purposeId
+      );
       logger.info(`[END] datapreparation-getAll`);
       return response;
     } catch (error) {
@@ -75,9 +85,12 @@ class DataPreparationService {
   public async deleteAllByKey(): Promise<number | null> {
     try {
       logger.info(`[START] datapreparation-deleteAllByKey`);
-      const purposeId = this.appContext.authData.purposeId;
+      // const hash = generateHash([
+      //   this.eService,
+      //   this.appContext.authData.purposeId,
+      // ]);
       const response = await dataPreparationRepository.deleteAllByKey(
-        purposeId
+        this.purposeId
       );
       logger.info(`[END] datapreparation-deleteAllByKey`);
       return response;
@@ -89,22 +102,22 @@ class DataPreparationService {
       throw error;
     }
   }
-
   public async deleteByFiscalCode(
     uuid: string
   ): Promise<ResponseRequestDigitalAddressModel[] | null> {
     try {
       logger.info(`[START] deleteByFiscalcode`);
-      const purposeId = this.appContext.authData.purposeId;
-      const allSaved = await dataPreparationRepository.findAllByKey(purposeId);
-
-      // La logica di manipolazione dei dati in memoria rimane uguale
+      // const hash = generateHash([
+      //   this.eService,
+      //   this.appContext.authData.purposeId,
+      // ]);
+      const allSaved = await dataPreparationRepository.findAllByKey(
+        this.purposeId
+      );
       const fiscaldode = deleteFiscalcodeModelByFiscaldode(allSaved, uuid);
-
-      await dataPreparationRepository.deleteAllByKey(purposeId);
-
-      if (fiscaldode && fiscaldode.length > 0) {
-        await dataPreparationRepository.saveList(fiscaldode, purposeId);
+      await this.deleteAllByKey();
+      if (fiscaldode) {
+        await dataPreparationRepository.saveList(fiscaldode, this.purposeId);
       }
       logger.info(`[END] deleteByFiscalcode`);
       return fiscaldode;
@@ -122,9 +135,13 @@ class DataPreparationService {
   ): Promise<ResponseRequestDigitalAddressModel | null> {
     try {
       logger.info(`[START] findByFiscalCode`);
-      const purposeId = this.appContext.authData.purposeId;
-      const allSaved = await dataPreparationRepository.findAllByKey(purposeId);
-
+      // const hash = generateHash([
+      //   this.eService,
+      //   this.appContext.authData.purposeId,
+      // ]);
+      const allSaved = await dataPreparationRepository.findAllByKey(
+        this.purposeId
+      );
       const fiscaldode = findFiscalcodeModelByFiscalcode(allSaved, fiscalCode);
       if (fiscaldode) {
         return fiscaldode;

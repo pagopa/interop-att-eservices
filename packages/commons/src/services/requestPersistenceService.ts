@@ -31,6 +31,7 @@ export class PersistenceService {
           purposeId: purposeId,
           submittedRequestId: uuidv4(),
           status: "PRESA_IN_CARICO",
+          statusMessage: null,
           createdAt: new Date(),
         })
         .returning({ listRequestId: listRequestsTable.id });
@@ -154,7 +155,13 @@ export class PersistenceService {
         )
         .leftJoin(
           subjectDataResponsesTable,
-          eq(listRequestsTable.id, subjectDataResponsesTable.listRequestId)
+          and(
+            eq(listRequestsTable.id, subjectDataResponsesTable.listRequestId),
+            eq(
+              requestSubjectsTable.subjectId,
+              subjectDataResponsesTable.subjectId
+            )
+          )
         )
         .leftJoin(
           digitalAddressesTable,
@@ -260,6 +267,50 @@ export class PersistenceService {
     } catch (error) {
       logger.error(
         `PersistenceService: Errore durante deleteAllDigitalAddressesByPurpose.`,
+        error
+      );
+      throw error;
+    }
+  }
+
+  public async deleteSingleSubjectByPurposeId(
+    purposeId: string,
+    fiscalCode: string
+  ): Promise<number> {
+    try {
+      const resultList = await client
+        .select({ id: listRequestsTable.id })
+        .from(listRequestsTable)
+        .where(eq(listRequestsTable.purposeId, purposeId))
+        .limit(1);
+
+      const listRequest = resultList.length > 0 ? resultList[0] : null;
+
+      if (!listRequest) {
+        logger.warn(
+          `PersistenceService: Nessuna lista trovata per il purposeId ${purposeId} durante la cancellazione.`
+        );
+        return 0;
+      }
+
+      const result = await client
+        .delete(requestSubjectsTable)
+        .where(
+          and(
+            eq(requestSubjectsTable.listRequestId, listRequest.id),
+            eq(requestSubjectsTable.subjectId, fiscalCode)
+          )
+        )
+        .returning();
+
+      const deletedCount = result.length;
+      logger.info(
+        `PersistenceService: Cancellati ${deletedCount} soggetti per purposeId ${purposeId} e fiscalCode ${fiscalCode}.`
+      );
+      return deletedCount;
+    } catch (error) {
+      logger.error(
+        `PersistenceService: Errore durante deleteSingleSubjectByPurposeId.`,
         error
       );
       throw error;
