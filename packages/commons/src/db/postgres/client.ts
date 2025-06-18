@@ -1,8 +1,9 @@
 import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
+import pkg from "pg";
 import { DatabaseConfig } from "../../config/databaseConfig.js";
 import { InteroperabilityConfig } from "../../config/commonConfig.js";
-// import { logger } from "../../index.js";
+
+const { Pool } = pkg;
 
 const config = InteroperabilityConfig.and(DatabaseConfig).parse(process.env);
 
@@ -13,7 +14,7 @@ const pool = new Pool({
 // ======================================================================
 // ====================== DIAGNOSI FINALE DEFINITIVA ====================
 // ======================================================================
-async function runDiagnostic() {
+async function runDiagnostic(): Promise<void> {
   console.log("\n\n\n--- INIZIO DIAGNOSI FINALE ---");
   const client = await pool.connect();
   console.log("Connessione per la diagnosi stabilita.\n");
