@@ -1,0 +1,464 @@
+{
+  "id": "a2d0d2a9-1e3f-4441-94f3-617fe1949521",
+  "prevId": "ccbdcd60-0292-497c-9f1f-d9f6da742f7c",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "att.data_preparation": {
+      "name": "data_preparation",
+      "schema": "att",
+      "columns": {
+        "id_subject": {
+          "name": "id_subject",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "data": {
+          "name": "data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.digital_addresses": {
+      "name": "digital_addresses",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "subject_data_response_id": {
+          "name": "subject_data_response_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "profession": {
+          "name": "profession",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "usage_reason": {
+          "name": "usage_reason",
+          "type": "motivation_termination_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "usage_end_at": {
+          "name": "usage_end_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "da_sdr_fk_idx": {
+          "name": "da_sdr_fk_idx",
+          "columns": [
+            {
+              "expression": "subject_data_response_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "digital_addresses_subject_data_response_id_subject_data_responses_id_fk": {
+          "name": "digital_addresses_subject_data_response_id_subject_data_responses_id_fk",
+          "tableFrom": "digital_addresses",
+          "tableTo": "subject_data_responses",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "subject_data_response_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "email_check": {
+          "name": "email_check",
+          "value": "address ~ '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9.-]+)+$'"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "att.list_requests": {
+      "name": "list_requests",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "submitted_request_id": {
+          "name": "submitted_request_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "status_processing_request_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status_message": {
+          "name": "status_message",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "lr_submitted_req_id_idx": {
+          "name": "lr_submitted_req_id_idx",
+          "columns": [
+            {
+              "expression": "submitted_request_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "list_requests_submitted_request_id_unique": {
+          "name": "list_requests_submitted_request_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "submitted_request_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.request_subjects": {
+      "name": "request_subjects",
+      "schema": "att",
+      "columns": {
+        "list_request_id": {
+          "name": "list_request_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "request_subjects_list_request_id_list_requests_id_fk": {
+          "name": "request_subjects_list_request_id_list_requests_id_fk",
+          "tableFrom": "request_subjects",
+          "tableTo": "list_requests",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "list_request_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "request_subjects_list_request_id_subject_id_pk": {
+          "name": "request_subjects_list_request_id_subject_id_pk",
+          "columns": [
+            "list_request_id",
+            "subject_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.subject_data_responses": {
+      "name": "subject_data_responses",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "list_request_id": {
+          "name": "list_request_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "data_from": {
+          "name": "data_from",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "sdr_list_request_fk_idx": {
+          "name": "sdr_list_request_fk_idx",
+          "columns": [
+            {
+              "expression": "list_request_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "sdr_subject_id_idx": {
+          "name": "sdr_subject_id_idx",
+          "columns": [
+            {
+              "expression": "subject_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "subject_data_responses_list_request_id_list_requests_id_fk": {
+          "name": "subject_data_responses_list_request_id_list_requests_id_fk",
+          "tableFrom": "subject_data_responses",
+          "tableTo": "list_requests",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "list_request_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "id_subject_check": {
+          "name": "id_subject_check",
+          "value": "subject_id ~ '^([0-9]{11})|([A-Za-z]{6}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{3}[A-Za-z]{1})$'"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "att.verification_logs": {
+      "name": "verification_logs",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "result": {
+          "name": "result",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "checked_at": {
+          "name": "checked_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.purposes": {
+      "name": "purposes",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.verification_requests": {
+      "name": "verification_requests",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "count": {
+          "name": "count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "json_request": {
+          "name": "json_request",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.motivation_termination_enum": {
+      "name": "motivation_termination_enum",
+      "schema": "public",
+      "values": [
+        "CESSAZIONE_UFFICIO",
+        "CESSAZIONE_VOLONTARIA"
+      ]
+    },
+    "public.status_processing_request_enum": {
+      "name": "status_processing_request_enum",
+      "schema": "public",
+      "values": [
+        "PRESA_IN_CARICO",
+        "IN_ELABORAZIONE",
+        "DISPONIBILE"
+      ]
+    }
+  },
+  "schemas": {
+    "att": "att"
+  },
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

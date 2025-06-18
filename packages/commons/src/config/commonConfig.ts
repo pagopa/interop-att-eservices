@@ -45,7 +45,7 @@ export const InteroperabilityConfig = z.preprocess(
   (c) =>
     (c as { SKIP_INTEROPERABILITY_VERIFICATION: string | undefined })
       .SKIP_INTEROPERABILITY_VERIFICATION === undefined
-      ? { ...(c as object), SKIP_INTEROPERABILITY_VERIFICATION: "false" }
+      ? { ...(c as object), SKIP_INTEROPERABILITY_VERIFICATION: "true" }
       : c,
 
   z

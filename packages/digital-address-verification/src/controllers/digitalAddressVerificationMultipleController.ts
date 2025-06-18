@@ -32,7 +32,9 @@ class DigitalAddressVerificationSingleController {
 
         const verifyRequestInstance = new VerifyRequest(jsonRequest, count);
 
-        await DigitalAddressVerificationService.saveAll(verifyRequestInstance);
+        await DigitalAddressVerificationService.createRequest(
+          verifyRequestInstance
+        );
 
         const result: ResponseRequestListDigitalAddress = {
           state: getStatusFromNumber(count),

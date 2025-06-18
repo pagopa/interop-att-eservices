@@ -1,316 +1,188 @@
 import { logger } from "pdnd-common";
+import { eq } from "drizzle-orm";
 import { ResponseRequestDigitalAddressModel } from "pdnd-models";
-import { eq, and } from "drizzle-orm";
-import { v4 as uuidv4 } from "uuid";
 import { client } from "../db/postgres/client.js";
-import {
-  listRequestsTable,
-  requestSubjectsTable,
-  subjectDataResponsesTable,
-  digitalAddressesTable,
-} from "../db/schema/digital-address.model.js";
+import { verificationRequestsTable } from "../db/schema/verifyRequest.model.js";
+import { VerifyRequest } from "../db/model/verifyRequest.js";
+import { dataPreparationTable } from "../db/schema/data-preparation.model.js";
 
 export class PersistenceService {
-  private async saveListInternal(
-    models: ResponseRequestDigitalAddressModel[],
-    purposeId: string
-  ): Promise<string | null> {
-    const validModels = models.filter(
-      (model) => model.idSubject && model.idSubject.trim() !== ""
-    );
-
-    if (!validModels || validModels.length === 0) {
-      logger.warn("Nessun modello valido da salvare dopo il filtraggio.");
-      return null;
-    }
-
-    return await client.transaction(async (tx) => {
-      const [listRequest] = await tx
-        .insert(listRequestsTable)
-        .values({
-          purposeId: purposeId,
-          submittedRequestId: uuidv4(),
-          status: "PRESA_IN_CARICO",
-          statusMessage: "List request",
-          createdAt: new Date(),
-        })
-        .returning({ listRequestId: listRequestsTable.id });
-
-      if (!listRequest) {
-        throw new Error("Creazione della listRequest fallita.");
-      }
-
-      const listRequestId = listRequest.listRequestId;
-
-      const subjectsToInsert = validModels.map((model) => ({
-        listRequestId: listRequestId,
-        subjectId: model.idSubject,
-      }));
-      if (subjectsToInsert.length > 0) {
-        await tx.insert(requestSubjectsTable).values(subjectsToInsert);
-      }
-
-      for (const model of validModels) {
-        const [subjectDataResponse] = await tx
-          .insert(subjectDataResponsesTable)
-          .values({
-            listRequestId: listRequestId,
-            subjectId: model.idSubject,
-            dataFrom: new Date(model.from),
-          })
-          .returning({ responseId: subjectDataResponsesTable.id });
-
-        if (!subjectDataResponse) {
-          throw new Error(
-            `Creazione di subjectDataResponse per ${model.idSubject} fallita.`
-          );
-        }
-
-        if (model.digitalAddress && model.digitalAddress.length > 0) {
-          const addressesToInsert = model.digitalAddress.map((addr) => ({
-            subjectDataResponseId: subjectDataResponse.responseId,
-            address: addr.digitalAddress,
-            profession: addr.profession,
-            usageReason: addr.information.reason,
-            usageEndAt: new Date(addr.information.endDate),
-          }));
-          await tx.insert(digitalAddressesTable).values(addressesToInsert);
-        }
-      }
-
-      logger.info(
-        `PersistenceService: Lista per purposeId ${purposeId} salvata correttamente.`
+  public async saveVerificationRequest(data: VerifyRequest): Promise<void> {
+    try {
+      await client.insert(verificationRequestsTable).values({
+        idRequest: data.idRequest,
+        count: data.count,
+        createdAt: new Date(),
+        jsonRequest: data.jsonRequest,
+      });
+    } catch (error) {
+      logger.error(
+        `[PERSISTENCE] Errore durante saveVerificationRequest per id ${data.idRequest}.`,
+        error
       );
-      return listRequestId;
-    });
+      throw error;
+    }
+  }
+
+  public async findVerificationRequestById(
+    id: string
+  ): Promise<VerifyRequest | null> {
+    try {
+      const result = await client
+        .select()
+        .from(verificationRequestsTable)
+        .where(eq(verificationRequestsTable.idRequest, id))
+        .limit(1);
+
+      if (result.length === 0) {
+        return null;
+      }
+
+      const dbRecord = result[0];
+
+      return {
+        idRequest: dbRecord.idRequest,
+        count: dbRecord.count,
+        jsonRequest: dbRecord.jsonRequest as string,
+      };
+    } catch (error) {
+      logger.error(
+        `[PERSISTENCE] Errore durante findVerificationRequestById per id ${id}.`,
+        error
+      );
+      throw error;
+    }
+  }
+
+  public async updateVerificationRequest(
+    data: Pick<VerifyRequest, "idRequest" | "count">
+  ): Promise<void> {
+    try {
+      await client
+        .update(verificationRequestsTable)
+        .set({
+          count: data.count,
+          updatedAt: new Date(),
+        })
+        .where(eq(verificationRequestsTable.idRequest, data.idRequest));
+    } catch (error) {
+      logger.error(
+        `[PERSISTENCE] Errore durante updateVerificationRequest per id ${data.idRequest}.`,
+        error
+      );
+      throw error;
+    }
   }
 
   public async saveDataPreparationList(
-    models: ResponseRequestDigitalAddressModel[],
-    purposeId: string
-  ): Promise<string | null> {
+    data: ResponseRequestDigitalAddressModel[]
+  ): Promise<void> {
     try {
-      return await this.saveListInternal(models, purposeId);
+      if (data.length === 0) {
+        return;
+      }
+
+      const dataToUpsert = data.map((item) => ({
+        idSubject: item.idSubject,
+        data: item,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }));
+
+      await client.transaction(async (tx) => {
+        for (const item of dataToUpsert) {
+          await tx
+            .insert(dataPreparationTable)
+            .values(item)
+            .onConflictDoUpdate({
+              target: dataPreparationTable.idSubject,
+              set: {
+                data: item.data,
+                updatedAt: new Date(),
+              },
+            });
+        }
+      });
     } catch (error) {
       logger.error(
-        `PersistenceService: Errore durante saveDataPreparationList.`,
+        `[PERSISTENCE] Errore durante saveDataPreparationList.`,
         error
       );
       throw error;
     }
   }
 
-  public async saveDigitalAddressList(
-    models: ResponseRequestDigitalAddressModel[],
-    purposeId: string
-  ): Promise<string | null> {
+  public async findAllDataPreparation(): Promise<
+    ResponseRequestDigitalAddressModel[] | null
+  > {
     try {
-      return await this.saveListInternal(models, purposeId);
+      const results = await client.select().from(dataPreparationTable);
+
+      if (results.length === 0) {
+        return null;
+      }
+
+      return results.map(
+        (dbRecord) => dbRecord.data as ResponseRequestDigitalAddressModel
+      );
     } catch (error) {
       logger.error(
-        `PersistenceService: Errore durante saveDigitalAddressList.`,
+        `[PERSISTENCE] Errore durante findAllDataPreparation.`,
         error
       );
       throw error;
     }
-  }
-
-  public async findAllDataPreparationByPurpose(
-    purposeId: string
-  ): Promise<ResponseRequestDigitalAddressModel[] | null> {
-    return this.findAllDigitalAddressesByPurpose(purposeId);
   }
 
   public async findSingleDataPreparationByFiscalCode(
-    purposeId: string,
     fiscalCode: string
   ): Promise<ResponseRequestDigitalAddressModel | null> {
-    return this.findSingleDigitalAddressByPurpose(purposeId, fiscalCode);
-  }
-
-  public async deleteAllDataPreparationByPurpose(
-    purposeId: string
-  ): Promise<number> {
-    return this.deleteAllDigitalAddressesByPurpose(purposeId);
-  }
-
-  public async findAllDigitalAddressesByPurpose(
-    purposeId: string
-  ): Promise<ResponseRequestDigitalAddressModel[] | null> {
     try {
-      const flatResults = await client
-        .select({
-          listRequestId: listRequestsTable.id,
-          subjectId: requestSubjectsTable.subjectId,
-          dataFrom: subjectDataResponsesTable.dataFrom,
-          address: digitalAddressesTable.address,
-          profession: digitalAddressesTable.profession,
-          usageReason: digitalAddressesTable.usageReason,
-          usageEndAt: digitalAddressesTable.usageEndAt,
-        })
-        .from(listRequestsTable)
-        .leftJoin(
-          requestSubjectsTable,
-          eq(listRequestsTable.id, requestSubjectsTable.listRequestId)
-        )
-        .leftJoin(
-          subjectDataResponsesTable,
-          and(
-            eq(listRequestsTable.id, subjectDataResponsesTable.listRequestId),
-            eq(
-              requestSubjectsTable.subjectId,
-              subjectDataResponsesTable.subjectId
-            )
-          )
-        )
-        .leftJoin(
-          digitalAddressesTable,
-          eq(
-            subjectDataResponsesTable.id,
-            digitalAddressesTable.subjectDataResponseId
-          )
-        )
-        .where(eq(listRequestsTable.purposeId, purposeId));
+      const result = await client
+        .select()
+        .from(dataPreparationTable)
+        .where(eq(dataPreparationTable.idSubject, fiscalCode))
+        .limit(1);
 
-      if (!flatResults || flatResults.length === 0) {
+      if (result.length === 0) {
         return null;
       }
-      const groupedBySubject = new Map<
-        string,
-        ResponseRequestDigitalAddressModel
-      >();
 
-      for (const row of flatResults) {
-        if (!row.subjectId) {
-          continue;
-        }
-        if (!groupedBySubject.has(row.subjectId)) {
-          groupedBySubject.set(row.subjectId, {
-            idSubject: row.subjectId,
-            from: row.dataFrom?.toISOString() ?? "",
-            digitalAddress: [],
-          });
-        }
-
-        const subjectModel = groupedBySubject.get(row.subjectId)!;
-
-        if (row.address) {
-          subjectModel.digitalAddress.push({
-            digitalAddress: row.address,
-            profession: row.profession ?? undefined,
-            information: {
-              reason: row.usageReason!,
-              endDate: row.usageEndAt?.toISOString() ?? "",
-            },
-          });
-        }
-      }
-
-      return Array.from(groupedBySubject.values());
+      return result[0].data as ResponseRequestDigitalAddressModel;
     } catch (error) {
       logger.error(
-        `PersistenceService: Errore durante findAllDigitalAddressesByPurpose.`,
+        `[PERSISTENCE] Errore durante findSingleDataPreparationByFiscalCode per fiscalCode '${fiscalCode}'.`,
         error
       );
       throw error;
     }
   }
 
-  public async findSingleDigitalAddressByPurpose(
-    purposeId: string,
-    fiscalCode: string
-  ): Promise<ResponseRequestDigitalAddressModel | null> {
+  public async deleteAllDataPreparation(): Promise<number> {
     try {
-      const result = await client
-        .select({ subjectId: requestSubjectsTable.subjectId })
-        .from(requestSubjectsTable)
-        .innerJoin(
-          listRequestsTable,
-          eq(requestSubjectsTable.listRequestId, listRequestsTable.id)
-        )
-        .where(
-          and(
-            eq(listRequestsTable.purposeId, purposeId),
-            eq(requestSubjectsTable.subjectId, fiscalCode)
-          )
-        )
-        .limit(1);
-
-      return result.length > 0
-        ? ({
-            idSubject: result[0].subjectId,
-          } as unknown as ResponseRequestDigitalAddressModel)
-        : null;
+      const result = await client.delete(dataPreparationTable);
+      return result.rowCount ?? 0;
     } catch (error) {
       logger.error(
-        `PersistenceService: Errore durante findSingleDigitalAddressByPurpose.`,
+        `[PERSISTENCE] Errore durante deleteAllDataPreparation.`,
         error
       );
       throw error;
     }
   }
 
-  public async deleteAllDigitalAddressesByPurpose(
-    purposeId: string
-  ): Promise<number> {
-    try {
-      const result = await client
-        .delete(listRequestsTable)
-        .where(eq(listRequestsTable.purposeId, purposeId))
-        .returning();
-
-      const deletedCount = result.length;
-      logger.info(
-        `PersistenceService: Cancellate ${deletedCount} liste per purposeId ${purposeId}.`
-      );
-      return deletedCount;
-    } catch (error) {
-      logger.error(
-        `PersistenceService: Errore durante deleteAllDigitalAddressesByPurpose.`,
-        error
-      );
-      throw error;
-    }
-  }
-
-  public async deleteSingleSubjectByPurposeId(
-    purposeId: string,
+  public async deleteSingleDataPreparationByFiscalCode(
     fiscalCode: string
   ): Promise<number> {
     try {
-      const resultList = await client
-        .select({ id: listRequestsTable.id })
-        .from(listRequestsTable)
-        .where(eq(listRequestsTable.purposeId, purposeId))
-        .limit(1);
-
-      const listRequest = resultList.length > 0 ? resultList[0] : null;
-
-      if (!listRequest) {
-        logger.warn(
-          `PersistenceService: Nessuna lista trovata per il purposeId ${purposeId} durante la cancellazione.`
-        );
-        return 0;
-      }
-
       const result = await client
-        .delete(requestSubjectsTable)
-        .where(
-          and(
-            eq(requestSubjectsTable.listRequestId, listRequest.id),
-            eq(requestSubjectsTable.subjectId, fiscalCode)
-          )
-        )
-        .returning();
+        .delete(dataPreparationTable)
+        .where(eq(dataPreparationTable.idSubject, fiscalCode));
 
-      const deletedCount = result.length;
-      logger.info(
-        `PersistenceService: Cancellati ${deletedCount} soggetti per purposeId ${purposeId} e fiscalCode ${fiscalCode}.`
-      );
-      return deletedCount;
+      return result.rowCount ?? 0;
     } catch (error) {
       logger.error(
-        `PersistenceService: Errore durante deleteSingleSubjectByPurposeId.`,
+        `[PERSISTENCE] Errore durante deleteSingleDataPreparationByFiscalCode per fiscalCode '${fiscalCode}'.`,
         error
       );
       throw error;

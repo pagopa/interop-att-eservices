@@ -2,7 +2,7 @@ import {
   bigserial,
   varchar,
   timestamp,
-  boolean,
+  boolean as pgBoolean,
   uuid,
   check,
   index,
@@ -12,7 +12,6 @@ import {
   primaryKey,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm/sql";
-import { Purpose } from "./purpose.model.js";
 
 export const customSchema = pgSchema("att");
 
@@ -30,9 +29,6 @@ export const listRequestsTable = customSchema.table(
   "list_requests",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    purposeId: uuid("purpose_id")
-      .notNull()
-      .references(() => Purpose.id, { onDelete: "cascade" }),
     submittedRequestId: varchar("submitted_request_id", { length: 255 })
       .unique()
       .notNull(),
@@ -47,7 +43,6 @@ export const listRequestsTable = customSchema.table(
     submittedReqIdIdx: index("lr_submitted_req_id_idx").on(
       table.submittedRequestId
     ),
-    purposeIdIdx: index("lr_purpose_id_idx").on(table.purposeId),
   })
 );
 
@@ -115,7 +110,7 @@ export const digitalAddressesTable = customSchema.table(
 
 export const verificationLogsTable = customSchema.table("verification_logs", {
   id: bigserial("id", { mode: "number" }).primaryKey(),
-  result: boolean("result").notNull(),
+  result: pgBoolean("result").notNull(),
   checkedAt: timestamp("checked_at", {
     withTimezone: true,
     mode: "date",

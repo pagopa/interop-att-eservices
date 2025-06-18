@@ -1,67 +1,24 @@
-import { logger, getContext } from "pdnd-common";
+import { logger } from "pdnd-common";
 import digitalAddressRepository from "../repository/digitalAddressPreparationRepository.js";
-// import generateHash from "../utilities/hashUtilities.js";
-import {
-  appendUniqueVerifyRequestToArray,
-  findRequestlByIdRequest,
-} from "../utilities/verifyRequestUtilities.js";
 import { VerifyRequest } from "../model/digitalAddress/VerifyRequest.js";
 import { getMaxNumber } from "../utilities/statusRequestUtility.js";
 
 class DigitalAddressVerificationService {
-  public appContext = getContext();
   public eService: string = "digital-address-verification-request";
-  public purposeId: string = this.appContext.authData.purposeId;
-  public async saveAll(
-    fiscalCodeModel: VerifyRequest
-  ): Promise<VerifyRequest[] | null> {
+
+  public async createRequest(
+    verifyRequestModel: VerifyRequest
+  ): Promise<VerifyRequest> {
     try {
-      logger.info(`[START] datapreparation-saveList`);
-      const fiscalCodeData: VerifyRequest[] = [fiscalCodeModel];
-
-      // recupera tutte le chiavi di data preparation
-      // const hash = generateHash([
-      //   this.eService,
-      //   this.appContext.authData.purposeId,
-      // ]);
-      const persistedFiscalcodeData =
-        await digitalAddressRepository.findAllByKey(this.purposeId);
-
-      // se è vuota, la salvo senza ulteriori controlli
-      /* eslint-disable */
-      if (
-        persistedFiscalcodeData == null ||
-        persistedFiscalcodeData.length === 0
-      ) {
-        /* eslint-enable */
-        await digitalAddressRepository.saveRequest(
-          fiscalCodeData,
-          this.purposeId
-        );
-      } else {
-        // esistono già chiavi, devo aggiungere la nuova, o sostituirla nel caso esista
-        const allFiscalcode = appendUniqueVerifyRequestToArray(
-          persistedFiscalcodeData,
-          fiscalCodeData
-        );
-        // if (areFiscalCodesValid(allFiscalcode)) {
-        await digitalAddressRepository.saveRequest(
-          allFiscalcode,
-          this.purposeId
-        );
-        // } else {
-        // throw ErrorHandling.invalidApiRequest();
-        // }
-      }
-      const response = await digitalAddressRepository.findAllByKey(
-        this.purposeId
+      logger.info(
+        `[SERVICE] Creating new verification request with id: ${verifyRequestModel.idRequest}`
       );
-      logger.info(`[END] datapreparation-saveList`);
-      return response;
+      await digitalAddressRepository.save(verifyRequestModel);
+      logger.info(`[SERVICE] Request saved successfully.`);
+      return verifyRequestModel;
     } catch (error) {
       logger.error(
-        `saveList [DATA-PREPARATION]- Errore durante il salvataggio della lista.`,
-        error
+        `createRequest [SERVICE] - Error while saving the request: ${error}`
       );
       throw error;
     }
@@ -71,44 +28,57 @@ class DigitalAddressVerificationService {
     idRequest: string
   ): Promise<VerifyRequest | null> {
     try {
-      // const hash = generateHash([
-      //   this.eService,
-      //   this.appContext.authData.purposeId,
-      // ]);
-      const result = await digitalAddressRepository.findAllByKey(
-        this.purposeId
-      );
-      const requests = result;
-      return findRequestlByIdRequest(requests, idRequest);
+      logger.info(`[SERVICE] Fetching request with id: ${idRequest}`);
+      const result = await digitalAddressRepository.findById(idRequest);
+      logger.info(`[SERVICE] Request fetch completed.`);
+      return result;
     } catch (error) {
       logger.error(
-        `DigitalAddressVerification: Errore durante il recupero dell'utente dal codice fiscale. `,
-        error
+        `getByIdRequest [SERVICE] - Error while fetching request by id: ${idRequest}. Error: ${error}`
       );
       throw error;
     }
   }
-  /* eslint-disable */
+
   public async simulateWorkByIdRequest(
     idRequest: string
   ): Promise<VerifyRequest | null> {
     try {
+      logger.info(`[SERVICE] Simulating work for request id: ${idRequest}`);
+
+      // 1. Trova il singolo record in modo efficiente.
       const verifyRequest = await this.getByIdRequest(idRequest);
+
       if (verifyRequest && verifyRequest.count > 1) {
+        // 2. Crea un nuovo oggetto con il campo aggiornato.
         const decrement = Math.floor(Math.random() * getMaxNumber()) + 1;
-        verifyRequest.count = Math.max(1, verifyRequest.count - decrement);
-        //verifyRequest.count -= 1;
-        await this.saveAll(verifyRequest);
+        const updatedVerifyRequest = {
+          ...verifyRequest,
+          count: Math.max(1, verifyRequest.count - decrement),
+        };
+
+        // 3. Aggiorna il singolo record nel database.
+        await digitalAddressRepository.update(updatedVerifyRequest);
+        logger.info(
+          `[SERVICE] Updated request id ${idRequest} with new count ${updatedVerifyRequest.count}`
+        );
+        return updatedVerifyRequest;
+      } else if (verifyRequest) {
+        logger.info(
+          `[SERVICE] Request id ${idRequest} is already completed (count: ${verifyRequest.count}).`
+        );
+
+        return verifyRequest;
       }
+
       return verifyRequest;
     } catch (error) {
       logger.error(
-        `DigitalAddressVerification: Errore durante la simulazione del lavoro. `,
-        error
+        `simulateWorkByIdRequest [SERVICE] - Error during work simulation for id ${idRequest}. Error: ${error}`
       );
       throw error;
     }
   }
-} /* eslint-enable */
+}
 
 export default new DigitalAddressVerificationService();
