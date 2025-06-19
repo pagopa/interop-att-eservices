@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/member-ordering */
+/* eslint-disable @typescript-eslint/array-type */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/prefer-optional-chain */
 import { PgTable } from "drizzle-orm/pg-core";
 import { SQL } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
@@ -26,7 +30,7 @@ export class BaseRepository {
     try {
       const database = tx ?? db;
       return database.select().from(table).where(where) as Promise<
-        SelectModel<T>[]
+        Array<SelectModel<T>>
       >;
     } catch (error) {
       logger.error(

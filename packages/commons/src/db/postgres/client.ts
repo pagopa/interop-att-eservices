@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { drizzle } from "drizzle-orm/node-postgres";
 import pkg from "pg";
 import { DatabaseConfig } from "../../config/databaseConfig.js";

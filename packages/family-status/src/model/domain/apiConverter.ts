@@ -80,7 +80,9 @@ export const UserModelToDataSubjectsInstitution = (
 export const CriteriaTypeToGeneralityType = (
   subject: CriteriaTypeFS001
 ): GeneralityType => ({
-  subjectId: codiceFiscaleToApiTipoCodiceFiscale(subject.subjectId!),
+  subjectId: subject.subjectId
+    ? codiceFiscaleToApiTipoCodiceFiscale(subject.subjectId)
+    : { subjectId: "", subjectIdValidity: "", dataAttributionValidity: "" },
   surname: subject.surname,
   noSurname: subject.surname == null ? "true" : "false",
   name: subject.name,
@@ -89,7 +91,13 @@ export const CriteriaTypeToGeneralityType = (
   birthDate: subject.birthDate?.eventDate,
   noDay: "",
   noMonth: "",
-  placeOfBirth: BirthDateTypeToEventPlaceType(subject.birthDate!),
+  placeOfBirth: subject.birthDate
+    ? BirthDateTypeToEventPlaceType(subject.birthDate)
+    : {
+        exceptionalPlace: undefined,
+        municipality: undefined,
+        place: undefined,
+      },
   AIRESubject: "",
   yearExpatriation: "",
   idSubjectData: "",

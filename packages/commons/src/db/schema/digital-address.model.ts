@@ -2,6 +2,7 @@ import {
   bigserial,
   varchar,
   timestamp,
+  // eslint-disable-next-line id-blacklist
   boolean,
   uuid,
   check,
