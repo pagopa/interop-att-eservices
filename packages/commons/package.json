@@ -16,7 +16,7 @@
     "start": "node  --no-warnings --loader ts-node/esm ./src/index.ts",
     "build": "tsc",
     "check": "tsc --project tsconfig.check.json",
-    "drizzle:generate": "pnpm build && drizzle-kit generate",
+    "drizzle:generate": "pnpm build && drizzle-kit generate && node dist/scripts/patchDrizzleMigration.js",
     "drizzle:migrate": "drizzle-kit migrate"
   },
   "keywords": [],

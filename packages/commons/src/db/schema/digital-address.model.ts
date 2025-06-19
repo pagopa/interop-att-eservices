@@ -2,25 +2,23 @@ import {
   bigserial,
   varchar,
   timestamp,
-  boolean as pgBoolean,
+  boolean,
   uuid,
   check,
   index,
-  pgEnum,
-  pgSchema,
   bigint,
   primaryKey,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm/sql";
+import { customSchema } from "./schema.js";
+import { Purpose } from "./purpose.model.js";
 
-export const customSchema = pgSchema("att");
+export const motivationTerminationEnum = customSchema.enum(
+  "motivation_termination_enum",
+  ["CESSAZIONE_UFFICIO", "CESSAZIONE_VOLONTARIA"]
+);
 
-export const motivationTerminationEnum = pgEnum("motivation_termination_enum", [
-  "CESSAZIONE_UFFICIO",
-  "CESSAZIONE_VOLONTARIA",
-]);
-
-export const statusProcessingRequestEnum = pgEnum(
+export const statusProcessingRequestEnum = customSchema.enum(
   "status_processing_request_enum",
   ["PRESA_IN_CARICO", "IN_ELABORAZIONE", "DISPONIBILE"]
 );
@@ -29,6 +27,9 @@ export const listRequestsTable = customSchema.table(
   "list_requests",
   {
     id: uuid("id").primaryKey().defaultRandom(),
+    purposeId: uuid("purpose_id")
+      .notNull()
+      .references(() => Purpose.id, { onDelete: "cascade" }),
     submittedRequestId: varchar("submitted_request_id", { length: 255 })
       .unique()
       .notNull(),
@@ -43,6 +44,7 @@ export const listRequestsTable = customSchema.table(
     submittedReqIdIdx: index("lr_submitted_req_id_idx").on(
       table.submittedRequestId
     ),
+    purposeIdIdx: index("lr_purpose_id_idx").on(table.purposeId),
   })
 );
 
@@ -110,7 +112,7 @@ export const digitalAddressesTable = customSchema.table(
 
 export const verificationLogsTable = customSchema.table("verification_logs", {
   id: bigserial("id", { mode: "number" }).primaryKey(),
-  result: pgBoolean("result").notNull(),
+  result: boolean("result").notNull(),
   checkedAt: timestamp("checked_at", {
     withTimezone: true,
     mode: "date",

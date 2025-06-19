@@ -1,9 +1,48 @@
 {
-  "id": "ccbdcd60-0292-497c-9f1f-d9f6da742f7c",
+  "id": "5a0980e5-0697-46c1-8c27-e5800dfcbf2c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "att.data_preparation": {
+      "name": "data_preparation",
+      "schema": "att",
+      "columns": {
+        "id_subject": {
+          "name": "id_subject",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "data": {
+          "name": "data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "att.digital_addresses": {
       "name": "digital_addresses",
       "schema": "att",
@@ -35,7 +74,7 @@
         "usage_reason": {
           "name": "usage_reason",
           "type": "motivation_termination_enum",
-          "typeSchema": "public",
+          "typeSchema": "att",
           "primaryKey": false,
           "notNull": true
         },
@@ -116,7 +155,7 @@
         "status": {
           "name": "status",
           "type": "status_processing_request_enum",
-          "typeSchema": "public",
+          "typeSchema": "att",
           "primaryKey": false,
           "notNull": true
         },
@@ -380,20 +419,65 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
+    },
+    "att.verification_requests": {
+      "name": "verification_requests",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "count": {
+          "name": "count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "json_request": {
+          "name": "json_request",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
   "enums": {
-    "public.motivation_termination_enum": {
+    "att.motivation_termination_enum": {
       "name": "motivation_termination_enum",
-      "schema": "public",
+      "schema": "att",
       "values": [
         "CESSAZIONE_UFFICIO",
         "CESSAZIONE_VOLONTARIA"
       ]
     },
-    "public.status_processing_request_enum": {
+    "att.status_processing_request_enum": {
       "name": "status_processing_request_enum",
-      "schema": "public",
+      "schema": "att",
       "values": [
         "PRESA_IN_CARICO",
         "IN_ELABORAZIONE",
