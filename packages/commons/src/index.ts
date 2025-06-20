@@ -1,7 +1,7 @@
 export { cacheManager } from "./db/index.js";
 export { baseRepository } from "./db/postgres/index.js";
 export * from "./db/postgres/client.js";
-export * from "./db/schema/digital-address.model.js";
+export * from "./db/schema/index.js";
 export * from "./db/schema/purpose.model.js";
 export * from "./auth/index.js";
 export * from "./config/index.js";

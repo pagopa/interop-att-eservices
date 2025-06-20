@@ -6,3 +6,4 @@ const cacheManager = new CacheManager();
 
 // Esporta direttamente l'istanza
 export { cacheManager };
+export * from "./schema/index.js";

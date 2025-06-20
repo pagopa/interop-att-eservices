@@ -9,8 +9,5 @@
     "types": ["node"],
     "rootDir": "src"
   },
-  "include": [
-    "src/**/*",
-    "drizzle.config.ts"
-  ]
+  "include": ["src/**/*"]
 }

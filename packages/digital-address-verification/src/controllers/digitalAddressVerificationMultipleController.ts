@@ -28,9 +28,13 @@ class DigitalAddressVerificationSingleController {
     try {
       if (request.idSubjects) {
         const jsonRequest = JSON.stringify(request);
-        const count = getMaxNumber(); // presa in carico
+        const count = getMaxNumber();
 
-        const verifyRequestInstance = new VerifyRequest(jsonRequest, count);
+        const verifyRequestInstance = new VerifyRequest(
+          request.idRequest,
+          jsonRequest,
+          count
+        );
 
         await DigitalAddressVerificationService.createRequest(
           verifyRequestInstance

@@ -1,8 +1,8 @@
-import { pgSchema, uuid } from "drizzle-orm/pg-core";
+import { uuid } from "drizzle-orm/pg-core";
 import { InferSelectModel } from "drizzle-orm";
-const att = pgSchema("att");
+import { customSchema } from "./schema.js";
 
-export const Purpose = att.table("purposes", {
+export const Purpose = customSchema.table("purposes", {
   id: uuid("id").primaryKey(),
 });
 export type Purpose = InferSelectModel<typeof Purpose>;

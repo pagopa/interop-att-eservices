@@ -1,5 +1,6 @@
-import { pgSchema, uuid, integer, jsonb, timestamp } from "drizzle-orm/pg-core";
-export const customSchema = pgSchema("att");
+import { uuid, integer, jsonb, timestamp } from "drizzle-orm/pg-core";
+import { customSchema } from "../schema.js";
+
 export const verificationRequestsTable = customSchema.table(
   "verification_requests",
   {

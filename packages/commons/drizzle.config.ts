@@ -1,6 +1,6 @@
-import { Config, defineConfig } from "drizzle-kit";
 import dotenv from "dotenv";
 import { z } from "zod";
+import { defineConfig, Config } from "drizzle-kit";
 
 dotenv.config();
 

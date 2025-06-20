@@ -1,4 +1,3 @@
-// This model reflects the structure of dataPreparationTable
 import { ResponseRequestDigitalAddressModel } from "pdnd-models";
 
 export type DataPreparation = {
