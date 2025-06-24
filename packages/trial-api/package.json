@@ -16,8 +16,8 @@
     "start": "node --no-warnings --loader ts-node/esm -r dotenv-flow/config ./src/index.ts",
     "build": "tsc",
     "check": "tsc --project tsconfig.check.json",
-    "drizzle:generate": "pnpm build && drizzle-kit generate",
-    "drizzle:migrate": "drizzle-kit migrate"
+    "drizzle:generate": "pnpm build && drizzle-kit generate --config=src/drizzle.config.ts",
+    "drizzle:migrate": "drizzle-kit migrate --config=src/drizzle.config.ts"
   },
   "keywords": [],
   "author": "",
