@@ -1,7 +1,8 @@
-/* eslint-disable */
-import { logger } from "pdnd-common";
-import { sequelize } from "trial";
-import { QueryTypes } from "sequelize";
+/* eslint-disable functional/no-let */
+/* eslint-disable functional/immutable-data */
+/* eslint-disable max-params */
+import { eq, and, asc } from "drizzle-orm";
+import { Trial, db, Check, Category } from "trial";
 import {
   PaginatedTrialResponse,
   PaginatedTrials,
@@ -16,118 +17,89 @@ export class TrialRepository {
     path?: string,
     method?: string
   ): Promise<PaginatedTrialResponse> {
-    try {
-      const offset = (page - 1) * pageSize;
+    const offset = (page - 1) * pageSize;
 
-      const whereConditions: string[] = [`t.purpose_id = :purposeId`];
-      const replacements: any = {
-        purposeId,
-        offset,
-        limit: pageSize,
-        page,
-        pageSize,
-      };
-
-      if (correlationId) {
-        whereConditions.push(`t.correlation_id = :correlationId`);
-        replacements.correlationId = correlationId;
-      }
-      if (path) {
-        whereConditions.push(`t.operation_path = :path`);
-        replacements.path = path;
-      }
-      if (method) {
-        whereConditions.push(`t.operation_method = :method`);
-        replacements.method = method;
-      }
-
-      const whereClause = whereConditions.join(" AND ");
-
-      const query = `
-                WITH paginated_trials AS (
-                    SELECT
-                        t.purpose_id,
-                        t.correlation_id,
-                        JSON_AGG(
-                            JSON_BUILD_OBJECT(
-                                'id', t.id,
-                                'operation_path', t.operation_path,
-                                'operation_method', t.operation_method,
-                                'response', t.response,
-                                'created_date', t.created_date,
-                                'checks', (
-                                    SELECT JSON_AGG(
-                                        JSON_BUILD_OBJECT(
-                                            'id', c.id,
-                                            'code', c.code,
-                                            'description', c.description,
-                                            '"order"', c."order"
-                                        )
-                                        ORDER BY c.id ASC
-                                    )
-                                    FROM "check" c
-                                    WHERE c.category_id = cat.id
-                                )
-                            )
-                            ORDER BY t.id ASC
-                        ) AS trials
-                    FROM trial t
-                    LEFT JOIN "check" c ON t.check_id = c.id
-                    LEFT JOIN category cat ON c.category_id = cat.id
-                    WHERE ${whereClause}
-                    GROUP BY t.purpose_id, t.correlation_id
-                    ORDER BY t.purpose_id, t.correlation_id
-                    OFFSET :offset ROWS
-                    LIMIT :limit
-                )
-                
-                SELECT
-                    json_build_object(
-                        'totalItems', COUNT(*),
-                        'totalPages', CEIL(COUNT(*)::NUMERIC / :pageSize),
-                        'currentPage', :page,
-                        'data', (
-                            SELECT JSON_AGG(paginated_trials)
-                            FROM paginated_trials
-                        )
-                    ) AS paginated_trial_query_result
-                FROM paginated_trials;
-            `;
-
-      const [queryResult] = await sequelize.query<PaginatedTrialQueryResult>(
-        query,
-        {
-          replacements,
-          type: QueryTypes.SELECT,
-          raw: true,
-        }
-      );
-
-      const parsedResult: PaginatedTrialResponse = {
-        totalItems: queryResult.paginated_trial_query_result.totalItems,
-        totalPages: queryResult.paginated_trial_query_result.totalPages,
-        currentPage: queryResult.paginated_trial_query_result.currentPage,
-        data: queryResult.paginated_trial_query_result.data ?? [],
-      };
-
-      return parsedResult;
-    } catch (error) {
-      logger.error(
-        `Errore durante la ricerca dei record Trial con correlationId '${correlationId}' con errore: ${error}`
-      );
-      throw error; // Rilancia l'errore per una gestione esterna se necessario
+    const filters = [eq(Trial.purpose_id, purposeId)];
+    if (correlationId) {
+      filters.push(eq(Trial.correlation_id, correlationId));
     }
+    if (path) {
+      filters.push(eq(Trial.operation_path, path));
+    }
+    if (method) {
+      filters.push(eq(Trial.operation_method, method));
+    }
+
+    const trials = await db
+      .select({
+        id: Trial.id,
+        purpose_id: Trial.purpose_id,
+        correlation_id: Trial.correlation_id,
+        operation_path: Trial.operation_path,
+        operation_method: Trial.operation_method,
+        response: Trial.response,
+        created_date: Trial.created_date,
+        check_id: Check.id,
+        check_code: Check.code,
+        check_description: Check.description,
+        check_order: Check.order,
+        category_id: Category.id,
+      })
+      .from(Trial)
+      .leftJoin(Check, eq(Trial.check_id, Check.id))
+      .leftJoin(Category, eq(Check.category_id, Category.id))
+      .where(and(...filters))
+      .orderBy(asc(Trial.id))
+      .limit(pageSize)
+      .offset(offset);
+
+    const grouped = new Map<string, PaginatedTrials>();
+
+    for (const trial of trials) {
+      const key = `${trial.purpose_id}-${trial.correlation_id}`;
+      let group = grouped.get(key);
+      if (!group) {
+        group = {
+          purpose_id: trial.purpose_id,
+          correlation_id: trial.correlation_id,
+          trials: [],
+        };
+        grouped.set(key, group);
+      }
+
+      if (!group.trials) {
+        group.trials = [];
+      }
+
+      group.trials.push({
+        id: trial.id,
+        operation_path: trial.operation_path,
+        operation_method: trial.operation_method ?? undefined, // Convert null to undefined
+        response: trial.response ?? undefined,
+        created_date: trial.created_date
+          ? trial.created_date.toISOString()
+          : undefined,
+        checks: trial.check_id
+          ? [
+              {
+                id: trial.check_id,
+                code: trial.check_code,
+                description: trial.check_description,
+                order: trial.check_order,
+                category: trial.category_id ? trial.category_id : undefined,
+              },
+            ]
+          : [],
+      });
+    }
+
+    const data = Array.from(grouped.values());
+
+    return {
+      totalItems: data.length,
+      totalPages: Math.ceil(data.length / pageSize),
+      currentPage: page,
+      data,
+    };
   }
 }
-
-interface PaginatedTrialData {
-  totalItems: number;
-  totalPages: number;
-  currentPage: number;
-  data: PaginatedTrials[];
-}
-
-interface PaginatedTrialQueryResult {
-  paginated_trial_query_result: PaginatedTrialData;
-}
-/* eslint-enable */

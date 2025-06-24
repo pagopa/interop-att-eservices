@@ -7,3 +7,4 @@ pnpm-lock.yaml
 .idea/
 packages/residence-verification/src/model/generated/api.ts
 packages/residence-verification/aws.config.local
+*.rsa.priv

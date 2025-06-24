@@ -1,38 +1,41 @@
 /* eslint-disable */
-import { Category, Check } from "trial";
-import {
-  CategoryResponse,
-  CheckResponse,
-  // PaginatedTrialResponse,
-  // PaginatedTrials,
-  // PaginatedTrialItem,
-} from "./models.js";
+import { Check, Category } from "trial"; // raw Drizzle table models
+import type { InferSelectModel } from "drizzle-orm";
 
-export const checkToCheckResponse = (check: Check): CheckResponse => ({
-  id: check?.dataValues.id,
-  code: check?.dataValues.code,
-  description: check?.dataValues.description || "",
-  order: check?.dataValues.order,
-  category: categoryToCategoryResponse(check?.dataValues.category!),
+type CategoryModel = InferSelectModel<typeof Category>;
+
+import { CategoryResponse, CheckResponse } from "./models.js";
+
+export type CheckType = InferSelectModel<typeof Check>;
+export type CategoryType = InferSelectModel<typeof Category>;
+
+export const checkToCheckResponse = (check: any): CheckResponse => ({
+  id: check.id,
+  code: check.code,
+  description: check.description ?? "",
+  order: check.order,
+  category: check.category
+    ? {
+        id: check.category.id,
+        code: check.category.code,
+        description: check.category.description ?? "",
+        order: check.category.order,
+        name: check.category.name ?? "",
+        eservice: check.category.eservice,
+      }
+    : undefined,
 });
 
 export const categoryToCategoryResponse = (
-  category: Category
+  category: CategoryModel
 ): CategoryResponse => ({
-  id: category?.dataValues.id,
-  code: category?.dataValues.code,
-  eservice: category?.dataValues.eservice,
-  description: category?.dataValues.description || "",
-  order: category?.dataValues.order,
+  id: category.id,
+  code: category.code,
+  eservice: category.eservice,
+  description: category.description ?? "", // handle possible null
+  order: category.order,
 });
 
-export const paginatedTrialResponse = (
-  category: Category
-): CategoryResponse => ({
-  id: category?.dataValues.id,
-  code: category?.dataValues.code,
-  eservice: category?.dataValues.eservice,
-  description: category?.dataValues.description || "",
-  order: category?.dataValues.order,
-});
+// If paginatedTrialResponse is meant to mirror categoryToCategoryResponse
+export const paginatedTrialResponse = categoryToCategoryResponse;
 /* eslint-enable */

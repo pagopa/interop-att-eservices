@@ -1,7 +1,7 @@
 import fs from "fs";
 import https from "https";
 import { logger } from "pdnd-common";
-import { sequelize } from "trial";
+import { testDbConnection } from "trial";
 import app from "./app.js";
 
 const port = process.env.PORT || 3003;
@@ -10,7 +10,7 @@ const portHttps = Number(port) + 443;
 const startServer = async (): Promise<void> => {
   try {
     logger.info(`Piva verficiation`);
-    await sequelize.authenticate();
+    await testDbConnection();
 
     logger.info("Connection to Database has been established.");
 

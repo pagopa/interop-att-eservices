@@ -21,7 +21,7 @@ class ResidenceVerificationController {
     request: RichiestaAR001
   ): Promise<RispostaAR001 | null | undefined> {
     try {
-      logger.info(`Post findUser: ${request}`);
+      logger.info(`Post findUser: ${JSON.stringify(request)}`);
       if (request.criteria.subjectId) {
         const data = await ResidenceVerificationService.getBySubjectId(
           request.criteria.subjectId
@@ -87,7 +87,6 @@ class ResidenceVerificationController {
     request: RichiestaAR002
   ): Promise<RispostaAR002OK> {
     try {
-      logger.info(`post request: ${request}`);
       let resultData;
       if (request.criteria.subjectId) {
         const data = await ResidenceVerificationService.getBySubjectId(

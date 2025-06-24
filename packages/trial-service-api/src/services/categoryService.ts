@@ -1,25 +1,24 @@
 import { logger } from "pdnd-common";
-import { Category } from "trial";
+import { db } from "trial"; // Drizzle db instance
+import { Category } from "trial"; // Drizzle model
 import { CategoryResponse } from "../model/domain/models.js";
 import { categoryToCategoryResponse } from "../model/domain/apiConverter.js";
-/* eslint-disable */
+
 class CategoryService {
   public async getAll(): Promise<CategoryResponse[]> {
     try {
-      const response: CategoryResponse[] = [];
-      const allCategories = await Category.findAll();
+      const allCategories = await db.select().from(Category);
+
       logger.info(
         "CategoryService - getAll - All categories retrieved successfully"
       );
-      allCategories.forEach((c) => {
-        response.push(categoryToCategoryResponse(c));
-      });
-      return response;
+
+      return allCategories.map(categoryToCategoryResponse);
     } catch (error) {
       logger.error(`CategoryService - getAll - Generic error: ${error}`);
       throw error;
     }
   }
 }
-/* eslint-enable */
+
 export default new CategoryService();
