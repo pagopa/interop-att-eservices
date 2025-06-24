@@ -56,6 +56,12 @@ export const TipoIndirizzoModel = z.object({
   fraction: z.string(),
   toponym: TipoToponimoModel,
   civicNumber: TipoNumeroCivicoModel,
+  coords: z
+    .object({
+      latitude: z.string(),
+      longitude: z.string(),
+    })
+    .optional(),
 });
 export type TipoIndirizzoModel = z.infer<typeof TipoIndirizzoModel>;
 
@@ -104,7 +110,7 @@ export type TipoLocalitaEsteraModel = z.infer<typeof TipoLocalitaEsteraModel>;
 
 export const TipoResidenzaModel = z.object({
   addressType: z.string(),
-  noteaddress: z.string(),
+  noteAddress: z.string(),
   address: TipoIndirizzoModel,
   foreignState: TipoLocalitaEsteraModel,
   presso: z.string(),
