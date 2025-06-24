@@ -4,33 +4,33 @@ import { z } from "zod";
 import { AuthData } from "pdnd-common";
 import { readAuthDataFromJwtToken } from "pdnd-common";
 
-export const HeadersResidenceVerification = z.object({
+export const HeadersResidenceSubmission = z.object({
   authorization: z.string().nullish(),
   "x-correlation-id": z.string().nullish(),
   "agid-jwt-signature": z.string().nullish(),
   "agid-jwt-trackingevidence": z.string().nullish(),
 });
 
-export type HeadersResidenceVerification = z.infer<
-  typeof HeadersResidenceVerification
+export type HeadersResidenceSubmission = z.infer<
+  typeof HeadersResidenceSubmission
 >;
 
-export const ParsedHeadersResidenceVerification = z
+export const ParsedHeadersResidenceSubmission = z
   .object({
     correlationId: z.string().uuid(),
     agidJtSignature: z.string(),
     agidJwtTrackingevidence: z.string(),
   })
   .and(AuthData);
-export type ParsedHeadersResidenceVerification = z.infer<
-  typeof ParsedHeadersResidenceVerification
+export type ParsedHeadersResidenceSubmission = z.infer<
+  typeof ParsedHeadersResidenceSubmission
 >;
 
-export const readHeadersResidenceVerification = (
+export const readHeadersResidenceSubmission = (
   req: Request
-): ParsedHeadersResidenceVerification | undefined => {
+): ParsedHeadersResidenceSubmission | undefined => {
   try {
-    const headers = HeadersResidenceVerification.parse(req.headers);
+    const headers = HeadersResidenceSubmission.parse(req.headers);
     return match(headers)
       .with(
         {
