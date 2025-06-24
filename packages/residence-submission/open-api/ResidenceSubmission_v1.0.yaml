@@ -17,11 +17,11 @@ security:
     Agid-JWT-Signature: []
 paths:
   /residence-submission:
-    put:
+    post:
       tags:
         - Residence Submission
       summary: Upsert User
-      description: Crea o aggiorna un utente in base ai criteri forniti.
+      description: Create a user based on the provided criteria.
       operationId: upsertUser
       security:
         - bearerAuth: []
@@ -58,6 +58,89 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/GeneralError'
+    put:
+      tags:
+        - Residence Submission
+      summary: Update User
+      description: Update an existing user based on the provided criteria.
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaAR003'
+      responses:
+        '200':
+          description: Operazione completata con successo
+        '400':
+          description: Parametri della richiesta non validi
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '404':
+          description: Utente non trovato
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+        delete:
+          tags:
+            - Residence Submission
+          summary: Delete institution use cases
+          description: Delete institution use cases
+          operationId: DeleteAR001
+          security:
+            - bearerAuth: []
+          responses:
+            '200':
+              description: Operation completed successfully
+            '400':
+              description: Bad request
+              content:
+                application/problem+json:
+                  schema:
+                    $ref: '#/components/schemas/GeneralError'
+            '401':
+              description: Unauthorized
+              content:
+                application/problem+json:
+                  schema:
+                    $ref: '#/components/schemas/GeneralError'
+            '403':
+              description: Forbidden
+              content:
+                application/problem+json:
+                  schema:
+                    $ref: '#/components/schemas/GeneralError'
+            '429':
+              description: Too Many Requests
+              content:
+                application/problem+json:
+                  schema:
+                    $ref: '#/components/schemas/GeneralError'
+
     /residence-submission/status:
     get:
       tags:
