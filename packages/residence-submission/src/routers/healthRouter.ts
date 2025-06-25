@@ -1,4 +1,3 @@
-// TODO: da implementare sistema di health check
 
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";

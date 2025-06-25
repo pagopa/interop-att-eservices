@@ -1,6 +1,3 @@
-// TODO: da implementare il servizio di health
-
-import { getContext } from "pdnd-common";
 import {
   signerConfig,
   buildPublicKeyService,
@@ -12,7 +9,6 @@ import { sequelize } from "trial";
 import healtRepository from "../repository/healthRepository.js";
 
 class healtService {
-  public appContext = getContext();
 
   public async status(): Promise<boolean | null> {
     const config = signerConfig();

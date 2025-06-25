@@ -7,7 +7,7 @@ import {
   TipoResidenzaModel,
   TipoToponimoModel,
   UserModel,
-} from "pdnd-models"; // TODO: da approfondire l'utilizzo
+} from "pdnd-models";
 import { logger } from "pdnd-common";
 
 function mapMunicipality(municipality: any): TipoComuneModel {
@@ -84,7 +84,7 @@ function mapForeignState(foreignState: any): TipoLocalitaEsteraModel {
 function mapAddressData(address: any): TipoResidenzaModel {
   return {
     addressType: address?.addressType ?? "",
-    noteaddress: address?.noteaddress ?? "",
+    noteAddress: address?.noteaddress ?? "",
     addressStartDate: address?.addressStartDate ?? "",
     presso: address?.presso ?? "",
     address: {
@@ -93,13 +93,7 @@ function mapAddressData(address: any): TipoResidenzaModel {
       fraction: address?.address?.fraction ?? "",
       toponym: mapToponym(address?.address?.toponym),
       civicNumber: mapCivicNumber(address?.address?.civicNumber),
-      coords:
-        address?.coords?.latitude && address?.coords?.longitude
-          ? {
-              latitude: address.coords.latitude,
-              longitude: address.coords.longitude,
-            }
-          : undefined,
+      coords: address?.coords
     },
     foreignState: mapForeignState(address?.foreignState),
   };
