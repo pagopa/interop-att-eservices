@@ -5,7 +5,7 @@ type Api = typeof api.api;
 
 export type ApiDataPreparation = ZodiosBodyByPath<
   Api,
-  "put",
+  "post",
   "/residence-submission"
 >;
 

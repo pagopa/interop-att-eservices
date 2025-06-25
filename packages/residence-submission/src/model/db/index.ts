@@ -10,14 +10,13 @@ const config = InteroperabilityConfig.and(DatabaseConfig).parse(process.env);
 const pool = new pg.Pool({
   connectionString: config.databaseUrl,
 });
-
 pool
   .connect()
   .then(() => {
-    logger.info("Connessione al database effettuata con successo");
+    logger.info("Database connection successful");
   })
   .catch((error) => {
-    logger.error("Errore di connessione al database:", error);
+    logger.error("Database connection error:", error);
   });
 
 const db = drizzle({ client: pool });

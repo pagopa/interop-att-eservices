@@ -15,10 +15,10 @@ export const Subject = att.table("subjects", {
   birth_municipality_name: text("birth_municipality_name"),
   birth_municipality_istat_code: text("birth_municipality_istat_code"),
   birth_municipality_acronym_istat_province: text(
-    "birth_municipality_acronym_istat_province"
+    "birth_municipality_acronym_istat_province",
   ),
   birth_municipality_place_description: text(
-    "birth_municipality_place_description"
+    "birth_municipality_place_description",
   ),
   birth_place_description: text("birth_place_description"),
   birth_country_description: text("birth_country_description"),

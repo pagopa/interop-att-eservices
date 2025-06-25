@@ -1,79 +1,71 @@
 import { logger, getContext } from "pdnd-common";
-import ResidenceSubmissionService from "../services/residenceSubmissionService.js";
+import residenceSubmissionService from "../services/residenceSubmissionService.js";
 import { RichiestaAR003 } from "../model/domain/models.js";
-import { requestParamNotValid } from "../exceptions/errors.js";
-import dataPreparationRepository from "../repository/dataPreparationRepository.js";
-
+// import { requestParamNotValid } from "../exceptions/errors.js";
 class ResidenceSubmissionController {
   public appContext = getContext();
 
-  public async upsertUser(
-    request: RichiestaAR003
+  public async createUser (
+  request: RichiestaAR003
   ): Promise<{ status: string; message: string }> {
     try {
-      // TODO: controllare se sia il caso di loggare questi dati
-      logger.info("resquest: ", JSON.stringify(request));
-      logger.info(`PUT upsertUser: ${JSON.stringify(request)}`);
 
-      console.log("request.instanceof", request.instanceof);
 
-      const subjectId = getSubjectId(request);
-
-      if (!subjectId) {
-        throw requestParamNotValid("The subjectId is missing or invalid");
-      }
-
-      if (request.subjects && Array.isArray(request.subjects.subject)) {
-        await Promise.all(
-          request.subjects.subject.map(async (subject) => {
-            const subjectId = subject?.generality?.subjectId?.subjectId; // TODO: da gestire il tipo di subjectId
-
-            if (!subjectId) {
-              throw requestParamNotValid("The subjectId is missing or invalid");
-            }
-
-            const data = await ResidenceSubmissionService.getBySubjectId(
-              subjectId,
-            );
-
-            if (data) {
-              // Aggiorna il record esistente
-              await dataPreparationRepository.updateSubjectByUuid(
-                data.uuid,
-                subject,
-              );
-            } else {
-              await dataPreparationRepository.createSubject(subject);
-            }
-          }),
-        );
-      }
+      residenceSubmissionService.create(request);
 
       return {
         status: "OK",
-        message: "Residenza caricata correttamente",
-      };
+        message: "User created successfully",
+      }
     } catch (error) {
-      logger.error(` Errore in 'upsertUser': `, error);
+      logger.error(` Error in 'createUser': `, error);
       return {
         status: "KO",
-        message: "Errore durante il caricamento della residenza",
+        message: "saveList - Error during list saving.",
+      };
+    }
+  }
+
+  public async updateUser(
+    request: RichiestaAR003
+  ): Promise<{ status: string; message: string }> {
+    try {
+
+      await residenceSubmissionService.updateByUsecasesIdService(
+        request,
+      );
+
+      return {
+        status: "OK",
+        message: "User updated successfully",
+      };
+    } catch (error) {
+      logger.error(`Error in 'updateUser': `, error);
+      return {
+        status: "KO",
+        message: "Error during user update.",
+      };
+    }
+  }
+
+  public async deleteUser(
+    id: string
+  ): Promise<{ status: string; message: string }> {
+    try {
+      await residenceSubmissionService.delete(id);
+
+      return {
+        status: "OK",
+        message: "User deleted successfully",
+      };
+    } catch (error) {
+      logger.error(`Error in 'deleteUser': `, error);
+      return {
+        status: "KO",
+        message: "Error during user deletion.",
       };
     }
   }
 }
-
-const getSubjectId = (request: RichiestaAR003): string | undefined => {
-  if (
-    request &&
-    request.subjects &&
-    Array.isArray(request.subjects.subject) &&
-    request.subjects.subject.length > 0 &&
-    request.subjects.subject[0]?.generality?.subjectId?.subjectId
-  ) {
-    return request.subjects.subject[0].generality.subjectId.subjectId;
-  }
-  return undefined;
-};
 
 export default new ResidenceSubmissionController();

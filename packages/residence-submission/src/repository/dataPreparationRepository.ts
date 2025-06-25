@@ -2,13 +2,12 @@ import { eq } from "drizzle-orm";
 import { db } from "../model/db/index.js";
 
 // TODO: these models need to be fixed
-import { Subject } from "../model/db/subjects.model.js"; 
+import { Subject } from "../model/db/subjects.model.js";
 import { Purpose } from "../model/db/purposes.model.js";
 import { Address } from "../model/db/addresses.model.js";
 import { Usecase } from "../model/db/usecases.model.js";
 
 class DataPreparationRepository {
-
   // READ METHODS
   public async findSubjectById(subjectId: string): Promise<Subject | null> {
     const result = await db

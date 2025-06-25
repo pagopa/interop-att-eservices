@@ -61,5 +61,4 @@ export const Address = att.table("addresses", {
   consulate_description: text("consulate_description"),
 });
 
-// TODO; da modificare per la gestione del salvataggio dati
 export type Address = InferSelectModel<typeof Address>;

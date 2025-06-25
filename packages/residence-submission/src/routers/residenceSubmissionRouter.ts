@@ -17,12 +17,52 @@ import { auditValidationMiddleware } from "../interoperability/auditValidationMi
 import { contextDataResidenceMiddleware } from "../context/context.js";
 
 const residenceSubissionController = (
-  ctx: ZodiosContext
+  ctx: ZodiosContext,
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const residenceSubissionController = ctx.router(api.api);
-  /*   residenceSubissionController.use(contextDataMiddleware);
 
-  residenceSubissionController.use(authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware()); */
+  residenceSubissionController.post(
+    "/residence-submission",
+    contextDataResidenceMiddleware,
+    authenticationCorrelationMiddleware(true),
+    integrityValidationMiddleware(),
+    auditValidationMiddleware(),
+    async (req, res) => {
+      try {
+        logger.info(`[START] residenceSubissionController: ${req.body}`);
+        const data: any = await ResidenceSubmissionController.createUser(
+          req.body,
+        ); // TODO: handle the type of the "data" constant
+        if (!data || data.subjects?.subject?.length === 0) {
+          throw userModelNotFound();
+        }
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "RESIDENCE_SUBMISSION_001",
+          "OK",
+        );
+        logger.info(`[END] residenceSubissionController`);
+        // TODO: handle the error after saving
+        return res.status(200).json(data).end();
+      } catch (error) {
+        const errorRes = makeApiProblem(error, createEserviceDataPreparation);
+        const correlationId = req.headers["x-correlation-id"] as string;
+        const generalErrorResponse = mapGeneralErrorModel(
+          correlationId,
+          errorRes,
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "RESIDENCE_SUBMISSION_001",
+          "KO",
+          JSON.stringify(generalErrorResponse),
+        );
+        return res.status(errorRes.status).json(generalErrorResponse).end();
+      }
+    },
+  );
 
   residenceSubissionController.put(
     "/residence-submission",
@@ -32,39 +72,81 @@ const residenceSubissionController = (
     auditValidationMiddleware(),
     async (req, res) => {
       try {
-        logger.info(`[START] residenceSubissionController: ${req.body}`);
-        const data: any = await ResidenceSubmissionController.upsertUser(
-          req.body
-        ); // TODO: da gestire il tipo della costante "data"
+        logger.info(`[START] residenceSubissionController update: ${req.body}`);
+        const data: any = await ResidenceSubmissionController.updateUser(
+          req.body,
+        ); // TODO: handle the type of the "data" constant
         if (!data || data.subjects?.subject?.length === 0) {
           throw userModelNotFound();
         }
         void TrialService.insert(
           req.url,
           req.method,
-          "RESIDENCE_VERIFICATION_001", // TODO: da controllare
-          "OK"
+          "RESIDENCE_SUBMISSION_001",
+          "OK",
         );
-        logger.info(`[END] residenceSubissionController`);
-        return res.status(200).json(data).end(); // TODO: da controllare se sia il caso da ritornare l'oggetto salvato
+        logger.info(`[END] residenceSubissionController update`);
+        return res.status(200).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;
         const generalErrorResponse = mapGeneralErrorModel(
           correlationId,
-          errorRes
+          errorRes,
         );
         void TrialService.insert(
           req.url,
           req.method,
-          "RESIDENCE_VERIFICATION_001", // TODO: da controllare
+          "RESIDENCE_SUBMISSION_001",
           "KO",
           JSON.stringify(generalErrorResponse),
         );
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }
-    }
+    },
   );
+
+  residenceSubissionController.delete(
+    "/residence-submission/:id",
+    contextDataResidenceMiddleware,
+    authenticationCorrelationMiddleware(true),
+    integrityValidationMiddleware(),
+    auditValidationMiddleware(),
+    async (req, res) => {
+      try {
+        const { id } = req.params;
+        logger.info(`[START] residenceSubissionController delete: ${id}`);
+        const data: any = await ResidenceSubmissionController.deleteUser(id);
+        if (!data) {
+          throw userModelNotFound();
+        }
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "RESIDENCE_SUBMISSION_001",
+          "OK",
+        );
+        logger.info(`[END] residenceSubissionController delete`);
+        return res.status(200).end();
+      } catch (error) {
+        const errorRes = makeApiProblem(error, createEserviceDataPreparation);
+        const correlationId = req.headers["x-correlation-id"] as string;
+        const generalErrorResponse = mapGeneralErrorModel(
+          correlationId,
+          errorRes,
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "RESIDENCE_SUBMISSION_001",
+          "KO",
+          JSON.stringify(generalErrorResponse),
+        );
+        return res.status(errorRes.status).json(generalErrorResponse).end();
+      }
+    },
+  );
+
   return residenceSubissionController;
 };
 export default residenceSubissionController;

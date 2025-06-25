@@ -1,3 +1,4 @@
+
 import { z } from "zod";
 import * as api from "../generated/api.js";
 
@@ -16,7 +17,7 @@ export type TipoDatiNascitaTemplateE000 = z.infer<
   typeof api.schemas.TipoDatiNascitaTemplateE000
 >;
 export type TipoCriteriRicercaTemplateAR001 = z.infer<
-  typeof api.schemas.TipoCriteriaTemplateAR001
+  typeof api.schemas.TipoCriteriRicercaTemplateAR001
 >;
 export type TipoToponimo = z.infer<typeof api.schemas.TipoToponimo>;
 export type TipoCivicoInterno = z.infer<typeof api.schemas.TipoCivicoInterno>;
@@ -46,7 +47,7 @@ export type TipoParametriRicercaAR001 = z.infer<
 >;
 
 export type TipoRichiestaAR001 = z.infer<typeof api.schemas.TipoRichiestaAR001>;
-// export type TipoVerificaAR002 = z.infer<typeof api.schemas.TipoVerificaAR002>;
+
 export type TipoVerificaResidenza = z.infer<
   typeof api.schemas.TipoVerificaResidenza
 >;
@@ -64,9 +65,9 @@ export type TipoAttoANSC = z.infer<typeof api.schemas.TipoAttoANSC>;
 export type TipoAttoEvento = z.infer<typeof api.schemas.TipoAttoEvento>;
 export type TipoDatiEvento = z.infer<typeof api.schemas.TipoDatiEvento>;
 export type TipoDatiSoggettiEnte = z.infer<
-  typeof api.schemas.TipoDatiSubjectsEnte
+  typeof api.schemas.TipoDatiSoggettiEnte 
 >;
-export type TipoListaSoggetti = z.infer<typeof api.schemas.TipoListaSubjects>;
+export type TipoListaSoggetti = z.infer<typeof api.schemas.TipoListaSoggetti>;
 export type InfoSoggettoEnte = z.infer<typeof api.schemas.InfoSoggettoEnte>;
 export type TipoInfoSoggetto = z.infer<typeof api.schemas.TipoInfoSoggetto>;
 export type TipoErroriAnomalia = z.infer<typeof api.schemas.TipoErroriAnomalia>;
@@ -76,45 +77,3 @@ export type RichiestaAR003 = z.infer<typeof api.schemas.RichiestaAR003>;
 export type RispostaAR002OK = z.infer<typeof api.schemas.RispostaAR002OK>;
 export type ProblemError = z.infer<typeof api.schemas.ProblemError>;
 export type Problem = z.infer<typeof api.schemas.Problem>;
-
-/* export const schemas = {
-    TipoComune,
-    TipoLocalita,
-    TipoLuogoNascitaE000,
-    TipoDatiNascitaTemplateE000,
-    TipoCriteriRicercaTemplateAR001,
-    TipoToponimo,
-    TipoCivicoInterno,
-    TipoNumeroCivico,
-    TipoIndirizzo,
-    TipoDatoLocalitaEstera,
-    TipoToponimoEstero,
-    TipoIndirizzoEstero,
-    TipoConsolato,
-    TipoLocalitaEstera1,
-    TipoResidenza,
-    DataPreparationTemplate,
-    DataPreparationResponse,
-    DataPreparationTemplateResponse,
-
-    TipoDatiNascitaE000,
-    TipoParametriRicercaAR001,
-    TipoRichiestaAR001,
-    RichiestaAR001,
-    TipoCodiceFiscale,
-    TipoLuogoEvento,
-    TipoIdSchedaSoggettoComune,
-    TipoGeneralita,
-    TipoIdentificativi,
-    TipoAtto,
-    TipoAttoANSC,
-    TipoAttoEvento,
-    TipoDatiEvento,
-    TipoDatiSoggettiEnte,
-    TipoListaSoggetti,
-    TipoErroriAnomalia,
-    RispostaAR001,
-    ProblemError,
-    Problem,
-};
- */
