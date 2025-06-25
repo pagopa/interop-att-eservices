@@ -7,6 +7,7 @@ import {
 import { drizzle, NodePgDatabase } from "drizzle-orm/node-postgres";
 import { Client } from "pg";
 
+import { logger } from "pdnd-common/dist";
 import { Subject } from "../src/model/db/subject.model";
 import { Address } from "../src/model/db/address.model";
 import { Usecase } from "../src/model/db/usecase.model";
@@ -137,7 +138,7 @@ export async function setupTestDb(): Promise<SetupTestDbReturnType> {
   };
 }
 
-export async function populateBaseTestData(client: any) {
+export async function populateBaseTestData(client: Client): Promise<void> {
   try {
     await client.query("BEGIN");
     await client.query(
@@ -155,7 +156,7 @@ export async function populateBaseTestData(client: any) {
     await client.query("COMMIT");
   } catch (error) {
     await client.query("ROLLBACK");
-    console.error("Errore durante il ripopolamento DB:", error);
+    logger.error("Errore durante il ripopolamento DB:", error);
     throw error;
   }
 }

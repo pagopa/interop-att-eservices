@@ -1,7 +1,7 @@
 import { UserModel } from "pdnd-models";
 import { TipoParametriRicercaAR001 } from "../model/domain/models.js";
 import { userModelNotFound } from "../exceptions/errors.js";
-
+/* eslint-disable */
 export function appendUniqueUserModelsToArray(
   existingArray: UserModel[] | null,
   modelsToAdd: UserModel[] | null
@@ -171,3 +171,4 @@ export function deleteUserModelByUUID(
 
   return result;
 }
+/* eslint-enable */

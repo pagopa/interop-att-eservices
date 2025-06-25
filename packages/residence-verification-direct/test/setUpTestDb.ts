@@ -136,7 +136,7 @@ export async function setupTestDb(): Promise<SetupTestDbReturnType> {
     client,
   };
 }
-export async function populateBaseTestData(client: any) {
+export async function populateBaseTestData(client: Client): Promise<void> {
   try {
     await client.query("BEGIN");
     await client.query(
@@ -154,7 +154,6 @@ export async function populateBaseTestData(client: any) {
     await client.query("COMMIT");
   } catch (error) {
     await client.query("ROLLBACK");
-    console.error("Errore durante il ripopolamento DB:", error);
     throw error;
   }
 }

@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable functional/no-let */
+/* eslint-disable no-console */
 import {
   describe,
   it,
@@ -8,16 +11,16 @@ import {
   beforeEach,
   Mock,
 } from "vitest";
-import { setupTestDb } from "./setUpTestDb";
 import { eq } from "drizzle-orm";
+import { UserModel } from "pdnd-models";
 import {
   getUserBySubjectId,
   getById,
   getByPersonalInfo,
-} from "../src/services/residenceVerificationService";
-import { mapUserModel } from "../src/utilities/mapUserModelUtilities";
-import { TipoParametriRicercaAR001 } from "../src/model/domain/models";
-import { UserModel } from "pdnd-models";
+} from "../src/services/residenceVerificationService.js";
+import { mapUserModel } from "../src/utilities/mapUserModelUtilities.js";
+import { TipoParametriRicercaAR001 } from "../src/model/domain/models.js";
+import { setupTestDb } from "./setUpTestDb.js";
 
 vi.mock("pdnd-common", () => ({
   getContext: vi.fn(),
@@ -53,7 +56,7 @@ vi.mock("../src/model/db/index.js", async () => {
     Subject: actualSubjectModel.Subject,
     Usecase: actualUsecaseModel.Usecase,
     Address: actualAddressModel.Address,
-    get db() {
+    get db(): any {
       return mockedDbInstance;
     },
   };
@@ -146,6 +149,7 @@ describe("ResidenceVerificationService (Integration with DB and Mapper)", () => 
 
     mockUserModelNotFound.mockImplementation((message?: string) => {
       const error = new Error(message ?? "User model not found from mock");
+      // eslint-disable-next-line functional/immutable-data
       (error as any).isUserModelNotFound = true;
       throw error;
     });

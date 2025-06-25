@@ -39,17 +39,6 @@ vi.mock("../src/utilities/equalsUtilities.js", () => ({
   checkInfoSoggettoEquals: vi.fn(),
 }));
 
-import residenceVerificationController from "../src/controllers/residenceVerificationController";
-import {
-  RichiestaAR001,
-  RichiestaAR002,
-  RispostaAR001,
-  RispostaAR002OK,
-  TipoInfoSoggetto,
-} from "../src/model/domain/models";
-import { Subject } from "../src/model/db/subject.model";
-import { Address } from "../src/model/db/address.model";
-import { mapUserModel } from "../src/utilities/mapUserModelUtilities";
 import {
   UserModel,
   TipoDatiSoggettiEnteModel,
@@ -60,6 +49,17 @@ import {
   TipoIdSchedaSoggettoComuneModel,
   TipoCodiceFiscaleModel,
 } from "pdnd-models/dist";
+import residenceVerificationController from "../src/controllers/residenceVerificationController.js";
+import {
+  RichiestaAR001,
+  RichiestaAR002,
+  RispostaAR001,
+  RispostaAR002OK,
+  TipoInfoSoggetto,
+} from "../src/model/domain/models.js";
+import { Subject } from "../src/model/db/subject.model.js";
+import { Address } from "../src/model/db/address.model.js";
+import { mapUserModel } from "../src/utilities/mapUserModelUtilities.js";
 
 import {
   getUserBySubjectId,

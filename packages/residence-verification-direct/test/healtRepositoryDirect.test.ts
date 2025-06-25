@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import healtRepository from "../src/repository/healtRepository";
+import healtRepository from "../src/repository/healtRepository.js";
 import { db } from "../src/model/db/index.js";
 
 vi.mock("../src/model/db/index.js", () => ({

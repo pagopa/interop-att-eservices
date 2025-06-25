@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable functional/no-let */
+/* eslint-disable no-console */
 import {
   describe,
   it,
@@ -8,8 +11,8 @@ import {
   beforeEach,
   Mock,
 } from "vitest";
-import { setupTestDb } from "./setUpTestDb";
 import { eq } from "drizzle-orm";
+import { UserModel } from "pdnd-models";
 import {
   getUserBySubjectId,
   getById,
@@ -17,7 +20,7 @@ import {
 } from "../src/services/residenceVerificationService";
 import { mapUserModel } from "../src/utilities/mapUserModelUtilities";
 import { TipoParametriRicercaAR001 } from "../src/model/domain/models";
-import { UserModel } from "pdnd-models";
+import { setupTestDb } from "./setUpTestDb";
 
 vi.mock("pdnd-common", () => ({
   getContext: vi.fn(),
@@ -53,7 +56,7 @@ vi.mock("../src/model/db/index.js", async () => {
     Subject: actualSubjectModel.Subject,
     Usecase: actualUsecaseModel.Usecase,
     Address: actualAddressModel.Address,
-    get db() {
+    get db(): any {
       return mockedDbInstance;
     },
   };
@@ -146,6 +149,7 @@ describe("ResidenceVerificationService (Integration with DB and Mapper)", () => 
 
     mockUserModelNotFound.mockImplementation((message?: string) => {
       const error = new Error(message ?? "User model not found from mock");
+      // eslint-disable-next-line functional/immutable-data
       (error as any).isUserModelNotFound = true;
       throw error;
     });
@@ -251,7 +255,7 @@ describe("ResidenceVerificationService (Integration with DB and Mapper)", () => 
       expect(mockGetContext).not.toHaveBeenCalled();
       expect(mockLoggerError).toHaveBeenCalledTimes(1);
       expect(mockLoggerError).toHaveBeenCalledWith(
-        `Errore durante getUserBySubjectId per subjectId: ${SUBJECT_ID_S1}`,
+        `Error during getUserBySubjectId for subjectId: ${SUBJECT_ID_S1}`,
         mockError
       );
     });
@@ -326,7 +330,7 @@ describe("ResidenceVerificationService (Integration with DB and Mapper)", () => 
       expect(mockGetContext).toHaveBeenCalled();
       expect(mockLoggerError).toHaveBeenCalledTimes(1);
       expect(mockLoggerError).toHaveBeenCalledWith(
-        `UserService: Errore durante il recupero dello user per id ${EXISTING_USECASE_ID_S1} e purposeId ${TEST_PURPOSE_ID}.`,
+        `UserService: Error retrieving user by id ${EXISTING_USECASE_ID_S1} and purposeId ${TEST_PURPOSE_ID}.`,
         mockError
       );
     });
@@ -406,7 +410,7 @@ describe("ResidenceVerificationService (Integration with DB and Mapper)", () => 
       expect(mockGetContext).toHaveBeenCalledTimes(1);
       expect(mockLoggerError).toHaveBeenCalledTimes(1);
       expect(mockLoggerError).toHaveBeenCalledWith(
-        "UserService: Errore durante la ricerca per info personali",
+        "UserService: Error during search by personal info",
         expect.objectContaining({ message: caughtError.message })
       );
     });
@@ -432,7 +436,7 @@ describe("ResidenceVerificationService (Integration with DB and Mapper)", () => 
       expect(mockGetContext).toHaveBeenCalledTimes(1);
       expect(mockLoggerError).toHaveBeenCalledTimes(1);
       expect(mockLoggerError).toHaveBeenCalledWith(
-        "UserService: Errore durante la ricerca per info personali",
+        "UserService: Error during search by personal info",
         mockError
       );
     });

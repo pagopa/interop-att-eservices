@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 
 vi.mock("pdnd-common", () => ({
@@ -17,6 +18,7 @@ vi.mock("../src/services/residenceVerificationService.js", () => ({
 vi.mock("../src/exceptions/errors.js", () => ({
   requestParamNotValid: vi.fn((msg?: string) => {
     const err = new Error(msg ?? "Request param not valid from mock");
+    // eslint-disable-next-line functional/immutable-data
     (err as any).isRequestParamNotValid = true;
     throw err;
   }),
@@ -35,6 +37,15 @@ vi.mock("../src/utilities/equalsUtilities.js", () => ({
   checkInfoSoggettoEquals: vi.fn(),
 }));
 
+import {
+  UserModel,
+  TipoDatiSoggettiEnteModel,
+  TipoGeneralitaModel,
+  TipoIdentificativiModel,
+  TipoDatiEventoModel,
+  TipoIdSchedaSoggettoComuneModel,
+  TipoCodiceFiscaleModel,
+} from "pdnd-models/dist";
 import residenceVerificationController from "../src/controllers/residenceVerificationController";
 import {
   RichiestaAR001,
@@ -46,15 +57,6 @@ import {
 import { Subject } from "../src/model/db/subject.model";
 import { Address } from "../src/model/db/address.model";
 import { mapUserModel } from "../src/utilities/mapUserModelUtilities";
-import {
-  UserModel,
-  TipoDatiSoggettiEnteModel,
-  TipoGeneralitaModel,
-  TipoIdentificativiModel,
-  TipoDatiEventoModel,
-  TipoIdSchedaSoggettoComuneModel,
-  TipoCodiceFiscaleModel,
-} from "pdnd-models/dist";
 
 import {
   getUserBySubjectId,
