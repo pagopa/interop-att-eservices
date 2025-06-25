@@ -2,7 +2,11 @@ openapi: 3.0.3
 info:
   title: Residence Submission API
   description: |-
-    Service for submitting and updating residence information
+    Service for submitting, updating, and deleting residence information.
+    
+    **New:**
+    - Added endpoint for deleting a user by ID (`DELETE /residence-submission/{id}`).
+    - Improved error handling documentation for all endpoints, specifying error response structure and possible error codes.
   version: '1.0.0'
   termsOfService: 'http://swagger.io/terms/'
   x-summary: Residence submission
@@ -12,16 +16,18 @@ servers:
 tags:
   - name: Residence Submission
     description: Submission and update of residence information
+  - name: Health Check
+    description: Service health check
 security:
   - bearerAuth: []
-    Agid-JWT-Signature: []
+  - Agid-JWT-Signature: []
 paths:
   /residence-submission:
     post:
       tags:
         - Residence Submission
       summary: Upsert User
-      description: Create a user based on the provided criteria.
+      description: Creates a user based on the provided criteria.
       operationId: upsertUser
       security:
         - bearerAuth: []
@@ -33,36 +39,36 @@ paths:
               $ref: '#/components/schemas/RichiestaAR003'
       responses:
         '200':
-          description: Operazione completata con successo
+          description: Operation completed successfully
         '400':
-          description: Parametri della richiesta non validi
+          description: Invalid request parameters
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/GeneralError'
+                $ref: '#/components/schemas/Problem'
         '401':
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/GeneralError'
+                $ref: '#/components/schemas/Problem'
         '403':
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/GeneralError'
+                $ref: '#/components/schemas/Problem'
         '429':
           description: Too Many Requests
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/GeneralError'
+                $ref: '#/components/schemas/Problem'
     put:
       tags:
         - Residence Submission
       summary: Update User
-      description: Update an existing user based on the provided criteria.
+      description: Updates an existing user based on the provided criteria.
       operationId: updateUser
       security:
         - bearerAuth: []
@@ -74,122 +80,131 @@ paths:
               $ref: '#/components/schemas/RichiestaAR003'
       responses:
         '200':
-          description: Operazione completata con successo
+          description: Operation completed successfully
         '400':
-          description: Parametri della richiesta non validi
+          description: Invalid request parameters
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/GeneralError'
+                $ref: '#/components/schemas/Problem'
         '401':
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/GeneralError'
+                $ref: '#/components/schemas/Problem'
         '403':
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/GeneralError'
+                $ref: '#/components/schemas/Problem'
         '404':
-          description: Utente non trovato
+          description: User not found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/GeneralError'
+                $ref: '#/components/schemas/Problem'
         '429':
           description: Too Many Requests
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/GeneralError'
-        delete:
-          tags:
-            - Residence Submission
-          summary: Delete institution use cases
-          description: Delete institution use cases
-          operationId: DeleteAR001
-          security:
-            - bearerAuth: []
-          responses:
-            '200':
-              description: Operation completed successfully
-            '400':
-              description: Bad request
-              content:
-                application/problem+json:
-                  schema:
-                    $ref: '#/components/schemas/GeneralError'
-            '401':
-              description: Unauthorized
-              content:
-                application/problem+json:
-                  schema:
-                    $ref: '#/components/schemas/GeneralError'
-            '403':
-              description: Forbidden
-              content:
-                application/problem+json:
-                  schema:
-                    $ref: '#/components/schemas/GeneralError'
-            '429':
-              description: Too Many Requests
-              content:
-                application/problem+json:
-                  schema:
-                    $ref: '#/components/schemas/GeneralError'
-
-    /residence-submission/status:
+                $ref: '#/components/schemas/Problem'
+  /residence-submission/{id}:
+    delete:
+      tags:
+        - Residence Submission
+      summary: Delete User
+      description: Deletes a user by their unique identifier.
+      operationId: deleteUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User deleted successfully
+        '400':
+          description: Invalid request parameters
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: User not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /residence-submission/status:
     get:
       tags:
         - Health Check
       summary: Health status endpoint
       description: Return ok
-      operationId: getStatus
+      operationId: healthCheck
       responses:
         "200":
           description: successful operation
           content:
             application/json:
               schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  uptime:
+                    type: number
+                  timestamp:
+                    type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
                 $ref: "#/components/schemas/Problem"
-
 
 components:
   schemas:
     RichiestaAR003:
       type: object
-      required:
-        - idOp
-        - subjects
       properties:
         idOp:
           type: string
         subjects:
-          $ref: '#/components/schemas/TipoListaSubjects'
-        warnings:
-          type: array
-          items:
-            $ref: '#/components/schemas/TipoErroriAnomalia'
-        criteria:
-          $ref: '#/components/schemas/TipoParametriRicercaAR001'
-    TipoListaSubjects:
+          $ref: '#/components/schemas/TipoListaSoggetti'
+    TipoListaSoggetti:
       type: object
-      required:
-        - subject
       properties:
         subject:
           type: array
-          $ref: '#/components/schemas/TipoDatiSubjectsEnte'
-    TipoDatiSubjectsEnte:
+          items:
+            $ref: '#/components/schemas/TipoDatiSoggettiEnte'
+    TipoDatiSoggettiEnte:
       type: object
-      required:
-        - generality
-        - address
-        - identifiers
-        - deathDate
       properties:
         generality:
           $ref: '#/components/schemas/TipoGeneralita'
@@ -203,20 +218,8 @@ components:
           $ref: '#/components/schemas/TipoDatiEvento'
     TipoGeneralita:
       type: object
-      required:
-        - subjectId
-        - surname
-        - name
-        - gender
-        - birthDate
-        - birthPlace
-        - AIRESubject
-        - yearExpatriation
-        - idCommonSubjectData
-        - idSubjectData
       properties:
         subjectId:
-          type: object
           $ref: '#/components/schemas/TipoCodiceFiscale'
         surname:
           type: string
@@ -248,10 +251,6 @@ components:
           type: string
     TipoCodiceFiscale:
       type: object
-      required:
-        - subjectId
-        - subjectIdValidity
-        - dataAttributionValidity
       properties:
         subjectId:
           type: string
@@ -262,31 +261,31 @@ components:
     TipoResidenza:
       type: object
       properties:
-      addressType:
-        type: string
-      noteaddress:
-        type: string
-      address:
-        $ref: '#/components/schemas/TipoIndirizzo'
-      foreignState:
-        $ref: '#/components/schemas/TipoLocalitaEstera1'
-      presso:
-        type: string
-      addressStartDate:
-        type: string
+        addressType:
+          type: string
+        noteaddress:
+          type: string
+        address:
+          $ref: '#/components/schemas/TipoIndirizzo'
+        foreignState:
+          $ref: '#/components/schemas/TipoLocalitaEstera1'
+        presso:
+          type: string
+        addressStartDate:
+          type: string
     TipoIndirizzo:
       type: object
       properties:
-      cap:
-        type: string
-      municipality:
-        $ref: '#/components/schemas/TipoComune'
-      fraction:
-        type: string
-      toponym:
-        $ref: '#/components/schemas/TipoToponimo'
-      civicNumber:
-        $ref: '#/components/schemas/TipoNumeroCivico'
+        cap:
+          type: string
+        municipality:
+          $ref: '#/components/schemas/TipoComune'
+        fraction:
+          type: string
+        toponym:
+          $ref: '#/components/schemas/TipoToponimo'
+        civicNumber:
+          $ref: '#/components/schemas/TipoNumeroCivico'
     TipoComune:
       type: object
       properties:
@@ -298,7 +297,6 @@ components:
           type: string
         placeDescription:
           type: string
-      additionalProperties: true
     TipoToponimo:
       type: object
       properties:
@@ -314,62 +312,59 @@ components:
           type: string
         toponymSource:
           type: string
-      additionalProperties: true
     TipoNumeroCivico:
       type: object
       properties:
-      civicCod:
-        type: string
-      civicSource:
-        type: string
-      civicNumber:
-        type: string
-      metric:
-        type: string
-      progSNC:
-        type: string
-      letter:
-        type: string
-      exponent1:
-        type: string
-      color:
-        type: string
-      internalCivic:
-        $ref: '#/components/schemas/TipoCivicoInterno'
+        civicCod:
+          type: string
+        civicSource:
+          type: string
+        civicNumber:
+          type: string
+        metric:
+          type: string
+        progSNC:
+          type: string
+        letter:
+          type: string
+        exponent1:
+          type: string
+        color:
+          type: string
+        internalCivic:
+          $ref: '#/components/schemas/TipoCivicoInterno'
     TipoCivicoInterno:
       type: object
       properties:
-      court:
-        type: string
-      stairs:
-        type: string
-      internal1:
-        type: string
-      espInternal1:
-        type: string
-      internal2:
-        type: string
-      espInternal2:
-        type: string
-      externalStairs:
-        type: string
-      secondary:
-        type: string
-      floor:
-        type: string
-      nui:
-        type: string
-      isolated:
-        type: string
-      additionalProperties: true
+        court:
+          type: string
+        stairs:
+          type: string
+        internal1:
+          type: string
+        espInternal1:
+          type: string
+        internal2:
+          type: string
+        espInternal2:
+          type: string
+        externalStairs:
+          type: string
+        secondary:
+          type: string
+        floor:
+          type: string
+        nui:
+          type: string
+        isolated:
+          type: string
     TipoLocalitaEstera1:
       type: object
       properties:
-      foreignAddress:
-        $ref: '#/components/schemas/TipoIndirizzoEstero'
-      consulate:
-        $ref: '#/components/schemas/TipoConsolato'
-      additionalProperties: true
+        foreignAddress:
+          $ref: '#/components/schemas/TipoIndirizzoEstero'
+        consulate:
+          $ref: '#/components/schemas/TipoConsolato'
     TipoIndirizzoEstero:
       type: object
       properties:
@@ -379,7 +374,6 @@ components:
           $ref: '#/components/schemas/TipoDatoLocalitaEstera'
         toponym:
           $ref: '#/components/schemas/TipoToponimoEstero'
-      additionalProperties: true
     TipoConsolato:
       type: object
       properties:
@@ -387,7 +381,6 @@ components:
           type: string
         consulateDescription:
           type: string
-      additionalProperties: true
     TipoDatoLocalitaEstera:
       type: object
       properties:
@@ -399,7 +392,6 @@ components:
           type: string
         provinceCounty:
           type: string
-      additionalProperties: true
     TipoToponimoEstero:
       type: object
       properties:
@@ -407,31 +399,28 @@ components:
           type: string
         civicNumber:
           type: string
-      additionalProperties: true
     TipoDatiEvento:
       type: object
       properties:
-      eventDate:
-        type: string
-      noDay:
-        type: string
-      noMonth:
-        type: string
-      eventPlace:
-        $ref: '#/components/schemas/TipoLuogoEvento'
-      eventAct:
-        $ref: '#/components/schemas/TipoAttoEvento'
-      additionalProperties: true
+        eventDate:
+          type: string
+        noDay:
+          type: string
+        noMonth:
+          type: string
+        eventPlace:
+          $ref: '#/components/schemas/TipoLuogoEvento'
+        eventAct:
+          $ref: '#/components/schemas/TipoAttoEvento'
     TipoLuogoEvento:
       type: object
       properties:
-      exceptionalPlace:
-        type: string
-      municipality:
-        $ref: '#/components/schemas/TipoComune'
-      place:
-        $ref: '#/components/schemas/TipoLocalita'
-      additionalProperties: true
+        exceptionalPlace:
+          type: string
+        municipality:
+          $ref: '#/components/schemas/TipoComune'
+        place:
+          $ref: '#/components/schemas/TipoLocalita'
     TipoAttoEvento:
       type: object
       properties:
@@ -439,7 +428,6 @@ components:
           $ref: '#/components/schemas/TipoAtto'
         actANSC:
           $ref: '#/components/schemas/TipoAttoANSC'
-      additionalProperties: true
     TipoAtto:
       type: object
       properties:
@@ -461,7 +449,6 @@ components:
           type: string
         transcribed:
           type: string
-      additionalProperties: true
     TipoAttoANSC:
       type: object
       properties:
@@ -479,44 +466,32 @@ components:
           type: string
         transcribed:
           type: string
-      additionalProperties: true
     TipoIdSchedaSoggettoComune:
       type: object
       properties:
-      idCommonSubjectDataIstat:
-        type: string
-      idSubjectData:
-        type: string
-      additionalProperties: true
+        idCommonSubjectDataIstat:
+          type: string
+        idSubjectData:
+          type: string
     TipoIdentificativi:
       type: object
       properties:
         id:
           type: string
-      additionalProperties: true
     TipoErroriAnomalia:
       type: object
       properties:
-      warningErrorCode:
-        type: string
-      warningErrorType:
-        type: string
-      warningErrorText:
-        type: string
-      warningErrorObject:
-        type: string
-      warningErrorField:
-        type: string
-      warningErrorValue:
-        type: string
-      additionalProperties: true
-    # Qui resto degli oggetti
-    GeneralError:
-      type: object
-      properties:
-        code:
+        warningErrorCode:
           type: string
-        message:
+        warningErrorType:
+          type: string
+        warningErrorText:
+          type: string
+        warningErrorObject:
+          type: string
+        warningErrorField:
+          type: string
+        warningErrorValue:
           type: string
     TipoParametriRicercaAR001:
       type: object
@@ -563,22 +538,119 @@ components:
           type: string
         codState:
           type: string
-    Error:
+        provinceCounty:
+          type: string
+    DataPreparationTemplate:
       type: object
       properties:
-        warningErrorCode:
+        subject:
+          $ref: '#/components/schemas/TipoCriteriRicercaTemplateAR001'
+        address:
+          $ref: '#/components/schemas/TipoResidenza'
+    DataPreparationResponse:
+      type: object
+      properties:
+        uuid:
           type: string
-        warningErrorType:
+    DataPreparationTemplateResponse:
+      type: object
+      properties:
+        uuid:
           type: string
-        warningErrorText:
+        subject:
+          $ref: '#/components/schemas/TipoCriteriRicercaTemplateAR001'
+        address:
+          $ref: '#/components/schemas/TipoResidenza'
+    TipoCriteriRicercaTemplateAR001:
+      type: object
+      properties:
+        subjectId:
           type: string
-        warningErrorObject:
+        id:
           type: string
-        warningErrorField:
+        surname:
           type: string
-        warningErrorValue:
+        name:
           type: string
-
+        gender:
+          type: string
+        birthDate:
+          $ref: '#/components/schemas/TipoDatiNascitaTemplateE000'
+    TipoDatiNascitaTemplateE000:
+      type: object
+      properties:
+        eventDate:
+          type: string
+        birthPlace:
+          $ref: '#/components/schemas/TipoLuogoNascitaE000'
+    TipoRichiestaAR001:
+      type: object
+      properties:
+        dateOfRequest:
+          type: string
+        motivation:
+          type: string
+        useCase:
+          type: string
+    TipoVerificaResidenza:
+      type: object
+      properties:
+        tipoIndirizzo:
+          type: string
+    RichiestaAR001:
+      type: object
+      properties:
+        operationId:
+          type: string
+        criteria:
+          $ref: '#/components/schemas/TipoParametriRicercaAR001'
+        requestData:
+          $ref: '#/components/schemas/TipoRichiestaAR001'
+    RispostaAR001:
+      type: object
+      properties:
+        idOperazione:
+          type: string
+        soggetti:
+          $ref: '#/components/schemas/TipoDatiSoggettiEnte'
+        listaAnomalie:
+          type: array
+          items:
+            $ref: '#/components/schemas/TipoErroriAnomalia'
+    RichiestaAR002:
+      type: object
+    RispostaAR002OK:
+      type: object
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+        status:
+          type: integer
+        title:
+          type: string
+        correlationId:
+          type: string
+        detail:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemError'
+    ProblemError:
+      type: object
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+    InfoSoggettoEnte:
+      $ref: '#/components/schemas/TipoDatiSoggettiEnte'
+    TipoInfoSoggetto:
+      $ref: '#/components/schemas/TipoGeneralita'
+    TipoLocalitaEstera:
+      $ref: '#/components/schemas/TipoLocalitaEstera1'
   securitySchemes:
     bearerAuth:
       type: http
