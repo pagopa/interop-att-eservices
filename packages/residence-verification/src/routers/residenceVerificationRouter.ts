@@ -116,7 +116,7 @@ const residenceVerificationRouter = (
         logger.info(`[START] residenceSubissionController: ${req.body}`);
         const data: any = await ResidenceVerificationController.upsertUser(
           req.body,
-        ); // TODO: da gestire il tipo della costante "data"
+        );
         if (!data || data.subjects?.subject?.length === 0) {
           throw userModelNotFound();
         }
