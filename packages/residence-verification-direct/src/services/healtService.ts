@@ -6,7 +6,7 @@ import {
   logger,
 } from "pdnd-common";
 import axios, { AxiosResponse } from "axios";
-import { sequelize } from "trial";
+import { testDbConnection } from "trial";
 import healtRepository from "../repository/healtRepository.js";
 
 class healtService {
@@ -18,10 +18,8 @@ class healtService {
     if (!(await healtRepository.checkConnection())) {
       return false;
     }
-    /* const config = signerConfig.parse(process.env); */
     const publicKeyService = buildPublicKeyService();
 
-    // Recupera il kid dal token JWT
     if (!(await publicKeyService.KMSAvailability(config.kmsKeyId))) {
       return false;
     }
@@ -37,10 +35,8 @@ class healtService {
     }
 
     try {
-      // Prova a connetterti al database
-      await sequelize.authenticate();
+      await testDbConnection();
     } catch (error) {
-      // Se c'è un errore nella connessione, invia una risposta negativa
       logger.error(`Errore nella connessione al database: ${error}`);
       return false;
     }

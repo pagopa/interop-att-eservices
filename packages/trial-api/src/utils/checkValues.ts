@@ -1,68 +1,4 @@
-import { DataTypes, Model } from "sequelize";
-import { sequelize } from "../client.js";
-import { Category } from "./category.js";
-
-interface CheckAttributes {
-  id: number;
-  code: string;
-  description: string | null;
-  order: number;
-  category_id: number | null;
-  category?: Category;
-}
-
-class Check extends Model<CheckAttributes> implements CheckAttributes {
-  public id!: number;
-  public code!: string;
-  public description!: string | null;
-  public order!: number;
-  public category_id!: number | null;
-  public category?: Category;
-}
-
-Check.init(
-  {
-    id: {
-      type: DataTypes.BIGINT,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    code: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    order: {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-    },
-    category_id: {
-      type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: Category,
-        key: "id",
-      },
-    },
-  },
-  {
-    sequelize,
-    modelName: "Check",
-    tableName: "check",
-    timestamps: false,
-  }
-);
-
-// Definisci l'associazione
-Check.belongsTo(Category, {
-  foreignKey: "category_id",
-  as: "category",
-});
-
-export const checkValuesMap: { [key: string]: number } = {
+export const checkValuesMap: Record<string, number> = {
   VOUCHER_AUTH_DATA_CANNOT_BE_PARSED: 1,
   VOUCHER_HEADER_NOT_PRESENT: 2,
   VOUCHER_PAYLOAD_NOT_PRESENT: 3,
@@ -121,8 +57,8 @@ export const checkValuesMap: { [key: string]: number } = {
   DIGITAL_ADDRESS_VERIFICATION_LIST_RESPONSE: 56,
   RESIDENCE_VERIFICATION_002: 57,
   FAMILY_STATUS: 58,
+  VOUCHER_DIGEST_NOT_VALID: 59,
 };
 
-const getCheckValue = (key: string): number | undefined => checkValuesMap[key];
-
-export { Check, CheckAttributes, getCheckValue };
+export const getCheckValue = (key: string): number | undefined =>
+  checkValuesMap[key];

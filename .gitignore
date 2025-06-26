@@ -8,3 +8,4 @@ pnpm-lock.yaml
 packages/*/src/model/generated
 packages/residence-verification/aws.config.local
 packages/residence-verification-direct/aws.config.local
+*.rsa.priv
