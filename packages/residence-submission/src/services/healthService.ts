@@ -9,7 +9,6 @@ import { sequelize } from "trial";
 import healtRepository from "../repository/healthRepository.js";
 
 class healtService {
-
   public async status(): Promise<boolean | null> {
     const config = signerConfig();
 

@@ -1,38 +1,38 @@
 // import {
-  // SoggettoModel,
-  // UserModel,
-  // TipoLuogoNascitaModel,
-  // TipoLocalitaModel,
-  // TipoComuneModel,
-  // TipoDataNascitaModel,
-  // TipoToponimoModel,
-  // TipoCivicoInternoModel,
-  // TipoNumeroCivicoModel,
-  // TipoIndirizzoModel,
-  // TipoDatoLocalitaEsteraModel,
-  // TipoToponimoEsteroModel,
-  // TipoIndirizzoEsteroModel,
-  // TipoConsolatoModel,
-  // TipoLocalitaEsteraModel,
-  // TipoResidenzaModel,
-  // TipoDatiNascitaModel,
-  // TipoParametriRicercaModel,
-  // TipoRichiestaModel,
-  // RichiestaModel,
-  // TipoCodiceFiscaleModel,
-  // TipoLuogoEventoModel,
-  // TipoIdSchedaSoggettoComuneModel,
-  // TipoGeneralitaModel,
-  // TipoIdentificativiModel,
-  // TipoAttoModel,
-  // TipoAttoANSCModel,
-  // TipoAttoEventoModel,
-  // TipoDatiEventoModel,
-  // TipoDatiSoggettiEnteModel,
-  // TipoListaSoggettiModel,
-  // TipoErroriAnomaliaModel,
-  // ProblemErrorModel,
-  // ProblemModel,
+// SoggettoModel,
+// UserModel,
+// TipoLuogoNascitaModel,
+// TipoLocalitaModel,
+// TipoComuneModel,
+// TipoDataNascitaModel,
+// TipoToponimoModel,
+// TipoCivicoInternoModel,
+// TipoNumeroCivicoModel,
+// TipoIndirizzoModel,
+// TipoDatoLocalitaEsteraModel,
+// TipoToponimoEsteroModel,
+// TipoIndirizzoEsteroModel,
+// TipoConsolatoModel,
+// TipoLocalitaEsteraModel,
+// TipoResidenzaModel,
+// TipoDatiNascitaModel,
+// TipoParametriRicercaModel,
+// TipoRichiestaModel,
+// RichiestaModel,
+// TipoCodiceFiscaleModel,
+// TipoLuogoEventoModel,
+// TipoIdSchedaSoggettoComuneModel,
+// TipoGeneralitaModel,
+// TipoIdentificativiModel,
+// TipoAttoModel,
+// TipoAttoANSCModel,
+// TipoAttoEventoModel,
+// TipoDatiEventoModel,
+// TipoDatiSoggettiEnteModel,
+// TipoListaSoggettiModel,
+// TipoErroriAnomaliaModel,
+// ProblemErrorModel,
+// ProblemModel,
 // } from "pdnd-models";
 // import { getUserModelByCodiceFiscale } from "../../utilities/userUtilities.js";
 // import {
@@ -97,7 +97,7 @@ interface Purpose {
 }
 
 interface Subject {
-  uuid: string; //TODO: to fix
+  uuid: string; // TODO: to fix
   id: string | "";
   subject_id: string | "";
   surname: string | "";
@@ -129,8 +129,6 @@ interface MappedDbData {
   usecases: Usecase[];
 }
 
-
-
 function mapToDbPurpose(): Purpose {
   return {
     id: uuidv4(),
@@ -138,7 +136,7 @@ function mapToDbPurpose(): Purpose {
 }
 
 function mapSourceSubjectToDbSubject(
-  sourceSubject: any, // TODO: Fix the type
+  sourceSubject: any // TODO: Fix the type
 ): Subject {
   return {
     uuid: uuidv4(),
@@ -173,7 +171,7 @@ function mapSourceSubjectToDbSubject(
 }
 
 function mapSourceAddressToDbAddress(
-  sourceAddress: any, // TODO: Fix the type
+  sourceAddress: any // TODO: Fix the type
 ): Address {
   return {
     id: uuidv4(),
@@ -217,31 +215,26 @@ function mapSourceAddressToDbAddress(
     esp_internal2:
       sourceAddress.address.civicNumber?.internalCivic?.espInternal2 ?? "",
     external_stairs:
-      sourceAddress.address.civicNumber?.internalCivic?.externalStairs ??
-      "",
+      sourceAddress.address.civicNumber?.internalCivic?.externalStairs ?? "",
     secondary:
       sourceAddress.address.civicNumber?.internalCivic?.secondary ?? "",
     floor: sourceAddress.address.civicNumber?.internalCivic?.floor ?? "",
     nui: sourceAddress.address.civicNumber?.internalCivic?.nui ?? "",
-    isolated:
-      sourceAddress.address.civicNumber?.internalCivic?.isolated ?? "",
-    latitude: (sourceAddress.address as any)?.coords?.latitude?.toString() ?? "",
-    longitude: (sourceAddress.address as any)?.coords?.longitude?.toString() ?? "",
+    isolated: sourceAddress.address.civicNumber?.internalCivic?.isolated ?? "",
+    latitude: sourceAddress.address?.coords?.latitude?.toString() ?? "",
+    longitude: sourceAddress.address?.coords?.longitude?.toString() ?? "",
     foreign_cap: sourceAddress.foreignState?.foreignAddress.cap ?? "",
     foreign_place_description:
-      sourceAddress.foreignState?.foreignAddress.place?.placeDescription ??
-      "",
+      sourceAddress.foreignState?.foreignAddress.place?.placeDescription ?? "",
     foreign_country_description:
       sourceAddress.foreignState?.foreignAddress.place?.countryDescription ??
       "",
     foreign_country_state:
       sourceAddress.foreignState?.foreignAddress.place?.countryState ?? "",
     foreign_province_county:
-      sourceAddress.foreignState?.foreignAddress.place?.provinceCounty ??
-      "",
+      sourceAddress.foreignState?.foreignAddress.place?.provinceCounty ?? "",
     foreign_toponym_denomination:
-      sourceAddress.foreignState?.foreignAddress.toponym?.denomination ??
-      "",
+      sourceAddress.foreignState?.foreignAddress.toponym?.denomination ?? "",
     foreign_toponym_civic_number:
       sourceAddress.foreignState?.foreignAddress.toponym?.civicNumber ?? "",
     consulate_cod: sourceAddress.foreignState?.consulate?.consulateCod ?? "",
@@ -253,7 +246,7 @@ function mapSourceAddressToDbAddress(
 function mapToDbUsecase(
   purposeId: string,
   subjectId: string,
-  addressId: string,
+  addressId: string
 ): Usecase {
   return {
     id: uuidv4(),
@@ -263,10 +256,7 @@ function mapToDbUsecase(
   };
 }
 
-export function mapApiBodyToDbModels(
-  subjectBody: any,
-): MappedDbData {
-
+export function mapApiBodyToDbModels(subjectBody: any): MappedDbData {
   const addresses: Address[] = [];
   const usecases: Usecase[] = [];
 
@@ -285,17 +275,16 @@ export function mapApiBodyToDbModels(
       );
       usecases.push(newDbUsecase);
     }
-  }  
+  }
 
   return { purpose, subject, addresses, usecases };
 }
-
 
 // TODO: Fix the type of subjectBody and addressBody with subject_id
 export function mapApiBodyToDbModelsUpdate(
   subjectBody: any,
   subjectUuid: string,
-  addressUuid: string,
+  addressUuid: string
 ): {
   subject: Subject;
   address: Address;
@@ -303,10 +292,10 @@ export function mapApiBodyToDbModelsUpdate(
   const subjectMapped = mapSourceSubjectToDbSubject(subjectBody);
 
   subjectMapped.uuid = subjectUuid;
-  
+
   let mappedAddress: Address;
   const mapped = mapSourceAddressToDbAddress(
-    subjectBody.address[0], // TODO: Fix array management
+    subjectBody.address[0] // TODO: Fix array management
   );
 
   mapped.id = addressUuid || "";
@@ -317,4 +306,3 @@ export function mapApiBodyToDbModelsUpdate(
     address: mappedAddress,
   };
 }
-

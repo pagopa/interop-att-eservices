@@ -1,22 +1,18 @@
 import { logger, getContext } from "pdnd-common";
 import residenceSubmissionService from "../services/residenceSubmissionService.js";
 import { RichiestaAR003 } from "../model/domain/models.js";
-// import { requestParamNotValid } from "../exceptions/errors.js";
 class ResidenceSubmissionController {
   public appContext = getContext();
-
-  public async createUser (
-  request: RichiestaAR003
+  public async createUser(
+    request: RichiestaAR003
   ): Promise<{ status: string; message: string }> {
     try {
-
-
       residenceSubmissionService.create(request);
 
       return {
         status: "OK",
         message: "User created successfully",
-      }
+      };
     } catch (error) {
       logger.error(` Error in 'createUser': `, error);
       return {
@@ -30,10 +26,7 @@ class ResidenceSubmissionController {
     request: RichiestaAR003
   ): Promise<{ status: string; message: string }> {
     try {
-
-      await residenceSubmissionService.updateByUsecasesIdService(
-        request,
-      );
+      await residenceSubmissionService.updateByUsecasesIdService(request);
 
       return {
         status: "OK",

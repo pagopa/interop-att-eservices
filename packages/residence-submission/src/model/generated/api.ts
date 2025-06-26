@@ -1,5 +1,5 @@
 
-// TODO: da implementare il sistema di zod drizzle
+// TODO: implement the zod drizzle system
 
 /**
  * Utilizzare il sistema di Insert schema, come descritto in: 

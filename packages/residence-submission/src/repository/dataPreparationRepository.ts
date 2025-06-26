@@ -18,11 +18,10 @@ class DataPreparationRepository {
   }
 
   public async findUsecasesById(subjectId: string): Promise<Usecase[]> {
-    const result = await db
+    return await db
       .select()
       .from(Usecase)
       .where(eq(Usecase.subject_id, subjectId));
-    return result;
   }
 
   // CREATE METHODS

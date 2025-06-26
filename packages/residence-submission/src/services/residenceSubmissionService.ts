@@ -18,15 +18,15 @@ class ResidenceSubmissionService {
       }
 
       const subject = await dataPreparationRepository.findSubjectById(
-        subjectId,
-      );      
+        subjectId
+      );
 
       if (!subject) {
         throw userModelNotFound("The subjectId is missing or invalid");
       }
 
       const usecases = await dataPreparationRepository.findUsecasesById(
-        subject.uuid,
+        subject.uuid
       );
 
       if (!usecases.length) {
@@ -43,50 +43,50 @@ class ResidenceSubmissionService {
   public async updateByUsecasesIdService(updatedUser: any): Promise<void> {
     try {
       logger.info(`[START] updateBysubjectId`);
-  
+
       const subjects = updatedUser?.subjects?.subject;
-  
+
       if (!Array.isArray(subjects)) {
         throw new Error("Missing or invalid 'subjects.subject' array");
       }
-  
+
       const updatePromises = subjects.map(async (subject: any) => {
         const id = subject?.generality?.subjectId?.subjectId;
-  
+
         if (!id) {
           logger.warn("subjectId missing, skipping subject");
           return;
         }
-  
+
         const existingUser = await this.getBySubjectId(id);
-  
+
         if (!existingUser) {
           throw userModelNotFound(`User with subjectId ${id} not found`);
         }
-  
+
         const innerPromises = existingUser.map(async (usecase: any) => {
           const queryData = mapApiBodyToDbModelsUpdate(
             subject,
             usecase.subject_id,
             usecase.address_id
           );
-  
+
           await dataPreparationRepository.updateSubjectById(
             id,
             queryData.subject
           );
-  
+
           await dataPreparationRepository.updateAddressById(
             usecase.address_id,
             queryData.address
           );
         });
-  
+
         await Promise.all(innerPromises);
       });
-  
+
       await Promise.all(updatePromises);
-  
+
       logger.info(`[END] updateById`);
     } catch (error) {
       logger.error(`Error during updateById.`, error);
@@ -99,13 +99,13 @@ class ResidenceSubmissionService {
       logger.info(`[START] create`);
       if (request.subjects && Array.isArray(request.subjects.subject)) {
         for (const subject of request.subjects.subject) {
-          let queryData = mapApiBodyToDbModels(subject);
+          const queryData = mapApiBodyToDbModels(subject);
           const existingUser = await dataPreparationRepository.findSubjectById(
-            queryData.subject.subject_id,
+            queryData.subject.subject_id
           );
           if (existingUser) {
             logger.warn(
-              `Subject with subject_id ${queryData.subject.subject_id} already exists. Skipping insert.`,
+              `Subject with subject_id ${queryData.subject.subject_id} already exists. Skipping insert.`
             );
             continue;
           }
@@ -136,13 +136,13 @@ class ResidenceSubmissionService {
   public async delete(subjectId: string): Promise<void> {
     try {
       logger.info(`[START] deleteBySubjectId`);
-      
+
       if (!subjectId) {
         throw userModelNotFound("The subjectId is missing or invalid");
       }
 
       const subject = await dataPreparationRepository.findSubjectById(
-        subjectId,
+        subjectId
       );
 
       if (!subject) {
@@ -150,7 +150,7 @@ class ResidenceSubmissionService {
       }
 
       const usecases = await dataPreparationRepository.findUsecasesById(
-        subject.uuid,
+        subject.uuid
       );
 
       if (!usecases.length) {

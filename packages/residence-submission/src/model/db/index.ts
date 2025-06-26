@@ -1,10 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
-import { 
-  InteroperabilityConfig, 
-  DatabaseConfig,
-  logger 
-} from "pdnd-common";
+import { InteroperabilityConfig, DatabaseConfig, logger } from "pdnd-common";
 const config = InteroperabilityConfig.and(DatabaseConfig).parse(process.env);
 
 const pool = new pg.Pool({
