@@ -69,7 +69,6 @@
     "pdnd-models": "workspace:*",
     "pg": "^8.13.3",
     "redis": "^4.6.13",
-    "sequelize": "^6.37.3",
     "trial": "workspace:*",
     "ts-pattern": "^5.0.6",
     "uuid": "^9.0.0",

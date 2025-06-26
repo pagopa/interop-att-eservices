@@ -1,11 +1,7 @@
 import express from "express";
-import { Sequelize } from "sequelize";
-import { DatabaseConfig, InteroperabilityConfig, zodiosCtx } from "pdnd-common";
+import { zodiosCtx } from "pdnd-common";
 import healthRouter from "./routers/healthRouter.js";
 import residenceVerificationRouter from "./routers/residenceVerificationRouter.js";
-
-const config = InteroperabilityConfig.and(DatabaseConfig).parse(process.env);
-export const dbInstance = new Sequelize(config.databaseUrl);
 
 const app = zodiosCtx.app();
 app.use(express.json());
