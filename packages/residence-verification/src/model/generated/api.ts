@@ -27,22 +27,79 @@ const TipoLuogoNascitaE000 = z
   })
   .partial()
   .passthrough();
-const TipoDatiNascitaTemplateE000 = z
+const TipoDatiNascitaE000 = z
   .object({
     eventDate: z.string(),
     noDay: z.string(),
+    noMonth: z.string(),
     birthPlace: TipoLuogoNascitaE000,
   })
   .partial()
   .passthrough();
-const TipoCriteriaTemplateAR001 = z
+const TipoParametriRicercaAR001 = z
   .object({
     subjectId: z.string(),
     id: z.string(),
     surname: z.string(),
+    noSurname: z.string(),
     name: z.string(),
+    noName: z.string(),
     gender: z.string(),
-    birthDate: TipoDatiNascitaTemplateE000,
+    birthDate: TipoDatiNascitaE000,
+  })
+  .partial()
+  .passthrough();
+const TipoRichiestaAR001 = z
+  .object({
+    dateOfRequest: z.string(),
+    motivation: z.string(),
+    useCase: z.string(),
+  })
+  .passthrough();
+const RichiestaAR001 = z
+  .object({
+    operationId: z.string(),
+    criteria: TipoParametriRicercaAR001,
+    requestData: TipoRichiestaAR001,
+  })
+  .passthrough();
+const TipoCodiceFiscale = z
+  .object({
+    subjectId: z.string(),
+    subjectIdValidity: z.string(),
+    dataAttributionValidity: z.string(),
+  })
+  .partial()
+  .passthrough();
+const TipoLuogoEvento = z
+  .object({
+    exceptionalPlace: z.string(),
+    municipality: TipoComune,
+    place: TipoLocalita,
+  })
+  .partial()
+  .passthrough();
+const TipoIdSchedaSoggettoComune = z
+  .object({ idCommonSubjectDataIstat: z.string(), idSubjectData: z.string() })
+  .partial()
+  .passthrough();
+const TipoGeneralita = z
+  .object({
+    subjectId: TipoCodiceFiscale,
+    surname: z.string(),
+    noSurname: z.string(),
+    name: z.string(),
+    noName: z.string(),
+    gender: z.string(),
+    birthDate: z.string(),
+    noDay: z.string(),
+    noMonth: z.string(),
+    birthPlace: TipoLuogoEvento,
+    AIRESubject: z.string(),
+    yearExpatriation: z.string(),
+    idCommonSubjectData: TipoIdSchedaSoggettoComune,
+    idSubjectData: z.string(),
+    note: z.string(),
   })
   .partial()
   .passthrough();
@@ -134,91 +191,6 @@ const TipoResidenza = z
     foreignState: TipoLocalitaEstera1,
     presso: z.string(),
     addressStartDate: z.string(),
-  })
-  .partial()
-  .passthrough();
-const DataPreparationTemplate = z
-  .object({ subject: TipoCriteriaTemplateAR001, address: TipoResidenza })
-  .partial();
-const DataPreparationResponse = z.object({ uuid: z.string() }).partial();
-const DataPreparationTemplateResponse = z
-  .object({ uuid: z.string().uuid() })
-  .partial()
-  .passthrough()
-  .and(DataPreparationTemplate);
-const TipoDatiNascitaE000 = z
-  .object({
-    eventDate: z.string(),
-    noDay: z.string(),
-    noMonth: z.string(),
-    birthPlace: TipoLuogoNascitaE000,
-  })
-  .partial()
-  .passthrough();
-const TipoParametriRicercaAR001 = z
-  .object({
-    subjectId: z.string(),
-    id: z.string(),
-    surname: z.string(),
-    noSurname: z.string(),
-    name: z.string(),
-    noName: z.string(),
-    gender: z.string(),
-    birthDate: TipoDatiNascitaE000,
-  })
-  .partial()
-  .passthrough();
-const TipoRichiestaAR001 = z
-  .object({
-    dateOfRequest: z.string(),
-    motivation: z.string(),
-    useCase: z.string(),
-  })
-  .passthrough();
-const RichiestaAR001 = z
-  .object({
-    operationId: z.string(),
-    criteria: TipoParametriRicercaAR001,
-    requestData: TipoRichiestaAR001,
-  })
-  .passthrough();
-const TipoCodiceFiscale = z
-  .object({
-    subjectId: z.string(),
-    subjectIdValidity: z.string(),
-    dataAttributionValidity: z.string(),
-  })
-  .partial()
-  .passthrough();
-const TipoLuogoEvento = z
-  .object({
-    exceptionalPlace: z.string(),
-    municipality: TipoComune,
-    place: TipoLocalita,
-  })
-  .partial()
-  .passthrough();
-const TipoIdSchedaSoggettoComune = z
-  .object({ idCommonSubjectDataIstat: z.string(), idSubjectData: z.string() })
-  .partial()
-  .passthrough();
-const TipoGeneralita = z
-  .object({
-    subjectId: TipoCodiceFiscale,
-    surname: z.string(),
-    noSurname: z.string(),
-    name: z.string(),
-    noName: z.string(),
-    gender: z.string(),
-    birthDate: z.string(),
-    noDay: z.string(),
-    noMonth: z.string(),
-    birthPlace: TipoLuogoEvento,
-    AIRESubject: z.string(),
-    yearExpatriation: z.string(),
-    idCommonSubjectData: TipoIdSchedaSoggettoComune,
-    idSubjectData: z.string(),
-    note: z.string(),
   })
   .partial()
   .passthrough();
@@ -385,8 +357,14 @@ export const schemas = {
   TipoComune,
   TipoLocalita,
   TipoLuogoNascitaE000,
-  TipoDatiNascitaTemplateE000,
-  TipoCriteriaTemplateAR001,
+  TipoDatiNascitaE000,
+  TipoParametriRicercaAR001,
+  TipoRichiestaAR001,
+  RichiestaAR001,
+  TipoCodiceFiscale,
+  TipoLuogoEvento,
+  TipoIdSchedaSoggettoComune,
+  TipoGeneralita,
   TipoToponimo,
   TipoCivicoInterno,
   TipoNumeroCivico,
@@ -397,17 +375,6 @@ export const schemas = {
   TipoConsolato,
   TipoLocalitaEstera1,
   TipoResidenza,
-  DataPreparationTemplate,
-  DataPreparationResponse,
-  DataPreparationTemplateResponse,
-  TipoDatiNascitaE000,
-  TipoParametriRicercaAR001,
-  TipoRichiestaAR001,
-  RichiestaAR001,
-  TipoCodiceFiscale,
-  TipoLuogoEvento,
-  TipoIdSchedaSoggettoComune,
-  TipoGeneralita,
   TipoIdentificativi,
   TipoAtto,
   TipoAttoANSC,
@@ -499,177 +466,6 @@ const endpoints = makeApi([
       {
         status: 500,
         description: `Internal Server Error`,
-        schema: z.void(),
-      },
-    ],
-  },
-  {
-    method: "post",
-    path: "/residence-verification/data-preparation",
-    alias: "InsertAR001",
-    description: `Insert data preparation residence-verification`,
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "body",
-        type: "Body",
-        schema: DataPreparationTemplate,
-      },
-    ],
-    response: z.object({ uuid: z.string() }).partial(),
-    errors: [
-      {
-        status: 400,
-        description: `Bad request`,
-        schema: z.void(),
-      },
-      {
-        status: 401,
-        description: `Unauthorized`,
-        schema: z.void(),
-      },
-      {
-        status: 403,
-        description: `Forbidden`,
-        schema: z.void(),
-      },
-      {
-        status: 429,
-        description: `Too Many Requests`,
-        schema: z.void(),
-      },
-    ],
-  },
-  {
-    method: "get",
-    path: "/residence-verification/data-preparation",
-    alias: "GetAllAR001",
-    description: `List of institution use cases`,
-    requestFormat: "json",
-    response: z.array(DataPreparationTemplateResponse),
-    errors: [
-      {
-        status: 400,
-        description: `Bad request`,
-        schema: z.void(),
-      },
-      {
-        status: 401,
-        description: `Unauthorized`,
-        schema: z.void(),
-      },
-      {
-        status: 403,
-        description: `Forbidden`,
-        schema: z.void(),
-      },
-      {
-        status: 429,
-        description: `Too Many Requests`,
-        schema: z.void(),
-      },
-    ],
-  },
-  {
-    method: "delete",
-    path: "/residence-verification/data-preparation",
-    alias: "DeleteAR001",
-    description: `Delete institution use cases`,
-    requestFormat: "json",
-    response: z.void(),
-    errors: [
-      {
-        status: 400,
-        description: `Bad request`,
-        schema: z.void(),
-      },
-      {
-        status: 401,
-        description: `Unauthorized`,
-        schema: z.void(),
-      },
-      {
-        status: 403,
-        description: `Forbidden`,
-        schema: z.void(),
-      },
-      {
-        status: 429,
-        description: `Too Many Requests`,
-        schema: z.void(),
-      },
-    ],
-  },
-  {
-    method: "get",
-    path: "/residence-verification/data-preparation/:uuid",
-    alias: "GetByIdAR001",
-    description: `Insert data preparation residence-verification`,
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "uuid",
-        type: "Path",
-        schema: z.string().uuid(),
-      },
-    ],
-    response: DataPreparationTemplate,
-    errors: [
-      {
-        status: 400,
-        description: `Bad request`,
-        schema: z.void(),
-      },
-      {
-        status: 401,
-        description: `Unauthorized`,
-        schema: z.void(),
-      },
-      {
-        status: 403,
-        description: `Forbidden`,
-        schema: z.void(),
-      },
-      {
-        status: 429,
-        description: `Too Many Requests`,
-        schema: z.void(),
-      },
-    ],
-  },
-  {
-    method: "delete",
-    path: "/residence-verification/data-preparation/:uuid",
-    alias: "DeleteByIdAR001",
-    description: `Remove a single use case`,
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "uuid",
-        type: "Path",
-        schema: z.string().uuid(),
-      },
-    ],
-    response: z.void(),
-    errors: [
-      {
-        status: 400,
-        description: `Bad request`,
-        schema: z.void(),
-      },
-      {
-        status: 401,
-        description: `Unauthorized`,
-        schema: z.void(),
-      },
-      {
-        status: 403,
-        description: `Forbidden`,
-        schema: z.void(),
-      },
-      {
-        status: 429,
-        description: `Too Many Requests`,
         schema: z.void(),
       },
     ],

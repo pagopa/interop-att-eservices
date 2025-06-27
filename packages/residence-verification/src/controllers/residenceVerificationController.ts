@@ -1,6 +1,10 @@
 import { UserModel } from "pdnd-models";
 import { logger, getContext } from "pdnd-common";
-import ResidenceVerificationService from "../services/residenceVerificationService.js";
+import {
+  getById,
+  getByPersonalInfo,
+  getUserBySubjectId,
+} from "../services/residenceVerificationService.js";
 import {
   requestParamNotValid,
   userModelNotFound,
@@ -18,197 +22,88 @@ class ResidenceVerificationController {
   public appContext = getContext();
 
   public async findUser(
-    request: RichiestaAR001,
+    request: RichiestaAR001
   ): Promise<RispostaAR001 | null | undefined> {
     try {
-      logger.info(`Post findUser: ${JSON.stringify(request)}`);
-      if (request.criteria.subjectId) {
-        const data = await ResidenceVerificationService.getBySubjectId(
-          request.criteria.subjectId,
-        );
+      const data = await this.getUserData(request);
 
-        const list: UserModel[] = data ? [data] : [];
-
-        const result: RispostaAR001 = {
-          idOp: request.operationId,
-          subjects: {
-            subject: list.map((element) =>
-              UserModelToApiTipoDatiSoggettiEnte(element),
-            ),
-          },
-        };
-        return result;
-      } else if (checkPersonalInfo(request)) {
-        const data = await ResidenceVerificationService.getByPersonalInfo(
-          request.criteria,
-        );
-
-        const result: RispostaAR001 = {
-          idOp: request.operationId,
-          subjects: {
-            subject: data.map((element) =>
-              UserModelToApiTipoDatiSoggettiEnte(element),
-            ),
-          },
-        };
-
-        return result;
-      } else if (request.criteria.id) {
-        if (request.criteria.id) {
-          const data = await ResidenceVerificationService.getById(
-            request.criteria.id,
-          );
-
-          const list: UserModel[] = data ? [data] : [];
-
-          const result: RispostaAR001 = {
-            idOp: request.operationId,
-            subjects: {
-              subject: list.map((element) =>
-                UserModelToApiTipoDatiSoggettiEnte(element),
-              ),
-            },
-          };
-          return result;
-        }
-        return null;
-      } else {
+      if (!data || data.length === 0) {
         throw requestParamNotValid(
-          "The request body has one or more required param not valid",
+          "The request body has one or more required param not valid"
         );
       }
+
+      return {
+        idOp: request.operationId,
+        subjects: {
+          subject: data.map(UserModelToApiTipoDatiSoggettiEnte),
+        },
+      };
     } catch (error) {
-      logger.error(`Error during in method controller 'findUser': `, error);
+      logger.error(`Error in 'findUser': `, error);
       throw error;
     }
   }
-  
-  public async upsertUser(
-    request: { subjects: { subject: UserModel[] } },
-  ): Promise<void> {
-    try {
-      logger.info(`Post upsertUser: ${JSON.stringify(request)}`);
-      const subjects = request.subjects.subject;
-
-      for (const subject of subjects) {
-        const existingUser = await ResidenceVerificationService.getBySubjectId(
-          request.criteria.subjectId,
-        );
-
-        if (existingUser) {
-          logger.info(
-            `Updating existing user with subjectId: ${subject.generality.subjectId.subjectId}`,
-          );
-          await ResidenceVerificationService.updateUser(subject);
-        } else {
-          logger.info(
-            `Creating new user with subjectId: ${subject.generality.subjectId.subjectId}`,
-          );
-          await ResidenceVerificationService.createUser(subject);
-        }
-      }
-    } catch (error) {
-      logger.error(`Error during in method controller 'upsertUser': `, error);
-      throw error;
-    }
-  }
-  /* eslint-disable */
   public async findUserVerify(
-    request: RichiestaAR002,
+    request: RichiestaAR002
   ): Promise<RispostaAR002OK> {
     try {
-      let resultData;
-      if (request.criteria.subjectId) {
-        const data = await ResidenceVerificationService.getBySubjectId(
-          request.criteria.subjectId,
-        );
+      const data = await this.getUserData(request);
 
-        const list: UserModel[] = data ? [data] : [];
-
-        resultData = {
-          idOp: request.operationId,
-          subjects: {
-            subject: list.map((element) =>
-              UserModelToApiTipoDatiSoggettiEnte(element),
-            ),
-          },
-        };
-      } else if (checkPersonalInfoVerify(request)) {
-        const data = await ResidenceVerificationService.getByPersonalInfo(
-          request.criteria,
-        );
-
-        resultData = {
-          idOp: request.operationId,
-          subjects: {
-            subject: data.map((element) =>
-              UserModelToApiTipoDatiSoggettiEnte(element),
-            ),
-          },
-        };
-      } else if (request.criteria.id) {
-        if (request.criteria.id) {
-          const data = await ResidenceVerificationService.getById(
-            `${request.criteria.id}`,
-          );
-
-          const list: UserModel[] = data ? [data] : [];
-
-          resultData = {
-            idOp: request.operationId,
-            subjects: {
-              subject: list.map((element) =>
-                UserModelToApiTipoDatiSoggettiEnte(element),
-              ),
-            },
-          };
-        }
-      } else {
-        throw requestParamNotValid(
-          "The request body has one or more required param not valid",
-        );
-      }
-
-      const response: RispostaAR002OK = {};
-      response.idOp = request.operationId;
-      if (!resultData || resultData.subjects?.subject?.length === 0) {
+      if (!data || data.length === 0) {
         throw userModelNotFound();
-      } else {
-        // vado a vedere se qualcuno ha la residenza richiesta in oggetto
-        response.subjects = { infoSubject: [] };
-        resultData?.subjects?.subject.forEach((oggetto) => {
-          oggetto.address?.forEach((address) => {
-            response.subjects?.infoSubject?.push(
-              checkInfoSoggettoEquals(request.check?.address, address),
-            );
-          });
-        });
       }
-      /* eslint-enable */
-      return response;
+
+      return {
+        idOp: request.operationId,
+        subjects: {
+          infoSubject: data.map((user) =>
+            checkInfoSoggettoEquals(request.check?.address, user)
+          ),
+        },
+      };
     } catch (error) {
-      logger.error(`Error during in method controller 'findUser': `, error);
+      logger.error(`Error in 'findUserVerify': `, error);
       throw error;
     }
+  }
+
+  private async getUserData(
+    request: RichiestaAR001 | RichiestaAR002
+  ): Promise<UserModel[] | undefined> {
+    const { subjectId, id } = request.criteria;
+    try {
+      if (subjectId) {
+        const user = await getUserBySubjectId(subjectId);
+        return user ? [user] : [];
+      }
+
+      if (this.checkPersonalInfo(request)) {
+        return getByPersonalInfo(request.criteria);
+      }
+
+      if (id) {
+        const user = await getById(`${id}`);
+        return user ? [user] : [];
+      }
+
+      return [];
+    } catch (error) {
+      logger.error(`Error retrieving user data: ${JSON.stringify(error)}`);
+    }
+    return undefined;
+  }
+
+  private checkPersonalInfo(request: RichiestaAR001 | RichiestaAR002): boolean {
+    const birthDate = request.criteria.birthDate;
+    return (
+      !!request.criteria.name &&
+      !!request.criteria.surname &&
+      !!birthDate?.eventDate &&
+      !!birthDate?.birthPlace?.municipality?.nameMunicipality &&
+      !!birthDate?.birthPlace?.place?.codState
+    );
   }
 }
 
-const checkPersonalInfo = (request: RichiestaAR001): boolean =>
-  !!request.criteria.name &&
-  !!request.criteria.surname &&
-  !!request.criteria.birthDate &&
-  !!request.criteria.birthDate.eventDate &&
-  !!request.criteria.birthDate.birthPlace &&
-  !!request.criteria?.birthDate?.birthPlace?.municipality?.nameMunicipality &&
-  !!request.criteria?.birthDate?.birthPlace?.place?.codState;
-
-const checkPersonalInfoVerify = (request002: RichiestaAR002): boolean =>
-  !!request002.criteria.name &&
-  !!request002.criteria.surname &&
-  !!request002.criteria.birthDate &&
-  !!request002.criteria.birthDate.eventDate &&
-  !!request002.criteria.birthDate.birthPlace &&
-  !!request002.criteria?.birthDate?.birthPlace?.municipality
-    ?.nameMunicipality &&
-  !!request002.criteria?.birthDate?.birthPlace?.place?.codState;
 export default new ResidenceVerificationController();

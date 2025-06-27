@@ -1,7 +1,6 @@
 version: "3"
 name: pagopa-interop
 services:
-
   # # PGAdmin is a web-based PostgreSQL admin interface, included for convenience
   # pg-admin:
   #   image: dpage/pgadmin4
@@ -27,8 +26,6 @@ services:
   #     "
   redis:
     image: redis:4.0.6
-    networks:
-      - net-redis
     ports:
       - "6379:6379"
     volumes:
@@ -36,3 +33,24 @@ services:
     environment:
       REDIS_PASSWORD: psw
     command: ["sh", "-c", 'exec redis-server --requirepass "$$REDIS_PASSWORD"']
+
+  postgres:
+    volumes:
+      - ../migrations/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql
+    image: postgres:14
+    ports:
+      - 55000:5432
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    command: -c 'max_connections=512' -c 'wal_level=logical'
+
+networks:
+  develop-network:
+    name: interop-att-eservice-network
+    driver: bridge
+
+volumes:
+  volume-redis: # Definizione del volume per Redis
+    driver: local

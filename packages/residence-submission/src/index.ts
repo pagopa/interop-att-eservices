@@ -6,7 +6,7 @@ const port = process.env.PORT || 3006;
 
 const startServer = async (): Promise<void> => {
   try {
-    await sequelize.authenticate(); // TODO: dopo da sviluppare testdbconnection
+    await sequelize.authenticate(); // TODO: to be developed later testdbconnection
 
     // await runLiquibase();
 
