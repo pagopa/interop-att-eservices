@@ -1,9 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { v4 as uuidv4 } from "uuid";
 import {
   generateRandomUUID,
   isValidUUID,
-} from "../../../src/utilities/uuidUtilities";
+} from "../../../src/utilities/uuidUtilities.js";
 
 describe("generateRandomUUID", () => {
   it("should return the existing UUID if provided", () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { TrialRepository } from "../../../src/repository/trialRepository";
-import trialService from "../../../src/services/trialService";
+import { TrialRepository } from "../../../src/repository/trialRepository.js";
+import trialService from "../../../src/services/trialService.js";
 
 vi.mock("../../../src/utilities/jsonTrialUtilities", () => ({
   parseJsonToCategoryArray: vi.fn(),

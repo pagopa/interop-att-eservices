@@ -1,5 +1,4 @@
-import { TrialRepository } from "../index.js";
-import { Trial } from "../model/trial.js";
+import { TrialRepository } from "../repositories/trialRepository.js";
 
 export class TrialService {
   public static async insert(
@@ -17,15 +16,16 @@ export class TrialService {
       message
     );
   }
-}
 
-export async function findByCorrelationId(data: string): Promise<Trial[]> {
-  return await TrialRepository.findByCorrelationId(data);
-}
+  public static async findByCorrelationId(
+    correlationId: string
+  ): Promise<unknown> {
+    return await TrialRepository.findByCorrelationId(correlationId);
+  }
 
-export async function existCorrelationId(
-  correlationId: string
-): Promise<boolean> {
-  const trials = await findByCorrelationId(correlationId);
-  return trials.length !== 0;
+  public static async existCorrelationId(
+    correlationId: string
+  ): Promise<unknown> {
+    return await TrialRepository.existCorrelationId(correlationId);
+  }
 }

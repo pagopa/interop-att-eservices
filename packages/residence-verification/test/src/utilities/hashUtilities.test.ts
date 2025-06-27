@@ -1,8 +1,6 @@
 import { describe, it, expect } from "vitest";
-import generateHash, {
-  generateHashFromString,
-} from "../../../src/utilities/hashUtilities";
-
+import generateHash from "../../../src/utilities/hashUtilities.js";
+import { generateHashFromString } from "pdnd-common"
 // Test for generateHash
 describe("generateHash", () => {
   it("should generate the correct SHA-256 hash for an empty array", () => {
