@@ -7,16 +7,16 @@ import {
 import { drizzle, NodePgDatabase } from "drizzle-orm/node-postgres";
 import { Client } from "pg";
 
-import { logger } from "pdnd-common/dist";
-import { Subject } from "../src/model/db/subject.model";
-import { Address } from "../src/model/db/address.model";
-import { Usecase } from "../src/model/db/usecase.model";
+import { logger } from "pdnd-common";
+import { Subject } from "../src/model/db/subjects.model.js";
+import { Address } from "../src/model/db/addresses.model.js";
+import { Usecase } from "../src/model/db/usecases.model.js";
 import {
   TEST_POSTGRES_DB_NAME,
   TEST_POSTGRES_DB_PASSWORD,
   TEST_POSTGRES_DB_USER,
   TEST_POSTGRES_SCHEMA,
-} from "./config";
+} from "./config.js";
 
 const drizzleSchema = {
   Subject,
