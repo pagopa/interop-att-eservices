@@ -1,14 +1,13 @@
-import { checkConnection, logger } from "pdnd-common";
+import { logger } from "pdnd-common";
+import { testDbConnection } from "trial";
 import app from "./app.js";
 
 const port = process.env.PORT || 3004;
 
 const startServer = async (): Promise<void> => {
   try {
-    await checkConnection();
-
+    await testDbConnection();
     logger.info("Connection to Database has been established.");
-
     app.listen(port, () => {
       logger.info(`Server is running on http://localhost:${port}`);
     });

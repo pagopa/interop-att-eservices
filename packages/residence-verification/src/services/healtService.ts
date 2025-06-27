@@ -6,7 +6,7 @@ import {
   logger,
 } from "pdnd-common";
 import axios, { AxiosResponse } from "axios";
-import { sequelize } from "trial";
+import { testDbConnection } from "trial";
 import healtRepository from "../repository/healtRepository.js";
 
 class healtService {
@@ -38,7 +38,7 @@ class healtService {
 
     try {
       // Prova a connetterti al database
-      await sequelize.authenticate();
+      await testDbConnection();
     } catch (error) {
       // Se c'è un errore nella connessione, invia una risposta negativa
       logger.error(`Errore nella connessione al database: ${error}`);

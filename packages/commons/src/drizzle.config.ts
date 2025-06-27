@@ -1,7 +1,6 @@
-import dotenv from "dotenv";
 import { z } from "zod";
 import { defineConfig, Config } from "drizzle-kit";
-
+import dotenv from "dotenv";
 dotenv.config();
 
 const envSchema = z.object({

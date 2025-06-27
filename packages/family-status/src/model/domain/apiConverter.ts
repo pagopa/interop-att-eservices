@@ -93,11 +93,7 @@ export const CriteriaTypeToGeneralityType = (
   noMonth: "",
   placeOfBirth: subject.birthDate
     ? BirthDateTypeToEventPlaceType(subject.birthDate)
-    : {
-        exceptionalPlace: undefined,
-        municipality: undefined,
-        place: undefined,
-      },
+    : undefined,
   AIRESubject: "",
   yearExpatriation: "",
   idSubjectData: "",

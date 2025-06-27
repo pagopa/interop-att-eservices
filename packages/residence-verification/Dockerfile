@@ -1,6 +1,6 @@
 FROM node:22.1.0-slim as build
 
-RUN corepack enable
+RUN corepack enable && corepack prepare pnpm@8.15.4 --activate
 
 WORKDIR /app
 COPY package.json /app/

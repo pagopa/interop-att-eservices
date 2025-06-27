@@ -28,11 +28,10 @@ export const generate_agid_jwt_signature_integrity = (
       iat: now,
       exp: exp,
       jti: uuidv4(),
-      //headers: { digest: digest_header, "content-type": "application/json" },
       signed_headers: {
         digest: digest_header,
         "content-type": "application/json",
-        "content-encoding": "utf-8",
+        "content-encoding": "identity",
       },
     };
 

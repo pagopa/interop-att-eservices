@@ -4,8 +4,8 @@ import {
   buildSignerService,
   logger,
   getContext,
-  checkConnection,
 } from "pdnd-common";
+import { testDbConnection } from "trial";
 
 class HealtService {
   public appContext = getContext();
@@ -24,7 +24,8 @@ class HealtService {
     }
 
     try {
-      await checkConnection();
+      // Prova a connetterti al database
+      await testDbConnection();
     } catch (error) {
       logger.error(`Errore nella connessione al database: ${error}`);
       return false;
