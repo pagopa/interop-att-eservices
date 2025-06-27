@@ -27,7 +27,7 @@ const drizzleSchema = {
 type SetupTestDbReturnType = {
   db: NodePgDatabase<typeof drizzleSchema>;
   container: StartedPostgreSqlContainer;
-  client: Client;
+  client: InstanceType<typeof Client>;
 };
 
 export async function setupTestDb(): Promise<SetupTestDbReturnType> {
