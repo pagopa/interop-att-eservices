@@ -58,12 +58,7 @@ class ResidenceSubmissionService {
 
       const updatePromises = subjects.map(async (subject: any) => {
         // TODO: Define more specific type
-        const id = subject?.generality?.subjectId?.subjectId;
-
-        if (!id) {
-          logger.warn("subjectId missing, skipping subject");
-          return;
-        }
+        const id: string = subject?.generality?.subjectId?.subjectId;
 
         const existingUser = await this.getBySubjectId(id);
 
@@ -118,15 +113,10 @@ class ResidenceSubmissionService {
           const queryData = mapApiBodyToDbModels(subject);
 
           const sub = queryData.subject;
-          const adrs = queryData.address;
+          const id = sub?.subject_id;
 
-          if (!sub || !adrs || sub.subject_id === undefined) {
-            throw new Error(
-              `Mapping error: Subject with subject_id ${sub?.subject_id} already exists. Skipping insert.`
-            );
-          }
           const existingUser = await dataPreparationRepository.findSubjectById(
-            sub.subject_id
+            id as string
           );
           if (existingUser) {
             throw new Error(
