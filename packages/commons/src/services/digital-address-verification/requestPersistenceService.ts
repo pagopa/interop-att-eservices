@@ -5,15 +5,15 @@ import {
   ElementDigitalAddressModel,
   UsageInfoModel,
 } from "pdnd-models";
-import { client } from "../db/postgres/client.js";
-import { verificationRequestsTable } from "../db/schema/digital-address-verification/verifyRequest.model.js";
-import { VerifyRequest } from "../db/model/verifyRequest.js";
-import { dataPreparationTable } from "../db/schema/digital-address-verification/data-preparation.model.js";
-import { listRequestsTable } from "../db/schema/digital-address-verification/listRequest.model.js";
-import { requestSubjectsTable } from "../db/schema/digital-address-verification/requestSubjects.model.js";
-import { subjectDataResponsesTable } from "../db/schema/digital-address-verification/subjectDataResponses.model.js";
-import { digitalAddressesTable } from "../db/schema/digital-address-verification/digital-address.model.js";
-import { logger } from "../index.js";
+import { client } from "../../db/postgres/client.js";
+import { verificationRequestsTable } from "../../db/schema/digital-address-verification/verifyRequest.model.js";
+import { VerifyRequest } from "../../db/model/verifyRequest.js";
+import { dataPreparationTable } from "../../db/schema/digital-address-verification/data-preparation.model.js";
+import { listRequestsTable } from "../../db/schema/digital-address-verification/listRequest.model.js";
+import { requestSubjectsTable } from "../../db/schema/digital-address-verification/requestSubjects.model.js";
+import { subjectDataResponsesTable } from "../../db/schema/digital-address-verification/subjectDataResponses.model.js";
+import { digitalAddressesTable } from "../../db/schema/digital-address-verification/digital-address.model.js";
+import { logger } from "../../index.js";
 
 export class PersistenceService {
   public async saveVerificationRequest(data: VerifyRequest): Promise<void> {
@@ -26,7 +26,7 @@ export class PersistenceService {
       });
     } catch (error) {
       logger.error(
-        `[PERSISTENCE] Errore durante saveVerificationRequest per id ${data.idRequest}.`,
+        `[PERSISTENCE] Error during saveVerificationRequest for id ${data.idRequest}.`,
         error
       );
       throw error;
@@ -56,7 +56,7 @@ export class PersistenceService {
       };
     } catch (error) {
       logger.error(
-        `[PERSISTENCE] Errore durante findVerificationRequestById per id ${id}.`,
+        `[PERSISTENCE] Error during findVerificationRequestById for id ${id}.`,
         error
       );
       throw error;
@@ -76,52 +76,12 @@ export class PersistenceService {
         .where(eq(verificationRequestsTable.idRequest, data.idRequest));
     } catch (error) {
       logger.error(
-        `[PERSISTENCE] Errore durante updateVerificationRequest per id ${data.idRequest}.`,
+        `[PERSISTENCE] Error during updateVerificationRequest for id ${data.idRequest}.`,
         error
       );
       throw error;
     }
   }
-
-  // public async saveDataPreparationList(
-  //   data: ResponseRequestDigitalAddressModel[]
-  // ): Promise<void> {
-  //   try {
-  //     if (data.length === 0) {
-  //       return;
-  //     }
-
-  //     const dataToUpsert = data.map((item) => ({
-  //       idSubject: item.idSubject,
-  //       data: item,
-  //       createdAt: new Date(),
-  //       updatedAt: new Date(),
-  //     }));
-
-  //     await client.transaction(async (tx) => {
-  //       for (const item of dataToUpsert) {
-  //         await tx
-  //           .insert(dataPreparationTable)
-  //           .values(item)
-  //           .onConflictDoUpdate({
-  //             target: dataPreparationTable.idSubject,
-  //             set: {
-  //               data: item.data, // JSON con data con relativa relazione alla tabella digital_address
-  //               updatedAt: new Date(),
-  //             },
-  //           });
-  //       }
-  //     });
-  //   } catch (error) {
-  //     logger.error(
-  //       `[PERSISTENCE] Errore durante saveDataPreparationList.`,
-  //       error
-  //     );
-  //     throw error;
-  //   }
-  // }
-
-  // ... import e definizioni di PersistenceService ...
 
   public async saveDataPreparationList(
     data: ResponseRequestDigitalAddressModel[]
@@ -222,7 +182,7 @@ export class PersistenceService {
       return "Data preparation list saved successfully.";
     } catch (error) {
       logger.error(
-        `[PERSISTENCE] Errore durante saveDataPreparationList.`,
+        `[PERSISTENCE] Error during saveDataPreparationList.`,
         error
       );
 
@@ -230,27 +190,6 @@ export class PersistenceService {
     }
   }
 
-  // public async findAllDataPreparation(): Promise<
-  //   ResponseRequestDigitalAddressModel[] | null
-  // > {
-  //   try {
-  //     const results = await client.select().from(dataPreparationTable);
-
-  //     if (results.length === 0) {
-  //       return null;
-  //     }
-
-  //     return results.map(
-  //       (dbRecord) => dbRecord.data as ResponseRequestDigitalAddressModel
-  //     );
-  //   } catch (error) {
-  //     logger.error(
-  //       `[PERSISTENCE] Errore durante findAllDataPreparation.`,
-  //       error
-  //     );
-  //     throw error;
-  //   }
-  // }
   public async findAllDataPreparation(): Promise<
     ResponseRequestDigitalAddressModel[] | null
   > {
@@ -265,7 +204,7 @@ export class PersistenceService {
           digitalAddressUsageReason: digitalAddressesTable.usageReason,
           digitalAddressUsageEndAt: digitalAddressesTable.usageEndAt,
           subjectDataResponseId: subjectDataResponsesTable.id,
-          // sdrCreatedAt: subjectDataResponsesTable.createdAt, // Removed because 'createdAt' does not exist on subjectDataResponsesTable
+          // sdrCreatedAt: subjectDataResponsesTable.createdAt,
         })
         .from(dataPreparationTable)
         .leftJoin(
@@ -299,7 +238,7 @@ export class PersistenceService {
           digitalAddressUsageReason,
           digitalAddressUsageEndAt,
           subjectDataResponseId,
-          // sdrCreatedAt, // Removed because 'createdAt' does not exist on subjectDataResponsesTable
+          // sdrCreatedAt,
         } = row;
 
         if (!idSubject || !from || !subjectDataResponseId) {
@@ -318,7 +257,6 @@ export class PersistenceService {
             return entry;
           })();
 
-        // Add digital address if it exists for this row
         if (
           digitalAddressId &&
           digitalAddressAddress &&
@@ -332,7 +270,7 @@ export class PersistenceService {
           };
           const elementDigitalAddress: ElementDigitalAddressModel = {
             digitalAddress: digitalAddressAddress,
-            profession: digitalAddressProfession || undefined, // Profession can be optional
+            profession: digitalAddressProfession || undefined,
             information: usageInfo,
           };
           groupedData.set(idSubject, {
@@ -345,54 +283,19 @@ export class PersistenceService {
         }
       }
 
-      // Final step: Convert the map values to an array
       return Array.from(groupedData.values());
     } catch (error) {
-      logger.error(
-        `[PERSISTENCE] Errore durante findAllDataPreparation.`,
-        error
-      );
+      logger.error(`[PERSISTENCE] Error during findAllDataPreparation.`, error);
       throw error;
     }
   }
 
-  // public async findSingleDataPreparationByFiscalCode(
-  //   fiscalCode: string
-  // ): Promise<ResponseRequestDigitalAddressModel | null> {
-  //   try {
-  //     const result = await client
-  //       .select()
-  //       .from(dataPreparationTable)
-  //       .where(eq(dataPreparationTable.idSubject, fiscalCode))
-  //       .limit(1);
-
-  //     if (result.length === 0) {
-  //       return null;
-  //     }
-
-  //     const row = result[0];
-  //     return {
-  //       idSubject: row.idSubject,
-  //       from: row.createdAt.toISOString(),
-  //       digitalAddress: [],
-  //     } as ResponseRequestDigitalAddressModel;
-  //   } catch (error) {
-  //     logger.error(
-  //       `[PERSISTENCE] Errore durante findSingleDataPreparationByFiscalCode per fiscalCode '${fiscalCode}'.`,
-  //       error
-  //     );
-  //     throw error;
-  //   }
-  // }
   public async findSingleDataPreparationByFiscalCode(
     fiscalCode: string
   ): Promise<ResponseRequestDigitalAddressModel | null> {
-    logger.info(
-      `[PERSISTENCE] Inizio ricerca per codice fiscale: ${fiscalCode}`
-    );
+    logger.info(`[PERSISTENCE] Starting search for fiscal code: ${fiscalCode}`);
 
     try {
-      // 1. Trova il record più recente in subjectDataResponsesTable per il fiscalCode
       logger.info(
         `[PERSISTENCE] Querying subjectDataResponsesTable for fiscalCode: ${fiscalCode}`
       );
@@ -404,14 +307,14 @@ export class PersistenceService {
         .limit(1);
 
       logger.info(
-        `[PERSISTENCE] Risultato query subjectDataResponsesTable: ${JSON.stringify(
+        `[PERSISTENCE] Query result from subjectDataResponsesTable: ${JSON.stringify(
           subjectResponseResult
         )}`
       );
 
       if (subjectResponseResult.length === 0) {
         logger.info(
-          `[PERSISTENCE] Nessuna risposta dati trovata per il codice fiscale: ${fiscalCode}. Restituisco null.`
+          `[PERSISTENCE] No data response found for fiscal code: ${fiscalCode}. Returning null.`
         );
         return null;
       }
@@ -419,10 +322,9 @@ export class PersistenceService {
       const subjectDataResponseRow = subjectResponseResult[0];
       const subjectDataResponseId = subjectDataResponseRow.id;
       logger.info(
-        `[PERSISTENCE] Trovata subjectDataResponse con ID: ${subjectDataResponseId} per fiscalCode: ${fiscalCode}`
+        `[PERSISTENCE] Found subjectDataResponse with ID: ${subjectDataResponseId} for fiscalCode: ${fiscalCode}`
       );
 
-      // 2. Recupera tutti gli indirizzi digitali associati a questo subjectDataResponseId
       logger.info(
         `[PERSISTENCE] Querying digitalAddressesTable for subjectDataResponseId: ${subjectDataResponseId}`
       );
@@ -434,16 +336,15 @@ export class PersistenceService {
         );
 
       logger.info(
-        `[PERSISTENCE] Risultato query digitalAddressesTable: ${JSON.stringify(
+        `[PERSISTENCE] Query result from digitalAddressesTable: ${JSON.stringify(
           digitalAddressesResult
         )}`
       );
 
-      // 3. Mappa i risultati degli indirizzi digitali al formato ElementDigitalAddressModel
       const digitalAddressModels: ElementDigitalAddressModel[] =
         digitalAddressesResult.map((da) => ({
           digitalAddress: da.address,
-          profession: da.profession ?? "", // Usiamo ?? per default a stringa vuota se null/undefined
+          profession: da.profession ?? "",
           information: {
             reason: da.usageReason,
             endDate: da.usageEndAt
@@ -452,17 +353,16 @@ export class PersistenceService {
           },
         }));
       logger.info(
-        `[PERSISTENCE] Mappati ${digitalAddressModels.length} indirizzi digitali.`
+        `[PERSISTENCE] Mapped ${digitalAddressModels.length} digital addresses.`
       );
 
-      // 4. Combina i dati per formare il ResponseRequestDigitalAddressModel completo
       const finalResult: ResponseRequestDigitalAddressModel = {
         idSubject: subjectDataResponseRow.subjectId,
         from: subjectDataResponseRow.dataFrom.toISOString(),
         digitalAddress: digitalAddressModels,
       };
       logger.info(
-        `[PERSISTENCE] Dati finali preparati per fiscalCode ${fiscalCode}: ${JSON.stringify(
+        `[PERSISTENCE] Final data prepared for fiscal code ${fiscalCode}: ${JSON.stringify(
           finalResult
         )}`
       );
@@ -470,13 +370,13 @@ export class PersistenceService {
       return finalResult;
     } catch (error) {
       logger.error(
-        `[PERSISTENCE] Errore durante findSingleDataPreparationByFiscalCode per fiscalCode '${fiscalCode}'.`,
+        `[PERSISTENCE] Error during findSingleDataPreparationByFiscalCode for fiscal code '${fiscalCode}'.`,
         error
       );
       throw error;
     } finally {
       logger.info(
-        `[PERSISTENCE] Fine esecuzione findSingleDataPreparationByFiscalCode per fiscalCode: ${fiscalCode}`
+        `[PERSISTENCE] Finished executing findSingleDataPreparationByFiscalCode for fiscal code: ${fiscalCode}`
       );
     }
   }
@@ -487,7 +387,7 @@ export class PersistenceService {
       return result.rowCount ?? 0;
     } catch (error) {
       logger.error(
-        `[PERSISTENCE] Errore durante deleteAllDataPreparation.`,
+        `[PERSISTENCE] Error during deleteAllDataPreparation.`,
         error
       );
       throw error;
@@ -505,7 +405,7 @@ export class PersistenceService {
       return result.rowCount ?? 0;
     } catch (error) {
       logger.error(
-        `[PERSISTENCE] Errore durante deleteSingleDataPreparationByFiscalCode per fiscalCode '${fiscalCode}'.`,
+        `[PERSISTENCE] Error during deleteSingleDataPreparationByFiscalCode for fiscal code '${fiscalCode}'.`,
         error
       );
       throw error;
