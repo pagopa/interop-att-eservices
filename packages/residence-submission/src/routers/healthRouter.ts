@@ -1,4 +1,3 @@
-
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
@@ -11,7 +10,6 @@ const healthRouter = (
   const healthRouter = ctx.router(api.api);
 
   healthRouter.get("/residence-submission/status", async (req, res) => {
-
     if (!req) {
       return res.status(500).end();
     }
