@@ -1,3 +1,5 @@
+/* eslint-disable functional/no-let */
+import { logger } from "pdnd-common";
 import {
   DbAddress as Address,
   DbPurpose as Purpose,
@@ -9,24 +11,25 @@ import {
   mapToDbPurpose,
   mapSourceSubjectToDbSubject,
   mapSourceAddressToDbAddress,
-  mapToDbUsecase
+  mapToDbUsecase,
 } from "../../utilities/mapUserModelUtilities.js";
 
 // TODO: Make error handling for field missing or invalid
-
-export function mapApiBodyToDbModels(subjectBody: any): MappedDbData {
-  const addresses: Address[] = [];
-  const usecases: Usecase[] = [];
+// TODO: Use const instead of let
+export function mapApiBodyToDbModels(
+  subjectBody: Record<string, unknown>
+): MappedDbData {
+  let addresses: Address[] = [];
+  let usecases: Usecase[] = [];
 
   const subject: Subject = mapSourceSubjectToDbSubject(subjectBody);
   const purpose: Purpose = mapToDbPurpose();
 
-  if (subjectBody.address && Array.isArray(subjectBody.address)) {
-    for (const sourceAddress of subjectBody.address) {
-      
+  if (Array.isArray(subjectBody.address)) {
+    subjectBody.address.forEach((sourceAddress) => {
       try {
         const newDbAddress = mapSourceAddressToDbAddress(sourceAddress);
-        addresses.push(newDbAddress);
+        addresses = [...addresses, newDbAddress];
         if (
           typeof purpose.id === "string" &&
           typeof subject.uuid === "string" &&
@@ -37,45 +40,50 @@ export function mapApiBodyToDbModels(subjectBody: any): MappedDbData {
             subject.uuid,
             newDbAddress.id
           );
-          usecases.push(newDbUsecase);
+          usecases = [...usecases, newDbUsecase];
         } else {
-          console.error(
-            "Invalid id(s) for usecase:",
-            JSON.stringify({ purposeId: purpose.id, subjectUuid: subject.uuid, addressId: newDbAddress.id })
-          );
+          throw new Error("Error during map conversion");
         }
-      } catch (err) {
-        console.error("Error creating usecase:", err);
+      } catch {
+        logger.error("Error during map conversion:", sourceAddress);
       }
-    }
+    });
   }
 
-  return { purpose, subject, addresses, usecases };
+  return {
+    purpose,
+    subject,
+    addresses,
+    usecases,
+  };
 }
 
 // TODO: Fix the type of subjectBody and addressBody with subject_id
 export function mapApiBodyToDbModelsUpdate(
-  subjectBody: any,
+  subjectBody: Record<string, unknown>,
   subjectUuid: string,
   addressUuid: string
 ): {
   subject: Subject;
   address: Address;
 } {
-  const subjectMapped = mapSourceSubjectToDbSubject(subjectBody);
-
-  subjectMapped.uuid = subjectUuid;
-
-  let mappedAddress: Address;
-  const mapped = mapSourceAddressToDbAddress(
-    subjectBody.address[0] // TODO: Fix array management
-  );
-
-  mapped.id = addressUuid || "";
-  mappedAddress = mapped;
-
-  return {
-    subject: subjectMapped,
-    address: mappedAddress,
-  };
+  try {
+    const subjectMapped = {
+      ...mapSourceSubjectToDbSubject(subjectBody),
+      uuid: subjectUuid,
+    };
+    const mapped = mapSourceAddressToDbAddress(
+      Array.isArray(subjectBody.address)
+        ? subjectBody.address[0]
+        : subjectBody.address
+    );
+    const address = { ...mapped, id: addressUuid || "" };
+    return {
+      subject: subjectMapped,
+      address,
+    };
+  } catch (error) {
+    logger.error("Errore durante la conversione di subject/address:", error);
+    throw error;
+  }
 }

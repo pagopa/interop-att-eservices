@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { logger } from "pdnd-common";
 import { getContext } from "pdnd-common";
 import dataPreparationRepository from "../repository/dataPreparationRepository.js";
@@ -7,11 +8,15 @@ import {
   mapApiBodyToDbModels,
   mapApiBodyToDbModelsUpdate,
 } from "../model/domain/apiConverter.js";
+import { Subject } from "../model/db/subjects.model.js";
+import { Purpose } from "../model/db/purposes.model.js";
+import { Address } from "../model/db/addresses.model.js";
+import { Usecase } from "../model/db/usecases.model.js";
 
 class ResidenceSubmissionService {
   public appContext = getContext();
 
-  public async getBySubjectId(subjectId: string): Promise<any> {
+  public async getBySubjectId(subjectId: string): Promise<Usecase[] | null> {
     try {
       if (!subjectId) {
         throw userModelNotFound("The subjectId is missing or invalid");
@@ -36,11 +41,12 @@ class ResidenceSubmissionService {
       return usecases;
     } catch (error) {
       logger.error("Error in getBySubjectId:", error);
-      return "";
+      return [];
     }
   }
 
   public async updateByUsecasesIdService(updatedUser: any): Promise<void> {
+    // TODO: Define more specific type
     try {
       logger.info(`[START] updateBysubjectId`);
 
@@ -51,6 +57,7 @@ class ResidenceSubmissionService {
       }
 
       const updatePromises = subjects.map(async (subject: any) => {
+        // TODO: Define more specific type
         const id = subject?.generality?.subjectId?.subjectId;
 
         if (!id) {
@@ -65,20 +72,27 @@ class ResidenceSubmissionService {
         }
 
         const innerPromises = existingUser.map(async (usecase: any) => {
+          // TODO: Define more specific type
           const queryData = mapApiBodyToDbModelsUpdate(
             subject,
             usecase.subject_id,
             usecase.address_id
           );
 
-          await dataPreparationRepository.updateSubjectById(
-            id,
-            queryData.subject
-          );
+          const sub = queryData.subject;
+          const adrs = queryData.address;
+
+          if (!sub || !adrs) {
+            throw new Error(
+              `Mapping error: Subject or address data is missing for subjectId ${id}.`
+            );
+          }
+
+          await dataPreparationRepository.updateSubjectById(id, sub as Subject);
 
           await dataPreparationRepository.updateAddressById(
             usecase.address_id,
-            queryData.address
+            adrs as Address
           );
         });
 
@@ -94,40 +108,48 @@ class ResidenceSubmissionService {
     }
   }
 
+  // TODO: Refactor this method to reduce complexity
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   public async create(request: RichiestaAR003): Promise<void> {
     try {
       logger.info(`[START] create`);
       if (request.subjects && Array.isArray(request.subjects.subject)) {
         for (const subject of request.subjects.subject) {
           const queryData = mapApiBodyToDbModels(subject);
-          const subjectId = queryData.subject?.subject_id;
-          if (typeof subjectId !== "string") {
-            logger.warn("subject_id missing or invalid, skipping insert.");
-            continue;
+
+          const sub = queryData.subject;
+          const adrs = queryData.address;
+
+          if (!sub || !adrs || sub.subject_id === undefined) {
+            throw new Error(
+              `Mapping error: Subject with subject_id ${sub?.subject_id} already exists. Skipping insert.`
+            );
           }
           const existingUser = await dataPreparationRepository.findSubjectById(
-            subjectId
+            sub.subject_id
           );
           if (existingUser) {
-            logger.warn(
-              `Subject with subject_id ${subjectId} already exists. Skipping insert.`
+            throw new Error(
+              `Mapping error: Subject with subject_id ${sub?.subject_id} already exists. Skipping insert.`
             );
             continue;
           }
-          if (
-            queryData?.subject &&
-            queryData?.addresses &&
-            queryData?.purpose &&
-            queryData?.usecases
-          ) {
-            await dataPreparationRepository.createSubject(queryData.subject);
-            await dataPreparationRepository.createPurpose(queryData.purpose);
-            for (const address of queryData.addresses) {
-              await dataPreparationRepository.createAddress(address);
-            }
-            for (const usecase of queryData.usecases) {
-              await dataPreparationRepository.createUsecase(usecase);
-            }
+
+          const uscs = queryData.usecases;
+          if (!uscs || uscs.length === 0) {
+            throw new Error(
+              `Mapping error: No usecases found for subject with subject_id ${sub?.subject_id}. Skipping insert.`
+            );
+          }
+          await dataPreparationRepository.createSubject(sub as Subject);
+          await dataPreparationRepository.createPurpose(
+            queryData.purpose as Purpose
+          );
+          for (const address of queryData.addresses as Address[]) {
+            await dataPreparationRepository.createAddress(address);
+          }
+          for (const usecase of queryData.usecases as Usecase[]) {
+            await dataPreparationRepository.createUsecase(usecase);
           }
         }
       }

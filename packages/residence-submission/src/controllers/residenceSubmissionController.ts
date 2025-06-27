@@ -1,13 +1,15 @@
 import { logger, getContext } from "pdnd-common";
 import residenceSubmissionService from "../services/residenceSubmissionService.js";
 import { RichiestaAR003 } from "../model/domain/models.js";
+
 class ResidenceSubmissionController {
   public appContext = getContext();
+
   public async createUser(
     request: RichiestaAR003
   ): Promise<{ status: string; message: string }> {
     try {
-      residenceSubmissionService.create(request);
+      await residenceSubmissionService.create(request);
 
       return {
         status: "OK",

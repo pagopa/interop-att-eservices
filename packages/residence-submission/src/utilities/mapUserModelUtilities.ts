@@ -1,12 +1,12 @@
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable complexity */
+import { v4 as uuidv4 } from "uuid";
 import {
   DbAddress as Address,
   DbPurpose as Purpose,
   DbSubject as Subject,
   DbUsecase as Usecase,
 } from "../model/domain/models.js";
-
-import { v4 as uuidv4 } from "uuid";
 
 export function mapToDbPurpose(): Purpose {
   return {
@@ -49,6 +49,8 @@ export function mapSourceSubjectToDbSubject(
   };
 }
 
+// TODO: Refactor this function to avoid complexity
+// eslint-disable-next-line complexity, sonarjs/cognitive-complexity
 export function mapSourceAddressToDbAddress(
   sourceAddress: any // TODO: Fix the type
 ): Address {

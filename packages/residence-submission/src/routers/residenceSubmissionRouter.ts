@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
-// import { authenticationCorrelationMiddleware } from "pdnd-common";
+import { authenticationCorrelationMiddleware } from "pdnd-common";
 import { TrialService } from "trial";
 import ResidenceSubmissionController from "../controllers/residenceSubmissionController.js";
 import { api } from "../model/generated/api.js";
@@ -12,9 +13,9 @@ import {
   mapGeneralErrorModel,
   userModelNotFound,
 } from "../exceptions/errors.js";
-// import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
-// import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
-// import { contextDataResidenceMiddleware } from "../context/context.js";
+import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
+import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
+import { contextDataResidenceMiddleware } from "../context/context.js";
 
 const residenceSubissionController = (
   ctx: ZodiosContext
@@ -23,10 +24,10 @@ const residenceSubissionController = (
 
   residenceSubissionController.post(
     "/residence-submission",
-    // contextDataResidenceMiddleware,
-    // authenticationCorrelationMiddleware(true),
-    // integrityValidationMiddleware(),
-    // auditValidationMiddleware(),
+    contextDataResidenceMiddleware,
+    authenticationCorrelationMiddleware(true),
+    integrityValidationMiddleware(),
+    auditValidationMiddleware(),
     async (req, res) => {
       try {
         logger.info(`[START] residenceSubissionController: ${req.body}`);
@@ -66,10 +67,10 @@ const residenceSubissionController = (
 
   residenceSubissionController.put(
     "/residence-submission",
-    // contextDataResidenceMiddleware,
-    // authenticationCorrelationMiddleware(true),
-    // integrityValidationMiddleware(),
-    // auditValidationMiddleware(),
+    contextDataResidenceMiddleware,
+    authenticationCorrelationMiddleware(true),
+    integrityValidationMiddleware(),
+    auditValidationMiddleware(),
     async (req, res) => {
       try {
         logger.info(`[START] residenceSubissionController update: ${req.body}`);
@@ -108,10 +109,10 @@ const residenceSubissionController = (
 
   residenceSubissionController.delete(
     "/residence-submission/:id",
-    // contextDataResidenceMiddleware,
-    // authenticationCorrelationMiddleware(true),
-    // integrityValidationMiddleware(),
-    // auditValidationMiddleware(),
+    contextDataResidenceMiddleware,
+    authenticationCorrelationMiddleware(true),
+    integrityValidationMiddleware(),
+    auditValidationMiddleware(),
     async (req, res) => {
       try {
         const { id } = req.params;

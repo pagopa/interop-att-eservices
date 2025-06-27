@@ -1,7 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "../model/db/index.js";
 
-// TODO: these models need to be fixed
 import { Subject } from "../model/db/subjects.model.js";
 import { Purpose } from "../model/db/purposes.model.js";
 import { Address } from "../model/db/addresses.model.js";
@@ -25,28 +24,28 @@ class DataPreparationRepository {
   }
 
   // CREATE METHODS
-  public async createPurpose(data: any): Promise<void> {
+  public async createPurpose(data: Purpose): Promise<void> {
     const result = await db.insert(Purpose).values(data);
     if (result.rowCount === 0) {
       throw new Error("Failed to create a new Purpose record");
     }
   }
 
-  public async createSubject(data: any): Promise<void> {
+  public async createSubject(data: Subject): Promise<void> {
     const result = await db.insert(Subject).values(data);
     if (result.rowCount === 0) {
       throw new Error("Failed to create a new Subject record");
     }
   }
 
-  public async createAddress(data: any): Promise<void> {
+  public async createAddress(data: Address): Promise<void> {
     const result = await db.insert(Address).values(data);
     if (result.rowCount === 0) {
       throw new Error("Failed to create a new Address record");
     }
   }
 
-  public async createUsecase(data: any): Promise<void> {
+  public async createUsecase(data: Usecase): Promise<void> {
     const result = await db.insert(Usecase).values(data);
     if (result.rowCount === 0) {
       throw new Error("Failed to create a new Usecase record");
@@ -54,7 +53,7 @@ class DataPreparationRepository {
   }
 
   // UPDATE METHODS
-  public async updatePurposeById(id: string, data: any): Promise<void> {
+  public async updatePurposeById(id: string, data: Purpose): Promise<void> {
     const result = await db
       .update(Purpose)
       .set(data)
@@ -65,7 +64,7 @@ class DataPreparationRepository {
     }
   }
 
-  public async updateSubjectById(id: string, data: any): Promise<void> {
+  public async updateSubjectById(id: string, data: Subject): Promise<void> {
     const result = await db
       .update(Subject)
       .set(data)
@@ -76,7 +75,7 @@ class DataPreparationRepository {
     }
   }
 
-  public async updateAddressById(id: string, data: any): Promise<void> {
+  public async updateAddressById(id: string, data: Address): Promise<void> {
     const result = await db
       .update(Address)
       .set(data)
