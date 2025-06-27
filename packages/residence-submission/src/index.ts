@@ -1,14 +1,12 @@
 import { logger } from "pdnd-common";
-import { sequelize } from "trial";
+import { testDbConnection } from "trial";
 import app from "./app.js";
 
 const port = process.env.PORT || 3006;
 
 const startServer = async (): Promise<void> => {
   try {
-    await sequelize.authenticate(); // TODO: to be developed later testdbconnection
-
-    // await runLiquibase();
+    await testDbConnection();
 
     logger.info("Connection to Database has been established.");
     app.listen(port, () => {
@@ -20,11 +18,3 @@ const startServer = async (): Promise<void> => {
 };
 
 await startServer();
-/* import { logger } from "pagopa-interop-commons";
-import { config } from "./utilities/config.js";
-import app from "./app.js";
-
-app.listen(config.port, config.host, () => {
-  logger.info(`listening on ${config.host}:${config.port}`);
-});
- */
