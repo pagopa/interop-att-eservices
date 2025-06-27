@@ -100,12 +100,17 @@ class ResidenceSubmissionService {
       if (request.subjects && Array.isArray(request.subjects.subject)) {
         for (const subject of request.subjects.subject) {
           const queryData = mapApiBodyToDbModels(subject);
+          const subjectId = queryData.subject?.subject_id;
+          if (typeof subjectId !== "string") {
+            logger.warn("subject_id missing or invalid, skipping insert.");
+            continue;
+          }
           const existingUser = await dataPreparationRepository.findSubjectById(
-            queryData.subject.subject_id
+            subjectId
           );
           if (existingUser) {
             logger.warn(
-              `Subject with subject_id ${queryData.subject.subject_id} already exists. Skipping insert.`
+              `Subject with subject_id ${subjectId} already exists. Skipping insert.`
             );
             continue;
           }
