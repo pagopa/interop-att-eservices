@@ -1,6 +1,103 @@
 import { makeApi, Zodios, type ZodiosOptions } from "@zodios/core";
 import { z } from "zod";
 
+const DbAddress = z
+  .object({
+    id: z.string(),
+    address_type: z.string(),
+    note_address: z.string(),
+    address_start_date: z.string(),
+    presso: z.string(),
+    address_municipality_name: z.string(),
+    address_municipality_istat_code: z.string(),
+    address_municipality_acronym_istat_province: z.string(),
+    address_municipality_place_description: z.string(),
+    toponym_cod_type: z.string(),
+    toponym_type: z.string(),
+    toponym_origin_type: z.string(),
+    toponym_cod: z.string(),
+    toponym_denomination: z.string(),
+    toponym_source: z.string(),
+    civic_cod: z.string(),
+    civic_source: z.string(),
+    civic_number: z.string(),
+    metric: z.string(),
+    prog_snc: z.string(),
+    letter: z.string(),
+    exponent1: z.string(),
+    color: z.string(),
+    internal_court: z.string(),
+    internal_stairs: z.string(),
+    internal1: z.string(),
+    esp_internal1: z.string(),
+    internal2: z.string(),
+    esp_internal2: z.string(),
+    external_stairs: z.string(),
+    secondary: z.string(),
+    floor: z.string(),
+    nui: z.string(),
+    isolated: z.string(),
+    latitude: z.string(),
+    longitude: z.string(),
+    foreign_cap: z.string(),
+    foreign_place_description: z.string(),
+    foreign_country_description: z.string(),
+    foreign_country_state: z.string(),
+    foreign_province_county: z.string(),
+    foreign_toponym_denomination: z.string(),
+    foreign_toponym_civic_number: z.string(),
+    consulate_cod: z.string(),
+    consulate_description: z.string(),
+  })
+  .partial()
+  .passthrough();
+const DbUsecase = z
+  .object({
+    id: z.string(),
+    purpose_id: z.string(),
+    subject_id: z.string(),
+    address_id: z.string(),
+  })
+  .partial()
+  .passthrough();
+const DbSubject = z
+  .object({
+    uuid: z.string(),
+    id: z.string(),
+    subject_id: z.string(),
+    surname: z.string(),
+    name: z.string(),
+    gender: z.string(),
+    birth_event_date: z.string(),
+    birth_exceptional_place: z.string(),
+    birth_municipality_name: z.string(),
+    birth_municipality_istat_code: z.string(),
+    birth_municipality_acronym_istat_province: z.string(),
+    birth_municipality_place_description: z.string(),
+    birth_place_description: z.string(),
+    birth_country_description: z.string(),
+    birth_cod_state: z.string(),
+    birth_province_county: z.string(),
+  })
+  .partial()
+  .passthrough();
+const DbPurpose = z.object({ id: z.string() }).partial().passthrough();
+const MappedDbData = z
+  .object({
+    purpose: DbPurpose,
+    subject: DbSubject,
+    addresses: z.array(DbAddress),
+    usecases: z.array(DbUsecase),
+  })
+  .partial()
+  .passthrough();
+const DebugSchema = z.union([
+  DbAddress,
+  DbUsecase,
+  DbSubject,
+  DbPurpose,
+  MappedDbData,
+]);
 const TipoCodiceFiscale = z
   .object({
     subjectId: z.string(),
@@ -208,107 +305,14 @@ const RichiestaAR003 = z
   .object({ idOp: z.string(), subjects: TipoListaSoggetti })
   .partial()
   .passthrough();
-  const DbAddress = z
-    .object({
-      id: z.string().optional(),
-      address_type: z.string().optional(),
-      note_address: z.string().optional(),
-      address_start_date: z.string().optional(),
-      presso: z.string().optional(),
-      address_municipality_name: z.string().optional(),
-      address_municipality_istat_code: z.string().optional(),
-      address_municipality_acronym_istat_province: z.string().optional(),
-      address_municipality_place_description: z.string().optional(),
-      toponym_cod_type: z.string().optional(),
-      toponym_type: z.string().optional(),
-      toponym_origin_type: z.string().optional(),
-      toponym_cod: z.string().optional(),
-      toponym_denomination: z.string().optional(),
-      toponym_source: z.string().optional(),
-      civic_cod: z.string().optional(),
-      civic_source: z.string().optional(),
-      civic_number: z.string().optional(),
-      metric: z.string().optional(),
-      prog_snc: z.string().optional(),
-      letter: z.string().optional(),
-      exponent1: z.string().optional(),
-      color: z.string().optional(),
-      internal_court: z.string().optional(),
-      internal_stairs: z.string().optional(),
-      internal1: z.string().optional(),
-      esp_internal1: z.string().optional(),
-      internal2: z.string().optional(),
-      esp_internal2: z.string().optional(),
-      external_stairs: z.string().optional(),
-      secondary: z.string().optional(),
-      floor: z.string().optional(),
-      nui: z.string().optional(),
-      isolated: z.string().optional(),
-      latitude: z.string().optional(),
-      longitude: z.string().optional(),
-      foreign_cap: z.string().optional(),
-      foreign_place_description: z.string().optional(),
-      foreign_country_description: z.string().optional(),
-      foreign_country_state: z.string().optional(),
-      foreign_province_county: z.string().optional(),
-      foreign_toponym_denomination: z.string().optional(),
-      foreign_toponym_civic_number: z.string().optional(),
-      consulate_cod: z.string().optional(),
-      consulate_description: z.string().optional(),
-    })
-    .partial()
-    .passthrough();
-
-  const DbPurpose = z
-    .object({
-      id: z.string().optional(),
-    })
-    .partial()
-    .passthrough();
-
-  const DbSubject = z
-    .object({
-      uuid: z.string().optional(),
-      id: z.string().optional(),
-      subject_id: z.string().optional(),
-      surname: z.string().optional(),
-      name: z.string().optional(),
-      gender: z.string().optional(),
-      birth_event_date: z.string().optional(),
-      birth_exceptional_place: z.string().optional(),
-      birth_municipality_name: z.string().optional(),
-      birth_municipality_istat_code: z.string().optional(),
-      birth_municipality_acronym_istat_province: z.string().optional(),
-      birth_municipality_place_description: z.string().optional(),
-      birth_place_description: z.string().optional(),
-      birth_country_description: z.string().optional(),
-      birth_cod_state: z.string().optional(),
-      birth_province_county: z.string().optional(),
-    })
-    .partial()
-    .passthrough();
-
-  const DbUsecase = z
-    .object({
-      id: z.string().optional(),
-      purpose_id: z.string().optional(),
-      subject_id: z.string().optional(),
-      address_id: z.string().optional(),
-    })
-    .partial()
-    .passthrough();
-
-  const MappedDbData = z
-    .object({
-      purpose: DbPurpose.optional(),
-      subject: DbSubject.optional(),
-      addresses: z.array(DbAddress).optional(),
-      usecases: z.array(DbUsecase).optional(),
-    })
-    .partial()
-    .passthrough();
 
 export const schemas = {
+  DbAddress,
+  DbUsecase,
+  DbSubject,
+  DbPurpose,
+  MappedDbData,
+  DebugSchema,
   TipoCodiceFiscale,
   TipoComune,
   TipoLocalita,
@@ -333,14 +337,16 @@ export const schemas = {
   TipoDatiSoggettiEnte,
   TipoListaSoggetti,
   RichiestaAR003,
-  DbAddress,
-  DbPurpose,
-  DbSubject,
-  DbUsecase,
-  MappedDbData
 };
 
 const endpoints = makeApi([
+  {
+    method: "get",
+    path: "/debug/schema",
+    alias: "getDebugSchema",
+    requestFormat: "json",
+    response: DebugSchema,
+  },
   {
     method: "post",
     path: "/residence-submission",

@@ -22,6 +22,18 @@ security:
   - bearerAuth: []
   - Agid-JWT-Signature: []
 paths:
+  /debug/schema:
+    get:
+      summary: Mostra uno degli schemi di debug
+      operationId: getDebugSchema
+      responses:
+        '200':
+          description: Uno degli schemi inclusi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DebugSchema'
+
   /residence-submission:
     post:
       tags:
@@ -188,6 +200,13 @@ paths:
                 $ref: "#/components/schemas/Problem"
 components:
   schemas:
+    DebugSchema:
+      oneOf:
+        - $ref: '#/components/schemas/DbAddress'
+        - $ref: '#/components/schemas/DbUsecase'
+        - $ref: '#/components/schemas/DbSubject'
+        - $ref: '#/components/schemas/DbPurpose'
+        - $ref: '#/components/schemas/MappedDbData'
     TipoCodiceFiscale:
       type: object
       properties:
