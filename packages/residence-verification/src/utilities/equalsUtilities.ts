@@ -36,12 +36,15 @@ export function deepEqual(obj1: any, obj2: any): boolean {
   return true;
 }
 
-export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
+export function checkInfoSoggettoEquals(
+  obj1: any,
+  obj2: any
+): InfoSoggettoEnte | {} {
   const response: InfoSoggettoEnte = {
     infoInstitution: [] as TipoInfoSoggetto[],
   };
   const listObj: TipoInfoSoggetto[] = [];
-  // Se uno dei due oggetti è null o non è un oggetto, non sono uguali
+
   if (
     obj1 === null ||
     obj2 === null ||
@@ -53,17 +56,19 @@ export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
 
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
+  const dateNow: Date = new Date();
+  const formattedDate = `${dateNow.getFullYear()}-${
+    dateNow.getMonth() + 1
+  }-${dateNow.getDate()}`;
 
-  // Confronto ricorsivo delle chiavi e dei valori degli oggetti
   for (const key of keys1) {
-    const dateNow: Date = new Date();
     if (!keys2.includes(key)) {
       listObj.push({
         id: uuidv4(),
         chiave: key,
         valore: "A",
         valoreTesto: "",
-        valoreData: `${dateNow.getFullYear()}-${dateNow.getMonth()}-${dateNow.getDay()}`,
+        valoreData: formattedDate,
         dettaglio: "-",
       });
     } else if (!deepEqual(obj1[key], obj2[key])) {
@@ -72,7 +77,7 @@ export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
         chiave: key,
         valore: "N",
         valoreTesto: obj2[key],
-        valoreData: `${dateNow.getFullYear()}-${dateNow.getMonth()}-${dateNow.getDay()}`,
+        valoreData: formattedDate,
         dettaglio: "-",
       });
     } else {
@@ -81,7 +86,7 @@ export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
         chiave: key,
         valore: "S",
         valoreTesto: obj2[key],
-        valoreData: `${dateNow.getFullYear()}-${dateNow.getMonth()}-${dateNow.getDay()}`,
+        valoreData: formattedDate,
         dettaglio: "-",
       });
     }
@@ -90,4 +95,5 @@ export function checkInfoSoggettoEquals(obj1: any, obj2: any) {
   response.infoInstitution?.push(...listObj);
   return response;
 }
+
 /* eslint-enable */

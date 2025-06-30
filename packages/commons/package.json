@@ -6,8 +6,9 @@
   "main": "dist",
   "type": "module",
   "exports": {
-    ".": "./dist/index.js"
-  },
+  ".": "./dist/index.js",
+  "./dist": "./dist/index.js"
+},
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx",
     "lint:autofix": "eslint . --ext .ts,.tsx --fix",
