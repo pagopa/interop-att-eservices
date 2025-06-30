@@ -1,49 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import ResidenceSubmissionController from "../src/controllers/residenceSubmissionController";
-import residenceSubmissionService from "../src/services/residenceSubmissionService";
-
-vi.mock("pdnd-common", () => ({
-  getContext: vi.fn(() => ({ mockApp: true })),
-  logger: {
-    error: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    debug: vi.fn(),
-  },
-}));
-
-vi.mock("../src/services/residenceSubmissionService", () => ({
-  default: {
-    create: vi.fn(),
-    updateByUsecasesIdService: vi.fn(),
-    delete: vi.fn(),
-  },
-}));
+import ResidenceSubmissionController from "../src/controllers/residenceSubmissionController.js";
+import residenceSubmissionService from "../src/services/residenceSubmissionService.js";
+import { RichiestaAR003 } from "../src/model/domain/models.js";
 
 describe("ResidenceSubmissionController", () => {
-  const mockRequest = {
-    subjects: {
-      subject: [
-        {
-          generality: {
-            subjectId: { subjectId: "test-id" },
-          },
-        },
-      ],
-    },
-  };
+  const mockRequest = { subject_id: "subjectId" } as RichiestaAR003;
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   describe("createUser", () => {
     it("should return OK on success", async () => {
-      (residenceSubmissionService.create as any).mockResolvedValue();
+      vi.spyOn(residenceSubmissionService, "create").mockResolvedValue();
 
       const result = await ResidenceSubmissionController.createUser(
-        mockRequest as any,
+        mockRequest,
       );
 
       expect(result).toEqual({
@@ -53,27 +25,30 @@ describe("ResidenceSubmissionController", () => {
     });
 
     it("should return KO on error", async () => {
-      (residenceSubmissionService.create as any).mockRejectedValue(
-        new Error("boom"),
+      vi.spyOn(residenceSubmissionService, "create").mockRejectedValue(
+        new Error("Error")
       );
 
       const result = await ResidenceSubmissionController.createUser(
-        mockRequest as any,
+        mockRequest
       );
 
-      expect(result.status).toBe("KO");
-      expect(result.message).toMatch(/list saving/i);
+      expect(result).toEqual({
+        status: "KO",
+        message: expect.stringMatching(/list saving/i),
+      });
     });
   });
 
   describe("updateUser", () => {
     it("should return OK on success", async () => {
-      (
-        residenceSubmissionService.updateByUsecasesIdService as any
+      vi.spyOn(
+        residenceSubmissionService,
+        "updateByUsecasesIdService"
       ).mockResolvedValue();
 
       const result = await ResidenceSubmissionController.updateUser(
-        mockRequest as any,
+        mockRequest
       );
 
       expect(result).toEqual({
@@ -83,24 +58,27 @@ describe("ResidenceSubmissionController", () => {
     });
 
     it("should return KO on error", async () => {
-      (
-        residenceSubmissionService.updateByUsecasesIdService as any
-      ).mockRejectedValue(new Error("update fail"));
+      vi.spyOn(
+        residenceSubmissionService,
+        "updateByUsecasesIdService",
+      ).mockRejectedValue(new Error("Error"));
 
       const result = await ResidenceSubmissionController.updateUser(
-        mockRequest as any,
+        mockRequest
       );
 
-      expect(result.status).toBe("KO");
-      expect(result.message).toMatch(/user update/i);
+      expect(result).toEqual({
+        status: "KO",
+        message: expect.stringMatching(/user update/i),
+      });
     });
   });
 
   describe("deleteUser", () => {
     it("should return OK on success", async () => {
-      (residenceSubmissionService.delete as any).mockResolvedValue();
+      vi.spyOn(residenceSubmissionService, "delete").mockResolvedValue();
 
-      const result = await ResidenceSubmissionController.deleteUser("id1");
+      const result = await ResidenceSubmissionController.deleteUser("user-id");
 
       expect(result).toEqual({
         status: "OK",
@@ -109,14 +87,16 @@ describe("ResidenceSubmissionController", () => {
     });
 
     it("should return KO on error", async () => {
-      (residenceSubmissionService.delete as any).mockRejectedValue(
-        new Error("delete fail"),
+      vi.spyOn(residenceSubmissionService, "delete").mockRejectedValue(
+        new Error("Error")
       );
 
-      const result = await ResidenceSubmissionController.deleteUser("id1");
+      const result = await ResidenceSubmissionController.deleteUser("user-id");
 
-      expect(result.status).toBe("KO");
-      expect(result.message).toMatch(/user deletion/i);
+      expect(result).toEqual({
+        status: "KO",
+        message: expect.stringMatching(/user deletion/i),
+      });
     });
   });
 });

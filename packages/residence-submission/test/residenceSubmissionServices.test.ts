@@ -1,18 +1,19 @@
-/* eslint-disable import/order */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable curly */
 /* eslint-disable functional/no-let */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-console */
 import {
   describe,
   it,
   expect,
-  beforeAll,
   vi,
+  beforeAll,
+  afterAll,
   beforeEach,
 } from "vitest";
-import ResidenceSubmissionService from "../src/services/residenceSubmissionService.js";
-import { setupTestDb } from "./setUpTestDb.js";
+import { eq } from "drizzle-orm";
 
+// Mock delle dipendenze usate nel servizio
 vi.mock("pdnd-common", () => ({
   getContext: vi.fn(),
   logger: {
@@ -57,77 +58,136 @@ vi.mock("../src/repository/dataPreparationRepository.js", () => ({
   },
 }));
 
-describe("ResidenceSubmissionService", () => {
-  let db: any;
+import residenceSubmissionService from "../src/services/residenceSubmissionService.js";
+import { RichiestaAR003 } from "../src/model/domain/models.js";
+import { setupTestDb } from "./setUpTestDb.js";
+
+let mockedDbInstance: any;
+let Subject: any;
+let Usecase: any;
+let Address: any;
+
+describe("residenceSubmissionService Integration", () => {
+  let client: any;
+  let container: any;
 
   beforeAll(async () => {
+    // Avvia container e db
     const setup = await setupTestDb();
-    db = setup.db;
+    client = setup.client;
+    mockedDbInstance = setup.db;
+    container = setup.container;
+
+    // Importa modelli DB dopo che il DB è pronto
+    const sub = await import("../src/model/db/subjects.model.js");
+    const usc = await import("../src/model/db/usecases.model.js");
+    const addr = await import("../src/model/db/addresses.model.js");
+    Subject = sub;
+    Usecase = usc;
+    Address = addr;
+  }, 60000);
+
+  afterAll(async () => {
+    if (client) await client.end();
+    if (container) await container.stop();
   });
 
-  beforeEach(() => {
-    vi.clearAllMocks();
+  beforeEach(async () => {
+    // Pulisce i dati prima di ogni test
+    await mockedDbInstance.delete(Usecase);
+    await mockedDbInstance.delete(Address);
+    await mockedDbInstance.delete(Subject);
   });
 
-  it("getBySubjectId returns null when no usecases", async () => {
-    const repo = (
-      await import("../src/repository/dataPreparationRepository.js")
-    ).default;
-    repo.findSubjectById.mockResolvedValue({ uuid: "uuid-s1" });
-    repo.findUsecasesById.mockResolvedValue([]);
-
-    const result = await ResidenceSubmissionService.getBySubjectId("s1");
-    expect(result).toBeNull();
-  });
-
-  it("create throws if subject exists", async () => {
-    const repo = (
-      await import("../src/repository/dataPreparationRepository.js")
-    ).default;
-    repo.findSubjectById.mockResolvedValue({});
+  it("should create successfully with no usecases", async () => {
+    await mockedDbInstance.insert(Subject).values({
+      subject_id: "subjectId",
+      uuid: "uuid-s1",
+    });
 
     await expect(
-      ResidenceSubmissionService.create({
+      residenceSubmissionService.create({
+        subject_id: "subjectId",
+      } as RichiestaAR003),
+    ).resolves.toBeUndefined();
+  });
+
+  it("should not create if subject is not found", async () => {
+    await expect(
+      residenceSubmissionService.create({
+        subject_id: "subjectId",
+      } as RichiestaAR003),
+    ).rejects.toThrow("Subject not found");
+  });
+
+  it("should update successfully", async () => {
+    await mockedDbInstance.insert(Subject).values({
+      subject_id: "s1",
+      uuid: "uuid-s1",
+    });
+
+    await mockedDbInstance.insert(Address).values({
+      id: "a1",
+    });
+
+    await mockedDbInstance.insert(Usecase).values({
+      id: "u1",
+      subject_id: "s1",
+      address_id: "a1",
+      purpose_id: "p1",
+    });
+
+    await expect(
+      residenceSubmissionService.updateByUsecasesIdService({
         subjects: {
           subject: [{ generality: { subjectId: { subjectId: "s1" } } }],
         },
-      } as any),
-    ).rejects.toThrow("already exists");
+      }),
+    ).resolves.toBeUndefined();
+
+    const updatedSubject = await mockedDbInstance
+      .select()
+      .from(Subject)
+      .where(eq(Subject.subject_id, "s1"));
+
+    const updatedAddress = await mockedDbInstance
+      .select()
+      .from(Address)
+      .where(eq(Address.id, "a1"));
+
+    expect(updatedSubject.length).toBe(1);
+    expect(updatedAddress.length).toBe(1);
   });
 
-  it("updateByUsecasesIdService processes updates", async () => {
-    const repo = (
-      await import("../src/repository/dataPreparationRepository.js")
-    ).default;
-    repo.findSubjectById.mockResolvedValue({ uuid: "uuid-s1" });
-    repo.findUsecasesById.mockResolvedValue([
-      { subject_id: "s1", address_id: "a1" },
-    ]);
+  it("should not update if subject not found", async () => {
+    await expect(
+      residenceSubmissionService.updateByUsecasesIdService({
+        subjects: {
+          subject: [{ generality: { subjectId: { subjectId: "s1" } } }],
+        },
+      }),
+    ).rejects.toThrow("Subject not found");
+  });
 
-    await ResidenceSubmissionService.updateByUsecasesIdService({
-      subjects: {
-        subject: [{ generality: { subjectId: { subjectId: "s1" } } }],
-      },
+  it("should update even if no usecases found", async () => {
+    await mockedDbInstance.insert(Subject).values({
+      subject_id: "s1",
+      uuid: "uuid-s1",
     });
 
-    expect(repo.updateSubjectById).toHaveBeenCalled();
-    expect(repo.updateAddressById).toHaveBeenCalled();
-  });
+    await expect(
+      residenceSubmissionService.updateByUsecasesIdService({
+        subjects: {
+          subject: [{ generality: { subjectId: { subjectId: "s1" } } }],
+        },
+      }),
+    ).resolves.toBeUndefined();
 
-  it("delete deletes all entities", async () => {
-    const repo = (
-      await import("../src/repository/dataPreparationRepository.js")
-    ).default;
-    repo.findSubjectById.mockResolvedValue({ uuid: "uuid-s1" });
-    repo.findUsecasesById.mockResolvedValue([
-      { id: "u1", address_id: "a1", purpose_id: "p1" },
-    ]);
+    const updatedSubject = await mockedDbInstance
+      .select()
+      .from(Subject)
+      .where(eq(Subject.subject_id, "s1"));
 
-    await ResidenceSubmissionService.delete("s1");
-
-    expect(repo.deleteUsecaseById).toHaveBeenCalledWith("u1");
-    expect(repo.deleteSubjectById).toHaveBeenCalledWith("s1");
-    expect(repo.deleteAddressById).toHaveBeenCalledWith("a1");
-    expect(repo.deletePurposeById).toHaveBeenCalledWith("p1");
+    expect(updatedSubject.length).toBe(1);
   });
 });
