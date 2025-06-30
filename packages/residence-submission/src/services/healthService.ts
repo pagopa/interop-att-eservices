@@ -18,7 +18,6 @@ class healtService {
     /* const config = signerConfig.parse(process.env); */
     const publicKeyService = buildPublicKeyService();
 
-    // Recupera il kid dal token JWT
     if (!(await publicKeyService.KMSAvailability(config.kmsKeyId))) {
       return false;
     }
