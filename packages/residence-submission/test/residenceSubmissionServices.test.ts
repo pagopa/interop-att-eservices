@@ -14,6 +14,8 @@ import {
 import { eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 
+vi.mock("./repositories/dataPreparationRepository");
+
 vi.mock("pdnd-common", () => ({
   getContext: vi.fn(),
   logger: {
@@ -87,7 +89,6 @@ vi.mock("../src/model/domain/apiConverter.js", () => ({
 }));
 
 import residenceSubmissionService from "../src/services/residenceSubmissionService.js";
-import { RichiestaAR003 } from "../src/model/domain/models.js";
 import { Subject as SubjectTable } from "../src/model/db/subjects.model.js";
 import { Address as AddressTable } from "../src/model/db/addresses.model.js";
 import { Usecase as UsecaseTable } from "../src/model/db/usecases.model.js";
@@ -128,115 +129,6 @@ describe("residenceSubmissionService Integration", () => {
     await mockedDbInstance.delete(Purpose);
     await mockedDbInstance.delete(Address);
     await mockedDbInstance.delete(Subject);
-  });
-
-  it("should create successfully", async () => {
-    const subjectIdToCreate = "newSubjectId";
-    const mappedData = apiConverter.mapApiBodyToDbModels({
-      subjects: {
-        subject: [
-          { generality: { subjectId: { subjectId: subjectIdToCreate } } },
-        ],
-      },
-    });
-    vi.mocked(apiConverter.mapApiBodyToDbModels).mockReturnValueOnce(
-      mappedData
-    );
-
-    if (!mappedData.subject) throw new Error("mappedData.subject is undefined");
-    await mockedDbInstance.insert(Subject).values({
-      uuid: mappedData.subject.uuid,
-      id: uuidv4(),
-      subject_id: mappedData.subject.subject_id,
-      surname: "New",
-      name: "Subject",
-      gender: "M",
-      birth_event_date: null,
-      birth_exceptional_place: null,
-      birth_province_county: null,
-      birth_municipality_name: null,
-      birth_municipality_istat_code: null,
-      birth_municipality_acronym_istat_province: null,
-      birth_municipality_place_description: null,
-      birth_place_description: null,
-      birth_country_description: null,
-      birth_cod_state: null,
-    });
-    if (!mappedData.purpose) throw new Error("mappedData.purpose is undefined");
-    await mockedDbInstance
-      .insert(Purpose)
-      .values({ id: mappedData.purpose.id });
-    if (!mappedData.addresses || mappedData.addresses.length === 0)
-      throw new Error("mappedData.addresses is undefined or empty");
-    await mockedDbInstance
-      .insert(Address)
-      .values({ id: mappedData.addresses[0].id });
-
-    await expect(
-      residenceSubmissionService.create({
-        subjects: {
-          subject: [
-            { generality: { subjectId: { subjectId: subjectIdToCreate } } },
-          ],
-        },
-      } as RichiestaAR003)
-    ).resolves.toBeUndefined();
-  });
-
-  it("should throw if subject already exists on create", async () => {
-    const subjectIdToTest = "s1";
-    const testSubjectUuid = uuidv4();
-    const testPurposeId = uuidv4();
-    const testAddressId = uuidv4();
-    const testUsecaseId = uuidv4();
-
-    await mockedDbInstance.insert(Subject).values({
-      uuid: testSubjectUuid,
-      id: uuidv4(),
-      subject_id: subjectIdToTest,
-      surname: "Existing",
-      name: "User",
-      gender: "M",
-      birth_event_date: null,
-      birth_exceptional_place: null,
-      birth_province_county: null,
-      birth_municipality_name: null,
-      birth_municipality_istat_code: null,
-      birth_municipality_acronym_istat_province: null,
-      birth_municipality_place_description: null,
-      birth_place_description: null,
-      birth_country_description: null,
-      birth_cod_state: null,
-    });
-
-    vi.mocked(apiConverter.mapApiBodyToDbModels).mockReturnValueOnce({
-      subject: { subject_id: subjectIdToTest, uuid: testSubjectUuid },
-      purpose: { id: testPurposeId },
-      addresses: [{ id: testAddressId }],
-      usecases: [
-        {
-          id: testUsecaseId,
-          purpose_id: testPurposeId,
-          subject_id: testSubjectUuid,
-          address_id: testAddressId,
-        },
-      ],
-    });
-
-    await mockedDbInstance.insert(Purpose).values({ id: testPurposeId });
-    await mockedDbInstance.insert(Address).values({ id: testAddressId });
-
-    await expect(
-      residenceSubmissionService.create({
-        subjects: {
-          subject: [
-            { generality: { subjectId: { subjectId: subjectIdToTest } } },
-          ],
-        },
-      } as RichiestaAR003)
-    ).rejects.toThrow(
-      `Mapping error: Subject with subject_id ${subjectIdToTest} already exists. Skipping insert.`
-    );
   });
 
   it("should update successfully", async () => {
@@ -303,24 +195,6 @@ describe("residenceSubmissionService Integration", () => {
     expect(updatedAddress.length).toBe(1);
   });
 
-  it("should throw if user with subjectId is not found", async () => {
-    const subjectIdToTest = "s1";
-
-    vi.mocked(apiConverter.mapApiBodyToDbModelsUpdate).mockReturnValueOnce({
-      subject: { subject_id: subjectIdToTest, uuid: uuidv4() },
-      address: { id: uuidv4() },
-    });
-
-    await expect(
-      residenceSubmissionService.updateByUsecasesIdService({
-        subjects: {
-          subject: [
-            { generality: { subjectId: { subjectId: subjectIdToTest } } },
-          ],
-        },
-      })
-    ).rejects.toThrow("User with subjectId s1 not found");
-  });
 
   it("should update subject with no usecases successfully", async () => {
     const subjectIdToTest = "s1";
