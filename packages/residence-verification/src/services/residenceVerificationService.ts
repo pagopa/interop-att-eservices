@@ -1,4 +1,4 @@
-import { eq, and, SQL } from "drizzle-orm";
+import { eq, and, SQL, isNotNull } from "drizzle-orm";
 import { UserModel } from "pdnd-models";
 import { getContext, logger } from "pdnd-common";
 import { TipoParametriRicercaAR001 } from "../model/domain/models.js";
@@ -142,17 +142,18 @@ export const getByPersonalInfo = async (
       .from(Usecase)
       .leftJoin(Subject, eq(Usecase.subject_id, Subject.uuid))
       .leftJoin(Address, eq(Usecase.address_id, Address.id))
-      .where(and(eq(Usecase.purpose_id, purposeId), ...conditions));
-
-    const validRows = rows.filter(
-      (row): row is { usecaseId: string; subject: Subject; address: Address } =>
-        row.subject !== null && row.address !== null
-    );
+      .where(
+        and(
+          eq(Usecase.purpose_id, purposeId),
+          isNotNull(Subject.uuid),
+          isNotNull(Address.id),
+          ...conditions
+        )
+      );
 
     const userModels = await Promise.all(
-      validRows.map((row) =>
-        mapUserModel(row.usecaseId, row.subject, row.address)
-      )
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      rows.map((row) => mapUserModel(row.usecaseId, row.subject!, row.address!))
     );
 
     if (userModels.length === 0) {
