@@ -406,7 +406,7 @@ describe("ResidenceVerificationService (Integration with DB and Mapper)", () => 
       }
 
       expect(caughtError).toBeInstanceOf(TypeError);
-      expect(caughtError.message).toContain("rows.filter is not a function");
+      expect(caughtError.message).toContain("rows.map is not a function");
       expect(mockGetContext).toHaveBeenCalledTimes(1);
       expect(mockLoggerError).toHaveBeenCalledTimes(1);
       expect(mockLoggerError).toHaveBeenCalledWith(

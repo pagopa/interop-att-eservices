@@ -58,6 +58,7 @@ export const checkValuesMap: Record<string, number> = {
   RESIDENCE_VERIFICATION_002: 57,
   FAMILY_STATUS: 58,
   VOUCHER_DIGEST_NOT_VALID: 59,
+  RESIDENCE_SUBMISSION_001: 60,
 };
 
 export const getCheckValue = (key: string): number | undefined =>

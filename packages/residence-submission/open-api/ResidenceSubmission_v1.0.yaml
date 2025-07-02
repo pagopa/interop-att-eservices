@@ -1,0 +1,713 @@
+openapi: 3.0.3
+info:
+  title: Residence Submission API
+  description: |-
+    Service for submitting, updating, and deleting residence information.
+    
+    **New:**
+    - Added endpoint for deleting a user by ID (`DELETE /residence-submission/{id}`).
+    - Improved error handling documentation for all endpoints, specifying error response structure and possible error codes.
+  version: '1.0.0'
+  termsOfService: 'http://swagger.io/terms/'
+  x-summary: Residence submission
+servers:
+  - url: 'http://eservices.att.interop.pagopa.it/'
+    description: Attestation Environment
+tags:
+  - name: Residence Submission
+    description: Submission and update of residence information
+  - name: Health Check
+    description: Service health check
+security:
+  - bearerAuth: []
+  - Agid-JWT-Signature: []
+paths:
+  /debug/schema:
+    get:
+      summary: Mostra uno degli schemi di debug
+      operationId: getDebugSchema
+      responses:
+        '200':
+          description: Uno degli schemi inclusi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DebugSchema'
+
+  /residence-submission:
+    post:
+      tags:
+        - Residence Submission
+      summary: Upsert User
+      description: Creates a user based on the provided criteria.
+      operationId: upsertUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaAR003'
+      responses:
+        '200':
+          description: Operation completed successfully
+        '400':
+          description: Invalid request parameters
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    put:
+      tags:
+        - Residence Submission
+      summary: Update User
+      description: Updates an existing user based on the provided criteria.
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaAR003'
+      responses:
+        '200':
+          description: Operation completed successfully
+        '400':
+          description: Invalid request parameters
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: User not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /residence-submission/{id}:
+    delete:
+      tags:
+        - Residence Submission
+      summary: Delete User
+      description: Deletes a user by their unique identifier.
+      operationId: deleteUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User deleted successfully
+        '400':
+          description: Invalid request parameters
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: User not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Too Many Requests
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /residence-submission/status:
+    get:
+      tags:
+        - Health Check
+      summary: Health status endpoint
+      description: Return ok
+      operationId: healthCheck
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  uptime:
+                    type: number
+                  timestamp:
+                    type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+components:
+  schemas:
+    DebugSchema:
+      oneOf:
+        - $ref: '#/components/schemas/DbAddress'
+        - $ref: '#/components/schemas/DbUsecase'
+        - $ref: '#/components/schemas/DbSubject'
+        - $ref: '#/components/schemas/DbPurpose'
+        - $ref: '#/components/schemas/MappedDbData'
+    TipoCodiceFiscale:
+      type: object
+      properties:
+        subjectId:
+          type: string
+        subjectIdValidity:
+          type: string
+        dataAttributionValidity:
+          type: string
+    TipoComune:
+      type: object
+      properties:
+        nameMunicipality:
+          type: string
+        istatCode:
+          type: string
+        acronymIstatProvince:
+          type: string
+        placeDescription:
+          type: string
+    TipoLocalita:
+      type: object
+      properties:
+        placeDescription:
+          type: string
+        countryDescription:
+          type: string
+        codState:
+          type: string
+        provinceCounty:
+          type: string
+    TipoLuogoEvento:
+      type: object
+      properties:
+        exceptionalPlace:
+          type: string
+        municipality:
+          $ref: '#/components/schemas/TipoComune'
+        place:
+          $ref: '#/components/schemas/TipoLocalita'
+    TipoIdSchedaSoggettoComune:
+      type: object
+      properties:
+        idCommonSubjectDataIstat:
+          type: string
+        idSubjectData:
+          type: string
+    TipoGeneralita:
+      type: object
+      properties:
+        subjectId:
+          $ref: '#/components/schemas/TipoCodiceFiscale'
+        surname:
+          type: string
+        noSurname:
+          type: string
+        name:
+          type: string
+        noName:
+          type: string
+        gender:
+          type: string
+        birthDate:
+          type: string
+        noDay:
+          type: string
+        noMonth:
+          type: string
+        birthPlace:
+          $ref: '#/components/schemas/TipoLuogoEvento'
+        AIRESubject:
+          type: string
+        yearExpatriation:
+          type: string
+        idCommonSubjectData:
+          $ref: '#/components/schemas/TipoIdSchedaSoggettoComune'
+        idSubjectData:
+          type: string
+        note:
+          type: string
+    TipoToponimo:
+      type: object
+      properties:
+        codType:
+          type: string
+        type:
+          type: string
+        originType:
+          type: string
+        toponymCod:
+          type: string
+        toponymDenomination:
+          type: string
+        toponymSource:
+          type: string
+    TipoCivicoInterno:
+      type: object
+      properties:
+        court:
+          type: string
+        stairs:
+          type: string
+        internal1:
+          type: string
+        espInternal1:
+          type: string
+        internal2:
+          type: string
+        espInternal2:
+          type: string
+        externalStairs:
+          type: string
+        secondary:
+          type: string
+        floor:
+          type: string
+        nui:
+          type: string
+        isolated:
+          type: string
+    TipoNumeroCivico:
+      type: object
+      properties:
+        civicCod:
+          type: string
+        civicSource:
+          type: string
+        civicNumber:
+          type: string
+        metric:
+          type: string
+        progSNC:
+          type: string
+        letter:
+          type: string
+        exponent1:
+          type: string
+        color:
+          type: string
+        internalCivic:
+          $ref: '#/components/schemas/TipoCivicoInterno'
+    TipoIndirizzo:
+      type: object
+      properties:
+        cap:
+          type: string
+        municipality:
+          $ref: '#/components/schemas/TipoComune'
+        fraction:
+          type: string
+        toponym:
+          $ref: '#/components/schemas/TipoToponimo'
+        civicNumber:
+          $ref: '#/components/schemas/TipoNumeroCivico'
+    TipoDatoLocalitaEstera:
+      type: object
+      properties:
+        placeDescription:
+          type: string
+        countryDescription:
+          type: string
+        countryState:
+          type: string
+        provinceCounty:
+          type: string
+    TipoToponimoEstero:
+      type: object
+      properties:
+        denomination:
+          type: string
+        civicNumber:
+          type: string
+    TipoIndirizzoEstero:
+      type: object
+      properties:
+        cap:
+          type: string
+        place:
+          $ref: '#/components/schemas/TipoDatoLocalitaEstera'
+        toponym:
+          $ref: '#/components/schemas/TipoToponimoEstero'
+    TipoConsolato:
+      type: object
+      properties:
+        consulateCod:
+          type: string
+        consulateDescription:
+          type: string
+    TipoLocalitaEstera1:
+      type: object
+      properties:
+        foreignAddress:
+          $ref: '#/components/schemas/TipoIndirizzoEstero'
+        consulate:
+          $ref: '#/components/schemas/TipoConsolato'
+    TipoResidenza:
+      type: object
+      properties:
+        addressType:
+          type: string
+        noteaddress:
+          type: string
+        address:
+          $ref: '#/components/schemas/TipoIndirizzo'
+        foreignState:
+          $ref: '#/components/schemas/TipoLocalitaEstera1'
+        presso:
+          type: string
+        addressStartDate:
+          type: string
+    TipoIdentificativi:
+      type: object
+      properties:
+        id:
+          type: string
+    TipoAtto:
+      type: object
+      properties:
+        municipalityRegistration:
+          $ref: '#/components/schemas/TipoComune'
+        municipalOffice:
+          type: string
+        year:
+          type: string
+        part:
+          type: string
+        series:
+          type: string
+        actNumber:
+          type: string
+        volume:
+          type: string
+        dateFormationAct:
+          type: string
+        transcribed:
+          type: string
+    TipoAttoANSC:
+      type: object
+      properties:
+        idANSC:
+          type: string
+        municipalityRegistration:
+          $ref: '#/components/schemas/TipoComune'
+        act:
+          type: string
+        municipalOffice:
+          type: string
+        municipalNumber:
+          type: string
+        dateFormationAct:
+          type: string
+        transcribed:
+          type: string
+    TipoAttoEvento:
+      type: object
+      properties:
+        act:
+          $ref: '#/components/schemas/TipoAtto'
+        actANSC:
+          $ref: '#/components/schemas/TipoAttoANSC'
+    TipoDatiEvento:
+      type: object
+      properties:
+        eventDate:
+          type: string
+        noDay:
+          type: string
+        noMonth:
+          type: string
+        eventPlace:
+          $ref: '#/components/schemas/TipoLuogoEvento'
+        eventAct:
+          $ref: '#/components/schemas/TipoAttoEvento'
+    TipoDatiSoggettiEnte:
+      type: object
+      properties:
+        generality:
+          $ref: '#/components/schemas/TipoGeneralita'
+        address:
+          type: array
+          items:
+            $ref: '#/components/schemas/TipoResidenza'
+        identifiers:
+          $ref: '#/components/schemas/TipoIdentificativi'
+        deathDate:
+          $ref: '#/components/schemas/TipoDatiEvento'
+    TipoListaSoggetti:
+      type: object
+      properties:
+        subject:
+          type: array
+          items:
+            $ref: '#/components/schemas/TipoDatiSoggettiEnte'
+    RichiestaAR003:
+      type: object
+      properties:
+        idOp:
+          type: string
+        subjects:
+          $ref: '#/components/schemas/TipoListaSoggetti'
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+        status:
+          type: integer
+        title:
+          type: string
+        correlationId:
+          type: string
+        detail:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemError'
+    ProblemError:
+      type: object
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+    DbAddress:
+      type: object
+      properties:
+        id:
+          type: string
+        address_type:
+          type: string
+        note_address:
+          type: string
+        address_start_date:
+          type: string
+        presso:
+          type: string
+        address_municipality_name:
+          type: string
+        address_municipality_istat_code:
+          type: string
+        address_municipality_acronym_istat_province:
+          type: string
+        address_municipality_place_description:
+          type: string
+        toponym_cod_type:
+          type: string
+        toponym_type:
+          type: string
+        toponym_origin_type:
+          type: string
+        toponym_cod:
+          type: string
+        toponym_denomination:
+          type: string
+        toponym_source:
+          type: string
+        civic_cod:
+          type: string
+        civic_source:
+          type: string
+        civic_number:
+          type: string
+        metric:
+          type: string
+        prog_snc:
+          type: string
+        letter:
+          type: string
+        exponent1:
+          type: string
+        color:
+          type: string
+        internal_court:
+          type: string
+        internal_stairs:
+          type: string
+        internal1:
+          type: string
+        esp_internal1:
+          type: string
+        internal2:
+          type: string
+        esp_internal2:
+          type: string
+        external_stairs:
+          type: string
+        secondary:
+          type: string
+        floor:
+          type: string
+        nui:
+          type: string
+        isolated:
+          type: string
+        latitude:
+          type: string
+        longitude:
+          type: string
+        foreign_cap:
+          type: string
+        foreign_place_description:
+          type: string
+        foreign_country_description:
+          type: string
+        foreign_country_state:
+          type: string
+        foreign_province_county:
+          type: string
+        foreign_toponym_denomination:
+          type: string
+        foreign_toponym_civic_number:
+          type: string
+        consulate_cod:
+          type: string
+        consulate_description:
+          type: string
+    DbPurpose:
+      type: object
+      properties:
+        id:
+          type: string
+    DbSubject:
+      type: object
+      properties:
+        uuid:
+          type: string
+        id:
+          type: string
+        subject_id:
+          type: string
+        surname:
+          type: string
+        name:
+          type: string
+        gender:
+          type: string
+        birth_event_date:
+          type: string
+        birth_exceptional_place:
+          type: string
+        birth_municipality_name:
+          type: string
+        birth_municipality_istat_code:
+          type: string
+        birth_municipality_acronym_istat_province:
+          type: string
+        birth_municipality_place_description:
+          type: string
+        birth_place_description:
+          type: string
+        birth_country_description:
+          type: string
+        birth_cod_state:
+          type: string
+        birth_province_county:
+          type: string
+    DbUsecase:
+      type: object
+      properties:
+        id:
+          type: string
+        purpose_id:
+          type: string
+        subject_id:
+          type: string
+        address_id:
+          type: string
+    MappedDbData:
+      type: object
+      properties:
+        purpose:
+          $ref: '#/components/schemas/DbPurpose'
+        subject:
+          $ref: '#/components/schemas/DbSubject'
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/DbAddress'
+        usecases:
+          type: array
+          items:
+            $ref: '#/components/schemas/DbUsecase'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: 'A bearer token in the format of a JWS and conformed to the specifications included in [RFC8725](https://tools.ietf.org/html/RFC8725).'
+      scheme: bearer
+      bearerFormat: JWT
+    Agid-JWT-Signature:
+      type: apiKey
+      in: header
+      name: Agid-JWT-Signature
+      description: |-
+        JWS signature header. The value of this header represents a JWS signature. Refer to [integrity_rest_02] for information on the integrity of the REST message payload in PDND
+    Agid-JWT-TrackingEvidence:
+      type: apiKey
+      in: header
+      name: Agid-JWT-TrackingEvidence
+      description: |-
+        JWS signature header. The value of this header is a JWS signature. Refer to [audit_rest_02] for the forwarding of tracked data within the REST consumer's domain with correlation. Claims to include:
+        userID: a unique identifier of the user within the consumer's domain who initiated the request for access to the provider's e-service;
+        userLocation: a unique identifier of the workstation within the consumer's domain from which the request for access to the provider's e-service originated;
+        LoA: the level of assurance or security adopted in the digital authentication process within the consumer's domain.

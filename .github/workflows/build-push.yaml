@@ -48,6 +48,8 @@ jobs:
             dockerfile_path: packages/keychain-mock
           - image_name: family-status
             dockerfile_path: packages/family-status
+          - image_name: residence-submission
+            dockerfile_path: packages/residence-submission
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

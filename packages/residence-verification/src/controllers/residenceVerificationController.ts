@@ -44,7 +44,6 @@ class ResidenceVerificationController {
       throw error;
     }
   }
-
   public async findUserVerify(
     request: RichiestaAR002
   ): Promise<RispostaAR002OK> {
