@@ -5,9 +5,7 @@ import {
   // areFiscalCodesValid,
   deleteFiscalcodeModelByFiscaldode,
   findFiscalcodeModelByFiscalcode,
-} from "../../../src/utilities/fiscalcodeUtilities.js";
-
-//import { fiscalcodeNotFound } from '../../../src/exceptions/errors';
+} from "../src/utilities/fiscalcodeUtilities.js";
 
 // Mock data
 const mockData: ResponseRequestDigitalAddressModel[] = [

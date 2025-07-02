@@ -4,3 +4,4 @@ export { verificationRequestsTable } from "./verifyRequest.model.js";
 export { listRequestsTable } from "./listRequest.model.js";
 export { requestSubjectsTable } from "./requestSubjects.model.js";
 export { subjectDataResponsesTable } from "./subjectDataResponses.model.js";
+export { verificationLogsTable } from "./verificationLogs.model.js";

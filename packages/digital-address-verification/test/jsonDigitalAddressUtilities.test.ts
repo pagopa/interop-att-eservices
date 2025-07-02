@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { classToPlain } from "class-transformer";
 import { logger } from "pdnd-common";
-import { parseJsonToRequestListDigitalAddress } from "../../../src/utilities/jsonDigitalAddressUtilities.js";
+import { parseJsonToRequestListDigitalAddress } from "../src/utilities/jsonDigitalAddressUtilities.js";
 
-import { RequestListDigitalAddress } from "../../../src/model/domain/models.js";
+import { RequestListDigitalAddress } from "../src/model/domain/models.js";
 // Mock data
 const validJsonString = '{"someField": "someValue"}';
 const invalidJsonString = "{someField: someValue}";

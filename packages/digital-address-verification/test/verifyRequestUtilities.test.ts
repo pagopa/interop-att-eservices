@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { fiscalcodeNotFound } from "../../../src/exceptions/errors";
+import { fiscalcodeNotFound } from "../src/exceptions/errors.js";
 import {
   appendUniqueVerifyRequestToArray,
   findRequestlByIdRequest,
   deleteRequestByIdRequest,
-} from "../../../src/utilities/verifyRequestUtilities.js";
-import { VerifyRequest } from "../../../src/model/digitalAddress/VerifyRequest.js";
+} from "../src/utilities/verifyRequestUtilities.js";
+import { VerifyRequest } from "../src/model/digitalAddress/VerifyRequest.js";
 
 describe("appendUniqueVerifyRequestToArray", () => {
   it("should throw an error if existingArray or modelsToAdd are null or undefined", () => {
@@ -16,10 +16,10 @@ describe("appendUniqueVerifyRequestToArray", () => {
 
   it("should add modelsToAdd to existingArray if not already present", () => {
     const existingArray: VerifyRequest[] = [
-      { idRequest: "1", jsonRequest: "{}" },
+      { idRequest: "1", jsonRequest: "{}", count: 0 },
     ];
     const modelsToAdd: VerifyRequest[] = [
-      { idRequest: "2", jsonRequest: "{}" },
+      { idRequest: "2", jsonRequest: "{}", count: 0 },
     ];
 
     const result = appendUniqueVerifyRequestToArray(existingArray, modelsToAdd);
@@ -29,10 +29,10 @@ describe("appendUniqueVerifyRequestToArray", () => {
 
   it("should update existing models in existingArray if already present", () => {
     const existingArray: VerifyRequest[] = [
-      { idRequest: "1", jsonRequest: "{}" },
+      { idRequest: "1", jsonRequest: "{}", count: 0 },
     ];
     const modelsToAdd: VerifyRequest[] = [
-      { idRequest: "1", jsonRequest: '{"updated": true}' },
+      { idRequest: "1", jsonRequest: '{"updated": true}', count: 0 },
     ];
 
     const result = appendUniqueVerifyRequestToArray(existingArray, modelsToAdd);
@@ -43,8 +43,8 @@ describe("appendUniqueVerifyRequestToArray", () => {
 
 describe("findRequestlByIdRequest", () => {
   const mockVerifyRequests: VerifyRequest[] = [
-    { idRequest: "1", jsonRequest: "{}" },
-    { idRequest: "2", jsonRequest: "{}" },
+    { idRequest: "1", jsonRequest: "{}", count: 0 },
+    { idRequest: "2", jsonRequest: "{}", count: 0 },
   ];
 
   it("should return the verify request with the specified idRequest", () => {
@@ -65,8 +65,8 @@ describe("findRequestlByIdRequest", () => {
 
 describe("deleteRequestByIdRequest", () => {
   const mockVerifyRequests: VerifyRequest[] = [
-    { idRequest: "1", jsonRequest: "{}" },
-    { idRequest: "2", jsonRequest: "{}" },
+    { idRequest: "1", jsonRequest: "{}", count: 0 },
+    { idRequest: "2", jsonRequest: "{}", count: 0 },
   ];
 
   it("should throw fiscalcodeNotFound error if existingArray is null", () => {
@@ -77,8 +77,13 @@ describe("deleteRequestByIdRequest", () => {
 
   it("should remove the verify request with the specified idRequest", () => {
     const result = deleteRequestByIdRequest(mockVerifyRequests, "1");
-    expect(result.length).toBe(1);
-    expect(result).not.toContainEqual({ idRequest: "1", jsonRequest: "{}" });
+    expect(result).not.toBeNull();
+    expect(result?.length).toBe(1);
+    expect(result).not.toContainEqual({
+      idRequest: "1",
+      jsonRequest: "{}",
+      count: 0,
+    });
   });
 
   it("should return the same array if no verify request with the specified idRequest is found", () => {

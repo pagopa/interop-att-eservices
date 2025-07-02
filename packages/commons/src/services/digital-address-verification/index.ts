@@ -1,5 +1,4 @@
-import { PersistenceService } from "./requestPersistenceService.js";
+import { DigitalAddressService } from "./digitalService.js";
+const digitalAddress = new DigitalAddressService();
 
-const persistenceService = new PersistenceService();
-
-export { persistenceService };
+export { digitalAddress };

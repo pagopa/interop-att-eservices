@@ -3,7 +3,7 @@ import {
   getStatusFromNumber,
   getMaxNumber,
   statusMap,
-} from "../../../src/utilities/statusRequestUtility";
+} from "../src/utilities/statusRequestUtility.js";
 
 describe("getStatusFromNumber", () => {
   it('should return "PRESA_IN_CARICO" for input 5', () => {

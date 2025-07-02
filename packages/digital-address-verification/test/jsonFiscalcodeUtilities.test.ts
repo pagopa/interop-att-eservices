@@ -6,7 +6,7 @@ import {
   parseJsonToResponseRequestDigitalAddress,
   parseJsonToResponseRequestDigitalAddressArray,
   convertStringToRichiesta,
-} from "../../../src/utilities/jsonFiscalcodeUtilities.js";
+} from "../src/utilities/jsonFiscalcodeUtilities.js";
 
 // Mock data
 const validJsonString =

@@ -1,4 +1,4 @@
-import { logger, persistenceService } from "pdnd-common";
+import { logger, digitalAddress } from "pdnd-common";
 import { ResponseRequestDigitalAddressModel } from "pdnd-models";
 
 class DataPreparationRepository {
@@ -6,7 +6,7 @@ class DataPreparationRepository {
     genericRequest: ResponseRequestDigitalAddressModel[]
   ): Promise<void> {
     try {
-      await persistenceService.saveDataPreparationList(genericRequest);
+      await digitalAddress.saveDataPreparationList(genericRequest);
     } catch (error) {
       logger.error(
         `dataPreparationRepository: Errore durante il salvataggio della lista: `,
@@ -20,7 +20,7 @@ class DataPreparationRepository {
     ResponseRequestDigitalAddressModel[] | null
   > {
     try {
-      return await persistenceService.findAllDataPreparation();
+      return await digitalAddress.findAllDataPreparation();
     } catch (error) {
       logger.error(
         `dataPreparationRepository: Errore durante il recupero degli elementi: `,
@@ -34,7 +34,7 @@ class DataPreparationRepository {
     fiscalCode: string
   ): Promise<ResponseRequestDigitalAddressModel | null> {
     try {
-      return await persistenceService.findSingleDataPreparationByFiscalCode(
+      return await digitalAddress.findSingleDataPreparationByFiscalCode(
         fiscalCode
       );
     } catch (error) {
@@ -48,7 +48,7 @@ class DataPreparationRepository {
 
   public async deleteAllByKey(): Promise<number> {
     try {
-      return await persistenceService.deleteAllDataPreparation();
+      return await digitalAddress.deleteAllDataPreparation();
     } catch (error) {
       logger.error(
         `dataPreparationRepository: Errore durante la cancellazione degli elementi: `,
@@ -60,7 +60,7 @@ class DataPreparationRepository {
 
   public async deleteSingleByFiscalCode(fiscalCode: string): Promise<number> {
     try {
-      return await persistenceService.deleteSingleDataPreparationByFiscalCode(
+      return await digitalAddress.deleteSingleDataPreparationByFiscalCode(
         fiscalCode
       );
     } catch (error) {

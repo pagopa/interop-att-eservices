@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import generateHash, {
   generateHashFromString,
-} from "../../../src/utilities/hashUtilities.js";
+} from "../src/utilities/hashUtilities.js";
 
 // Test for generateHash
 describe("generateHash", () => {

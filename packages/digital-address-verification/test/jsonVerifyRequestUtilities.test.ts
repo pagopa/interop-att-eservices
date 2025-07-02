@@ -6,8 +6,8 @@ import {
   parseJsonToVerifyRequestArray,
   convertStringToVerifyRequest,
   convertStringToResponseRequestDigitalAddress,
-} from "../../../src/utilities/jsonVerifyRequestUtilities.js";
-import { VerifyRequest } from "../../../src/model/digitalAddress/VerifyRequest.js";
+} from "../src/utilities/jsonVerifyRequestUtilities.js";
+import { VerifyRequest } from "../src/model/digitalAddress/VerifyRequest.js";
 
 // Mock data
 
