@@ -3,6 +3,7 @@ import { customSchema } from "../schema.js";
 
 export const CompleteSubjectBinding = customSchema.table("subject_binding", {
   id: uuid("id").defaultRandom().primaryKey(),
+  subjectId: text("subject_id"),
   relationshipType: text("relationship_type"),
   startDate: text("start_date"),
   relationshipCode: text("relationship_code"),

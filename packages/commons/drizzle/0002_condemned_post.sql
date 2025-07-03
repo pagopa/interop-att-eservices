@@ -1,0 +1,1 @@
+ALTER TABLE "att"."subject_binding" ADD COLUMN "subject_id" text;
