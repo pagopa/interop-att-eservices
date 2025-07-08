@@ -1,20 +1,45 @@
-import { v4 as uuid } from "uuid";
-import { CompleteSubjectBinding } from "../../db/schema/family-status/index.js";
+import { eq } from "drizzle-orm";
+import { client } from "../../db/postgres/client.js";
+import {
+  type CompleteSubjectBindingSelect,
+  type CompleteSubjectBindingInsert,
+  CompleteSubjectBinding,
+} from "../../db/schema/family-status/subject-binding.js";
 import { DBClient } from "../../types/db.js";
 
 export class CompleteSubjectBindingRepository {
   public async insert(
-    data: Omit<typeof CompleteSubjectBinding.$inferInsert, "id">,
-    db: DBClient
-  ): Promise<typeof CompleteSubjectBinding.$inferInsert> {
+    data: CompleteSubjectBindingInsert,
+    db: DBClient = client
+  ): Promise<CompleteSubjectBindingSelect> {
     const [result] = await db
       .insert(CompleteSubjectBinding)
-      .values({ id: uuid(), ...data })
-      .returning({ id: CompleteSubjectBinding.id });
-
+      .values(data)
+      .returning();
     if (!result) {
-      throw new Error("Insert failed: CompleteSubjectBinding");
+      throw new Error("Insert failed");
     }
     return result;
+  }
+
+  public async findBySubjectId(
+    subjectId: string,
+    db: DBClient = client
+  ): Promise<CompleteSubjectBindingSelect | undefined> {
+    return db
+      .select()
+      .from(CompleteSubjectBinding)
+      .where(eq(CompleteSubjectBinding.subjectId, subjectId))
+      .then((rows) => rows[0]);
+  }
+
+  public async updateBySubjectId(
+    subjectId: string,
+    data: Partial<CompleteSubjectBindingInsert>
+  ): Promise<unknown> {
+    return client
+      .update(CompleteSubjectBinding)
+      .set(data)
+      .where(eq(CompleteSubjectBinding.subjectId, subjectId));
   }
 }

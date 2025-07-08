@@ -7,12 +7,13 @@ import {
   Places,
   CompleteSubjectBinding,
 } from "../../db/schema/family-status/index.js";
+import { client } from "../../db/postgres/client.js";
 import { DBClient } from "../../types/db.js";
 
 export class CriteriaRepository {
   public async insert(
     data: Omit<typeof Criteria.$inferInsert, "id">,
-    db: DBClient
+    db: DBClient = client
   ): Promise<typeof Criteria.$inferInsert> {
     const [result] = await db
       .insert(Criteria)
@@ -25,10 +26,7 @@ export class CriteriaRepository {
     return result;
   }
 
-  public async findWithJoinsBySubjectId(
-    subjectId: string,
-    db: DBClient
-  ): Promise<
+  public async findWithJoinsBySubjectId(subjectId: string): Promise<
     | {
         criteria: typeof Criteria.$inferSelect;
         birthDate: typeof BirthDate.$inferSelect | null;
@@ -38,7 +36,7 @@ export class CriteriaRepository {
       }
     | undefined
   > {
-    const [row] = await db
+    const [row] = await client
       .select({
         criteria: Criteria,
         birthDate: BirthDate,
@@ -58,5 +56,29 @@ export class CriteriaRepository {
       .limit(1);
 
     return row;
+  }
+
+  public async findAllWithJoins(): Promise<
+    Array<{
+      criteria: typeof Criteria.$inferSelect;
+      birthDate: typeof BirthDate.$inferSelect | null;
+      place: typeof Places.$inferSelect | null;
+      binding: typeof CompleteSubjectBinding.$inferSelect | null;
+    }>
+  > {
+    return await client
+      .select({
+        criteria: Criteria,
+        birthDate: BirthDate,
+        place: Places,
+        binding: CompleteSubjectBinding,
+      })
+      .from(Criteria)
+      .leftJoin(BirthDate, eq(Criteria.birthDateId, BirthDate.id))
+      .leftJoin(Places, eq(BirthDate.placeOfBirthId, Places.id))
+      .leftJoin(
+        CompleteSubjectBinding,
+        eq(Criteria.subjectId, CompleteSubjectBinding.subjectId)
+      );
   }
 }

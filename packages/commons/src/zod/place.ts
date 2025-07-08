@@ -1,6 +1,5 @@
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { Places } from "../db/schema/family-status/places.js";
 
-export const InsertPlaceSchema = createInsertSchema(Places).omit({
-  id: true,
-});
+export const InsertPlaceSchema = createInsertSchema(Places);
+export const SelectPlaceSchema = createSelectSchema(Places);

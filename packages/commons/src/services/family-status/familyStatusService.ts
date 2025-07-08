@@ -1,140 +1,191 @@
 import { z } from "zod";
 import { client } from "../../db/postgres/client.js";
-import { FamilyStatusInputSchema } from "../../zod/family-status.js";
-import { InsertMunicipalitySchema } from "../../zod/municipality.js";
-import { InsertPlaceSchema } from "../../zod/place.js";
-import { InsertBirthDateSchema } from "../../zod/birth-date.js";
-import { InsertCriteriaSchema } from "../../zod/criteria.js";
-import { InsertBindingSchema } from "../../zod/binding.js";
+import {
+  FamilyStatusInputSchema,
+  FamilyStatusResponseSchema,
+} from "../../zod/family-status.js";
+import {
+  InsertMunicipalitySchema,
+  SelectMunicipalitySchema,
+} from "../../zod/municipality.js";
+import { InsertPlaceSchema, SelectPlaceSchema } from "../../zod/place.js";
+import {
+  InsertBirthDateSchema,
+  SelectBirthDateSchema,
+} from "../../zod/birth-date.js";
+import {
+  InsertCriteriaSchema,
+  SelectCriteriaSchema,
+} from "../../zod/criteria.js";
+import { InsertBindingSchema, SelectBindingSchema } from "../../zod/binding.js";
 
+import { validateAndInsert } from "../../utility/validateInsert.js";
 import { MunicipalityRepository } from "../../repositories/family-status/MunicipalityRepository.js";
 import { PlaceRepository } from "../../repositories/family-status/PlaceRepository.js";
 import { BirthDateRepository } from "../../repositories/family-status/BirthDateRepository.js";
 import { CriteriaRepository } from "../../repositories/family-status/CriteriaRepository.js";
 import { CompleteSubjectBindingRepository } from "../../repositories/family-status/CompleteSubjectBindingRepository.js";
+import { DBClient } from "../../types/db.js";
 
-import { validateAndInsert } from "../../utility/validateInsert.js";
+type FamilyStatusInsertResult = {
+  municipality: z.infer<typeof InsertMunicipalitySchema>;
+  place: z.infer<typeof InsertPlaceSchema>;
+  birthDate: z.infer<typeof InsertBirthDateSchema>;
+  criteria: z.infer<typeof InsertCriteriaSchema>;
+  binding: z.infer<typeof InsertBindingSchema> & { subjectId: string };
+};
 
-export class FamilyStatusPreparationService {
+export class FamilyStatusService {
   private municipalityRepo = new MunicipalityRepository();
   private placeRepo = new PlaceRepository();
   private birthDateRepo = new BirthDateRepository();
   private criteriaRepo = new CriteriaRepository();
   private bindingRepo = new CompleteSubjectBindingRepository();
 
-  public async insert(input: unknown): Promise<unknown> {
-    const parsedInput = FamilyStatusInputSchema.parse(input);
+  public async insert(input: unknown): Promise<FamilyStatusInsertResult> {
+    const parsed = FamilyStatusInputSchema.parse(input);
 
-    return client.transaction(async (tx) => {
-      const {
-        subject: {
-          subjectId,
-          personalId,
-          surname,
-          nosurname,
-          name,
-          noname,
-          gender,
-          birthDate: {
-            eventDate,
-            noDay,
-            noMonth,
-            placeOfBirth: { municipality, place },
-          },
-        },
-        subjectLink,
-      } = parsedInput;
-
-      const municipalityData = InsertMunicipalitySchema.parse(municipality);
-      const municipalityResult = await validateAndInsert(
+    return client.transaction(async (tx: DBClient) => {
+      const muniData = InsertMunicipalitySchema.parse(
+        parsed.subject.birthDate.placeOfBirth.municipality
+      );
+      const municipality = await validateAndInsert(
         "Municipality",
-        municipalityData,
+        muniData,
         this.municipalityRepo.insert.bind(this.municipalityRepo),
-        tx
+        tx,
+        InsertMunicipalitySchema
       );
 
-      const placeData = InsertPlaceSchema.parse(place);
-      const placeResult = await validateAndInsert(
+      const placeData = InsertPlaceSchema.parse(
+        parsed.subject.birthDate.placeOfBirth.place
+      );
+      const place = await validateAndInsert(
         "Place",
         placeData,
         this.placeRepo.insert.bind(this.placeRepo),
-        tx
+        tx,
+        InsertPlaceSchema
       );
 
-      const placeOfBirthId = (placeResult as { id: string }).id;
+      const birthDateData = InsertBirthDateSchema.parse({
+        eventDate: parsed.subject.birthDate.eventDate,
+        noDay: parsed.subject.birthDate.noDay,
+        noMonth: parsed.subject.birthDate.noMonth,
+        placeOfBirthId: place.id,
+      });
 
-      const birthDateData = InsertBirthDateSchema.omit({ placeOfBirth: true })
-        .extend({ placeOfBirthId: z.string() })
-        .parse({
-          eventDate,
-          noDay,
-          noMonth,
-          placeOfBirthId,
-        });
-
-      const birthDateResult = await validateAndInsert(
+      const birthDate = await validateAndInsert(
         "BirthDate",
         birthDateData,
         this.birthDateRepo.insert.bind(this.birthDateRepo),
-        tx
+        tx,
+        InsertBirthDateSchema
       );
 
-      const birthDateId = (birthDateResult as { id: string }).id;
       const criteriaData = InsertCriteriaSchema.parse({
-        subjectId,
-        personalId,
-        surname,
-        nosurname,
-        name,
-        noname,
-        gender,
-        birthDateId,
+        subjectId: parsed.subject.subjectId,
+        personalId: parsed.subject.personalId,
+        surname: parsed.subject.surname,
+        nosurname: parsed.subject.nosurname,
+        name: parsed.subject.name,
+        noname: parsed.subject.noname,
+        gender: parsed.subject.gender,
+        birthDateId: birthDate.id,
       });
-
-      const criteriaResult = await validateAndInsert(
+      const criteria = await validateAndInsert(
         "Criteria",
         criteriaData,
         this.criteriaRepo.insert.bind(this.criteriaRepo),
-        tx
+        tx,
+        InsertCriteriaSchema
       );
 
-      const bindingData = InsertBindingSchema.extend({
+      const bindingSchemaWithSubjectId = InsertBindingSchema.extend({
         subjectId: z.string(),
-      }).parse({
-        ...subjectLink,
-        subjectId,
       });
-
-      const bindingResult = await validateAndInsert(
+      const bindingData = bindingSchemaWithSubjectId.parse({
+        ...parsed.subjectLink,
+        subjectId: parsed.subject.subjectId,
+      });
+      const binding = await validateAndInsert(
         "CompleteSubjectBinding",
         bindingData,
-        async (data, db) => {
-          const result = await this.bindingRepo.insert.call(
-            this.bindingRepo,
-            data,
-            db
-          );
-          if (result === undefined) {
-            throw new Error(
-              "Insert function for CompleteSubjectBinding returned undefined"
-            );
-          }
-          return {
-            ...data,
-            ...result,
-            subjectId: data.subjectId,
-          };
-        },
-        tx
+        this.bindingRepo.insert.bind(this.bindingRepo),
+        tx,
+        bindingSchemaWithSubjectId
       );
 
-      return {
-        municipality: municipalityResult,
-        place: placeResult,
-        birthDate: birthDateResult,
-        criteria: criteriaResult,
-        binding: bindingResult,
-      };
+      return this.mapToFamilyStatusInsertResult({
+        municipality,
+        place,
+        birthDate,
+        criteria,
+        binding,
+      });
     });
+  }
+
+  public async getBySubjectId(
+    subjectId: string
+  ): Promise<z.infer<typeof FamilyStatusResponseSchema>> {
+    const row = await this.criteriaRepo.findWithJoinsBySubjectId(subjectId);
+
+    if (!row) {
+      throw new Error(`Subject ${subjectId} not found`);
+    }
+
+    const { criteria, birthDate, place, municipality, binding } = row;
+
+    if (!birthDate || !place || !municipality) {
+      throw new Error("Incomplete data");
+    }
+
+    const response = {
+      criteria: SelectCriteriaSchema.omit({
+        id: true,
+        birthDateId: true,
+      }).parse(criteria),
+      birthDate: SelectBirthDateSchema.pick({
+        eventDate: true,
+        noDay: true,
+        noMonth: true,
+      }).parse(birthDate),
+      placeOfBirth: SelectPlaceSchema.pick({
+        placeDescription: true,
+        countryDescription: true,
+        codState: true,
+        provinceCounty: true,
+      })
+        .extend({ municipality: SelectMunicipalitySchema })
+        .parse({ ...place, municipality }),
+      relationship: binding
+        ? SelectBindingSchema.pick({
+            relationshipType: true,
+            relationshipCode: true,
+            startDate: true,
+            startDateRelationship: true,
+            memberSequence: true,
+          }).parse(binding)
+        : null,
+    };
+
+    return FamilyStatusResponseSchema.parse(response);
+  }
+
+  private mapToFamilyStatusInsertResult(data: {
+    municipality: z.infer<typeof InsertMunicipalitySchema>;
+    place: z.infer<typeof InsertPlaceSchema>;
+    birthDate: z.infer<typeof InsertBirthDateSchema>;
+    criteria: z.infer<typeof InsertCriteriaSchema>;
+    binding: z.infer<typeof InsertBindingSchema> & { subjectId: string };
+  }): FamilyStatusInsertResult {
+    return {
+      municipality: data.municipality,
+      place: data.place,
+      birthDate: data.birthDate,
+      criteria: data.criteria,
+      binding: data.binding,
+    };
   }
 }

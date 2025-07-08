@@ -1,5 +1,5 @@
-import { FamilyStatusPreparationService } from "./familyStatusService.js";
+import { FamilyStatusService } from "./familyStatusService.js";
 
-const familyStatus = new FamilyStatusPreparationService();
+const familyStatus = new FamilyStatusService();
 
 export { familyStatus };

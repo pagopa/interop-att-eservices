@@ -1,11 +1,12 @@
 import { v4 as uuid } from "uuid";
 import { Municipalities } from "../../db/schema/family-status/index.js";
+import { client } from "../../db/postgres/client.js";
 import { DBClient } from "../../types/db.js";
 
 export class MunicipalityRepository {
   public async insert(
     data: Omit<typeof Municipalities.$inferInsert, "id">,
-    db: DBClient
+    db: DBClient = client
   ): Promise<typeof Municipalities.$inferInsert> {
     const [result] = await db
       .insert(Municipalities)
@@ -15,7 +16,6 @@ export class MunicipalityRepository {
     if (!result) {
       throw new Error("Failed to insert municipality");
     }
-
     return result;
   }
 }
