@@ -1,4 +1,4 @@
-import { logger, getContext } from "pdnd-common";
+import { logger, getContext, digitalAddress } from "pdnd-common";
 import {
   requestParamNotValid,
   requestVerificationNotFountError,
@@ -9,15 +9,14 @@ import {
   ResponseRequestListDigitalAddress,
   ResponseStatusListDigitalAddress,
 } from "../model/domain/models.js";
-import DigitalAddressVerificationService from "../services/digitalAddressVerificationService.js";
 import { VerifyRequest } from "../model/digitalAddress/VerifyRequest.js";
 import {
   getMaxNumber,
   getStatusFromNumber,
 } from "../utilities/statusRequestUtility.js";
-import dataPreparationService from "../services/dataPreparationService.js";
 import { parseJsonToRequestListDigitalAddress } from "../utilities/jsonDigitalAddressUtilities.js";
 import { responseRequestDigitalAddressModelToResponseRequestDigitalAddress } from "../model/domain/apiConverter.js";
+import { calculateUpdatedRequestState } from "../utilities/simulationUtils.js";
 
 class DigitalAddressVerificationSingleController {
   public appContext = getContext();
@@ -36,9 +35,7 @@ class DigitalAddressVerificationSingleController {
           count
         );
 
-        await DigitalAddressVerificationService.createRequest(
-          verifyRequestInstance
-        );
+        await digitalAddress.saveVerificationRequest(verifyRequestInstance);
 
         const result: ResponseRequestListDigitalAddress = {
           state: getStatusFromNumber(count),
@@ -61,28 +58,48 @@ class DigitalAddressVerificationSingleController {
     }
   }
 
-  // Response_Status_List_Digital_Address
   public async verify(
     idRichiesta: string
   ): Promise<ResponseStatusListDigitalAddress> {
+    logger.info(
+      `[CONTROLLER] Avvio verifica e simulazione per richiesta: ${idRichiesta}`
+    );
     try {
-      const richiesta =
-        await DigitalAddressVerificationService.simulateWorkByIdRequest(
-          idRichiesta
+      const originalRequest = await digitalAddress.findVerificationRequestById(
+        idRichiesta
+      );
+
+      if (!originalRequest) {
+        logger.warn(
+          `[CONTROLLER] Richiesta non trovata con id: ${idRichiesta}`
         );
-      if (richiesta) {
-        const result: ResponseStatusListDigitalAddress = {
-          status: getStatusFromNumber(richiesta.count),
-          message: getStatusFromNumber(richiesta.count),
-        };
-        return result;
-      } else {
         throw requestVerificationNotFountError(
           `The request verification not found with id: ${idRichiesta}`
         );
       }
+
+      const finalRequestState = calculateUpdatedRequestState(originalRequest);
+
+      if (finalRequestState !== originalRequest) {
+        logger.info(
+          `[CONTROLLER] Aggiornamento stato per ${idRichiesta}. Nuovo conteggio: ${finalRequestState.count}`
+        );
+        await digitalAddress.updateVerificationRequest(finalRequestState);
+      } else {
+        logger.info(
+          `[CONTROLLER] Nessun aggiornamento necessario per ${idRichiesta}. Conteggio: ${finalRequestState.count}`
+        );
+      }
+      const result: ResponseStatusListDigitalAddress = {
+        status: getStatusFromNumber(finalRequestState.count),
+        message: getStatusFromNumber(finalRequestState.count),
+      };
+      return result;
     } catch (error) {
-      logger.error(`Error during in method controller 'verify': `, error);
+      logger.error(
+        `[CONTROLLER] Errore nel metodo 'verify' per id ${idRichiesta}: `,
+        error
+      );
       throw error;
     }
   }
@@ -95,18 +112,16 @@ class DigitalAddressVerificationSingleController {
       list: [],
     };
     try {
-      const richiesta = await DigitalAddressVerificationService.getByIdRequest(
-        idRichiesta
-      );
+      const richiesta = await digitalAddress.findVerificationRequestById(idRichiesta);
       if (richiesta?.count == 1) {
         const requestListDigitalAddress = parseJsonToRequestListDigitalAddress(
           richiesta.jsonRequest
         );
         if (requestListDigitalAddress) {
           for (const idSubject of requestListDigitalAddress.idSubjects) {
-            const addressModel = await dataPreparationService.findByFiscalCode(
-              idSubject
-            );
+            const addressModel = await digitalAddress.findSingleDataPreparationByFiscalCode(
+             idSubject
+             );
             if (addressModel) {
               const address =
                 responseRequestDigitalAddressModelToResponseRequestDigitalAddress(

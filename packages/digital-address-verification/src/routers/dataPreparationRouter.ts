@@ -4,7 +4,6 @@ import { ExpressContext, ZodiosContext, logger } from "pdnd-common";
 // import { authenticationMiddleware } from "pdnd-common";
 import { ErrorHandling } from "pdnd-models";
 import { api } from "../model/generated/api.js";
-import DataPreparationService from "../services/dataPreparationService.js";
 import { makeApiProblem } from "../exceptions/errors.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import {
@@ -12,6 +11,7 @@ import {
   convertArrayOfModelsToResponseListRequestDigitalAddress,
   responseRequestDigitalAddressModelToResponseRequestDigitalAddress,
 } from "../model/domain/apiConverter.js";
+import dataPreparationController from "../controllers/dataPreparationController.js";
 // import { contextDataDigitalAddressMiddleware } from "../context/context.js";
 
 const dataPreparationRouter = (
@@ -25,7 +25,7 @@ const dataPreparationRouter = (
     // authenticationMiddleware(false),
     async (req, res) => {
       try {
-        const responseData = await DataPreparationService.saveList(
+        const responseData = await dataPreparationController.saveList(
           ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel(
             req.body
           )
@@ -51,7 +51,7 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        const data = await DataPreparationService.getAll();
+        const data = await dataPreparationController.getAll();
         const result = data
           ? convertArrayOfModelsToResponseListRequestDigitalAddress(data)
           : undefined;
@@ -76,7 +76,7 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        const data = await DataPreparationService.findByFiscalCode(
+        const data = await dataPreparationController.findByFiscalCode(
           req.params.idSubject
         );
 
@@ -107,7 +107,7 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        const data = await DataPreparationService.deleteAllByKey();
+        const data = await dataPreparationController.deleteAllByKey();
         if (data !== 0) {
           throw ErrorHandling.genericError(
             `Not all data could be deleted. Remaining: ${data}`
@@ -129,13 +129,15 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        const data = await DataPreparationService.findByFiscalCode(
+        const data = await dataPreparationController.findByFiscalCode(
           req.params.idSubject
         );
         if (data == null) {
           return res.status(404).end();
         }
-        await DataPreparationService.deleteByFiscalCode(req.params.idSubject);
+        await dataPreparationController.deleteByFiscalCode(
+          req.params.idSubject
+        );
         return res.status(200).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);

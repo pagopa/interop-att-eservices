@@ -1,10 +1,9 @@
-import { logger, getContext } from "pdnd-common";
+import { logger, getContext, digitalAddress } from "pdnd-common";
 import { fiscalcodeNotFound } from "../exceptions/errors.js";
 import {
   ResponseRequestDigitalAddress,
   ResponseVerifyDigitalAddress,
 } from "../model/domain/models.js";
-import DataPreparationService from "../services/dataPreparationService.js";
 import { responseRequestDigitalAddressModelToResponseRequestDigitalAddress } from "../model/domain/apiConverter.js";
 
 class DigitalAddressVerificationSingleController {
@@ -12,17 +11,16 @@ class DigitalAddressVerificationSingleController {
 
   public async verify(
     idSubject: string,
-    digitalAddress: string,
+    digitalAddressInput: string,
     from: string
   ): Promise<ResponseVerifyDigitalAddress> {
     try {
-      const richiesta = await DataPreparationService.findByFiscalCode(
-        idSubject
-      );
+      const richiesta =
+        await digitalAddress.findSingleDataPreparationByFiscalCode(idSubject);
       /* eslint-disable */
       if (richiesta) {
         const foundItem = richiesta.digitalAddress.find(
-          (richiesta) => richiesta.digitalAddress === digitalAddress
+          (richiesta) => richiesta.digitalAddress === digitalAddressInput
         );
         if (foundItem) {
           if (richiesta.from <= from) {
@@ -53,9 +51,8 @@ class DigitalAddressVerificationSingleController {
     idSubject: string // Response_Request_Digital_Address
   ): Promise<ResponseRequestDigitalAddress> {
     try {
-      const richiesta = await DataPreparationService.findByFiscalCode(
-        idSubject
-      );
+      const richiesta =
+        await digitalAddress.findSingleDataPreparationByFiscalCode(idSubject);
       if (richiesta) {
         return responseRequestDigitalAddressModelToResponseRequestDigitalAddress(
           richiesta
