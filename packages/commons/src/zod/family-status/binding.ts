@@ -1,6 +1,6 @@
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
-import { CompleteSubjectBinding } from "../db/schema/family-status/subject-binding.js";
+import { CompleteSubjectBinding } from "../../db/schema/family-status/subject-binding.js";
 
 export const InsertBindingSchema = createInsertSchema(
   CompleteSubjectBinding

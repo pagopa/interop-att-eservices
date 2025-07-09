@@ -3,21 +3,27 @@ import { client } from "../../db/postgres/client.js";
 import {
   FamilyStatusInputSchema,
   FamilyStatusResponseSchema,
-} from "../../zod/family-status.js";
+} from "../../zod/family-status/family-status.js";
 import {
   InsertMunicipalitySchema,
   SelectMunicipalitySchema,
-} from "../../zod/municipality.js";
-import { InsertPlaceSchema, SelectPlaceSchema } from "../../zod/place.js";
+} from "../../zod/family-status/municipality.js";
+import {
+  InsertPlaceSchema,
+  SelectPlaceSchema,
+} from "../../zod/family-status/place.js";
 import {
   InsertBirthDateSchema,
   SelectBirthDateSchema,
-} from "../../zod/birth-date.js";
+} from "../../zod/family-status/birth-date.js";
 import {
   InsertCriteriaSchema,
   SelectCriteriaSchema,
-} from "../../zod/criteria.js";
-import { InsertBindingSchema, SelectBindingSchema } from "../../zod/binding.js";
+} from "../../zod/family-status/criteria.js";
+import {
+  InsertBindingSchema,
+  SelectBindingSchema,
+} from "../../zod/family-status/binding.js";
 
 import { validateAndInsert } from "../../utility/validateInsert.js";
 import { MunicipalityRepository } from "../../repositories/family-status/MunicipalityRepository.js";

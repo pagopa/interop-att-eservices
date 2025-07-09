@@ -1,5 +1,5 @@
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { Municipalities } from "../db/schema/family-status/municipalities.js";
+import { Municipalities } from "../../db/schema/family-status/municipalities.js";
 
 export const InsertMunicipalitySchema = createInsertSchema(Municipalities).omit(
   {
