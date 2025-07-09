@@ -1,12 +1,14 @@
-import { pgSchema, text, uuid } from "drizzle-orm/pg-core";
+import { text, uuid } from "drizzle-orm/pg-core";
 import { InferSelectModel } from "drizzle-orm";
-const att = pgSchema("att");
+import { customSchema } from "../schema.js";
+import { addressTable } from "./address.model.js";
 
-export const Subject = att.table("subjects", {
+export const subjectTable = customSchema.table("subjects", {
   uuid: uuid("uuid").primaryKey(),
   id: text("id").notNull(),
   subject_id: text("subject_id").notNull(),
 
+  // Dati Anagrafici
   surname: text("surname"),
   name: text("name"),
   gender: text("gender"),
@@ -24,6 +26,10 @@ export const Subject = att.table("subjects", {
   birth_country_description: text("birth_country_description"),
   birth_cod_state: text("birth_cod_state"),
   birth_province_county: text("birth_province_county"),
+
+  address_id: uuid("address_id")
+    .notNull()
+    .references(() => addressTable.id),
 });
 
-export type Subject = InferSelectModel<typeof Subject>;
+export type Subject = InferSelectModel<typeof subjectTable>;

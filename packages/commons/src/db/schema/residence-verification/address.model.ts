@@ -1,8 +1,8 @@
-import { pgSchema, uuid, text } from "drizzle-orm/pg-core";
+import { uuid, text } from "drizzle-orm/pg-core";
 import { InferSelectModel } from "drizzle-orm";
-const att = pgSchema("att");
+import { customSchema } from "../schema.js";
 
-export const Address = att.table("addresses", {
+export const addressTable = customSchema.table("addresses", {
   id: uuid("id").primaryKey().defaultRandom(),
 
   address_type: text("address_type"),
@@ -58,4 +58,4 @@ export const Address = att.table("addresses", {
   consulate_description: text("consulate_description"),
 });
 
-export type Address = InferSelectModel<typeof Address>;
+export type Address = InferSelectModel<typeof addressTable>;

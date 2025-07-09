@@ -14,5 +14,6 @@ export * from "./security/index.js";
 export * from "./events/index.js";
 export * from "./middleware/index.js";
 export { digitalAddress } from "./services/digital-address-verification/index.js";
+export { userService } from "./services/residence-verification/index.js"
 export { familyStatus } from "./services/family-status/index.js";
 export { FamilyStatusInputSchema } from "./zod/family-status.js";

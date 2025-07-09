@@ -46,9 +46,8 @@ class DigitalAddressVerificationSingleController {
     }
   }
 
-  // Response_Status_List_Digital_Address
   public async extract(
-    idSubject: string // Response_Request_Digital_Address
+    idSubject: string
   ): Promise<ResponseRequestDigitalAddress> {
     try {
       const richiesta =

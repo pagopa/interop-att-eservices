@@ -22,6 +22,13 @@
       "when": 1751545630655,
       "tag": "0002_condemned_post",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1752047745974,
+      "tag": "0003_worthless_supernaut",
+      "breakpoints": true
     }
   ]
 }
