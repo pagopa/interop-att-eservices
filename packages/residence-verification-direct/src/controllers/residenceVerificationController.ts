@@ -1,11 +1,10 @@
 import { UserModel } from "pdnd-models";
-import { logger, getContext } from "pdnd-common";
 import {
-  getById,
-  getByPersonalInfo,
-  getUserBySubjectId,
-} from "../services/residenceVerificationService.js";
-import CoordinatesService from "../services/coordinateService.js";
+  logger,
+  getContext,
+  userServiceDirect,
+  coordinateService,
+} from "pdnd-common";
 import {
   requestParamNotValid,
   userModelNotFound,
@@ -22,9 +21,6 @@ import { checkInfoSoggettoEquals } from "../utilities/equalsUtilities.js";
 class ResidenceVerificationController {
   public appContext = getContext();
 
-  /**
-   * Find users based on the provided criteria.
-   */
   public async findUser(
     request: RichiestaAR001
   ): Promise<RispostaAR001 | null | undefined> {
@@ -50,9 +46,6 @@ class ResidenceVerificationController {
     }
   }
 
-  /**
-   * Verifies a user by comparing provided info with stored data.
-   */
   public async findUserVerify(
     request: RichiestaAR002
   ): Promise<RispostaAR002OK> {
@@ -77,25 +70,22 @@ class ResidenceVerificationController {
     }
   }
 
-  /**
-   * Retrieves user data and adds geolocation coordinates.
-   */
   private async getUserData(
     request: RichiestaAR001 | RichiestaAR002
   ): Promise<UserModel[] | undefined> {
-    const { subjectId, id } = request.criteria;
+    const { subjectId } = request.criteria;
     try {
       if (subjectId) {
-        return this.fetchAndUpdateUser(getUserBySubjectId(subjectId));
+        return this.fetchAndUpdateUser(
+          userServiceDirect.getUserBySubjectId(subjectId)
+        );
       }
 
       if (this.checkPersonalInfo(request)) {
-        const users = await getByPersonalInfo(request.criteria);
+        const users = await userServiceDirect.getByPersonalInfo(
+          request.criteria
+        );
         return Promise.all(users.map(this.getUpdatedUserModel.bind(this)));
-      }
-
-      if (id) {
-        return this.fetchAndUpdateUser(getById(`${id}`));
       }
     } catch (error) {
       logger.error(`Error retrieving user data: ${JSON.stringify(error)}`);
@@ -103,9 +93,6 @@ class ResidenceVerificationController {
     return undefined;
   }
 
-  /**
-   * Fetches a single user and updates their address with coordinates.
-   */
   private async fetchAndUpdateUser(
     fetchUser: Promise<UserModel | null>
   ): Promise<UserModel[] | undefined> {
@@ -113,9 +100,6 @@ class ResidenceVerificationController {
     return user ? [await this.getUpdatedUserModel(user)] : [];
   }
 
-  /**
-   * Builds a full address string from the user model.
-   */
   private getFullAddress(data: UserModel): string {
     const address = data?.address?.address;
     return address
@@ -123,12 +107,9 @@ class ResidenceVerificationController {
       : "";
   }
 
-  /**
-   * Updates the user model with geolocation coordinates based on address.
-   */
   private async getUpdatedUserModel(user: UserModel): Promise<UserModel> {
     const fullAddress = this.getFullAddress(user);
-    const coordinates = await CoordinatesService.getCoordinates(fullAddress);
+    const coordinates = await coordinateService.getCoordinates(fullAddress);
 
     return {
       ...user,
@@ -142,9 +123,6 @@ class ResidenceVerificationController {
     };
   }
 
-  /**
-   * Checks if the request contains valid personal info for matching.
-   */
   private checkPersonalInfo(request: RichiestaAR001 | RichiestaAR002): boolean {
     const birthDate = request.criteria.birthDate;
     return (

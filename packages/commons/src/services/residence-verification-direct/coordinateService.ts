@@ -6,7 +6,7 @@ const geocoder = NodeGeocoder({
   provider: "openstreetmap",
 });
 
-class CoordinatesService {
+export class CoordinatesService {
   public async getCoordinates(
     address: string
   ): Promise<CoordinatesModel | undefined> {
@@ -28,5 +28,3 @@ class CoordinatesService {
     }
   }
 }
-
-export default new CoordinatesService();
