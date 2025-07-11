@@ -26,4 +26,5 @@ export const familyStatus = customSchema.table("family_status", {
   relationshipCode: text("relationshipCode"),
   memberSequence: text("memberSequence"),
   startDateRelationship: date("startDateRelationship"),
+  endDateRelationship: date("endDateRelationship"),
 });

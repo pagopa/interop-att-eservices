@@ -1,9 +1,9 @@
-// import { zodiosRouter } from "@zodios/express";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ErrorHandling } from "pdnd-models";
-import { ExpressContext, ZodiosContext } from "pdnd-common";
+import { ExpressContext, ZodiosContext, familyStatus } from "pdnd-common";
 import { authenticationMiddleware } from "pdnd-common";
+import { RawPayload } from "pdnd-common";
 import DataPreparationService from "../services/dataPreparationService.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -13,10 +13,7 @@ import {
   UserModel,
 } from "../model/domain/models.js";
 import { contextDataFamilyMiddleware } from "../context/context.js";
-import {
-  userModelToApiDataPreparationResponseCf,
-  userModelToApiDataPreparationTemplateResponse,
-} from "../model/domain/apiConverter.js";
+import { userModelToApiDataPreparationTemplateResponse } from "../model/domain/apiConverter.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -29,17 +26,13 @@ const dataPreparationRouter = (
     authenticationMiddleware(false),
     async (req, res) => {
       try {
-        const data = await DataPreparationService.saveList(req.body);
-        const result = userModelToApiDataPreparationResponseCf(
-          data,
-          req.body.subject?.subjectId
-        );
-        if (!result) {
+        const data = await familyStatus.prepareData(req.body as RawPayload);
+        if (!data) {
           throw userModelNotFound(
             `Data with subjectId '${req.body.subject?.subjectId}' not found`
           );
         }
-        return res.status(200).json(result).end();
+        return res.status(200).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();

@@ -1,5 +1,5 @@
 {
-  "id": "87ccc4a5-be9e-48b9-9b7c-33a83164cc7a",
+  "id": "eed92c18-00a1-4880-814c-437639b03bda",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -553,6 +553,12 @@
         },
         "startDateRelationship": {
           "name": "startDateRelationship",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "endDateRelationship": {
+          "name": "endDateRelationship",
           "type": "date",
           "primaryKey": false,
           "notNull": false

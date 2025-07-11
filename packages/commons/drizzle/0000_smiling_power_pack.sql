@@ -99,6 +99,7 @@ CREATE TABLE IF NOT EXISTS "att"."family_status" (
 	"relationshipCode" text,
 	"memberSequence" text,
 	"startDateRelationship" date,
+	"endDateRelationship" date,
 	CONSTRAINT "family_status_subjectId_unique" UNIQUE("subjectId")
 );
 
