@@ -5,3 +5,5 @@ export { listRequestsTable } from "./listRequest.model.js";
 export { requestSubjectsTable } from "./requestSubjects.model.js";
 export { subjectDataResponsesTable } from "./subjectDataResponses.model.js";
 export { verificationLogsTable } from "./verificationLogs.model.js";
+export { motivationTerminationEnum } from "./digital-address.model.js";
+export { statusProcessingRequestEnum } from "./listRequest.model.js";

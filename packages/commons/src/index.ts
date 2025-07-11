@@ -20,4 +20,4 @@ export {
   coordinateService,
 } from "./services/residence-verification-direct/index.js";
 export { familyStatus } from "./services/family-status/index.js";
-export { FamilyStatusInputSchema } from "./zod/family-status/family-status.js";
+export { RawPayload } from "./types/rawPayload.js";

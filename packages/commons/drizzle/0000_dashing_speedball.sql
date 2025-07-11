@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS "att"."subject_data_responses" (
 	"list_request_id" uuid NOT NULL,
 	"subject_id" varchar(255) NOT NULL,
 	"data_from" timestamp with time zone NOT NULL,
+	CONSTRAINT "unique_sdr_list_req_subject" UNIQUE("list_request_id","subject_id"),
 	CONSTRAINT "id_subject_check" CHECK (subject_id ~ '^([0-9]{11})|([A-Za-z]{6}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{3}[A-Za-z]{1})$')
 );
 
@@ -77,71 +78,93 @@ CREATE TABLE IF NOT EXISTS "att"."purposes" (
 	"id" uuid PRIMARY KEY NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "att"."birth_date" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"event_date" text,
-	"no_day" text,
-	"no_month" text,
-	"place_of_birth_id" uuid
+CREATE TABLE IF NOT EXISTS "att"."family_status" (
+	"id" uuid PRIMARY KEY NOT NULL,
+	"subjectId" varchar(16) NOT NULL,
+	"surname" text NOT NULL,
+	"name" text NOT NULL,
+	"gender" varchar(1),
+	"birthDate" date,
+	"municipality_nameMunicipality" text,
+	"municipality_istatCode" text,
+	"municipality_acronymIstatProvince" text,
+	"municipality_placeDescription" text,
+	"place_placeDescription" text,
+	"place_countryDescription" text,
+	"place_codState" text,
+	"place_provinceCounty" text,
+	"relationshipType" text,
+	"startDate" date,
+	"relationshipCode" text,
+	"memberSequence" text,
+	"startDateRelationship" date,
+	CONSTRAINT "family_status_subjectId_unique" UNIQUE("subjectId")
 );
 
-CREATE TABLE IF NOT EXISTS "att"."subject_binding" (
+CREATE TABLE IF NOT EXISTS "att"."addresses" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"relationship_type" text,
-	"start_date" text,
-	"relationship_code" text,
-	"member_sequence" text,
-	"start_date_relationship" text
+	"address_type" text,
+	"note_address" text,
+	"address_start_date" text,
+	"presso" text,
+	"address_municipality_name" text,
+	"address_municipality_istat_code" text,
+	"address_municipality_acronym_istat_province" text,
+	"address_municipality_place_description" text,
+	"toponym_cod_type" text,
+	"toponym_type" text,
+	"toponym_origin_type" text,
+	"toponym_cod" text,
+	"toponym_denomination" text,
+	"toponym_source" text,
+	"civic_cod" text,
+	"civic_source" text,
+	"civic_number" text,
+	"metric" text,
+	"prog_snc" text,
+	"letter" text,
+	"exponent1" text,
+	"color" text,
+	"internal_court" text,
+	"internal_stairs" text,
+	"internal1" text,
+	"esp_internal1" text,
+	"internal2" text,
+	"esp_internal2" text,
+	"external_stairs" text,
+	"secondary" text,
+	"floor" text,
+	"nui" text,
+	"isolated" text,
+	"foreign_cap" text,
+	"foreign_place_description" text,
+	"foreign_country_description" text,
+	"foreign_country_state" text,
+	"foreign_province_county" text,
+	"foreign_toponym_denomination" text,
+	"foreign_toponym_civic_number" text,
+	"consulate_cod" text,
+	"consulate_description" text
 );
 
-CREATE TABLE IF NOT EXISTS "att"."criteria" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"subject_id" text,
-	"personal_id" text,
+CREATE TABLE IF NOT EXISTS "att"."subjects" (
+	"uuid" uuid PRIMARY KEY NOT NULL,
+	"id" text NOT NULL,
+	"subject_id" text NOT NULL,
 	"surname" text,
-	"nosurname" text,
 	"name" text,
-	"noname" text,
 	"gender" text,
-	"birth_date_id" uuid
-);
-
-CREATE TABLE IF NOT EXISTS "att"."data_birth" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"exceptional_place" text,
-	"municipality_id" uuid,
-	"place_id" uuid
-);
-
-CREATE TABLE IF NOT EXISTS "att"."municipalities" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"name_municipality" text,
-	"istat_code" text,
-	"acronym_istat_province" text,
-	"place_description" text
-);
-
-CREATE TABLE IF NOT EXISTS "att"."places" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"place_description" text,
-	"country_description" text,
-	"cod_state" text,
-	"province_county" text
-);
-
-CREATE TABLE IF NOT EXISTS "att"."request_data" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"request_type" text,
-	"requested_by" text,
-	"created_at" text,
-	"additional_info" json
-);
-
-CREATE TABLE IF NOT EXISTS "att"."requests_fs001" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"operation_id" text NOT NULL,
-	"criteria_id" uuid NOT NULL,
-	"request_data_id" uuid NOT NULL
+	"birth_event_date" text,
+	"birth_exceptional_place" text,
+	"birth_municipality_name" text,
+	"birth_municipality_istat_code" text,
+	"birth_municipality_acronym_istat_province" text,
+	"birth_municipality_place_description" text,
+	"birth_place_description" text,
+	"birth_country_description" text,
+	"birth_cod_state" text,
+	"birth_province_county" text,
+	"address_id" uuid NOT NULL
 );
 
 DO $$
@@ -187,77 +210,12 @@ DO $$
 BEGIN
   IF EXISTS (
     SELECT FROM information_schema.tables
-    WHERE table_name = 'birth_date' AND table_schema = 'att'
+    WHERE table_name = 'subjects' AND table_schema = 'att'
   ) AND NOT EXISTS (
     SELECT FROM information_schema.table_constraints
-    WHERE constraint_name = 'birth_date_place_of_birth_id_places_id_fk' AND table_schema = 'att'
+    WHERE constraint_name = 'subjects_address_id_addresses_id_fk' AND table_schema = 'att'
   ) THEN
-    ALTER TABLE "att"."birth_date" ADD CONSTRAINT "birth_date_place_of_birth_id_places_id_fk" FOREIGN KEY ("place_of_birth_id") REFERENCES "att"."places"("id") ON DELETE no action ON UPDATE no action;
-  END IF;
-END $$;
-
-DO $$
-BEGIN
-  IF EXISTS (
-    SELECT FROM information_schema.tables
-    WHERE table_name = 'criteria' AND table_schema = 'att'
-  ) AND NOT EXISTS (
-    SELECT FROM information_schema.table_constraints
-    WHERE constraint_name = 'criteria_birth_date_id_birth_date_id_fk' AND table_schema = 'att'
-  ) THEN
-    ALTER TABLE "att"."criteria" ADD CONSTRAINT "criteria_birth_date_id_birth_date_id_fk" FOREIGN KEY ("birth_date_id") REFERENCES "att"."birth_date"("id") ON DELETE no action ON UPDATE no action;
-  END IF;
-END $$;
-
-DO $$
-BEGIN
-  IF EXISTS (
-    SELECT FROM information_schema.tables
-    WHERE table_name = 'data_birth' AND table_schema = 'att'
-  ) AND NOT EXISTS (
-    SELECT FROM information_schema.table_constraints
-    WHERE constraint_name = 'data_birth_municipality_id_municipalities_id_fk' AND table_schema = 'att'
-  ) THEN
-    ALTER TABLE "att"."data_birth" ADD CONSTRAINT "data_birth_municipality_id_municipalities_id_fk" FOREIGN KEY ("municipality_id") REFERENCES "att"."municipalities"("id") ON DELETE no action ON UPDATE no action;
-  END IF;
-END $$;
-
-DO $$
-BEGIN
-  IF EXISTS (
-    SELECT FROM information_schema.tables
-    WHERE table_name = 'data_birth' AND table_schema = 'att'
-  ) AND NOT EXISTS (
-    SELECT FROM information_schema.table_constraints
-    WHERE constraint_name = 'data_birth_place_id_places_id_fk' AND table_schema = 'att'
-  ) THEN
-    ALTER TABLE "att"."data_birth" ADD CONSTRAINT "data_birth_place_id_places_id_fk" FOREIGN KEY ("place_id") REFERENCES "att"."places"("id") ON DELETE no action ON UPDATE no action;
-  END IF;
-END $$;
-
-DO $$
-BEGIN
-  IF EXISTS (
-    SELECT FROM information_schema.tables
-    WHERE table_name = 'requests_fs001' AND table_schema = 'att'
-  ) AND NOT EXISTS (
-    SELECT FROM information_schema.table_constraints
-    WHERE constraint_name = 'requests_fs001_criteria_id_criteria_id_fk' AND table_schema = 'att'
-  ) THEN
-    ALTER TABLE "att"."requests_fs001" ADD CONSTRAINT "requests_fs001_criteria_id_criteria_id_fk" FOREIGN KEY ("criteria_id") REFERENCES "att"."criteria"("id") ON DELETE no action ON UPDATE no action;
-  END IF;
-END $$;
-
-DO $$
-BEGIN
-  IF EXISTS (
-    SELECT FROM information_schema.tables
-    WHERE table_name = 'requests_fs001' AND table_schema = 'att'
-  ) AND NOT EXISTS (
-    SELECT FROM information_schema.table_constraints
-    WHERE constraint_name = 'requests_fs001_request_data_id_request_data_id_fk' AND table_schema = 'att'
-  ) THEN
-    ALTER TABLE "att"."requests_fs001" ADD CONSTRAINT "requests_fs001_request_data_id_request_data_id_fk" FOREIGN KEY ("request_data_id") REFERENCES "att"."request_data"("id") ON DELETE no action ON UPDATE no action;
+    ALTER TABLE "att"."subjects" ADD CONSTRAINT "subjects_address_id_addresses_id_fk" FOREIGN KEY ("address_id") REFERENCES "att"."addresses"("id") ON DELETE no action ON UPDATE no action;
   END IF;
 END $$;
 
