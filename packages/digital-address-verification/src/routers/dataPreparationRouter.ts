@@ -1,7 +1,7 @@
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext, logger } from "pdnd-common";
-// import { authenticationMiddleware } from "pdnd-common";
+import { authenticationMiddleware } from "pdnd-common";
 import { ErrorHandling } from "pdnd-models";
 import { api } from "../model/generated/api.js";
 import { makeApiProblem } from "../exceptions/errors.js";
@@ -12,7 +12,7 @@ import {
   responseRequestDigitalAddressModelToResponseRequestDigitalAddress,
 } from "../model/domain/apiConverter.js";
 import dataPreparationController from "../controllers/dataPreparationController.js";
-// import { contextDataDigitalAddressMiddleware } from "../context/context.js";
+import { contextDataDigitalAddressMiddleware } from "../context/context.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -21,8 +21,8 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.post(
     "/digital-address-verification/data-preparation",
-    // contextDataDigitalAddressMiddleware,
-    // authenticationMiddleware(false),
+    contextDataDigitalAddressMiddleware,
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         const responseData = await dataPreparationController.saveList(
@@ -44,8 +44,8 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.get(
     "/digital-address-verification/data-preparation",
-    // contextDataDigitalAddressMiddleware,
-    // authenticationMiddleware(false),
+    contextDataDigitalAddressMiddleware,
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {
@@ -69,8 +69,8 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.get(
     "/digital-address-verification/data-preparation/:idSubject",
-    // contextDataDigitalAddressMiddleware,
-    // authenticationMiddleware(false),
+    contextDataDigitalAddressMiddleware,
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {

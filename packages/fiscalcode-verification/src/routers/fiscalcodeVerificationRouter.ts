@@ -1,8 +1,11 @@
-import { logger } from "pdnd-common";
+import {
+  logger,
+  authenticationCorrelationMiddleware,
+  ExpressContext,
+  ZodiosContext,
+} from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
-import { ExpressContext, ZodiosContext } from "pdnd-common";
-import { authenticationCorrelationMiddleware } from "pdnd-common";
 import { TrialService } from "trial";
 import FiscalcodeVerificationController from "../controllers/fiscalcodeVerificationController.js";
 import { api } from "../model/generated/api.js";

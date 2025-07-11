@@ -169,6 +169,24 @@ CREATE TABLE IF NOT EXISTS "att"."subjects" (
 	"address_id" uuid NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS "att"."fiscal_codes" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"fiscal_code" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "fiscal_codes_fiscal_code_unique" UNIQUE("fiscal_code")
+);
+
+CREATE TABLE IF NOT EXISTS "att"."handshakes" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"purpose_id" text NOT NULL,
+	"certificate" text NOT NULL,
+	"context_key" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "handshakes_purpose_id_unique" UNIQUE("purpose_id")
+);
+
 DO $$
 BEGIN
   IF EXISTS (

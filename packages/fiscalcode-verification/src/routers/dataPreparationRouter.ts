@@ -1,10 +1,14 @@
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
-import { ExpressContext, ZodiosContext, logger } from "pdnd-common";
-import { authenticationMiddleware } from "pdnd-common";
+import {
+  ExpressContext,
+  ZodiosContext,
+  fiscalCodeService,
+  logger,
+  authenticationMiddleware,
+} from "pdnd-common";
 import { ErrorHandling } from "pdnd-models";
 import { api } from "../model/generated/api.js";
-import DataPreparationService from "../services/dataPreparationService.js";
 import { makeApiProblem } from "../exceptions/errors.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import {
@@ -24,7 +28,7 @@ const dataPreparationRouter = (
     authenticationMiddleware(false),
     async (req, res) => {
       try {
-        await DataPreparationService.saveList(
+        await fiscalCodeService.saveList(
           apiDatapreparationTemplateToFiscalcodeModel(req.body)
         );
         return res.status(201).end();
@@ -44,7 +48,7 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        const data = await DataPreparationService.getAll();
+        const data = await fiscalCodeService.getAll();
         const result =
           data != null ? apiFiscalcodeModelToDataPreparationResponse(data) : [];
         logger.info(result);
@@ -65,7 +69,7 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        const data = await DataPreparationService.deleteAllByKey();
+        const data = await fiscalCodeService.deleteAllByKey();
         if (data !== 0) {
           throw ErrorHandling.genericError(
             `Not all data could be deleted. Remaining: ${data}`
@@ -86,7 +90,7 @@ const dataPreparationRouter = (
     async (req, res) => {
       /* eslint-enable */
       try {
-        await DataPreparationService.deleteByFiscalCode(
+        await fiscalCodeService.deleteByFiscalCode(
           apiDatapreparationTemplateToFiscalcodeModel(req.body).fiscalCode
         );
         return res.status(200).end();
