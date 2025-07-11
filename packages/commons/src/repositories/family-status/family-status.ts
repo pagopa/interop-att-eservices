@@ -7,18 +7,21 @@ import {
 } from "../../zod/family-status/family-status.js";
 
 export const familyStatusRepo = {
-  async upsert(data: InsertFamilyStatus): Promise<void> {
-    const sql = await client
+  async upsert(data: InsertFamilyStatus): Promise<object> {
+    const [result] = await client
       .insert(familyStatus)
       .values(data)
       .onConflictDoUpdate({
         target: familyStatus.subjectId,
         set: data,
       })
-      .returning();
+      .returning({ uuid: familyStatus.uuid });
 
-    // eslint-disable-next-line no-console
-    console.log(sql); // stampi la query
+    if (!result?.uuid) {
+      throw new Error("UUID not returned from database");
+    }
+
+    return { uuid: result.uuid };
   },
 
   async findBySubjectId(

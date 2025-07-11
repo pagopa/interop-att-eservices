@@ -2,7 +2,8 @@ import { varchar, text, date, uuid } from "drizzle-orm/pg-core";
 import { customSchema } from "../schema.js";
 
 export const familyStatus = customSchema.table("family_status", {
-  id: uuid("id").primaryKey(),
+  uuid: uuid("uuid").primaryKey().defaultRandom(),
+  id: varchar("id", { length: 64 }).notNull(),
 
   subjectId: varchar("subjectId", { length: 16 }).notNull().unique(),
   surname: text("surname").notNull(),

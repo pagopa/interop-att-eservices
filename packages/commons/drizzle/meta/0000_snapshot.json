@@ -1,5 +1,5 @@
 {
-  "id": "189fbc2b-3dd4-44c5-9289-560ebf4bce76",
+  "id": "87ccc4a5-be9e-48b9-9b7c-33a83164cc7a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -436,10 +436,17 @@
       "name": "family_status",
       "schema": "att",
       "columns": {
-        "id": {
-          "name": "id",
+        "uuid": {
+          "name": "uuid",
           "type": "uuid",
           "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar(64)",
+          "primaryKey": false,
           "notNull": true
         },
         "subjectId": {

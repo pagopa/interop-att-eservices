@@ -79,7 +79,8 @@ CREATE TABLE IF NOT EXISTS "att"."purposes" (
 );
 
 CREATE TABLE IF NOT EXISTS "att"."family_status" (
-	"id" uuid PRIMARY KEY NOT NULL,
+	"uuid" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" varchar(64) NOT NULL,
 	"subjectId" varchar(16) NOT NULL,
 	"surname" text NOT NULL,
 	"name" text NOT NULL,

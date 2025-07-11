@@ -8,12 +8,12 @@ import { familyStatusRepo } from "../../repositories/family-status/family-status
 import { RawPayload } from "../../types/rawPayload.js";
 
 export const FamilyStatusService = {
-  async prepareData(payload: RawPayload): Promise<void> {
+  async prepareData(payload: RawPayload): Promise<object> {
     const flat: InsertFamilyStatus = flattenPayload(payload);
 
     insertFamilyStatusSchema.parse(flat);
 
-    await familyStatusRepo.upsert(flat);
+    return await familyStatusRepo.upsert(flat);
   },
 
   /**
