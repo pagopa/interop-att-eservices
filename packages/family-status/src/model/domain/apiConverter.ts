@@ -8,7 +8,6 @@ import {
   CriteriaTypeFS001,
   DataPreparationResponse,
   DataPreparationTemplate,
-  DataPreparationTemplateResponse,
   DataSubjectsInstitution,
   EventPlaceType,
   SubjectIdType,
@@ -59,14 +58,6 @@ export const userModelToApiDataPreparationResponseCf = (
     uuid: userModel.uuid,
   };
 };
-
-export const userModelToApiDataPreparationTemplateResponse = (
-  userModel: UserModel
-): DataPreparationTemplateResponse => ({
-  uuid: userModel?.uuid,
-  subject: userModel?.subject,
-  subjectLink: userModel?.subjectLink,
-});
 
 //* ********************************************************************************************************** */
 

@@ -87,7 +87,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DataPreparationTemplateResponse'
+                  $ref: '#/components/schemas/FamilyStatusDto'
         '400':
           description: Bad request
           content:
@@ -324,6 +324,61 @@ paths:
 
 components:
   schemas:
+    FamilyStatusDto:
+      type: object
+      required: [uuid, subject, subjectLink]
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        subject:
+          type: object
+          required: [subjectId, id, surname, name, gender, birthDate]
+          properties:
+            subjectId:
+              type: string
+            id:
+              type: string
+            surname:
+              type: string
+            name:
+              type: string
+            gender:
+              type: string
+              nullable: true
+            birthDate:
+              type: object
+              properties:
+                eventDate:
+                  type: string
+                  format: date
+                  nullable: true
+                placeOfBirth:
+                  type: object
+                  properties:
+                    municipality:
+                      type: object
+                      properties:
+                        nameMunicipality: { type: string, nullable: true }
+                        istatCode: { type: string, nullable: true }
+                        acronymIstatProvince: { type: string, nullable: true }
+                        placeDescription: { type: string, nullable: true }
+                    place:
+                      type: object
+                      properties:
+                        placeDescription: { type: string, nullable: true }
+                        countryDescription: { type: string, nullable: true }
+                        codState: { type: string, nullable: true }
+                        provinceCounty: { type: string, nullable: true }
+        subjectLink:
+          type: object
+          properties:
+            relationshipType: { type: string, nullable: true }
+            startDate: { type: string, format: date, nullable: true }
+            relationshipCode: { type: string, nullable: true }
+            memberSequence: { type: string, nullable: true }
+            startDateRelationship: { type: string, format: date, nullable: true }
+            endDateRelationship: { type: string, format: date, nullable: true }  
     RequestFS001:
       type: object
       required:
@@ -470,6 +525,10 @@ components:
         memberSequence:
           type: string
         startDateRelationship:
+          type: string
+          format: YYYY-MM-DD
+          example: '2021-11-15'
+        endDateRelationship:
           type: string
           format: YYYY-MM-DD
           example: '2021-11-15'
@@ -664,18 +723,6 @@ components:
         uuid:
           type: string
           description: id of Operation
-    DataPreparationTemplateResponse:
-      description: Data Preparation Configuration
-      type: object
-      allOf:
-        - type: object
-          properties:
-            uuid:
-              description: >-
-                identifier associated with the saved configuration
-              type: string
-              format: uuid
-        - $ref: '#/components/schemas/DataPreparationTemplate'
     GeneralError:
       type: object
       properties:

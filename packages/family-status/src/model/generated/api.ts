@@ -56,6 +56,7 @@ const CompleteSubjectBindingType = z
     relationshipCode: z.string(),
     memberSequence: z.string(),
     startDateRelationship: z.string(),
+    endDateRelationship: z.string(),
   })
   .partial()
   .passthrough();
@@ -67,11 +68,60 @@ const DataPreparationTemplate = z
   .partial()
   .passthrough();
 const DataPreparationResponse = z.object({ uuid: z.string() }).partial();
-const DataPreparationTemplateResponse = z
-  .object({ uuid: z.string().uuid() })
-  .partial()
-  .passthrough()
-  .and(DataPreparationTemplate);
+const FamilyStatusDto = z
+  .object({
+    uuid: z.string().uuid(),
+    subject: z
+      .object({
+        subjectId: z.string(),
+        id: z.string(),
+        surname: z.string(),
+        name: z.string(),
+        gender: z.string().nullable(),
+        birthDate: z
+          .object({
+            eventDate: z.string().nullable(),
+            placeOfBirth: z
+              .object({
+                municipality: z
+                  .object({
+                    nameMunicipality: z.string().nullable(),
+                    istatCode: z.string().nullable(),
+                    acronymIstatProvince: z.string().nullable(),
+                    placeDescription: z.string().nullable(),
+                  })
+                  .partial()
+                  .passthrough(),
+                place: z
+                  .object({
+                    placeDescription: z.string().nullable(),
+                    countryDescription: z.string().nullable(),
+                    codState: z.string().nullable(),
+                    provinceCounty: z.string().nullable(),
+                  })
+                  .partial()
+                  .passthrough(),
+              })
+              .partial()
+              .passthrough(),
+          })
+          .partial()
+          .passthrough(),
+      })
+      .passthrough(),
+    subjectLink: z
+      .object({
+        relationshipType: z.string().nullable(),
+        startDate: z.string().nullable(),
+        relationshipCode: z.string().nullable(),
+        memberSequence: z.string().nullable(),
+        startDateRelationship: z.string().nullable(),
+        endDateRelationship: z.string().nullable(),
+      })
+      .partial()
+      .passthrough(),
+  })
+  .passthrough();
 const DataTypeRquestFS001 = z
   .object({
     dateOfRequest: z.string(),
@@ -229,7 +279,7 @@ export const schemas = {
   CompleteSubjectBindingType,
   DataPreparationTemplate,
   DataPreparationResponse,
-  DataPreparationTemplateResponse,
+  FamilyStatusDto,
   DataTypeRquestFS001,
   RequestFS001,
   SubjectIdType,
@@ -358,7 +408,7 @@ const endpoints = makeApi([
     alias: "GetAllFS001",
     description: `List of institution use cases`,
     requestFormat: "json",
-    response: z.array(DataPreparationTemplateResponse),
+    response: z.array(FamilyStatusDto),
     errors: [
       {
         status: 400,

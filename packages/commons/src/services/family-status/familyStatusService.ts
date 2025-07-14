@@ -6,6 +6,7 @@ import {
 } from "../../zod/family-status/family-status.js";
 import { familyStatusRepo } from "../../repositories/family-status/family-status.js";
 import { RawPayload } from "../../types/rawPayload.js";
+import { FamilyStatusDto } from "../../types/familyStatusDTO.js";
 
 export const FamilyStatusService = {
   async prepareData(payload: RawPayload): Promise<object> {
@@ -16,10 +17,22 @@ export const FamilyStatusService = {
     return await familyStatusRepo.upsert(flat);
   },
 
-  /**
-   * Verifica i dati esistenti per un dato subjectId (codice fiscale).
-   * Utile per confrontare i dati locali con quelli esposti da un e-service.
-   */
+  async getAll(): Promise<FamilyStatusDto[]> {
+    return await familyStatusRepo.findAll();
+  },
+
+  async getByUUID(uuid: string): Promise<FamilyStatusDto> {
+    return await familyStatusRepo.findByUUID(uuid);
+  },
+
+  async deleteAll(): Promise<number> {
+    return await familyStatusRepo.deleteAll();
+  },
+
+  async deleteByUUID(uuid: string): Promise<void> {
+    return await familyStatusRepo.deleteByUUID(uuid);
+  },
+
   async verifyBySubjectId(
     subjectId: string
   ): Promise<SelectFamilyStatus | undefined> {

@@ -31,6 +31,7 @@ type RawPayload = {
     relationshipCode?: string;
     memberSequence?: string;
     startDateRelationship?: string;
+    endDateRelationship?: string;
   };
 };
 
@@ -64,5 +65,6 @@ export function flattenPayload(payload: RawPayload): InsertFamilyStatus {
     relationshipCode: payload.subjectLink?.relationshipCode || null,
     memberSequence: payload.subjectLink?.memberSequence || null,
     startDateRelationship: payload.subjectLink?.startDateRelationship || null,
+    endDateRelationship: payload.subjectLink?.endDateRelationship || null,
   };
 }

@@ -40,6 +40,7 @@ export const rawPayloadSchema = z.object({
       relationshipCode: z.string().optional(),
       memberSequence: z.string().optional(),
       startDateRelationship: z.string().optional(),
+      endDateRelationship: z.string().optional(),
     })
     .optional(),
 });
