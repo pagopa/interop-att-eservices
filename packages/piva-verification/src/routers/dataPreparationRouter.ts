@@ -1,7 +1,7 @@
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext, logger } from "pdnd-common";
-import { authenticationMiddleware } from "pdnd-common";
+// import { authenticationMiddleware } from "pdnd-common";
 import { ErrorHandling } from "pdnd-models";
 import { api } from "../model/generated/api.js";
 import DataPreparationService from "../services/dataPreparationService.js";
@@ -11,7 +11,7 @@ import {
   apiPartitaIvaModelToDataPreparationResponse,
   apiDatapreparationTemplateToPivaModel,
 } from "../model/domain/apiConverter.js";
-import { contextDataPivaMiddleware } from "../context/context.js";
+// import { contextDataPivaMiddleware } from "../context/context.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -20,8 +20,8 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.post(
     "/organization-id-verification/data-preparation",
-    contextDataPivaMiddleware,
-    authenticationMiddleware(false),
+    // contextDataPivaMiddleware,
+    // authenticationMiddleware(false),
     async (req, res) => {
       try {
         await DataPreparationService.saveList(
@@ -37,8 +37,8 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.get(
     "/organization-id-verification/data-preparation",
-    contextDataPivaMiddleware,
-    authenticationMiddleware(false),
+    // contextDataPivaMiddleware,
+    // authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {
@@ -58,8 +58,8 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.delete(
     "/organization-id-verification/data-preparation",
-    contextDataPivaMiddleware,
-    authenticationMiddleware(false),
+    // contextDataPivaMiddleware,
+    // authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {
@@ -81,8 +81,8 @@ const dataPreparationRouter = (
   /* eslint-disable */
   dataPreparationRouter.post(
     "/organization-id-verification/data-preparation/remove",
-    contextDataPivaMiddleware,
-    authenticationMiddleware(false),
+    // contextDataPivaMiddleware,
+    // authenticationMiddleware(false),
     async (req, res) => {
       /* eslint-enable */
       try {

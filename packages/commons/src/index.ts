@@ -21,4 +21,4 @@ export {
 } from "./services/residence-verification-direct/index.js";
 export { familyStatus } from "./services/family-status/index.js";
 export { RawPayload } from "./types/rawPayload.js";
-export { fiscalCodeService } from "./services/fiscal-code-verification/index.js";
+export { pivaVerification } from "./services/piva-verification/index.js";

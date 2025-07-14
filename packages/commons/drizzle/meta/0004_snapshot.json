@@ -1,0 +1,1315 @@
+{
+  "id": "918619d3-0069-4dac-a9bf-976c683a366c",
+  "prevId": "1f786ca1-1080-44dd-91e9-f9b912383109",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "att.data_preparation": {
+      "name": "data_preparation",
+      "schema": "att",
+      "columns": {
+        "id_subject": {
+          "name": "id_subject",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.digital_addresses": {
+      "name": "digital_addresses",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "subject_data_response_id": {
+          "name": "subject_data_response_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "profession": {
+          "name": "profession",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "usage_reason": {
+          "name": "usage_reason",
+          "type": "motivation_termination_enum",
+          "typeSchema": "att",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "usage_end_at": {
+          "name": "usage_end_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "da_sdr_response_id_idx": {
+          "name": "da_sdr_response_id_idx",
+          "columns": [
+            {
+              "expression": "subject_data_response_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "digital_addresses_subject_data_response_id_subject_data_responses_id_fk": {
+          "name": "digital_addresses_subject_data_response_id_subject_data_responses_id_fk",
+          "tableFrom": "digital_addresses",
+          "tableTo": "subject_data_responses",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "subject_data_response_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "email_check": {
+          "name": "email_check",
+          "value": "address ~ '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9.-]+)+$'"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "att.list_requests": {
+      "name": "list_requests",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "submitted_request_id": {
+          "name": "submitted_request_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "status_processing_request_enum",
+          "typeSchema": "att",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status_message": {
+          "name": "status_message",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "lr_submitted_req_id_idx_list_requests": {
+          "name": "lr_submitted_req_id_idx_list_requests",
+          "columns": [
+            {
+              "expression": "submitted_request_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "list_requests_submitted_request_id_unique": {
+          "name": "list_requests_submitted_request_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "submitted_request_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.request_subjects": {
+      "name": "request_subjects",
+      "schema": "att",
+      "columns": {
+        "list_request_id": {
+          "name": "list_request_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "request_subjects_list_request_id_list_requests_id_fk": {
+          "name": "request_subjects_list_request_id_list_requests_id_fk",
+          "tableFrom": "request_subjects",
+          "tableTo": "list_requests",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "list_request_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "request_subjects_list_request_id_subject_id_pk": {
+          "name": "request_subjects_list_request_id_subject_id_pk",
+          "columns": [
+            "list_request_id",
+            "subject_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.subject_data_responses": {
+      "name": "subject_data_responses",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "list_request_id": {
+          "name": "list_request_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "data_from": {
+          "name": "data_from",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "sdr_list_request_fk_idx_sdr": {
+          "name": "sdr_list_request_fk_idx_sdr",
+          "columns": [
+            {
+              "expression": "list_request_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "sdr_subject_id_idx_sdr": {
+          "name": "sdr_subject_id_idx_sdr",
+          "columns": [
+            {
+              "expression": "subject_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "subject_data_responses_list_request_id_list_requests_id_fk": {
+          "name": "subject_data_responses_list_request_id_list_requests_id_fk",
+          "tableFrom": "subject_data_responses",
+          "tableTo": "list_requests",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "list_request_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "unique_sdr_list_req_subject": {
+          "name": "unique_sdr_list_req_subject",
+          "nullsNotDistinct": false,
+          "columns": [
+            "list_request_id",
+            "subject_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "id_subject_check": {
+          "name": "id_subject_check",
+          "value": "subject_id ~ '^([0-9]{11})|([A-Za-z]{6}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{3}[A-Za-z]{1})$'"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "att.verification_logs": {
+      "name": "verification_logs",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "result": {
+          "name": "result",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "checked_at": {
+          "name": "checked_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.verification_requests": {
+      "name": "verification_requests",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "count": {
+          "name": "count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "json_request": {
+          "name": "json_request",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.purposes": {
+      "name": "purposes",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.birth_date": {
+      "name": "birth_date",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "event_date": {
+          "name": "event_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "no_day": {
+          "name": "no_day",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "no_month": {
+          "name": "no_month",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "place_of_birth_id": {
+          "name": "place_of_birth_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "birth_date_place_of_birth_id_places_id_fk": {
+          "name": "birth_date_place_of_birth_id_places_id_fk",
+          "tableFrom": "birth_date",
+          "tableTo": "places",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "place_of_birth_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.subject_binding": {
+      "name": "subject_binding",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "relationship_type": {
+          "name": "relationship_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "relationship_code": {
+          "name": "relationship_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "member_sequence": {
+          "name": "member_sequence",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "start_date_relationship": {
+          "name": "start_date_relationship",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.criteria": {
+      "name": "criteria",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "personal_id": {
+          "name": "personal_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "surname": {
+          "name": "surname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nosurname": {
+          "name": "nosurname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "noname": {
+          "name": "noname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gender": {
+          "name": "gender",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_date_id": {
+          "name": "birth_date_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "criteria_birth_date_id_birth_date_id_fk": {
+          "name": "criteria_birth_date_id_birth_date_id_fk",
+          "tableFrom": "criteria",
+          "tableTo": "birth_date",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "birth_date_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.data_birth": {
+      "name": "data_birth",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "exceptional_place": {
+          "name": "exceptional_place",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "municipality_id": {
+          "name": "municipality_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "place_id": {
+          "name": "place_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "data_birth_municipality_id_municipalities_id_fk": {
+          "name": "data_birth_municipality_id_municipalities_id_fk",
+          "tableFrom": "data_birth",
+          "tableTo": "municipalities",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "municipality_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "data_birth_place_id_places_id_fk": {
+          "name": "data_birth_place_id_places_id_fk",
+          "tableFrom": "data_birth",
+          "tableTo": "places",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "place_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.municipalities": {
+      "name": "municipalities",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name_municipality": {
+          "name": "name_municipality",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "istat_code": {
+          "name": "istat_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "acronym_istat_province": {
+          "name": "acronym_istat_province",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "place_description": {
+          "name": "place_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.places": {
+      "name": "places",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "place_description": {
+          "name": "place_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "country_description": {
+          "name": "country_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cod_state": {
+          "name": "cod_state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "province_county": {
+          "name": "province_county",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.request_data": {
+      "name": "request_data",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "request_type": {
+          "name": "request_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "requested_by": {
+          "name": "requested_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "additional_info": {
+          "name": "additional_info",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.requests_fs001": {
+      "name": "requests_fs001",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "operation_id": {
+          "name": "operation_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "criteria_id": {
+          "name": "criteria_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "request_data_id": {
+          "name": "request_data_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "requests_fs001_criteria_id_criteria_id_fk": {
+          "name": "requests_fs001_criteria_id_criteria_id_fk",
+          "tableFrom": "requests_fs001",
+          "tableTo": "criteria",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "criteria_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "requests_fs001_request_data_id_request_data_id_fk": {
+          "name": "requests_fs001_request_data_id_request_data_id_fk",
+          "tableFrom": "requests_fs001",
+          "tableTo": "request_data",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "request_data_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.addresses": {
+      "name": "addresses",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "address_type": {
+          "name": "address_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "note_address": {
+          "name": "note_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address_start_date": {
+          "name": "address_start_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "presso": {
+          "name": "presso",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address_municipality_name": {
+          "name": "address_municipality_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address_municipality_istat_code": {
+          "name": "address_municipality_istat_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address_municipality_acronym_istat_province": {
+          "name": "address_municipality_acronym_istat_province",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address_municipality_place_description": {
+          "name": "address_municipality_place_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "toponym_cod_type": {
+          "name": "toponym_cod_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "toponym_type": {
+          "name": "toponym_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "toponym_origin_type": {
+          "name": "toponym_origin_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "toponym_cod": {
+          "name": "toponym_cod",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "toponym_denomination": {
+          "name": "toponym_denomination",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "toponym_source": {
+          "name": "toponym_source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "civic_cod": {
+          "name": "civic_cod",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "civic_source": {
+          "name": "civic_source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "civic_number": {
+          "name": "civic_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "metric": {
+          "name": "metric",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "prog_snc": {
+          "name": "prog_snc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "letter": {
+          "name": "letter",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "exponent1": {
+          "name": "exponent1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "color": {
+          "name": "color",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "internal_court": {
+          "name": "internal_court",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "internal_stairs": {
+          "name": "internal_stairs",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "internal1": {
+          "name": "internal1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "esp_internal1": {
+          "name": "esp_internal1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "internal2": {
+          "name": "internal2",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "esp_internal2": {
+          "name": "esp_internal2",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "external_stairs": {
+          "name": "external_stairs",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "secondary": {
+          "name": "secondary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "floor": {
+          "name": "floor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nui": {
+          "name": "nui",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "isolated": {
+          "name": "isolated",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foreign_cap": {
+          "name": "foreign_cap",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foreign_place_description": {
+          "name": "foreign_place_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foreign_country_description": {
+          "name": "foreign_country_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foreign_country_state": {
+          "name": "foreign_country_state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foreign_province_county": {
+          "name": "foreign_province_county",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foreign_toponym_denomination": {
+          "name": "foreign_toponym_denomination",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foreign_toponym_civic_number": {
+          "name": "foreign_toponym_civic_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "consulate_cod": {
+          "name": "consulate_cod",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "consulate_description": {
+          "name": "consulate_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.subjects": {
+      "name": "subjects",
+      "schema": "att",
+      "columns": {
+        "uuid": {
+          "name": "uuid",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "surname": {
+          "name": "surname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gender": {
+          "name": "gender",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_event_date": {
+          "name": "birth_event_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_exceptional_place": {
+          "name": "birth_exceptional_place",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_municipality_name": {
+          "name": "birth_municipality_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_municipality_istat_code": {
+          "name": "birth_municipality_istat_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_municipality_acronym_istat_province": {
+          "name": "birth_municipality_acronym_istat_province",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_municipality_place_description": {
+          "name": "birth_municipality_place_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_place_description": {
+          "name": "birth_place_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_country_description": {
+          "name": "birth_country_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_cod_state": {
+          "name": "birth_cod_state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_province_county": {
+          "name": "birth_province_county",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address_id": {
+          "name": "address_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "subjects_address_id_addresses_id_fk": {
+          "name": "subjects_address_id_addresses_id_fk",
+          "tableFrom": "subjects",
+          "tableTo": "addresses",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "address_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {
+    "att": "att"
+  },
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

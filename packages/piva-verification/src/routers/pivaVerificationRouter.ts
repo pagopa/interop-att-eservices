@@ -2,15 +2,15 @@ import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
-import { authenticationCorrelationMiddleware } from "pdnd-common";
+// import { authenticationCorrelationMiddleware } from "pdnd-common";
 import { TrialService } from "trial";
 import PivaVerificationController from "../controllers/pivaVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
-import logHeadersMiddleware from "../middlewares/logHeaderMiddleware.js";
-import { contextDataPivaMiddleware } from "../context/context.js";
-import { verifyCertValidity } from "../security/certValidityMiddleware.js";
+// import logHeadersMiddleware from "../middlewares/logHeaderMiddleware.js";
+// import { contextDataPivaMiddleware } from "../context/context.js";
+// import { verifyCertValidity } from "../security/certValidityMiddleware.js";
 
 const pivaVerificationRouter = (
   ctx: ZodiosContext
@@ -19,10 +19,10 @@ const pivaVerificationRouter = (
 
   pivaVerificationRouter.post(
     "/organization-id-verification/check",
-    logHeadersMiddleware,
-    contextDataPivaMiddleware,
-    authenticationCorrelationMiddleware(true),
-    verifyCertValidity,
+    // logHeadersMiddleware,
+    // contextDataPivaMiddleware,
+    // authenticationCorrelationMiddleware(true),
+    // verifyCertValidity,
     async (req, res) => {
       try {
         logger.info("Request Headers:", req.headers);

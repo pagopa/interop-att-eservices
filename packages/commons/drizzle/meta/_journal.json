@@ -8,6 +8,20 @@
       "when": 1752248781354,
       "tag": "0000_strange_banshee",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1752140947998,
+      "tag": "0004_far_justice",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1752141785509,
+      "tag": "0005_perfect_wind_dancer",
+      "breakpoints": true
     }
   ]
 }

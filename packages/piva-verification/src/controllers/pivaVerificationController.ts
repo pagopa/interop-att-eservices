@@ -1,4 +1,5 @@
 import { logger, getContext } from "pdnd-common";
+// import PivaVerificationService from "pdnd-common";
 import PivaVerificationService from "../services/pivaVerificationService.js";
 import { Richiesta, VerificaPartitaIva } from "../model/domain/models.js";
 import { requestParamNotValid } from "../exceptions/errors.js";
@@ -9,6 +10,7 @@ class PivaVerificationController {
   public async findPiva(request: Richiesta): Promise<VerificaPartitaIva> {
     try {
       if (request.organizationId) {
+        // TODO: da sostituire con il common
         const data = await PivaVerificationService.getByPiva(
           request.organizationId
         );

@@ -5,9 +5,9 @@ dotenv.config();
 
 const envSchema = z.object({
   DATABASE_HOST: z.string().default("localhost"),
-  DATABASE_PORT: z.coerce.number().default(5432),
+  DATABASE_PORT: z.coerce.number().default(55000),
   DATABASE_USERNAME: z.string().min(1, "DATABASE_USERNAME is required"),
-  DATABASE_PASSWORD: z.string().optional().default(""),
+  DATABASE_PASSWORD: z.string().optional().default("password"),
   DATABASE_NAME: z.string().min(1, "DATABASE_NAME is required"),
   DATABASE_SSL: z.string().optional().default("false"),
 });

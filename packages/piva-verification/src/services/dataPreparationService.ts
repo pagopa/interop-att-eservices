@@ -27,7 +27,6 @@ class DataPreparationService {
 
       const pivaData: PartitaIvaModel[] = [pivaModel];
 
-      // recupera tutte le chiavi di data preparation
       const hash = generateHash([
         this.eService,
         this.appContext.authData.purposeId,
@@ -36,11 +35,9 @@ class DataPreparationService {
         hash
       );
 
-      // se è vuota, la salvo senza ulteriori controlli
       if (persistedPivaData == null || persistedPivaData.length === 0) {
         await dataPreparationRepository.saveList(pivaData, hash);
       } else {
-        // esistono già chiavi, devo aggiungere la nuova, o sostituirla nel caso esista
         const allPiva = appendUniquePivaModelsToArray(
           persistedPivaData,
           pivaData
