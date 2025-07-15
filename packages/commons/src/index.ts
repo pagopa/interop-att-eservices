@@ -22,3 +22,5 @@ export {
 export { familyStatus } from "./services/family-status/index.js";
 export { RawPayload } from "./types/rawPayload.js";
 export { pivaVerification } from "./services/piva-verification/index.js";
+export { mapDbRecordToResponseFS001 } from "./model/mappers/mapDbRecordToResponseFS001.js";
+export { fiscalCodeService } from "./services/fiscal-code-verification/index.js";

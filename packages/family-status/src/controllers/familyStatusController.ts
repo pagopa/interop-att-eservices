@@ -1,15 +1,10 @@
-import { logger, getContext } from "pdnd-common";
+import { logger, getContext, mapDbRecordToResponseFS001 } from "pdnd-common";
+import { familyStatus } from "pdnd-common";
 import {
   requestParamNotValid,
   userModelNotFound,
 } from "../exceptions/errors.js";
-import {
-  RequestFS001,
-  ResponseFS001,
-  UserModel,
-} from "../model/domain/models.js";
-import { UserModelToDataSubjectsInstitution } from "../model/domain/apiConverter.js";
-import familyStatusService from "../services/familyStatusService.js";
+import { RequestFS001, ResponseFS001 } from "../model/domain/models.js";
 
 class FamilyStatusController {
   public appContext = getContext();
@@ -20,51 +15,23 @@ class FamilyStatusController {
     try {
       logger.info(`[START] findUser: ${request}`);
       if (request.criteria.subjectId) {
-        const data = await familyStatusService.getBySubjectId(
+        const data = await familyStatus.verifyBySubjectId(
           request.criteria.subjectId
         );
 
-        const list: UserModel[] = data ? [data] : [];
-
-        const result: ResponseFS001 = {
-          idOp: request.operationId,
-          subjects: {
-            subject: list.map((element) =>
-              UserModelToDataSubjectsInstitution(element)
-            ),
-          },
-        };
-        return result;
+        return mapDbRecordToResponseFS001(data, request.operationId);
       } else if (checkPersonalInfo(request)) {
-        const data = await familyStatusService.getByPersonalInfo(
-          request.criteria
+        const data = await familyStatus.findByPersonalInfo(request.criteria);
+        const mappedData = mapDbRecordToResponseFS001(
+          data[0],
+          request.operationId
         );
-
-        const result: ResponseFS001 = {
-          idOp: request.operationId,
-          subjects: {
-            subject: data.map((element) =>
-              UserModelToDataSubjectsInstitution(element)
-            ),
-          },
-        };
         logger.info(`[END] findUser: ${request}`);
-        return result;
+        return mappedData;
       } else if (request.criteria.id) {
         if (request.criteria.id) {
-          const data = await familyStatusService.getById(request.criteria.id);
-
-          const list: UserModel[] = data ? [data] : [];
-
-          const result: ResponseFS001 = {
-            idOp: request.operationId,
-            subjects: {
-              subject: list.map((element) =>
-                UserModelToDataSubjectsInstitution(element)
-              ),
-            },
-          };
-          return result;
+          const data = await familyStatus.findById(request.criteria.id);
+          return mapDbRecordToResponseFS001(data, request.operationId);
         }
         return null;
       } else {
@@ -83,49 +50,26 @@ class FamilyStatusController {
       logger.info(`post request: ${request}`);
       let resultData;
       if (request.criteria.subjectId) {
-        const data = await familyStatusService.getBySubjectId(
+        const data = await familyStatus.verifyBySubjectId(
           request.criteria.subjectId
         );
-
-        const list: UserModel[] = data ? [data] : [];
-
-        resultData = {
-          idOp: request.operationId,
-          subjects: {
-            subject: list.map((element) =>
-              UserModelToDataSubjectsInstitution(element)
-            ),
-          },
-        };
+        return mapDbRecordToResponseFS001(data, request.operationId);
       } else if (checkPersonalInfoVerify(request)) {
-        const data = await familyStatusService.getByPersonalInfo(
-          request.criteria
-        );
 
-        resultData = {
-          idOp: request.operationId,
-          subjects: {
-            subject: data.map((element) =>
-              UserModelToDataSubjectsInstitution(element)
-            ),
-          },
-        };
+        const data = await familyStatus.findByPersonalInfo(request.criteria);
+        resultData = mapDbRecordToResponseFS001(
+          data[0],
+          request.operationId
+        );
+        
       } else if (request.criteria.id) {
         if (request.criteria.id) {
-          const data = await familyStatusService.getById(
-            `${request.criteria.id}`
+
+          const data = await familyStatus.findById(request.criteria.id);
+          resultData = mapDbRecordToResponseFS001(
+            data,
+            request.operationId
           );
-
-          const list: UserModel[] = data ? [data] : [];
-
-          resultData = {
-            idOp: request.operationId,
-            subjects: {
-              subject: list.map((element) =>
-                UserModelToDataSubjectsInstitution(element)
-              ),
-            },
-          };
         }
       } else {
         throw requestParamNotValid(

@@ -1,13 +1,11 @@
 import { eq } from "drizzle-orm";
 import { client } from "../../db/postgres/client.js"; // la tua istanza Drizzle configurata
 import { familyStatus } from "../../db/schema/family-status/family-status.js";
-import {
-  InsertFamilyStatus,
-  SelectFamilyStatus,
-} from "../../zod/family-status/family-status.js";
+import { InsertFamilyStatus } from "../../zod/family-status/family-status.js";
 import { DbRecord } from "../../types/dbRecord.js";
-import { mapDbRecordToFamilyStatusDto } from "../../zod/family-status/mapDbRecordToSelectFamilyStatus.js";
+import { mapDbRecordToFamilyStatusDto } from "../../model/mappers/mapDbRecordToSelectFamilyStatus.js";
 import { FamilyStatusDto } from "../../types/familyStatusDTO.js";
+import { CriteriaTypeFS001 } from "../../types/criteriaTypeFS001.js";
 
 export const familyStatusRepo = {
   async upsert(data: InsertFamilyStatus): Promise<object> {
@@ -51,9 +49,7 @@ export const familyStatusRepo = {
     await client.delete(familyStatus).where(eq(familyStatus.uuid, uuid));
   },
 
-  async findBySubjectId(
-    subjectId: string
-  ): Promise<SelectFamilyStatus | undefined> {
+  async findBySubjectId(subjectId: string): Promise<DbRecord> {
     const result = await client
       .select()
       .from(familyStatus)
@@ -61,5 +57,53 @@ export const familyStatusRepo = {
       .limit(1);
 
     return result[0];
+  },
+
+  async findById(id: string): Promise<DbRecord> {
+    const result = await client
+      .select()
+      .from(familyStatus)
+      .where(eq(familyStatus.id, id))
+      .limit(1);
+
+    return result[0];
+  },
+
+  async findByPersonalInfo(criteria: CriteriaTypeFS001): Promise<DbRecord[]> {
+    const query = client.select().from(familyStatus);
+
+    if (criteria.name) {
+      await query.where(eq(familyStatus.name, criteria.name));
+    }
+
+    if (criteria.surname) {
+      await query.where(eq(familyStatus.surname, criteria.surname));
+    }
+
+    if (criteria.birthDate?.eventDate) {
+      await query.where(
+        eq(familyStatus.birthDate, criteria.birthDate.eventDate)
+      );
+    }
+
+    if (criteria.birthDate?.placeOfBirth?.place?.codState) {
+      await query.where(
+        eq(
+          familyStatus.place_codState,
+          criteria.birthDate.placeOfBirth.place.codState
+        )
+      );
+    }
+
+    if (criteria.birthDate?.placeOfBirth?.municipality?.nameMunicipality) {
+      await query.where(
+        eq(
+          familyStatus.municipality_nameMunicipality,
+          criteria.birthDate.placeOfBirth.municipality.nameMunicipality
+        )
+      );
+    }
+
+    return query;
   },
 };
