@@ -1,59 +1,40 @@
 import { logger } from "pdnd-common";
-import { ErrorHandling, PartitaIvaModel } from "pdnd-models";
-import { getContext } from "pdnd-common";
-import dataPreparationRepository from "../repository/dataPreparationRepository.js";
-import generateHash from "../utilities/hashUtilities.js";
-import {
-  appendUniquePivaModelsToArray,
-  arePartitaIvasValid,
-  deletePivaModelByPiva,
-} from "../utilities/pivaUtilities.js";
-import { pivaNotValid } from "../exceptions/errors.js";
+import { PartitaIvaModel } from "pdnd-models";
+import { PivaRepository } from "../../repositories/piva-verification/piva.js";
 
 class DataPreparationService {
-  public appContext = getContext();
   public eService: string = "piva-verification";
-  public async saveList(
+  private pivaRepository: PivaRepository;
+
+  constructor() {
+    this.pivaRepository = new PivaRepository();
+  }
+  
+  public async saveIfNotExists(
     pivaModel: PartitaIvaModel,
-  ): Promise<PartitaIvaModel[] | null> {
+  ): Promise<PartitaIvaModel | null> {
     try {
-      logger.info(`[START] datapreparation-saveList`);
-      if (
-        pivaModel.organizationId == null ||
-        pivaModel.organizationId.length <= 5
-      ) {
-        throw pivaNotValid();
-      }
+      logger.info(`[PivaService][START] saveIfNotExists`);
 
-      const pivaData: PartitaIvaModel[] = [pivaModel];
-
-      const hash = generateHash([
-        this.eService,
-        this.appContext.authData.purposeId,
-      ]);
-      const persistedPivaData = await dataPreparationRepository.findAllByKey(
-        hash,
+      const exists = await this.pivaRepository.getPivaObjectByKey(
+        pivaModel.organizationId,
       );
 
-      if (persistedPivaData == null || persistedPivaData.length === 0) {
-        await dataPreparationRepository.saveList(pivaData, hash);
-      } else {
-        const allPiva = appendUniquePivaModelsToArray(
-          persistedPivaData,
-          pivaData
+      if (!exists) {
+        await this.pivaRepository.setPivaObject(pivaModel.organizationId);
+        logger.info(
+          `[PivaService] organizationId salvato: ${pivaModel.organizationId}`,
         );
-        if (arePartitaIvasValid(allPiva)) {
-          await dataPreparationRepository.saveList(allPiva, hash);
-        } else {
-          throw ErrorHandling.invalidApiRequest();
-        }
+        return pivaModel;
+      } else {
+        logger.info(
+          `[PivaService] organizationId già esistente: ${pivaModel.organizationId}`,
+        );
+        return null;
       }
-      const response = await dataPreparationRepository.findAllByKey(hash);
-      logger.info(`[END] datapreparation-saveList`);
-      return response;
     } catch (error) {
       logger.error(
-        `saveList [DATA-PREPARATION]- Errore durante il salvataggio della lista.`,
+        `[PivaService] Errore durante il salvataggio dell'organizationId.`,
         error,
       );
       throw error;
@@ -63,11 +44,8 @@ class DataPreparationService {
   public async getAll(): Promise<PartitaIvaModel[] | null> {
     try {
       logger.info(`[START] datapreparation-getAll`);
-      const hash = generateHash([
-        this.eService,
-        this.appContext.authData.purposeId,
-      ]);
-      const response = await dataPreparationRepository.findAllByKey(hash);
+
+      const response = await this.pivaRepository.getAllPivaObject();
       logger.info(`[END] datapreparation-getAll`);
       return response;
     } catch (error) {
@@ -79,14 +57,10 @@ class DataPreparationService {
     }
   }
 
-  public async deleteAllByKey(): Promise<number | null> {
+  public async deleteAllByKey(): Promise<void> {
     try {
       logger.info(`[START] datapreparation-deleteAllByKey`);
-      const hash = generateHash([
-        this.eService,
-        this.appContext.authData.purposeId,
-      ]);
-      const response = await dataPreparationRepository.deleteAllByKey(hash);
+      const response = await this.pivaRepository.deleteAllPivaObject();
       logger.info(`[END] datapreparation-deleteAllByKey`);
       return response;
     } catch (error) {
@@ -97,24 +71,17 @@ class DataPreparationService {
       throw error;
     }
   }
-  public async deleteByPiva(uuid: string): Promise<PartitaIvaModel[] | null> {
+
+  public async deleteByPiva(
+    pivaModel: PartitaIvaModel,
+  ): Promise<PartitaIvaModel | null> {
     try {
       logger.info(`[START] deleteByPiva`);
-      const hash = generateHash([
-        this.eService,
-        this.appContext.authData.purposeId,
-      ]);
-      const allSaved = await dataPreparationRepository.findAllByKey(hash);
-      if (allSaved == null) {
-        return null;
-      }
-      const datapreparation = deletePivaModelByPiva(allSaved, uuid);
-      await this.deleteAllByKey();
-      if (datapreparation) {
-        await dataPreparationRepository.saveList(datapreparation, hash);
-      }
+      await this.pivaRepository.deletePivaObjectByKey(
+        pivaModel.organizationId,
+      );
       logger.info(`[END] deleteByPiva`);
-      return datapreparation;
+      return pivaModel;
     } catch (error) {
       logger.error(
         `deleteByPiva - Errore durante l'aggiornamento della lista.`,

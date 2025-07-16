@@ -1,5 +1,3 @@
-import { PivaVerificationService } from "./pivaService.js";
-
-const pivaVerification = new PivaVerificationService();
+import pivaVerification from "./pivaService.js";
 
 export { pivaVerification };

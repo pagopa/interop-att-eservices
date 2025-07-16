@@ -17,3 +17,7 @@ export interface VerificaPartitaIva {
   valida: boolean;
   messaggio: string;
 }
+
+export interface Richiesta {
+  organizationId: string;
+}
