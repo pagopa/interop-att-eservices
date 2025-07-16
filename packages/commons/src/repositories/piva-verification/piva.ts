@@ -4,7 +4,7 @@ import { Richiesta } from "../../db/model/pivaModel.js";
 import { client } from "../../db/postgres/client.js";
 
 export class PivaRepository {
-  async setPivaObject(organizationId: string): Promise<string> {
+  public async setPivaObject(organizationId: string): Promise<string> {
     await client
       .insert(pivaTable)
       .values({ organizationId })
@@ -15,7 +15,9 @@ export class PivaRepository {
     return organizationId;
   }
 
-  async getPivaObjectByKey(organizationId: string): Promise<string | null> {
+  public async getPivaObjectByKey(
+    organizationId: string
+  ): Promise<string | null> {
     const result = await client
       .select()
       .from(pivaTable)
@@ -28,18 +30,17 @@ export class PivaRepository {
     return null;
   }
 
-  async getAllPivaObject(): Promise<Richiesta[] | null> {
-    const result = await client.select().from(pivaTable);
-    return result;
+  public async getAllPivaObject(): Promise<Richiesta[] | null> {
+    return await client.select().from(pivaTable);
   }
 
-  async deletePivaObjectByKey(organizationId: string): Promise<void> {
+  public async deletePivaObjectByKey(organizationId: string): Promise<void> {
     await client
       .delete(pivaTable)
       .where(eq(pivaTable.organizationId, organizationId));
   }
 
-  async deleteAllPivaObject(): Promise<void> {
-    await client
-      .delete(pivaTable)  }
+  public async deleteAllPivaObject(): Promise<void> {
+    await client.delete(pivaTable);
+  }
 }
