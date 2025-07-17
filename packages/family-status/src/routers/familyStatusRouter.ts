@@ -4,6 +4,8 @@ import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, ZodiosContext } from "pdnd-common";
 import { authenticationCorrelationMiddleware } from "pdnd-common";
 import { TrialService } from "trial";
+import { auditValidationMiddleware } from "pdnd-common";
+import { integrityValidationMiddleware } from "pdnd-common";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import {
@@ -11,8 +13,6 @@ import {
   mapGeneralErrorModel,
   userModelNotFound,
 } from "../exceptions/errors.js";
-import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
-import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
 import { contextDataFamilyMiddleware } from "../context/context.js";
 import familyStatusController from "../controllers/familyStatusController.js";
 import { keychainSignatureUtility } from "../utilities/keychainSignatureUtility.js";

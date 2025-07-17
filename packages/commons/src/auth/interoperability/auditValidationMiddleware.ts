@@ -1,14 +1,12 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { ZodiosRouterContextRequestHandler } from "@zodios/express";
 import { ErrorHandling } from "pdnd-models";
-// import { JWTConfig } from "../index.js";
 import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
 import { makeApiProblemBuilder } from "pdnd-models";
 import { match } from "ts-pattern";
-import { logger, InteroperabilityConfig } from "pdnd-common";
-import { ExpressContext } from "pdnd-common";
 import { TrialService } from "trial";
-import { validate as tokenValidation } from "./interoperabilityValidationMiddleware.js";
+import { ExpressContext } from "../../index.js";
+import { InteroperabilityConfig } from "../../config/commonConfig.js";
+import { logger } from "../../logging/index.js";
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 
 export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<ExpressContext> =
@@ -51,25 +49,12 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
           );
           throw ErrorHandling.missingHeader("agid-jwt-trackingevidence");
         }
-        if (
-          !(await tokenValidation(
-            trackingEvidenceToken,
-            "trackingEvidenceToken"
-          ))
-        ) {
-          logger.error(`auditValidationMiddleware - token not valid`);
-          void TrialService.insert(
-            req.url,
-            req.method,
-            "TRACKING_EVIDENCE_PUBLIC_KEY_NOT_VALID"
-          );
-          throw ErrorHandling.tokenNotValid();
-        }
+
         /* eslint-disable */
-        if (process.env.SKIP_AGID_PAYLOAD_VERIFICATION != "true") {
-          verifyJwtPayload(trackingEvidenceToken, req.url, req.method);
-        }
-        /* eslint-enable */
+                if (process.env.SKIP_AGID_PAYLOAD_VERIFICATION != "true") {
+                    verifyJwtPayload(trackingEvidenceToken, req.url, req.method);
+                }
+                /* eslint-enable */
         void TrialService.insert(
           req.url,
           req.method,
@@ -172,7 +157,7 @@ const verifyJwtPayload = (
   }
 
   if (!decodedToken.payload.userID) {
-    logger.error(`verifyJwtPayload - Request header 'purposeId' not present`);
+    logger.error(`verifyJwtPayload - Request header 'userID' not present`);
     void TrialService.insert(
       url,
       method,
@@ -182,7 +167,9 @@ const verifyJwtPayload = (
   }
 
   if (!decodedToken.payload.userLocation) {
-    logger.error(`verifyJwtPayload - Request header 'purposeId' not present`);
+    logger.error(
+      `verifyJwtPayload - Request header 'userLocation' not present`
+    );
     void TrialService.insert(
       url,
       method,
@@ -192,7 +179,7 @@ const verifyJwtPayload = (
   }
 
   if (!decodedToken.payload.LoA) {
-    logger.error(`verifyJwtPayload - Request header 'purposeId' not present`);
+    logger.error(`verifyJwtPayload - Request header 'LoA' not present`);
     void TrialService.insert(
       url,
       method,
