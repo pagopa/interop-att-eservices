@@ -10,7 +10,7 @@ class PivaVerificationService {
     this.pivaRepository = new PivaRepository();
   }
 
-  public async saveIfNotExists(
+  public async saveList(
     pivaModel: PartitaIvaModel
   ): Promise<PartitaIvaModel | null> {
     try {
@@ -77,12 +77,12 @@ class PivaVerificationService {
     }
   }
 
-  public async deleteAllByKey(): Promise<void> {
+  public async deleteAllByKey(): Promise<string | null> {
     try {
       logger.info(`[START] datapreparation-deleteAllByKey`);
-      const response = await this.pivaRepository.deleteAllPivaObject();
+      await this.pivaRepository.deleteAllPivaObject();
       logger.info(`[END] datapreparation-deleteAllByKey`);
-      return response;
+      return "Success";
     } catch (error) {
       logger.error(
         `datapreparationService [DATA-PREPARATION]: Errore durante la cancellazione della lista. `,
