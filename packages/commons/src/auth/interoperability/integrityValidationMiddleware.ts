@@ -1,9 +1,7 @@
 import { ZodiosRouterContextRequestHandler } from "@zodios/express";
-import { ErrorHandling } from "pdnd-models";
 import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
-import { makeApiProblemBuilder } from "pdnd-models";
+import { makeApiProblemBuilder, ErrorHandling } from "pdnd-models";
 import { match } from "ts-pattern";
-import { TrialService } from "trial";
 import { ExpressContext } from "../../index.js";
 import { InteroperabilityConfig } from "../../config/commonConfig.js";
 import { logger } from "../../logging/index.js";
@@ -11,6 +9,7 @@ import {
   generateHashFromString,
   encodeBase64,
 } from "../../utility/hashUtility.js";
+import { TrialService } from "../../services/trial-api/trialService.js";
 
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 

@@ -1,1 +1,0 @@
-ALTER TABLE "att"."subject_binding" ALTER COLUMN "subject_id" SET NOT NULL;

@@ -187,6 +187,38 @@ CREATE TABLE IF NOT EXISTS "att"."handshakes" (
 	CONSTRAINT "handshakes_purpose_id_unique" UNIQUE("purpose_id")
 );
 
+CREATE TABLE IF NOT EXISTS "att"."piva" (
+	"organization_id" text PRIMARY KEY NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "att"."category" (
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"code" varchar(255) NOT NULL,
+	"eservice" varchar(255) NOT NULL,
+	"description" varchar(255),
+	"order" integer NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "att"."check" (
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"code" varchar(255) NOT NULL,
+	"description" varchar(255),
+	"order" integer NOT NULL,
+	"category_id" bigserial NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "att"."trial" (
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"purpose_id" varchar(255) NOT NULL,
+	"correlation_id" varchar(255) NOT NULL,
+	"operation_path" varchar(255) NOT NULL,
+	"operation_method" varchar(255),
+	"check_id" bigint,
+	"response" varchar(255),
+	"created_date" timestamp,
+	"message" varchar(255)
+);
+
 DO $$
 BEGIN
   IF EXISTS (
@@ -236,6 +268,32 @@ BEGIN
     WHERE constraint_name = 'subjects_address_id_addresses_id_fk' AND table_schema = 'att'
   ) THEN
     ALTER TABLE "att"."subjects" ADD CONSTRAINT "subjects_address_id_addresses_id_fk" FOREIGN KEY ("address_id") REFERENCES "att"."addresses"("id") ON DELETE no action ON UPDATE no action;
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT FROM information_schema.tables
+    WHERE table_name = 'check' AND table_schema = 'att'
+  ) AND NOT EXISTS (
+    SELECT FROM information_schema.table_constraints
+    WHERE constraint_name = 'check_category_id_category_id_fk' AND table_schema = 'att'
+  ) THEN
+    ALTER TABLE "att"."check" ADD CONSTRAINT "check_category_id_category_id_fk" FOREIGN KEY ("category_id") REFERENCES "att"."category"("id") ON DELETE no action ON UPDATE no action;
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT FROM information_schema.tables
+    WHERE table_name = 'trial' AND table_schema = 'att'
+  ) AND NOT EXISTS (
+    SELECT FROM information_schema.table_constraints
+    WHERE constraint_name = 'trial_check_id_check_id_fk' AND table_schema = 'att'
+  ) THEN
+    ALTER TABLE "att"."trial" ADD CONSTRAINT "trial_check_id_check_id_fk" FOREIGN KEY ("check_id") REFERENCES "att"."check"("id") ON DELETE no action ON UPDATE no action;
   END IF;
 END $$;
 

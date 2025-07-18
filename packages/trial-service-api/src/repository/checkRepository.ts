@@ -1,10 +1,9 @@
-import { db } from "trial";
-import { Check, Category } from "trial";
 import { eq } from "drizzle-orm";
+import { Category, Check, client } from "pdnd-common";
 
 export class CheckRepository {
   public static async findAllChecksWithCategories(): Promise<unknown[]> {
-    return await db
+    return await client
       .select({
         id: Check.id,
         code: Check.code,
