@@ -5,9 +5,12 @@ import { ErrorHandling } from "pdnd-models";
 import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
 import { makeApiProblemBuilder } from "pdnd-models";
 import { match } from "ts-pattern";
-import { logger, InteroperabilityConfig } from "pdnd-common";
-import { ExpressContext } from "pdnd-common";
-import { TrialService } from "trial";
+import {
+  logger,
+  InteroperabilityConfig,
+  TrialService,
+  ExpressContext,
+} from "pdnd-common";
 import { validate as tokenValidation } from "./interoperabilityValidationMiddleware.js";
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 

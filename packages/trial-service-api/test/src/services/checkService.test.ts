@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { Check } from "trial";
+import { Check } from "pdnd-common";
 
 vi.mock("trial", () => {
   return {

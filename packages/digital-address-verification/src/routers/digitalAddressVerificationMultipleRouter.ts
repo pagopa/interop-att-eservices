@@ -3,10 +3,10 @@ import {
   ExpressContext,
   ZodiosContext,
   authenticationCorrelationMiddleware,
+  TrialService,
 } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
-import { TrialService } from "trial";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
@@ -20,7 +20,6 @@ const DigitalAddressVerificationMultipleRouter = (
 
   digitalAddressVerificationMultipleRouter.post(
     "/digital-address-verification/list",
-    // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
     authenticationCorrelationMiddleware(true),
     async (req, res) => {
@@ -65,7 +64,6 @@ const DigitalAddressVerificationMultipleRouter = (
 
   digitalAddressVerificationMultipleRouter.get(
     "/digital-address-verification/list/state/:id",
-    // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
     authenticationCorrelationMiddleware(true),
     async (req, res) => {
@@ -121,7 +119,6 @@ const DigitalAddressVerificationMultipleRouter = (
 
   digitalAddressVerificationMultipleRouter.get(
     "/digital-address-verification/list/response/:id",
-    // logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
     authenticationCorrelationMiddleware(true),
     async (req, res) => {

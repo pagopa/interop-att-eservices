@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { ZodiosRouterContextRequestHandler } from "@zodios/express";
 import { ErrorHandling } from "pdnd-models";
-// import { JWTConfig } from "../index.js";
 import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
 import { makeApiProblemBuilder } from "pdnd-models";
 import { match } from "ts-pattern";
-import { logger, InteroperabilityConfig } from "pdnd-common";
-import { ExpressContext } from "pdnd-common";
-import { TrialService } from "trial";
+import {
+  logger,
+  InteroperabilityConfig,
+  ExpressContext,
+  TrialService,
+} from "pdnd-common";
 import { validate as tokenValidation } from "./interoperabilityValidationMiddleware.js";
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 

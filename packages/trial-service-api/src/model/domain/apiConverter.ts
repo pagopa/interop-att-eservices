@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { Check, Category } from "trial"; // raw Drizzle table models
+import { Check, Category } from "pdnd-common";
 import type { InferSelectModel } from "drizzle-orm";
 
 type CategoryModel = InferSelectModel<typeof Category>;
@@ -36,6 +36,5 @@ export const categoryToCategoryResponse = (
   order: category.order,
 });
 
-// If paginatedTrialResponse is meant to mirror categoryToCategoryResponse
 export const paginatedTrialResponse = categoryToCategoryResponse;
 /* eslint-enable */

@@ -3,9 +3,9 @@ import {
   buildPublicKeyService,
   buildSignerService,
   logger,
+  testDbConnection,
 } from "pdnd-common";
 import axios, { AxiosResponse } from "axios";
-import { testDbConnection } from "trial";
 import healtRepository from "../repository/healthRepository.js";
 
 class healtService {

@@ -1,5 +1,4 @@
-import { logger } from "pdnd-common";
-import { testDbConnection } from "trial";
+import { logger, testDbConnection } from "pdnd-common";
 import app from "./app.js";
 
 const port = process.env.PORT || 3006;

@@ -1,10 +1,13 @@
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ErrorHandling } from "pdnd-models";
-import { ExpressContext, ZodiosContext, familyStatus } from "pdnd-common";
-import { authenticationMiddleware } from "pdnd-common";
-import { RawPayload } from "pdnd-common";
-import DataPreparationService from "../services/dataPreparationService.js";
+import {
+  authenticationMiddleware,
+  ExpressContext,
+  ZodiosContext,
+  FamilyStatusService,
+  RawPayload,
+} from "pdnd-common";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, userModelNotFound } from "../exceptions/errors.js";
@@ -21,7 +24,9 @@ const dataPreparationRouter = (
     authenticationMiddleware(false),
     async (req, res) => {
       try {
-        const data = await familyStatus.prepareData(req.body as RawPayload);
+        const data = await FamilyStatusService.prepareData(
+          req.body as RawPayload
+        );
         if (!data) {
           throw userModelNotFound(
             `Data with subjectId '${req.body.subject?.subjectId}' not found`
@@ -44,7 +49,7 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        const data = await familyStatus.getAll();
+        const data = await FamilyStatusService.getAll();
 
         return res.status(200).json(data).end();
       } catch (error) {
@@ -63,7 +68,7 @@ const dataPreparationRouter = (
         if (!req) {
           return res.status(500);
         }
-        const data = await familyStatus.getByUUID(req.params.uuid);
+        const data = await FamilyStatusService.getByUUID(req.params.uuid);
         const result: RawPayload | null = data ? (data as RawPayload) : null;
         return result
           ? res.status(200).json(result).end()
@@ -84,7 +89,7 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        const data = await DataPreparationService.deleteAllByKey();
+        const data = await FamilyStatusService.deleteAll();
         if (data !== 0) {
           throw ErrorHandling.genericError(
             `Not all data could be deleted. Remaining: ${data}`
@@ -107,7 +112,7 @@ const dataPreparationRouter = (
         if (!req) {
           return res.status(500);
         }
-        await familyStatus.deleteByUUID(req.params.uuid);
+        await FamilyStatusService.deleteByUUID(req.params.uuid);
         return res.status(200).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);

@@ -5,8 +5,8 @@ import {
   logger,
   ExpressContext,
   ZodiosContext,
+  TrialService,
 } from "pdnd-common";
-import { TrialService } from "trial";
 import ResidenceVerificationController from "../controllers/residenceVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";

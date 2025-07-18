@@ -3,10 +3,10 @@ import {
   authenticationCorrelationMiddleware,
   ExpressContext,
   ZodiosContext,
+  TrialService,
 } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
-import { TrialService } from "trial";
 import FiscalcodeVerificationController from "../controllers/fiscalcodeVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";

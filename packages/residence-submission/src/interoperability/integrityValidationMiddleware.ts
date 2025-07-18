@@ -4,9 +4,12 @@ import { ErrorHandling } from "pdnd-models";
 import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
 import { makeApiProblemBuilder } from "pdnd-models";
 import { match } from "ts-pattern";
-import { logger } from "pdnd-common";
-import { ExpressContext, InteroperabilityConfig } from "pdnd-common";
-import { TrialService } from "trial";
+import {
+  logger,
+  ExpressContext,
+  InteroperabilityConfig,
+  TrialService,
+} from "pdnd-common";
 import { generateHashFromString } from "../utilities/hashUtilities.js";
 import { validate as tokenValidation } from "./interoperabilityValidationMiddleware.js";
 

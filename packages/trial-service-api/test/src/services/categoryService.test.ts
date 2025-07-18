@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { Category } from "trial";
+import { Category } from "pdnd-common";
 
 vi.mock("../../../src/utilities/jsonTrialUtilities", () => ({
   parseJsonToCategoryArray: vi.fn(),

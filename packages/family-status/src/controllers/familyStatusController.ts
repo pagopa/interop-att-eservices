@@ -1,5 +1,5 @@
 import { logger, getContext, mapDbRecordToResponseFS001 } from "pdnd-common";
-import { familyStatus } from "pdnd-common";
+import { FamilyStatusService } from "pdnd-common";
 import {
   requestParamNotValid,
   userModelNotFound,
@@ -15,13 +15,15 @@ class FamilyStatusController {
     try {
       logger.info(`[START] findUser: ${request}`);
       if (request.criteria.subjectId) {
-        const data = await familyStatus.verifyBySubjectId(
+        const data = await FamilyStatusService.verifyBySubjectId(
           request.criteria.subjectId
         );
 
         return mapDbRecordToResponseFS001(data, request.operationId);
       } else if (checkPersonalInfo(request)) {
-        const data = await familyStatus.findByPersonalInfo(request.criteria);
+        const data = await FamilyStatusService.findByPersonalInfo(
+          request.criteria
+        );
         const mappedData = mapDbRecordToResponseFS001(
           data[0],
           request.operationId
@@ -30,7 +32,7 @@ class FamilyStatusController {
         return mappedData;
       } else if (request.criteria.id) {
         if (request.criteria.id) {
-          const data = await familyStatus.findById(request.criteria.id);
+          const data = await FamilyStatusService.findById(request.criteria.id);
           return mapDbRecordToResponseFS001(data, request.operationId);
         }
         return null;
@@ -50,13 +52,13 @@ class FamilyStatusController {
       logger.info(`post request: ${request}`);
       let resultData;
       if (request.criteria.subjectId) {
-        const data = await familyStatus.verifyBySubjectId(
+        const data = await FamilyStatusService.verifyBySubjectId(
           request.criteria.subjectId
         );
         return mapDbRecordToResponseFS001(data, request.operationId);
       } else if (checkPersonalInfoVerify(request)) {
 
-        const data = await familyStatus.findByPersonalInfo(request.criteria);
+        const data = await FamilyStatusService.findByPersonalInfo(request.criteria);
         resultData = mapDbRecordToResponseFS001(
           data[0],
           request.operationId
@@ -65,7 +67,7 @@ class FamilyStatusController {
       } else if (request.criteria.id) {
         if (request.criteria.id) {
 
-          const data = await familyStatus.findById(request.criteria.id);
+          const data = await FamilyStatusService.findById(request.criteria.id);
           resultData = mapDbRecordToResponseFS001(
             data,
             request.operationId

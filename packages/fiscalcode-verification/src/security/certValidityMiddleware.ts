@@ -1,7 +1,6 @@
-import { ExpressContext, getContext, logger } from "pdnd-common";
+import { ExpressContext, getContext, logger, TrialService } from "pdnd-common";
 import { ZodiosRouterContextRequestHandler } from "@zodios/express";
 import { match } from "ts-pattern";
-import { TrialService } from "trial";
 import DataPreparationHandshakeService from "../services/dataPreparationHandshakeService.js";
 import { getSerialNumberFromUrlEncodedCert } from "../utilities/certificateUtility.js";
 import {

@@ -1,13 +1,11 @@
-import { logger } from "pdnd-common";
-import { db } from "trial"; // Drizzle db instance
-import { Category } from "trial"; // Drizzle model
+import { logger, client, Category } from "pdnd-common";
 import { CategoryResponse } from "../model/domain/models.js";
 import { categoryToCategoryResponse } from "../model/domain/apiConverter.js";
 
 class CategoryService {
   public async getAll(): Promise<CategoryResponse[]> {
     try {
-      const allCategories = await db.select().from(Category);
+      const allCategories = await client.select().from(Category);
 
       logger.info(
         "CategoryService - getAll - All categories retrieved successfully"

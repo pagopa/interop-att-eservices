@@ -1,1 +1,1 @@
-export { FamilyStatusService as familyStatus } from "./familyStatusService.js";
+export { FamilyStatusService } from "./familyStatusService.js";

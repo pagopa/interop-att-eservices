@@ -1,11 +1,11 @@
-import { getContext } from "pdnd-common";
 import {
+  getContext,
   signerConfig,
   buildPublicKeyService,
   buildSignerService,
   logger,
+  testDbConnection,
 } from "pdnd-common";
-import { testDbConnection } from "trial";
 import healtRepository from "../repository/healtRepository.js";
 
 class healtService {
@@ -30,10 +30,8 @@ class healtService {
     }
 
     try {
-      // Prova a connetterti al database
       await testDbConnection();
     } catch (error) {
-      // Se c'è un errore nella connessione, invia una risposta negativa
       logger.error(`Errore nella connessione al database: ${error}`);
       return false;
     }

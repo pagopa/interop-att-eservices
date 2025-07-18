@@ -4,8 +4,8 @@ import {
   buildSignerService,
   logger,
   getContext,
+  testDbConnection,
 } from "pdnd-common";
-import { testDbConnection } from "trial";
 
 class HealtService {
   public appContext = getContext();
