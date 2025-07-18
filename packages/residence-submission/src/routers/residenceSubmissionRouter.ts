@@ -7,6 +7,8 @@ import {
   ZodiosContext,
   authenticationCorrelationMiddleware,
   TrialService,
+  integrityValidationMiddleware,
+  auditValidationMiddleware,
 } from "pdnd-common";
 import ResidenceSubmissionController from "../controllers/residenceSubmissionController.js";
 import { api } from "../model/generated/api.js";
@@ -16,8 +18,6 @@ import {
   mapGeneralErrorModel,
   userModelNotFound,
 } from "../exceptions/errors.js";
-import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
-import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
 import { contextDataResidenceMiddleware } from "../context/context.js";
 
 const residenceSubissionController = (
