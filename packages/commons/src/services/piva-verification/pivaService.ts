@@ -1,8 +1,8 @@
-import { logger } from "pdnd-common";
 import { PartitaIvaModel } from "pdnd-models";
+import { logger } from "../../index.js";
 import { PivaRepository } from "../../repositories/piva-verification/piva.js";
 
-class DataPreparationService {
+class PivaVerificationService {
   public eService: string = "piva-verification";
   private pivaRepository: PivaRepository;
 
@@ -35,6 +35,26 @@ class DataPreparationService {
     } catch (error) {
       logger.error(
         `[PivaService] Errore durante il salvataggio dell'organizationId.`,
+        error
+      );
+      throw error;
+    }
+  }
+
+  public async getByPiva(
+    organizationId: string
+  ): Promise<PartitaIvaModel | null> {
+    try {
+      logger.info(`[START] datapreparation-getByPiva`);
+
+      const response = await this.pivaRepository.getPivaObjectByKey(
+        organizationId
+      );
+      logger.info(`[END] datapreparation-getByPiva`);
+      return response;
+    } catch (error) {
+      logger.error(
+        `getByPiva [DATA-PREPARATION]: Errore durante il recupero della partita IVA.`,
         error
       );
       throw error;
@@ -90,4 +110,4 @@ class DataPreparationService {
   }
 }
 
-export default new DataPreparationService();
+export default new PivaVerificationService();

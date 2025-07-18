@@ -21,7 +21,7 @@ export {
 } from "./services/residence-verification-direct/index.js";
 export { familyStatus } from "./services/family-status/index.js";
 export { RawPayload } from "./types/rawPayload.js";
-export { pivaVerification } from "./services/piva-verification/index.js";
+export { PivaVerificationService } from "./services/piva-verification/index.js";
 export { mapDbRecordToResponseFS001 } from "./model/mappers/mapDbRecordToResponseFS001.js";
 export { fiscalCodeService } from "./services/fiscal-code-verification/index.js";
 export { auditValidationMiddleware } from "./auth/interoperability/auditValidationMiddleware.js";

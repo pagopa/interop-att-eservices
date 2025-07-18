@@ -1,7 +1,8 @@
 import { eq } from "drizzle-orm";
 import { pivaTable } from "../../db/schema/piva-verification/piva.model.js";
-import { Richiesta } from "../../db/model/pivaModel.js";
+import { PivaRequest } from "../../db/model/pivaModel.js";
 import { client } from "../../db/postgres/client.js";
+import { PartitaIvaModel } from "../../../../models/dist/pivaVerification/pivaVerification.js";
 
 export class PivaRepository {
   public async setPivaObject(organizationId: string): Promise<string> {
@@ -17,7 +18,7 @@ export class PivaRepository {
 
   public async getPivaObjectByKey(
     organizationId: string
-  ): Promise<string | null> {
+  ): Promise<PartitaIvaModel | null> {
     const result = await client
       .select()
       .from(pivaTable)
@@ -25,12 +26,12 @@ export class PivaRepository {
       .limit(1);
 
     if (result.length > 0) {
-      return result[0].organizationId;
+      return result[0];
     }
     return null;
   }
 
-  public async getAllPivaObject(): Promise<Richiesta[] | null> {
+  public async getAllPivaObject(): Promise<PivaRequest[] | null> {
     return await client.select().from(pivaTable);
   }
 

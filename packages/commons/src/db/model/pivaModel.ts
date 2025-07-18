@@ -18,6 +18,6 @@ export interface VerificaPartitaIva {
   messaggio: string;
 }
 
-export interface Richiesta {
+export interface PivaRequest {
   organizationId: string;
 }
