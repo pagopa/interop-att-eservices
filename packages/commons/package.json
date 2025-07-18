@@ -73,6 +73,7 @@
     "node-geocoder": "^4.4.1",
     "node-jose": "^2.0.0",
     "pdnd-models": "workspace:*",
+    "trial": "workspace:*",
     "pg": "^8.13.3",
     "redis": "^4.6.13",
     "ts-pattern": "^5.0.6",

@@ -4,6 +4,11 @@ import { mapUserModel } from "../../utility/mapUserModel.js";
 import { UserService } from "../../services/residence-verification/UserService.js";
 import { SubjectRepository } from "../../repositories/residence-verification/subjectRepository.js";
 
+// Aggiungi questo mock per risolvere l'errore
+vi.mock("../../services/residence-verification/index.js", () => ({
+  userService: {},
+}));
+
 vi.mock("../../repositories/residence-verification/subjectRepository.js");
 vi.mock("../../utility/mapUserModel.js");
 vi.mock("pdnd-common", () => ({
