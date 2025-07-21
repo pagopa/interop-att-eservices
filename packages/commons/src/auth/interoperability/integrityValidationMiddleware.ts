@@ -2,6 +2,7 @@ import { ZodiosRouterContextRequestHandler } from "@zodios/express";
 import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
 import { makeApiProblemBuilder, ErrorHandling } from "pdnd-models";
 import { match } from "ts-pattern";
+import stringify from "json-stable-stringify";
 import { ExpressContext } from "../../index.js";
 import { InteroperabilityConfig } from "../../config/commonConfig.js";
 import { logger } from "../../logging/index.js";
@@ -238,7 +239,7 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
   }
 
   const hashBody = encodeBase64(
-    generateHashFromString(JSON.stringify(req.body))
+    generateHashFromString(stringify(req.body) ?? "")
   );
 
   if (hashBody !== signedHeaders.digest.substring(8)) {
