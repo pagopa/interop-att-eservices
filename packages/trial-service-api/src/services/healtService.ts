@@ -1,26 +1,20 @@
 import {
-  getContext,
   signerConfig,
   buildPublicKeyService,
   buildSignerService,
   logger,
+  getContext,
   testDbConnection,
 } from "pdnd-common";
-import healtRepository from "../repository/healtRepository.js";
 
-class healtService {
+class HealtService {
   public appContext = getContext();
 
   public async status(): Promise<boolean | null> {
     const config = signerConfig();
 
-    if (!(await healtRepository.checkConnection())) {
-      return false;
-    }
-    /* const config = signerConfig.parse(process.env); */
     const publicKeyService = buildPublicKeyService();
 
-    // Recupera il kid dal token JWT
     if (!(await publicKeyService.KMSAvailability(config.kmsKeyId))) {
       return false;
     }
@@ -41,4 +35,4 @@ class healtService {
   }
 }
 
-export default new healtService();
+export default new HealtService();

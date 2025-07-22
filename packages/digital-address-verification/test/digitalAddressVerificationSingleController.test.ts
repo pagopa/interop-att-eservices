@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import type { Mock } from "vitest";
-
 import { logger, digitalAddressService } from "pdnd-common";
 import { fiscalcodeNotFound } from "../src/exceptions/errors.js";
 import { responseRequestDigitalAddressModelToResponseRequestDigitalAddress } from "../src/model/domain/apiConverter.js";
@@ -11,7 +10,7 @@ vi.mock("pdnd-common", async () => ({
     error: vi.fn(),
   },
   getContext: vi.fn(),
-  digitalAddress: {
+  digitalAddressService: {
     findSingleDataPreparationByFiscalCode: vi.fn(),
   },
 }));

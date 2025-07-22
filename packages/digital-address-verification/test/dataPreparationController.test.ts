@@ -11,7 +11,7 @@ vi.mock("pdnd-common", async () => ({
     error: vi.fn(),
   },
   getContext: vi.fn(),
-  digitalAddress: {
+  digitalAddressService: {
     findAllDataPreparation: vi.fn(),
     saveDataPreparationList: vi.fn(),
     deleteAllDataPreparation: vi.fn(),

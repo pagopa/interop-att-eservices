@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import type { Mock } from "vitest";
 
 // Importa le dipendenze da mockare (usando percorsi coerenti)
-import { logger, userServiceDirect, coordinateService } from "pdnd-common";
+import { logger, userServiceDirect, CoordinatesService } from "pdnd-common";
 import {
   requestParamNotValid,
   userModelNotFound,
@@ -22,7 +22,7 @@ vi.mock("pdnd-common", () => ({
     getUserBySubjectId: vi.fn(),
     getByPersonalInfo: vi.fn(),
   },
-  coordinateService: {
+  CoordinatesService: {
     getCoordinates: vi.fn(),
   },
 }));
@@ -91,7 +91,7 @@ describe("ResidenceVerificationController", () => {
       (userServiceDirect.getUserBySubjectId as Mock).mockResolvedValue(
         mockUser
       );
-      (coordinateService.getCoordinates as Mock).mockResolvedValue(
+      (CoordinatesService.getCoordinates as Mock).mockResolvedValue(
         mockCoordinates
       );
       // Ora il mock funziona correttamente
@@ -106,7 +106,7 @@ describe("ResidenceVerificationController", () => {
       expect(userServiceDirect.getUserBySubjectId).toHaveBeenCalledWith(
         "USER_123"
       );
-      expect(coordinateService.getCoordinates).toHaveBeenCalled();
+      expect(CoordinatesService.getCoordinates).toHaveBeenCalled();
       expect(result).toBeDefined();
       expect(result?.idOp).toBe("op1");
       expect(result?.subjects.subject).toHaveLength(1);
@@ -131,7 +131,7 @@ describe("ResidenceVerificationController", () => {
       (userServiceDirect.getByPersonalInfo as Mock).mockResolvedValue([
         mockUser,
       ]);
-      (coordinateService.getCoordinates as Mock).mockResolvedValue(
+      (CoordinatesService.getCoordinates as Mock).mockResolvedValue(
         mockCoordinates
       );
       // FIX 2: Aggiunto il mock mancante. L'errore precedente nascondeva questa necessità.
@@ -202,7 +202,7 @@ describe("ResidenceVerificationController", () => {
       (userServiceDirect.getUserBySubjectId as Mock).mockResolvedValue(
         mockUser
       );
-      (coordinateService.getCoordinates as Mock).mockResolvedValue(
+      (CoordinatesService.getCoordinates as Mock).mockResolvedValue(
         mockCoordinates
       );
       // Ora il mock funziona correttamente

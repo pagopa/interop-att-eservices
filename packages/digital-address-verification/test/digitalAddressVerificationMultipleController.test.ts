@@ -15,7 +15,7 @@ import { calculateUpdatedRequestState } from "../src/utilities/simulationUtils.j
 vi.mock("pdnd-common", async () => ({
   logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn() },
   getContext: vi.fn(),
-  digitalAddress: {
+  digitalAddressService: {
     saveVerificationRequest: vi.fn(),
     findVerificationRequestById: vi.fn(),
     updateVerificationRequest: vi.fn(),
