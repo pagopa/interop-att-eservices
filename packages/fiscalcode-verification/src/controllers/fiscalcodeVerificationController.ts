@@ -1,4 +1,4 @@
-import { logger, fiscalCodeService } from "pdnd-common";
+import { logger, FiscalCodeService } from "pdnd-common";
 import { Richiesta, VerificaCodiceFiscale } from "../model/domain/models.js";
 import { requestParamNotValid } from "../exceptions/errors.js";
 import { fiscalcodeModelToVerificaCodiceFiscale } from "../model/domain/apiConverter.js";
@@ -9,7 +9,7 @@ class FiscalcodeVerificationController {
   ): Promise<VerificaCodiceFiscale> {
     try {
       if (request.idSubject) {
-        const foundFiscalCode = await fiscalCodeService.getByFiscalCode(
+        const foundFiscalCode = await FiscalCodeService.getByFiscalCode(
           request.idSubject
         );
 

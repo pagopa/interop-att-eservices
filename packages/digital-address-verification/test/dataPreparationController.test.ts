@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import type { Mock } from "vitest";
 import type { ResponseRequestDigitalAddressModel } from "pdnd-models";
 
-import { logger, digitalAddress } from "pdnd-common";
+import { logger, digitalAddressService } from "pdnd-common";
 import { appendUniqueFiscalcodeModelsToArray } from "../src/utilities/fiscalcodeUtilities.js";
 
 vi.mock("pdnd-common", async () => ({
@@ -44,13 +44,15 @@ describe("DataPreparationController", () => {
 
   describe("saveList", () => {
     it("should create a new list if no data exists", async () => {
-      (digitalAddress.findAllDataPreparation as Mock).mockResolvedValue([]);
+      (digitalAddressService.findAllDataPreparation as Mock).mockResolvedValue(
+        []
+      );
 
       const result = await controller.saveList(mockFiscalCode1);
 
-      expect(digitalAddress.saveDataPreparationList).toHaveBeenCalledWith([
-        mockFiscalCode1,
-      ]);
+      expect(
+        digitalAddressService.saveDataPreparationList
+      ).toHaveBeenCalledWith([mockFiscalCode1]);
       expect(result).toBeNull();
     });
 
@@ -58,15 +60,15 @@ describe("DataPreparationController", () => {
       const initialList = [mockFiscalCode1];
       const updatedList = [mockFiscalCode1, mockFiscalCode2];
 
-      (digitalAddress.findAllDataPreparation as Mock).mockResolvedValueOnce(
-        initialList
-      );
+      (
+        digitalAddressService.findAllDataPreparation as Mock
+      ).mockResolvedValueOnce(initialList);
       (appendUniqueFiscalcodeModelsToArray as Mock).mockReturnValue(
         updatedList
       );
-      (digitalAddress.findAllDataPreparation as Mock).mockResolvedValueOnce(
-        updatedList
-      );
+      (
+        digitalAddressService.findAllDataPreparation as Mock
+      ).mockResolvedValueOnce(updatedList);
 
       const result = await controller.saveList(mockFiscalCode2);
 
@@ -74,15 +76,17 @@ describe("DataPreparationController", () => {
         initialList,
         [mockFiscalCode2]
       );
-      expect(digitalAddress.saveDataPreparationList).toHaveBeenCalledWith(
-        updatedList
-      );
+      expect(
+        digitalAddressService.saveDataPreparationList
+      ).toHaveBeenCalledWith(updatedList);
       expect(result).toEqual(updatedList);
     });
 
     it("should throw an error if saving fails", async () => {
       const error = new Error("Database error");
-      (digitalAddress.findAllDataPreparation as Mock).mockRejectedValue(error);
+      (digitalAddressService.findAllDataPreparation as Mock).mockRejectedValue(
+        error
+      );
 
       await expect(controller.saveList(mockFiscalCode1)).rejects.toThrow(error);
       expect(logger.error).toHaveBeenCalledWith(
@@ -95,19 +99,23 @@ describe("DataPreparationController", () => {
   describe("getAll", () => {
     it("should return all data from the service", async () => {
       const allData = [mockFiscalCode1, mockFiscalCode2];
-      (digitalAddress.findAllDataPreparation as Mock).mockResolvedValue(
+      (digitalAddressService.findAllDataPreparation as Mock).mockResolvedValue(
         allData
       );
 
       const result = await controller.getAll();
 
       expect(result).toEqual(allData);
-      expect(digitalAddress.findAllDataPreparation).toHaveBeenCalledOnce();
+      expect(
+        digitalAddressService.findAllDataPreparation
+      ).toHaveBeenCalledOnce();
     });
 
     it("should throw an error if retrieval fails", async () => {
       const error = new Error("Failed to fetch");
-      (digitalAddress.findAllDataPreparation as Mock).mockRejectedValue(error);
+      (digitalAddressService.findAllDataPreparation as Mock).mockRejectedValue(
+        error
+      );
 
       await expect(controller.getAll()).rejects.toThrow(error);
       expect(logger.error).toHaveBeenCalledWith(
@@ -120,21 +128,23 @@ describe("DataPreparationController", () => {
   describe("deleteAllByKey", () => {
     it("should call the delete service and return the number of deleted items", async () => {
       const deletedCount = 5;
-      (digitalAddress.deleteAllDataPreparation as Mock).mockResolvedValue(
-        deletedCount
-      );
+      (
+        digitalAddressService.deleteAllDataPreparation as Mock
+      ).mockResolvedValue(deletedCount);
 
       const result = await controller.deleteAllByKey();
 
       expect(result).toBe(deletedCount);
-      expect(digitalAddress.deleteAllDataPreparation).toHaveBeenCalledOnce();
+      expect(
+        digitalAddressService.deleteAllDataPreparation
+      ).toHaveBeenCalledOnce();
     });
 
     it("should throw an error if deletion fails", async () => {
       const error = new Error("Failed to delete");
-      (digitalAddress.deleteAllDataPreparation as Mock).mockRejectedValue(
-        error
-      );
+      (
+        digitalAddressService.deleteAllDataPreparation as Mock
+      ).mockRejectedValue(error);
 
       await expect(controller.deleteAllByKey()).rejects.toThrow(error);
       expect(logger.error).toHaveBeenCalledWith(
@@ -148,16 +158,16 @@ describe("DataPreparationController", () => {
     it("should delete a single entry and return the remaining list", async () => {
       const remainingList = [mockFiscalCode2];
       (
-        digitalAddress.deleteSingleDataPreparationByFiscalCode as Mock
+        digitalAddressService.deleteSingleDataPreparationByFiscalCode as Mock
       ).mockResolvedValue(undefined);
-      (digitalAddress.findAllDataPreparation as Mock).mockResolvedValue(
+      (digitalAddressService.findAllDataPreparation as Mock).mockResolvedValue(
         remainingList
       );
 
       const result = await controller.deleteByFiscalCode("AAAAAA00A00A000A");
 
       expect(
-        digitalAddress.deleteSingleDataPreparationByFiscalCode
+        digitalAddressService.deleteSingleDataPreparationByFiscalCode
       ).toHaveBeenCalledWith("AAAAAA00A00A000A");
       expect(result).toEqual(remainingList);
     });
@@ -165,7 +175,7 @@ describe("DataPreparationController", () => {
     it("should throw an error if deletion by fiscal code fails", async () => {
       const error = new Error("Failed to delete by fiscal code");
       (
-        digitalAddress.deleteSingleDataPreparationByFiscalCode as Mock
+        digitalAddressService.deleteSingleDataPreparationByFiscalCode as Mock
       ).mockRejectedValue(error);
 
       await expect(
@@ -181,20 +191,20 @@ describe("DataPreparationController", () => {
   describe("findByFiscalCode", () => {
     it("should find and return a single entry by fiscal code", async () => {
       (
-        digitalAddress.findSingleDataPreparationByFiscalCode as Mock
+        digitalAddressService.findSingleDataPreparationByFiscalCode as Mock
       ).mockResolvedValue(mockFiscalCode1);
 
       const result = await controller.findByFiscalCode("AAAAAA00A00A000A");
 
       expect(
-        digitalAddress.findSingleDataPreparationByFiscalCode
+        digitalAddressService.findSingleDataPreparationByFiscalCode
       ).toHaveBeenCalledWith("AAAAAA00A00A000A");
       expect(result).toEqual(mockFiscalCode1);
     });
 
     it("should return null if no entry is found", async () => {
       (
-        digitalAddress.findSingleDataPreparationByFiscalCode as Mock
+        digitalAddressService.findSingleDataPreparationByFiscalCode as Mock
       ).mockResolvedValue(null);
 
       const result = await controller.findByFiscalCode("ZZZZZZ00Z00Z000Z");
@@ -205,7 +215,7 @@ describe("DataPreparationController", () => {
     it("should throw an error if finding by fiscal code fails", async () => {
       const error = new Error("Failed to find by fiscal code");
       (
-        digitalAddress.findSingleDataPreparationByFiscalCode as Mock
+        digitalAddressService.findSingleDataPreparationByFiscalCode as Mock
       ).mockRejectedValue(error);
 
       await expect(

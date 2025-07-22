@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import NodeGeocoder from "node-geocoder";
-import { CoordinatesService } from "../../services/residence-verification-direct/coordinateService.js";
+import { CoordinatesService } from "../../src/services/residence-verification-direct/index.js";
+
 vi.mock("node-geocoder", () => {
   const mockGeocoder = {
     geocode: vi.fn(),
@@ -10,15 +11,17 @@ vi.mock("node-geocoder", () => {
   };
 });
 
-vi.mock("pdnd-common", () => ({
-  logger: {
+const { mockLogger } = vi.hoisted(() => ({
+  mockLogger: {
     info: vi.fn(),
     error: vi.fn(),
   },
 }));
+vi.mock("../../src/index.js", () => ({
+  logger: mockLogger,
+}));
 
 describe("CoordinatesService", () => {
-  const service: CoordinatesService = new CoordinatesService();
   const geocoderInstance = NodeGeocoder({ provider: "openstreetmap" });
 
   afterEach(() => {
@@ -29,7 +32,9 @@ describe("CoordinatesService", () => {
     const mockResponse = [{ latitude: 41.9, longitude: 12.5 }];
     vi.mocked(geocoderInstance.geocode).mockResolvedValue(mockResponse);
 
-    const result = await service.getCoordinates("Via del Corso, Roma");
+    const result = await CoordinatesService.getCoordinates(
+      "Via del Corso, Roma"
+    );
 
     expect(geocoderInstance.geocode).toHaveBeenCalledWith(
       "Via del Corso, Roma"
@@ -39,26 +44,22 @@ describe("CoordinatesService", () => {
 
   it("should return undefined if address is not found", async () => {
     vi.mocked(geocoderInstance.geocode).mockResolvedValue([]);
-    const { logger } = await import("pdnd-common");
-
-    const result = await service.getCoordinates("address-not-found");
+    const result = await CoordinatesService.getCoordinates("address-not-found");
 
     expect(result).toBeUndefined();
-    expect(logger.info).toHaveBeenCalledWith("Nessun risultato trovato.");
+    expect(mockLogger.info).toHaveBeenCalledWith("Nessun risultato trovato.");
   });
 
   it("should return undefined and log an error on geocoding failure", async () => {
-    vi.mocked(geocoderInstance.geocode).mockRejectedValue(
-      new Error("API Error")
-    );
-    const { logger } = await import("pdnd-common");
+    const testError = new Error("API Error");
+    vi.mocked(geocoderInstance.geocode).mockRejectedValue(testError);
 
-    const result = await service.getCoordinates("any address");
+    const result = await CoordinatesService.getCoordinates("any address");
 
     expect(result).toBeUndefined();
-    expect(logger.error).toHaveBeenCalledWith(
+    expect(mockLogger.error).toHaveBeenCalledWith(
       "Errore durante la geocodifica:",
-      expect.any(Error)
+      testError
     );
   });
 });

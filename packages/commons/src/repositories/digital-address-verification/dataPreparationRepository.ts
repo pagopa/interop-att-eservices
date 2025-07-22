@@ -1,21 +1,18 @@
 import { eq, desc } from "drizzle-orm";
-import { client } from "../../db/postgres/client.js";
 import { dataPreparationTable } from "../../db/schema/digital-address-verification/data-preparation.model.js";
 import { subjectDataResponsesTable } from "../../db/schema/digital-address-verification/subjectDataResponses.model.js";
 import { digitalAddressesTable } from "../../db/schema/digital-address-verification/digital-address.model.js";
-import { logger } from "../../index.js";
+import { client, logger } from "../../index.js";
 
-export class DataPreparationRepository {
-  private readonly db = client;
-
-  public async upsertDataPreparation(idSubject: string): Promise<void> {
+export const DataPreparationRepository = {
+  async upsertDataPreparation(idSubject: string): Promise<void> {
     try {
       const insertData = {
         idSubject,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
-      await this.db
+      await client
         .insert(dataPreparationTable)
         .values(insertData)
         .onConflictDoUpdate({
@@ -31,9 +28,9 @@ export class DataPreparationRepository {
       );
       throw error;
     }
-  }
+  },
 
-  public async findAllAggregatedData(): Promise<
+  async findAllAggregatedData(): Promise<
     Array<{
       idSubject: string | null;
       from: Date | null;
@@ -49,7 +46,7 @@ export class DataPreparationRepository {
     }>
   > {
     try {
-      return await this.db
+      return await client
         .select({
           idSubject: dataPreparationTable.idSubject,
           from: subjectDataResponsesTable.dataFrom,
@@ -83,11 +80,9 @@ export class DataPreparationRepository {
       );
       throw error;
     }
-  }
+  },
 
-  public async findSingleAggregatedDataBySubjectId(
-    fiscalCode: string
-  ): Promise<{
+  async findSingleAggregatedDataBySubjectId(fiscalCode: string): Promise<{
     subjectDataResponseRow: {
       id: number;
       listRequestId: string;
@@ -104,7 +99,7 @@ export class DataPreparationRepository {
     }>;
   } | null> {
     try {
-      const subjectResponseResult = await this.db
+      const subjectResponseResult = await client
         .select()
         .from(subjectDataResponsesTable)
         .where(eq(subjectDataResponsesTable.subjectId, fiscalCode))
@@ -118,7 +113,7 @@ export class DataPreparationRepository {
       const subjectDataResponseRow = subjectResponseResult[0];
       const subjectDataResponseId = subjectDataResponseRow.id;
 
-      const digitalAddressesResult = await this.db
+      const digitalAddressesResult = await client
         .select()
         .from(digitalAddressesTable)
         .where(
@@ -136,21 +131,21 @@ export class DataPreparationRepository {
       );
       throw error;
     }
-  }
+  },
 
-  public async deleteAll(): Promise<number> {
+  async deleteAll(): Promise<number> {
     try {
-      const result = await this.db.delete(dataPreparationTable);
+      const result = await client.delete(dataPreparationTable);
       return result.rowCount ?? 0;
     } catch (error) {
       logger.error(`[DataPreparationRepo] Error deleting all data.`, error);
       throw error;
     }
-  }
+  },
 
-  public async deleteBySubjectId(fiscalCode: string): Promise<number> {
+  async deleteBySubjectId(fiscalCode: string): Promise<number> {
     try {
-      const result = await this.db
+      const result = await client
         .delete(dataPreparationTable)
         .where(eq(dataPreparationTable.idSubject, fiscalCode));
       return result.rowCount ?? 0;
@@ -161,5 +156,5 @@ export class DataPreparationRepository {
       );
       throw error;
     }
-  }
-}
+  },
+};

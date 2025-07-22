@@ -1,15 +1,13 @@
 import NodeGeocoder from "node-geocoder";
-import { logger } from "pdnd-common";
 import { CoordinatesModel } from "pdnd-models";
+import { logger } from "../../index.js";
 
 const geocoder = NodeGeocoder({
   provider: "openstreetmap",
 });
 
-export class CoordinatesService {
-  public async getCoordinates(
-    address: string
-  ): Promise<CoordinatesModel | undefined> {
+export const CoordinatesService = {
+  async getCoordinates(address: string): Promise<CoordinatesModel | undefined> {
     try {
       const res = await geocoder.geocode(address);
       if (res.length > 0) {
@@ -26,5 +24,5 @@ export class CoordinatesService {
       logger.error("Errore durante la geocodifica:", error);
       return undefined;
     }
-  }
-}
+  },
+};

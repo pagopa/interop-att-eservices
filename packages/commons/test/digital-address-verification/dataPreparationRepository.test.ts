@@ -1,6 +1,6 @@
 /* eslint-disable functional/no-let */
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { DataPreparationRepository } from "../../repositories/digital-address-verification/dataPreparationRepository.js";
+import { describe, it, expect, vi, afterEach } from "vitest";
+import { DataPreparationRepository } from "../../src/repositories/digital-address-verification/dataPreparationRepository.js";
 
 const { mockClient, mockDbChain } = vi.hoisted(() => {
   const mockDbChain = {
@@ -24,16 +24,12 @@ const { mockClient, mockDbChain } = vi.hoisted(() => {
   return { mockClient, mockDbChain };
 });
 
-vi.mock("../../db/postgres/client.js", () => ({ client: mockClient }));
-vi.mock("../../index.js", () => ({ logger: { error: vi.fn() } }));
+vi.mock("../../src/index.js", () => ({
+  client: mockClient,
+  logger: { error: vi.fn() },
+}));
 
 describe("DataPreparationRepository", () => {
-  let repository: DataPreparationRepository;
-
-  beforeEach(() => {
-    repository = new DataPreparationRepository();
-  });
-
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -42,7 +38,7 @@ describe("DataPreparationRepository", () => {
     vi.mocked(mockDbChain.then).mockImplementation((resolve) =>
       resolve(undefined)
     );
-    await repository.upsertDataPreparation("TEST_SUBJECT_01");
+    await DataPreparationRepository.upsertDataPreparation("TEST_SUBJECT_01");
     expect(mockClient.insert).toHaveBeenCalled();
     expect(mockDbChain.onConflictDoUpdate).toHaveBeenCalled();
   });
@@ -50,7 +46,7 @@ describe("DataPreparationRepository", () => {
   it("should find all aggregated data", async () => {
     const mockData = [{ idSubject: "SUBJ1" }];
     vi.mocked(mockDbChain.orderBy).mockResolvedValue(mockData);
-    const result = await repository.findAllAggregatedData();
+    const result = await DataPreparationRepository.findAllAggregatedData();
     expect(mockClient.select).toHaveBeenCalled();
     expect(result).toEqual(mockData);
   });
@@ -60,7 +56,7 @@ describe("DataPreparationRepository", () => {
     vi.mocked(mockDbChain.then).mockImplementation((resolve) =>
       resolve(mockResult)
     );
-    const result = await repository.deleteAll();
+    const result = await DataPreparationRepository.deleteAll();
     expect(mockClient.delete).toHaveBeenCalled();
     expect(result).toBe(5);
   });

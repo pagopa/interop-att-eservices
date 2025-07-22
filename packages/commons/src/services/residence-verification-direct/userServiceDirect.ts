@@ -1,21 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { UserModel } from "pdnd-models";
-import { logger } from "pdnd-common";
 import { mapUserModel } from "../../utility/mapUserModel.js";
-import { SubjectRepositoryDirect } from "../../repositories/residence-verification-direct/subjectRepository.js";
+import { SubjectRepositoryDirect } from "../../repositories/residence-verification-direct/subjectRepositoryDirect.js";
+import { logger } from "../../index.js";
 
-export class UserServiceDirect {
-  private readonly subjectRepository: SubjectRepositoryDirect;
+const subjectRepositoryDirect = SubjectRepositoryDirect;
 
-  constructor() {
-    this.subjectRepository = new SubjectRepositoryDirect();
-  }
-
-  public async getUserBySubjectId(
-    subjectId: string
-  ): Promise<UserModel | null> {
+export const userServiceDirect = {
+  async getUserBySubjectId(subjectId: string): Promise<UserModel | null> {
     try {
-      const result = await this.subjectRepository.findWithAddressBySubjectId(
+      const result = await subjectRepositoryDirect.findWithAddressBySubjectId(
         subjectId
       );
 
@@ -32,11 +26,11 @@ export class UserServiceDirect {
       );
       throw error;
     }
-  }
+  },
 
-  public async getByPersonalInfo(parametriRicerca: any): Promise<UserModel[]> {
+  async getByPersonalInfo(parametriRicerca: any): Promise<UserModel[]> {
     try {
-      const rows = await this.subjectRepository.findWithAddressByPersonalInfo(
+      const rows = await subjectRepositoryDirect.findWithAddressByPersonalInfo(
         parametriRicerca
       );
 
@@ -53,5 +47,5 @@ export class UserServiceDirect {
       logger.error(`[UserService] Error in getByPersonalInfo`, error);
       throw error;
     }
-  }
-}
+  },
+};

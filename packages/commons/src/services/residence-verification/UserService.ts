@@ -4,18 +4,12 @@ import { mapUserModel } from "../../utility/mapUserModel.js";
 import { SubjectRepository } from "../../repositories/residence-verification/index.js";
 import { logger } from "../../index.js";
 
-export class UserService {
-  private readonly subjectRepository: SubjectRepository;
+const subjectRepository = SubjectRepository;
 
-  constructor() {
-    this.subjectRepository = new SubjectRepository();
-  }
-
-  public async getUserBySubjectId(
-    subjectId: string
-  ): Promise<UserModel | null> {
+export const userService = {
+  async getUserBySubjectId(subjectId: string): Promise<UserModel | null> {
     try {
-      const result = await this.subjectRepository.findWithAddressBySubjectId(
+      const result = await subjectRepository.findWithAddressBySubjectId(
         subjectId
       );
 
@@ -32,11 +26,14 @@ export class UserService {
       );
       throw error;
     }
-  }
+  },
 
-  public async getByPersonalInfo(parametriRicerca: any): Promise<UserModel[]> {
+  /**
+   * Recupera una lista di utenti tramite i loro dati anagrafici.
+   */
+  async getByPersonalInfo(parametriRicerca: any): Promise<UserModel[]> {
     try {
-      const rows = await this.subjectRepository.findWithAddressByPersonalInfo(
+      const rows = await subjectRepository.findWithAddressByPersonalInfo(
         parametriRicerca
       );
 
@@ -53,7 +50,5 @@ export class UserService {
       logger.error(`[UserService] Error in getByPersonalInfo`, error);
       throw error;
     }
-  }
-}
-
-export default new UserService();
+  },
+};

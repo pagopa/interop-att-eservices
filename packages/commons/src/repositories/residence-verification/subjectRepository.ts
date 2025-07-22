@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { eq, and, SQL } from "drizzle-orm";
-import { client } from "pdnd-common";
 import {
   addressTable,
   subjectTable,
 } from "../../db/schema/residence-verification/index.js";
 import { Subject } from "../../db/schema/residence-verification/subject.model.js";
 import { Address } from "../../db/schema/residence-verification/address.model.js";
+import { client } from "../../index.js";
 
 type SubjectWithAddress = {
   subjects: Subject;
   addresses: Address;
 };
 
-export class SubjectRepository {
-  public async findWithAddressBySubjectId(
+export const SubjectRepository = {
+  async findWithAddressBySubjectId(
     subjectId: string
   ): Promise<SubjectWithAddress[]> {
     return client
@@ -24,9 +24,9 @@ export class SubjectRepository {
       .where(eq(subjectTable.subject_id, subjectId))
       .limit(1)
       .execute();
-  }
+  },
 
-  public async findWithAddressByPersonalInfo(
+  async findWithAddressByPersonalInfo(
     parametriRicerca: any
   ): Promise<SubjectWithAddress[]> {
     const conditions: SQL[] = [
@@ -56,5 +56,5 @@ export class SubjectRepository {
       .from(subjectTable)
       .innerJoin(addressTable, eq(subjectTable.address_id, addressTable.id))
       .where(and(...conditions));
-  }
-}
+  },
+};

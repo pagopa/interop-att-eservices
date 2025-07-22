@@ -6,52 +6,37 @@ import {
 import { client } from "../../db/postgres/client.js";
 import { VerifyRequest } from "../../db/model/verifyRequest.js";
 import { logger } from "../../index.js";
-import {
-  DataPreparationRepository,
-  DigitalAddressRepository,
-  ListRequestRepository,
-  SubjectDataResponseRepository,
-  VerificationRequestRepository,
-} from "../../repositories/digital-address-verification/index.js";
 
-export class DigitalAddressService {
-  private readonly verificationRequestRepo: VerificationRequestRepository;
-  private readonly dataPreparationRepo: DataPreparationRepository;
-  private readonly listRequestRepo: ListRequestRepository;
-  private readonly subjectDataResponseRepo: SubjectDataResponseRepository;
-  private readonly digitalAddressRepo: DigitalAddressRepository;
+// Aggiungo gli import necessari per i repository
+import { VerificationRequestRepository } from "../../repositories/digital-address-verification/verificationRequestRepository.js";
+import { DataPreparationRepository } from "../../repositories/digital-address-verification/dataPreparationRepository.js";
+import { ListRequestRepository } from "../../repositories/digital-address-verification/listRequestRepository.js";
+import { SubjectDataResponseRepository } from "../../repositories/digital-address-verification/subjectDataResponseRepository.js";
+import { DigitalAddressRepository } from "../../repositories/digital-address-verification/digitalAddressRepository.js";
 
-  constructor(
-    verificationRequestRepo: VerificationRequestRepository = new VerificationRequestRepository(),
-    dataPreparationRepo: DataPreparationRepository = new DataPreparationRepository(),
-    listRequestRepo: ListRequestRepository = new ListRequestRepository(),
-    subjectDataResponseRepo: SubjectDataResponseRepository = new SubjectDataResponseRepository(),
-    digitalAddressRepo: DigitalAddressRepository = new DigitalAddressRepository()
-  ) {
-    this.verificationRequestRepo = verificationRequestRepo;
-    this.dataPreparationRepo = dataPreparationRepo;
-    this.listRequestRepo = listRequestRepo;
-    this.subjectDataResponseRepo = subjectDataResponseRepo;
-    this.digitalAddressRepo = digitalAddressRepo;
-  }
+const verificationRequestRepo = VerificationRequestRepository;
+const dataPreparationRepo = DataPreparationRepository;
+const listRequestRepo = ListRequestRepository;
+const subjectDataResponseRepo = SubjectDataResponseRepository;
+const digitalAddressRepo = DigitalAddressRepository;
 
-  public async saveVerificationRequest(data: VerifyRequest): Promise<void> {
-    await this.verificationRequestRepo.save(data);
-  }
+// --- Oggetto Servizio Esportato ---
+export const digitalAddressService = {
+  async saveVerificationRequest(data: VerifyRequest): Promise<void> {
+    await verificationRequestRepo.save(data);
+  },
 
-  public async findVerificationRequestById(
-    id: string
-  ): Promise<VerifyRequest | null> {
-    return await this.verificationRequestRepo.findById(id);
-  }
+  async findVerificationRequestById(id: string): Promise<VerifyRequest | null> {
+    return await verificationRequestRepo.findById(id);
+  },
 
-  public async updateVerificationRequest(
+  async updateVerificationRequest(
     data: Pick<VerifyRequest, "idRequest" | "count">
   ): Promise<void> {
-    await this.verificationRequestRepo.update(data);
-  }
+    await verificationRequestRepo.update(data);
+  },
 
-  public async saveDataPreparationList(
+  async saveDataPreparationList(
     data: ResponseRequestDigitalAddressModel[]
   ): Promise<string> {
     if (data.length === 0) {
@@ -61,25 +46,22 @@ export class DigitalAddressService {
     try {
       await client.transaction(async () => {
         const currentListRequestId: string =
-          await this.listRequestRepo.createListRequest();
+          await listRequestRepo.createListRequest();
 
         for (const item of data) {
-          await this.dataPreparationRepo.upsertDataPreparation(item.idSubject);
-          await this.listRequestRepo.addRequestSubject(
+          await dataPreparationRepo.upsertDataPreparation(item.idSubject);
+          await listRequestRepo.addRequestSubject(
             currentListRequestId,
             item.idSubject
           );
 
           const subjectDataResponseIdToUse: number =
-            await this.subjectDataResponseRepo.upsert(
-              currentListRequestId,
-              item
-            );
+            await subjectDataResponseRepo.upsert(currentListRequestId, item);
 
-          await this.digitalAddressRepo.deleteBySubjectDataResponseId(
+          await digitalAddressRepo.deleteBySubjectDataResponseId(
             subjectDataResponseIdToUse
           );
-          await this.digitalAddressRepo.insertDigitalAddresses(
+          await digitalAddressRepo.insertDigitalAddresses(
             subjectDataResponseIdToUse,
             item.digitalAddress
           );
@@ -94,13 +76,13 @@ export class DigitalAddressService {
       );
       throw error;
     }
-  }
+  },
 
-  public async findAllDataPreparation(): Promise<
+  async findAllDataPreparation(): Promise<
     ResponseRequestDigitalAddressModel[] | null
   > {
     try {
-      const results = await this.dataPreparationRepo.findAllAggregatedData();
+      const results = await dataPreparationRepo.findAllAggregatedData();
 
       if (results.length === 0) {
         return null;
@@ -169,9 +151,9 @@ export class DigitalAddressService {
       );
       throw error;
     }
-  }
+  },
 
-  public async findSingleDataPreparationByFiscalCode(
+  async findSingleDataPreparationByFiscalCode(
     fiscalCode: string
   ): Promise<ResponseRequestDigitalAddressModel | null> {
     logger.info(
@@ -180,7 +162,7 @@ export class DigitalAddressService {
 
     try {
       const aggregatedData =
-        await this.dataPreparationRepo.findSingleAggregatedDataBySubjectId(
+        await dataPreparationRepo.findSingleAggregatedDataBySubjectId(
           fiscalCode
         );
 
@@ -229,15 +211,15 @@ export class DigitalAddressService {
         `[DigitalAddressService] Finished executing findSingleDataPreparationByFiscalCode for fiscal code: ${fiscalCode}`
       );
     }
-  }
+  },
 
-  public async deleteAllDataPreparation(): Promise<number> {
-    return await this.dataPreparationRepo.deleteAll();
-  }
+  async deleteAllDataPreparation(): Promise<number> {
+    return await dataPreparationRepo.deleteAll();
+  },
 
-  public async deleteSingleDataPreparationByFiscalCode(
+  async deleteSingleDataPreparationByFiscalCode(
     fiscalCode: string
   ): Promise<number> {
-    return await this.dataPreparationRepo.deleteBySubjectId(fiscalCode);
-  }
-}
+    return await dataPreparationRepo.deleteBySubjectId(fiscalCode);
+  },
+};

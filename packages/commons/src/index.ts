@@ -1,5 +1,4 @@
 export { cacheManager } from "./db/index.js";
-export { baseRepository } from "./db/postgres/index.js";
 export * from "./db/postgres/client.js";
 export * from "./db/schema/index.js";
 export * from "./db/schema/purpose.model.js";

@@ -1,17 +1,15 @@
 import { eq } from "drizzle-orm";
 import { ElementDigitalAddressModel } from "pdnd-models";
-import { client } from "../../db/postgres/client.js";
+
 import { digitalAddressesTable } from "../../db/schema/digital-address-verification/digital-address.model.js";
-import { logger } from "../../index.js";
+import { client, logger } from "../../index.js";
 
-export class DigitalAddressRepository {
-  private readonly db = client;
-
-  public async deleteBySubjectDataResponseId(
+export const DigitalAddressRepository = {
+  async deleteBySubjectDataResponseId(
     subjectDataResponseId: number
   ): Promise<void> {
     try {
-      await this.db
+      await client
         .delete(digitalAddressesTable)
         .where(
           eq(digitalAddressesTable.subjectDataResponseId, subjectDataResponseId)
@@ -23,9 +21,9 @@ export class DigitalAddressRepository {
       );
       throw error;
     }
-  }
+  },
 
-  public async insertDigitalAddresses(
+  async insertDigitalAddresses(
     subjectDataResponseId: number,
     digitalAddresses: ElementDigitalAddressModel[]
   ): Promise<void> {
@@ -42,7 +40,7 @@ export class DigitalAddressRepository {
           ? new Date(da.information.endDate)
           : new Date("9999-12-31T23:59:59Z"),
       }));
-      await this.db.insert(digitalAddressesTable).values(values);
+      await client.insert(digitalAddressesTable).values(values);
     } catch (error) {
       logger.error(
         `[DigitalAddressRepo] Error inserting digital addresses for SDR ID ${subjectDataResponseId}.`,
@@ -50,5 +48,5 @@ export class DigitalAddressRepository {
       );
       throw error;
     }
-  }
-}
+  },
+};

@@ -3,7 +3,7 @@ import {
   logger,
   getContext,
   userServiceDirect,
-  coordinateService,
+  CoordinatesService,
 } from "pdnd-common";
 import {
   requestParamNotValid,
@@ -109,7 +109,7 @@ class ResidenceVerificationController {
 
   private async getUpdatedUserModel(user: UserModel): Promise<UserModel> {
     const fullAddress = this.getFullAddress(user);
-    const coordinates = await coordinateService.getCoordinates(fullAddress);
+    const coordinates = await CoordinatesService.getCoordinates(fullAddress);
 
     return {
       ...user,

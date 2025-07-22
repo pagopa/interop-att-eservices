@@ -3,7 +3,7 @@ import { ZodiosEndpointDefinitions } from "@zodios/core";
 import {
   ExpressContext,
   ZodiosContext,
-  fiscalCodeService,
+  FiscalCodeService,
   logger,
   authenticationMiddleware,
 } from "pdnd-common";
@@ -28,7 +28,7 @@ const dataPreparationRouter = (
     authenticationMiddleware(false),
     async (req, res) => {
       try {
-        await fiscalCodeService.saveList(
+        await FiscalCodeService.saveList(
           apiDatapreparationTemplateToFiscalcodeModel(req.body)
         );
         return res.status(201).end();
@@ -48,7 +48,7 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        const data = await fiscalCodeService.getAll();
+        const data = await FiscalCodeService.getAll();
         const result =
           data != null ? apiFiscalcodeModelToDataPreparationResponse(data) : [];
         logger.info(result);
@@ -69,7 +69,7 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        const data = await fiscalCodeService.deleteAllByKey();
+        const data = await FiscalCodeService.deleteAllByKey();
         if (data !== 0) {
           throw ErrorHandling.genericError(
             `Not all data could be deleted. Remaining: ${data}`
@@ -90,7 +90,7 @@ const dataPreparationRouter = (
     async (req, res) => {
       /* eslint-enable */
       try {
-        await fiscalCodeService.deleteByFiscalCode(
+        await FiscalCodeService.deleteByFiscalCode(
           apiDatapreparationTemplateToFiscalcodeModel(req.body).fiscalCode
         );
         return res.status(200).end();

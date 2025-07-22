@@ -1,6 +1,6 @@
 /* eslint-disable functional/no-let */
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { ListRequestRepository } from "../../repositories/digital-address-verification/listRequestRepository.js";
+import { describe, it, expect, vi, afterEach } from "vitest";
+import { ListRequestRepository } from "../../src/repositories/digital-address-verification/listRequestRepository.js";
 
 const { mockClient, mockDbChain } = vi.hoisted(() => {
   const mockDbChain = {
@@ -16,16 +16,12 @@ const { mockClient, mockDbChain } = vi.hoisted(() => {
 });
 
 vi.mock("uuid", () => ({ v4: (): string => "mock-uuid-1234" }));
-vi.mock("../../db/postgres/client.js", () => ({ client: mockClient }));
-vi.mock("../../index.js", () => ({ logger: { error: vi.fn() } }));
+vi.mock("../../src/index.js", () => ({
+  client: mockClient,
+  logger: { error: vi.fn() },
+}));
 
 describe("ListRequestRepository", (): void => {
-  let repository: ListRequestRepository;
-
-  beforeEach((): void => {
-    repository = new ListRequestRepository();
-  });
-
   afterEach((): void => {
     vi.clearAllMocks();
   });
@@ -34,7 +30,7 @@ describe("ListRequestRepository", (): void => {
     vi.mocked(mockDbChain.returning).mockResolvedValue([
       { id: "mock-uuid-1234" },
     ]);
-    const result = await repository.createListRequest();
+    const result = await ListRequestRepository.createListRequest();
     expect(result).toBe("mock-uuid-1234");
     expect(mockClient.insert).toHaveBeenCalled();
   });
@@ -43,7 +39,7 @@ describe("ListRequestRepository", (): void => {
     vi.mocked(mockDbChain.then).mockImplementation((resolve) =>
       resolve(undefined)
     );
-    await repository.addRequestSubject("list-req-1", "subject-1");
+    await ListRequestRepository.addRequestSubject("list-req-1", "subject-1");
     expect(mockClient.insert).toHaveBeenCalled();
     expect(mockDbChain.onConflictDoNothing).toHaveBeenCalled();
   });

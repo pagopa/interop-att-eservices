@@ -1,24 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { mapUserModel } from "../../utility/mapUserModel.js";
-import { UserService } from "../../services/residence-verification/UserService.js";
-import { SubjectRepository } from "../../repositories/residence-verification/subjectRepository.js";
+import { userServiceDirect } from "../../src/services/residence-verification-direct/userServiceDirect.js";
+import { mapUserModel } from "../../src/utility/mapUserModel.js";
+import { SubjectRepositoryDirect } from "../../src/repositories/residence-verification-direct/subjectRepositoryDirect.js";
 
-// Aggiungi questo mock per risolvere l'errore
-vi.mock("../../services/residence-verification/index.js", () => ({
-  userService: {},
-}));
+vi.mock(
+  "../../src/repositories/residence-verification-direct/subjectRepositoryDirect.js"
+);
+vi.mock("../../src/utility/mapUserModel.js");
+vi.mock("../../src/index.js", () => {
+  const mockDbChain = {
+    select: vi.fn().mockReturnThis(),
+    from: vi.fn().mockReturnThis(),
+    innerJoin: vi.fn().mockReturnThis(),
+    where: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockReturnThis(),
+    execute: vi.fn(),
+  };
 
-vi.mock("../../repositories/residence-verification/subjectRepository.js");
-vi.mock("../../utility/mapUserModel.js");
-vi.mock("pdnd-common", () => ({
-  logger: {
-    error: vi.fn(),
-  },
-}));
+  return {
+    logger: {
+      error: vi.fn(),
+    },
+    client: {
+      select: vi.fn(() => mockDbChain),
+    },
+  };
+});
 
-describe("UserService", () => {
-  const service: UserService = new UserService();
+describe("UserServiceDirect", () => {
   const mockRepoResult = [{ subjects: { uuid: "uuid1" }, addresses: {} }];
   const mockMappedUser = { uuid: "uuid1", subject: { name: "Test" } };
 
@@ -29,14 +39,14 @@ describe("UserService", () => {
   describe("getUserBySubjectId", () => {
     it("should return a mapped user when repository finds data", async () => {
       vi.mocked(
-        SubjectRepository.prototype.findWithAddressBySubjectId
+        SubjectRepositoryDirect.findWithAddressBySubjectId
       ).mockResolvedValue(mockRepoResult as any);
       vi.mocked(mapUserModel).mockResolvedValue(mockMappedUser as any);
 
-      const result = await service.getUserBySubjectId("test-id");
+      const result = await userServiceDirect.getUserBySubjectId("test-id");
 
       expect(
-        SubjectRepository.prototype.findWithAddressBySubjectId
+        SubjectRepositoryDirect.findWithAddressBySubjectId
       ).toHaveBeenCalledWith("test-id");
       expect(mapUserModel).toHaveBeenCalledWith(
         mockRepoResult[0].subjects.uuid,
@@ -48,10 +58,10 @@ describe("UserService", () => {
 
     it("should return null if repository finds no data", async () => {
       vi.mocked(
-        SubjectRepository.prototype.findWithAddressBySubjectId
+        SubjectRepositoryDirect.findWithAddressBySubjectId
       ).mockResolvedValue([]);
 
-      const result = await service.getUserBySubjectId("not-found-id");
+      const result = await userServiceDirect.getUserBySubjectId("not-found-id");
 
       expect(result).toBeNull();
       expect(mapUserModel).not.toHaveBeenCalled();
@@ -61,11 +71,13 @@ describe("UserService", () => {
   describe("getByPersonalInfo", () => {
     it("should return an array of mapped users", async () => {
       vi.mocked(
-        SubjectRepository.prototype.findWithAddressByPersonalInfo
+        SubjectRepositoryDirect.findWithAddressByPersonalInfo
       ).mockResolvedValue(mockRepoResult as any);
       vi.mocked(mapUserModel).mockResolvedValue(mockMappedUser as any);
 
-      const result = await service.getByPersonalInfo({ name: "Test" });
+      const result = await userServiceDirect.getByPersonalInfo({
+        name: "Test",
+      });
 
       expect(result).toEqual([mockMappedUser]);
       expect(mapUserModel).toHaveBeenCalledTimes(1);
@@ -73,10 +85,12 @@ describe("UserService", () => {
 
     it("should return an empty array if repository finds nothing", async () => {
       vi.mocked(
-        SubjectRepository.prototype.findWithAddressByPersonalInfo
+        SubjectRepositoryDirect.findWithAddressByPersonalInfo
       ).mockResolvedValue([]);
 
-      const result = await service.getByPersonalInfo({ name: "not-found" });
+      const result = await userServiceDirect.getByPersonalInfo({
+        name: "not-found",
+      });
 
       expect(result).toEqual([]);
       expect(mapUserModel).not.toHaveBeenCalled();

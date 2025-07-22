@@ -1,4 +1,4 @@
-import { logger, getContext, digitalAddress } from "pdnd-common";
+import { logger, getContext, digitalAddressService } from "pdnd-common";
 import { fiscalcodeNotFound } from "../exceptions/errors.js";
 import {
   ResponseRequestDigitalAddress,
@@ -16,7 +16,9 @@ class DigitalAddressVerificationSingleController {
   ): Promise<ResponseVerifyDigitalAddress> {
     try {
       const richiesta =
-        await digitalAddress.findSingleDataPreparationByFiscalCode(idSubject);
+        await digitalAddressService.findSingleDataPreparationByFiscalCode(
+          idSubject
+        );
       /* eslint-disable */
       if (richiesta) {
         const foundItem = richiesta.digitalAddress.find(
@@ -51,7 +53,9 @@ class DigitalAddressVerificationSingleController {
   ): Promise<ResponseRequestDigitalAddress> {
     try {
       const richiesta =
-        await digitalAddress.findSingleDataPreparationByFiscalCode(idSubject);
+        await digitalAddressService.findSingleDataPreparationByFiscalCode(
+          idSubject
+        );
       if (richiesta) {
         return responseRequestDigitalAddressModelToResponseRequestDigitalAddress(
           richiesta

@@ -1,14 +1,12 @@
-import { logger } from "pdnd-common";
 import { FiscalcodeModel, ErrorHandling } from "pdnd-models";
-import fiscalCodeRepository from "../../repositories/fiscal-code-verification/fiscalCodeRepository.js";
+import { FiscalCodeRepository } from "../../repositories/fiscal-code-verification/fiscalCodeRepository.js";
+import { logger } from "../../index.js";
 
-export class FiscalCodeService {
-  public async getByFiscalCode(
-    fiscalCode: string
-  ): Promise<FiscalcodeModel | null> {
+export const FiscalCodeService = {
+  async getByFiscalCode(fiscalCode: string): Promise<FiscalcodeModel | null> {
     logger.info(`Searching for fiscal code model: ${fiscalCode}`);
     try {
-      return await fiscalCodeRepository.findByFiscalCode(fiscalCode);
+      return await FiscalCodeRepository.findByFiscalCode(fiscalCode);
     } catch (error) {
       logger.error(
         `GenericFiscalCodeVerificationService: Errore durante la ricerca del codice fiscale.`,
@@ -16,16 +14,16 @@ export class FiscalCodeService {
       );
       throw error;
     }
-  }
-  public async saveList(
+  },
+  async saveList(
     fiscalCodeModel: FiscalcodeModel
   ): Promise<FiscalcodeModel[] | null> {
     logger.info(
       `[START] datapreparation-saveList for: ${fiscalCodeModel.fiscalCode}`
     );
     try {
-      await fiscalCodeRepository.save(fiscalCodeModel);
-      const response = await fiscalCodeRepository.findAll();
+      await FiscalCodeRepository.save(fiscalCodeModel);
+      const response = await FiscalCodeRepository.findAll();
       logger.info(`[END] datapreparation-saveList`);
       return response;
     } catch (error) {
@@ -38,29 +36,29 @@ export class FiscalCodeService {
       }
       throw error;
     }
-  }
+  },
 
-  public async getAll(): Promise<FiscalcodeModel[] | null> {
+  async getAll(): Promise<FiscalcodeModel[] | null> {
     logger.info(`[START] datapreparation-getAll`);
-    const response = await fiscalCodeRepository.findAll();
+    const response = await FiscalCodeRepository.findAll();
     logger.info(`[END] datapreparation-getAll`);
     return response;
-  }
+  },
 
-  public async deleteAllByKey(): Promise<number | null> {
+  async deleteAllByKey(): Promise<number | null> {
     logger.info(`[START] datapreparation-deleteAllByKey`);
-    const response = await fiscalCodeRepository.deleteAll();
+    const response = await FiscalCodeRepository.deleteAll();
     logger.info(`[END] datapreparation-deleteAllByKey`);
     return response;
-  }
+  },
 
-  public async deleteByFiscalCode(
+  async deleteByFiscalCode(
     fiscalCode: string
   ): Promise<FiscalcodeModel[] | null> {
     logger.info(`[START] deleteByFiscalcode for: ${fiscalCode}`);
     try {
-      await fiscalCodeRepository.deleteByFiscalCode(fiscalCode);
-      const response = await fiscalCodeRepository.findAll();
+      await FiscalCodeRepository.deleteByFiscalCode(fiscalCode);
+      const response = await FiscalCodeRepository.findAll();
       logger.info(`[END] deleteByFiscalcode`);
       return response;
     } catch (error) {
@@ -70,5 +68,5 @@ export class FiscalCodeService {
       );
       throw error;
     }
-  }
-}
+  },
+};

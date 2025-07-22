@@ -8,9 +8,9 @@ import {
   TipoToponimoModel,
   UserModel,
 } from "pdnd-models";
-import { logger } from "pdnd-common";
 import { Address } from "../db/schema/residence-verification/address.model.js";
 import { Subject } from "../db/schema/residence-verification/subject.model.js";
+import { logger } from "../index.js";
 
 function mapMunicipality(address: Address): TipoComuneModel {
   return {

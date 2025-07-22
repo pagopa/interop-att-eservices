@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { client } from "../../db/postgres/client.js"; // la tua istanza Drizzle configurata
+import { client } from "../../index.js";
 import { familyStatus } from "../../db/schema/family-status/family-status.js";
 import { InsertFamilyStatus } from "../../zod/family-status/family-status.js";
 import { DbRecord } from "../../types/dbRecord.js";

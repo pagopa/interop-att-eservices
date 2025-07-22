@@ -1,4 +1,1 @@
-import { DigitalAddressService } from "./digitalService.js";
-const digitalAddress = new DigitalAddressService();
-
-export { digitalAddress };
+export { digitalAddressService } from "./digitalService.js";

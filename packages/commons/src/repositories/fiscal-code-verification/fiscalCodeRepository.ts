@@ -1,12 +1,10 @@
 import { FiscalcodeModel } from "pdnd-models";
 import { eq } from "drizzle-orm";
-import { client, logger } from "pdnd-common";
 import { fiscalCodes } from "../../db/schema/fiscal-code-verification/index.js";
+import { logger, client } from "../../index.js";
 
-class FiscalCodeRepository {
-  public async findByFiscalCode(
-    fiscalCode: string
-  ): Promise<FiscalcodeModel | null> {
+export const FiscalCodeRepository = {
+  async findByFiscalCode(fiscalCode: string): Promise<FiscalcodeModel | null> {
     logger.info(
       `FiscalCodeVerificationRepository: Searching for fiscal code: ${fiscalCode}`
     );
@@ -18,8 +16,8 @@ class FiscalCodeRepository {
       .limit(1);
 
     return result.length > 0 ? result[0] : null;
-  }
-  public async save(model: FiscalcodeModel): Promise<FiscalcodeModel> {
+  },
+  async save(model: FiscalcodeModel): Promise<FiscalcodeModel> {
     const result = await client
       .insert(fiscalCodes)
       .values({
@@ -37,22 +35,22 @@ class FiscalCodeRepository {
       `FiscalCodeRepository: Record salvato/aggiornato: ${model.fiscalCode}`
     );
     return result[0];
-  }
+  },
 
-  public async findAll(): Promise<FiscalcodeModel[]> {
+  async findAll(): Promise<FiscalcodeModel[]> {
     return await client
       .select({ fiscalCode: fiscalCodes.fiscalCode })
       .from(fiscalCodes);
-  }
+  },
 
-  public async deleteAll(): Promise<number> {
+  async deleteAll(): Promise<number> {
     const result = await client
       .delete(fiscalCodes)
       .returning({ deletedId: fiscalCodes.id });
     logger.info(`FiscalCodeRepository: Cancellati ${result.length} record.`);
     return result.length;
-  }
-  public async deleteByFiscalCode(fiscalCode: string): Promise<number> {
+  },
+  async deleteByFiscalCode(fiscalCode: string): Promise<number> {
     const result = await client
       .delete(fiscalCodes)
       .where(eq(fiscalCodes.fiscalCode, fiscalCode))
@@ -61,7 +59,5 @@ class FiscalCodeRepository {
       logger.info(`FiscalCodeRepository: Record cancellato: ${fiscalCode}`);
     }
     return result.length;
-  }
-}
-
-export default new FiscalCodeRepository();
+  },
+};

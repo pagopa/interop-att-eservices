@@ -1,4 +1,1 @@
-import { UserService } from "./UserService.js";
-const userService = new UserService();
-
-export { userService };
+export { userService } from "./UserService.js";

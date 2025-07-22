@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import type { Mock } from "vitest";
-import { digitalAddress } from "pdnd-common";
+import { digitalAddressService } from "pdnd-common";
 import type { RequestListDigitalAddress } from "../src/model/domain/models.js";
 
 import {
@@ -74,7 +74,7 @@ describe("DigitalAddressVerificationSingleController", () => {
         idSubjects: ["CODE1"],
       };
       (getMaxNumber as Mock).mockReturnValue(3);
-      (digitalAddress.saveVerificationRequest as Mock).mockResolvedValue(
+      (digitalAddressService.saveVerificationRequest as Mock).mockResolvedValue(
         undefined
       );
 
@@ -88,9 +88,9 @@ describe("DigitalAddressVerificationSingleController", () => {
         JSON.stringify(request),
         3
       );
-      expect(digitalAddress.saveVerificationRequest).toHaveBeenCalledWith(
-        mockInstance
-      );
+      expect(
+        digitalAddressService.saveVerificationRequest
+      ).toHaveBeenCalledWith(mockInstance);
       expect(result.state).toBe("STATUS_3");
       expect(result.id).toBe(request.idRequest);
     });
@@ -111,16 +111,16 @@ describe("DigitalAddressVerificationSingleController", () => {
       const originalRequest = { count: 2 };
       const finalRequestState = { count: 1 };
 
-      (digitalAddress.findVerificationRequestById as Mock).mockResolvedValue(
-        originalRequest
-      );
+      (
+        digitalAddressService.findVerificationRequestById as Mock
+      ).mockResolvedValue(originalRequest);
       (calculateUpdatedRequestState as Mock).mockReturnValue(finalRequestState);
 
       const result = await controller.verify(idRichiesta);
 
-      expect(digitalAddress.updateVerificationRequest).toHaveBeenCalledWith(
-        finalRequestState
-      );
+      expect(
+        digitalAddressService.updateVerificationRequest
+      ).toHaveBeenCalledWith(finalRequestState);
       expect(result.status).toBe("STATUS_1");
     });
 
@@ -128,22 +128,24 @@ describe("DigitalAddressVerificationSingleController", () => {
       const idRichiesta = "req-123";
       const originalRequest = { count: 1 };
 
-      (digitalAddress.findVerificationRequestById as Mock).mockResolvedValue(
-        originalRequest
-      );
+      (
+        digitalAddressService.findVerificationRequestById as Mock
+      ).mockResolvedValue(originalRequest);
       (calculateUpdatedRequestState as Mock).mockReturnValue(originalRequest);
 
       const result = await controller.verify(idRichiesta);
 
-      expect(digitalAddress.updateVerificationRequest).not.toHaveBeenCalled();
+      expect(
+        digitalAddressService.updateVerificationRequest
+      ).not.toHaveBeenCalled();
       expect(result.status).toBe("STATUS_1");
     });
 
     it("should throw an error if the original request is not found", async () => {
       const idRichiesta = "req-not-found";
-      (digitalAddress.findVerificationRequestById as Mock).mockResolvedValue(
-        null
-      );
+      (
+        digitalAddressService.findVerificationRequestById as Mock
+      ).mockResolvedValue(null);
 
       await expect(controller.verify(idRichiesta)).rejects.toThrow(
         `The request verification not found with id: ${idRichiesta}`
@@ -161,13 +163,13 @@ describe("DigitalAddressVerificationSingleController", () => {
       const mockAddressModel2 = { fiscalCode: "CODE2" };
       const mockConvertedAddress = { cf: "CODE1" };
 
-      (digitalAddress.findVerificationRequestById as Mock).mockResolvedValue(
-        mockRequest
-      );
+      (
+        digitalAddressService.findVerificationRequestById as Mock
+      ).mockResolvedValue(mockRequest);
       (parseJsonToRequestListDigitalAddress as Mock).mockReturnValue(
         mockParsedRequest
       );
-      (digitalAddress.findSingleDataPreparationByFiscalCode as Mock)
+      (digitalAddressService.findSingleDataPreparationByFiscalCode as Mock)
         .mockResolvedValueOnce(mockAddressModel1)
         .mockResolvedValueOnce(mockAddressModel2);
       (
@@ -177,7 +179,7 @@ describe("DigitalAddressVerificationSingleController", () => {
       const result = await controller.getByIdRequest(idRichiesta);
 
       expect(
-        digitalAddress.findSingleDataPreparationByFiscalCode
+        digitalAddressService.findSingleDataPreparationByFiscalCode
       ).toHaveBeenCalledTimes(2);
       expect(result.list).toHaveLength(2);
       expect(result.list[0]).toEqual(mockConvertedAddress);
@@ -186,9 +188,9 @@ describe("DigitalAddressVerificationSingleController", () => {
     it("should throw an error if request count is not 1", async () => {
       const idRichiesta = "req-123";
       const mockRequest = { count: 0 };
-      (digitalAddress.findVerificationRequestById as Mock).mockResolvedValue(
-        mockRequest
-      );
+      (
+        digitalAddressService.findVerificationRequestById as Mock
+      ).mockResolvedValue(mockRequest);
 
       await expect(controller.getByIdRequest(idRichiesta)).rejects.toThrow(
         `The request verification not found with id: ${idRichiesta}`
@@ -197,9 +199,9 @@ describe("DigitalAddressVerificationSingleController", () => {
 
     it("should throw an error if request is not found", async () => {
       const idRichiesta = "req-not-found";
-      (digitalAddress.findVerificationRequestById as Mock).mockResolvedValue(
-        null
-      );
+      (
+        digitalAddressService.findVerificationRequestById as Mock
+      ).mockResolvedValue(null);
 
       await expect(controller.getByIdRequest(idRichiesta)).rejects.toThrow(
         `The request verification not found with id: ${idRichiesta}`

@@ -1,4 +1,4 @@
-import { logger, getContext, digitalAddress } from "pdnd-common";
+import { logger, getContext, digitalAddressService } from "pdnd-common";
 import { ResponseRequestDigitalAddressModel } from "pdnd-models";
 import { appendUniqueFiscalcodeModelsToArray } from "../utilities/fiscalcodeUtilities.js";
 
@@ -15,7 +15,7 @@ class DataPreparationController {
       ];
 
       const persistedFiscalcodeData =
-        await digitalAddress.findAllDataPreparation();
+        await digitalAddressService.findAllDataPreparation();
 
       // eslint-disable-next-line functional/no-let
       let allFiscalcode: ResponseRequestDigitalAddressModel[];
@@ -25,7 +25,7 @@ class DataPreparationController {
         persistedFiscalcodeData.length === 0
       ) {
         logger.info(`[CONTROLLER] Creazione nuova lista dati.`);
-        await digitalAddress.saveDataPreparationList(fiscalCodeData);
+        await digitalAddressService.saveDataPreparationList(fiscalCodeData);
         return null;
       } else {
         logger.info(`[CONTROLLER] Aggiornamento lista dati esistente.`);
@@ -33,8 +33,8 @@ class DataPreparationController {
           persistedFiscalcodeData,
           fiscalCodeData
         );
-        await digitalAddress.saveDataPreparationList(allFiscalcode);
-        return await digitalAddress.findAllDataPreparation();
+        await digitalAddressService.saveDataPreparationList(allFiscalcode);
+        return await digitalAddressService.findAllDataPreparation();
       }
     } catch (error) {
       logger.error(
@@ -47,7 +47,7 @@ class DataPreparationController {
 
   public async getAll(): Promise<ResponseRequestDigitalAddressModel[] | null> {
     try {
-      return await digitalAddress.findAllDataPreparation();
+      return await digitalAddressService.findAllDataPreparation();
     } catch (error) {
       logger.error(
         `getAll [DATA-PREPARATION-CONTROLLER]: Errore durante il recupero della lista.`,
@@ -59,7 +59,7 @@ class DataPreparationController {
 
   public async deleteAllByKey(): Promise<number | null> {
     try {
-      return await digitalAddress.deleteAllDataPreparation();
+      return await digitalAddressService.deleteAllDataPreparation();
     } catch (error) {
       logger.error(
         `deleteAllByKey [DATA-PREPARATION-CONTROLLER]: Errore durante la cancellazione della lista.`,
@@ -73,8 +73,8 @@ class DataPreparationController {
     uuid: string
   ): Promise<ResponseRequestDigitalAddressModel[] | null> {
     try {
-      await digitalAddress.deleteSingleDataPreparationByFiscalCode(uuid);
-      return await digitalAddress.findAllDataPreparation();
+      await digitalAddressService.deleteSingleDataPreparationByFiscalCode(uuid);
+      return await digitalAddressService.findAllDataPreparation();
     } catch (error) {
       logger.error(
         `deleteByFiscalCode [DATA-PREPARATION-CONTROLLER] - Errore durante l'eliminazione.`,
@@ -88,7 +88,7 @@ class DataPreparationController {
     fiscalCode: string
   ): Promise<ResponseRequestDigitalAddressModel | null> {
     try {
-      return await digitalAddress.findSingleDataPreparationByFiscalCode(
+      return await digitalAddressService.findSingleDataPreparationByFiscalCode(
         fiscalCode
       );
     } catch (error) {

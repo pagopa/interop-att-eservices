@@ -1,1 +1,1 @@
-export * from "./subjectRepository.js";
+export * from "./subjectRepositoryDirect.js";

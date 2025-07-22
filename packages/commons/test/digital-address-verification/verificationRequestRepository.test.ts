@@ -1,7 +1,7 @@
 /* eslint-disable functional/no-let */
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { VerificationRequestRepository } from "../../repositories/digital-address-verification/verificationRequestRepository.js";
-import { VerifyRequest } from "../../db/model/verifyRequest.js";
+import { describe, it, expect, vi, afterEach } from "vitest";
+import { VerifyRequest } from "../../src/db/model/verifyRequest.js";
+import { VerificationRequestRepository } from "../../src/repositories/digital-address-verification/verificationRequestRepository.js";
 
 const { mockClient, mockDbChain } = vi.hoisted(() => {
   const mockDbChain = {
@@ -20,21 +20,17 @@ const { mockClient, mockDbChain } = vi.hoisted(() => {
   return { mockClient, mockDbChain };
 });
 
-vi.mock("../../db/postgres/client.js", () => ({ client: mockClient }));
-vi.mock("../../index.js", () => ({ logger: { error: vi.fn() } }));
+vi.mock("../../src/index.js", () => ({
+  client: mockClient,
+  logger: { error: vi.fn() },
+}));
 
 describe("VerificationRequestRepository", (): void => {
-  let repository: VerificationRequestRepository;
-
   const mockRequest: VerifyRequest = {
     idRequest: "req-123",
     count: 1,
     jsonRequest: '{"key":"value"}',
   };
-
-  beforeEach((): void => {
-    repository = new VerificationRequestRepository();
-  });
 
   afterEach((): void => {
     vi.clearAllMocks();
@@ -44,7 +40,7 @@ describe("VerificationRequestRepository", (): void => {
     vi.mocked(mockDbChain.then).mockImplementation((resolve) =>
       resolve(undefined)
     );
-    await repository.save(mockRequest);
+    await VerificationRequestRepository.save(mockRequest);
     expect(mockClient.insert).toHaveBeenCalled();
     expect(mockDbChain.values).toHaveBeenCalled();
   });
@@ -55,7 +51,7 @@ describe("VerificationRequestRepository", (): void => {
       jsonRequest: JSON.parse(mockRequest.jsonRequest),
     };
     vi.mocked(mockDbChain.limit).mockResolvedValue([dbRecord]);
-    const result = await repository.findById("req-123");
+    const result = await VerificationRequestRepository.findById("req-123");
     expect(mockClient.select).toHaveBeenCalled();
     expect(result).toEqual(mockRequest);
   });
@@ -64,7 +60,10 @@ describe("VerificationRequestRepository", (): void => {
     vi.mocked(mockDbChain.then).mockImplementation((resolve) =>
       resolve(undefined)
     );
-    await repository.update({ idRequest: "req-123", count: 5 });
+    await VerificationRequestRepository.update({
+      idRequest: "req-123",
+      count: 5,
+    });
     expect(mockClient.update).toHaveBeenCalled();
     expect(mockDbChain.set).toHaveBeenCalled();
   });

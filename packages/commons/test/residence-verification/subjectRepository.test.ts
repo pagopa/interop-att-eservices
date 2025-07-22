@@ -2,8 +2,8 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import {
   subjectTable,
   addressTable,
-} from "../../db/schema/residence-verification/index.js";
-import { SubjectRepository } from "../../repositories/residence-verification/index.js";
+} from "../../src/db/schema/residence-verification/index.js";
+import { SubjectRepository } from "../../src/repositories/residence-verification/index.js";
 
 const { mockClient, mockFrom, mockDbChain } = vi.hoisted(() => {
   const mockDbChain = {
@@ -23,11 +23,11 @@ const { mockClient, mockFrom, mockDbChain } = vi.hoisted(() => {
   return { mockClient, mockFrom, mockDbChain };
 });
 
-vi.mock("pdnd-common", () => ({ client: mockClient }));
+vi.mock("../../src/index.js", () => ({
+  client: mockClient,
+}));
 
 describe("SubjectRepository", () => {
-  const repository: SubjectRepository = new SubjectRepository();
-
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -37,7 +37,7 @@ describe("SubjectRepository", () => {
       const mockResult = [{ subjects: {}, addresses: {} }];
       vi.mocked(mockDbChain.execute).mockResolvedValue(mockResult);
 
-      await repository.findWithAddressBySubjectId("SUBJ123");
+      await SubjectRepository.findWithAddressBySubjectId("SUBJ123");
 
       expect(mockClient.select).toHaveBeenCalled();
       expect(mockFrom).toHaveBeenCalledWith(subjectTable);
@@ -53,7 +53,7 @@ describe("SubjectRepository", () => {
 
   describe("findWithAddressByPersonalInfo", () => {
     it("should return an empty array and not call the db if no search parameters are provided", async () => {
-      const result = await repository.findWithAddressByPersonalInfo({});
+      const result = await SubjectRepository.findWithAddressByPersonalInfo({});
 
       expect(result).toEqual([]);
       expect(mockClient.select).not.toHaveBeenCalled();

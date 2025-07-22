@@ -1,7 +1,7 @@
 /* eslint-disable functional/no-let */
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { ElementDigitalAddressModel } from "pdnd-models";
-import { DigitalAddressRepository } from "../../repositories/digital-address-verification/digitalAddressRepository.js";
+import { DigitalAddressRepository } from "../../src/repositories/digital-address-verification/digitalAddressRepository.js";
 
 const { mockClient, mockDbChain } = vi.hoisted(() => {
   const mockDbChain = {
@@ -16,16 +16,12 @@ const { mockClient, mockDbChain } = vi.hoisted(() => {
   return { mockClient, mockDbChain };
 });
 
-vi.mock("../../db/postgres/client.js", () => ({ client: mockClient }));
-vi.mock("../../index.js", () => ({ logger: { error: vi.fn() } }));
+vi.mock("../../src/index.js", () => ({
+  client: mockClient,
+  logger: { error: vi.fn() },
+}));
 
 describe("DigitalAddressRepository", () => {
-  let repository: DigitalAddressRepository;
-
-  beforeEach(() => {
-    repository = new DigitalAddressRepository();
-  });
-
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -34,7 +30,7 @@ describe("DigitalAddressRepository", () => {
     vi.mocked(mockDbChain.then).mockImplementation((resolve) =>
       resolve(undefined)
     );
-    await repository.deleteBySubjectDataResponseId(123);
+    await DigitalAddressRepository.deleteBySubjectDataResponseId(123);
     expect(mockClient.delete).toHaveBeenCalled();
     expect(mockDbChain.where).toHaveBeenCalled();
   });
@@ -52,7 +48,7 @@ describe("DigitalAddressRepository", () => {
         },
       },
     ];
-    await repository.insertDigitalAddresses(456, addresses);
+    await DigitalAddressRepository.insertDigitalAddresses(456, addresses);
     expect(mockClient.insert).toHaveBeenCalled();
     expect(mockDbChain.values).toHaveBeenCalled();
   });

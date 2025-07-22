@@ -1,15 +1,14 @@
 /* eslint-disable prettier/prettier */
 import { eq } from "drizzle-orm";
-import { client } from "../../db/postgres/client.js";
+import { client, logger } from "../../index.js";
 import { verificationRequestsTable } from "../../db/schema/digital-address-verification/verifyRequest.model.js";
 import { VerifyRequest } from "../../db/model/verifyRequest.js";
-import { logger } from "../../index.js";
 
 
-export class VerificationRequestRepository {
-  private readonly db = client;
 
-  public async save(data: VerifyRequest): Promise<void> {
+export const VerificationRequestRepository = {
+ 
+   async save(data: VerifyRequest): Promise<void> {
     try {
       const insertData = {
         idRequest: data.idRequest,
@@ -18,16 +17,16 @@ export class VerificationRequestRepository {
         jsonRequest: data.jsonRequest,
         updatedAt: new Date(),
       };
-      await this.db.insert(verificationRequestsTable).values(insertData);
+      await client.insert(verificationRequestsTable).values(insertData);
     } catch (error: unknown) {
       logger.error(`[VerificationRequestRepo] Error saving request for id ${data.idRequest}.`, error);
       throw error;
     }
-  }
+  },
 
-  public async findById(id: string): Promise<VerifyRequest | null> {
+   async findById(id: string): Promise<VerifyRequest | null> {
     try {
-      const result = await this.db
+      const result = await client
         .select()
         .from(verificationRequestsTable)
         .where(eq(verificationRequestsTable.idRequest, id))
@@ -48,11 +47,11 @@ export class VerificationRequestRepository {
       logger.error(`[VerificationRequestRepo] Error finding request by id ${id}.`, error);
       throw error;
     }
-  }
+  },
 
-  public async update(data: Pick<VerifyRequest, "idRequest" | "count">): Promise<void> {
+   async update(data: Pick<VerifyRequest, "idRequest" | "count">): Promise<void> {
     try {
-      await this.db
+      await client
         .update(verificationRequestsTable)
         .set({
           count: data.count,
@@ -63,5 +62,5 @@ export class VerificationRequestRepository {
       logger.error(`[VerificationRequestRepo] Error updating request for id ${data.idRequest}.`, error);
       throw error;
     }
-  }
-}
+  },
+};

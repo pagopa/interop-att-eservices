@@ -1,12 +1,10 @@
 import { ResponseRequestDigitalAddressModel } from "pdnd-models";
-import { client } from "../../db/postgres/client.js";
+
 import { subjectDataResponsesTable } from "../../db/schema/digital-address-verification/subjectDataResponses.model.js";
-import { logger } from "../../index.js";
+import { client, logger } from "../../index.js";
 
-export class SubjectDataResponseRepository {
-  private readonly db = client;
-
-  public async upsert(
+export const SubjectDataResponseRepository = {
+  async upsert(
     listRequestId: string,
     item: ResponseRequestDigitalAddressModel
   ): Promise<number> {
@@ -17,7 +15,7 @@ export class SubjectDataResponseRepository {
         dataFrom: new Date(item.from),
         createdAt: new Date(),
       };
-      const [sdrUpsertResult] = await this.db
+      const [sdrUpsertResult] = await client
         .insert(subjectDataResponsesTable)
         .values(insertData)
         .onConflictDoUpdate({
@@ -44,5 +42,5 @@ export class SubjectDataResponseRepository {
       );
       throw error;
     }
-  }
-}
+  },
+};

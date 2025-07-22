@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import type { Mock } from "vitest";
 
-import { logger, digitalAddress } from "pdnd-common";
+import { logger, digitalAddressService } from "pdnd-common";
 import { fiscalcodeNotFound } from "../src/exceptions/errors.js";
 import { responseRequestDigitalAddressModelToResponseRequestDigitalAddress } from "../src/model/domain/apiConverter.js";
 
@@ -49,7 +49,7 @@ describe("DigitalAddressVerificationSingleController", () => {
   describe("verify", () => {
     it("should return true when user, address, and date are all valid", async () => {
       (
-        digitalAddress.findSingleDataPreparationByFiscalCode as Mock
+        digitalAddressService.findSingleDataPreparationByFiscalCode as Mock
       ).mockResolvedValue(mockDbRecord);
 
       const result = await controller.verify(
@@ -64,7 +64,7 @@ describe("DigitalAddressVerificationSingleController", () => {
 
     it("should return false if the digital address does not match", async () => {
       (
-        digitalAddress.findSingleDataPreparationByFiscalCode as Mock
+        digitalAddressService.findSingleDataPreparationByFiscalCode as Mock
       ).mockResolvedValue(mockDbRecord);
 
       const result = await controller.verify(
@@ -78,7 +78,7 @@ describe("DigitalAddressVerificationSingleController", () => {
 
     it("should return false if the 'from' date is not valid", async () => {
       (
-        digitalAddress.findSingleDataPreparationByFiscalCode as Mock
+        digitalAddressService.findSingleDataPreparationByFiscalCode as Mock
       ).mockResolvedValue(mockDbRecord);
 
       const result = await controller.verify(
@@ -92,7 +92,7 @@ describe("DigitalAddressVerificationSingleController", () => {
 
     it("should return false if the user is not found", async () => {
       (
-        digitalAddress.findSingleDataPreparationByFiscalCode as Mock
+        digitalAddressService.findSingleDataPreparationByFiscalCode as Mock
       ).mockResolvedValue(null);
 
       const result = await controller.verify(
@@ -107,7 +107,7 @@ describe("DigitalAddressVerificationSingleController", () => {
     it("should throw an error if the service fails", async () => {
       const error = new Error("Database connection failed");
       (
-        digitalAddress.findSingleDataPreparationByFiscalCode as Mock
+        digitalAddressService.findSingleDataPreparationByFiscalCode as Mock
       ).mockRejectedValue(error);
 
       await expect(
@@ -124,7 +124,7 @@ describe("DigitalAddressVerificationSingleController", () => {
   describe("extract", () => {
     it("should return converted user data when user is found", async () => {
       (
-        digitalAddress.findSingleDataPreparationByFiscalCode as Mock
+        digitalAddressService.findSingleDataPreparationByFiscalCode as Mock
       ).mockResolvedValue(mockDbRecord);
       (
         responseRequestDigitalAddressModelToResponseRequestDigitalAddress as Mock
@@ -141,7 +141,7 @@ describe("DigitalAddressVerificationSingleController", () => {
     it("should throw fiscalcodeNotFound error if user is not found", async () => {
       const idSubject = "ZZZZZZ00Z00Z000Z";
       (
-        digitalAddress.findSingleDataPreparationByFiscalCode as Mock
+        digitalAddressService.findSingleDataPreparationByFiscalCode as Mock
       ).mockResolvedValue(null);
 
       await expect(controller.extract(idSubject)).rejects.toThrow(
@@ -155,7 +155,7 @@ describe("DigitalAddressVerificationSingleController", () => {
     it("should throw an error if the service fails", async () => {
       const error = new Error("Database connection failed");
       (
-        digitalAddress.findSingleDataPreparationByFiscalCode as Mock
+        digitalAddressService.findSingleDataPreparationByFiscalCode as Mock
       ).mockRejectedValue(error);
 
       await expect(controller.extract("AAAAAA00A00A000A")).rejects.toThrow(

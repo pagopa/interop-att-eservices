@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { subjectTable } from "../../db/schema/residence-verification/index.js";
-import { SubjectRepositoryDirect } from "../../repositories/residence-verification-direct/subjectRepository.js";
+import { subjectTable } from "../../src/db/schema/residence-verification/index.js";
+import { SubjectRepositoryDirect } from "../../src/repositories/residence-verification-direct/index.js";
 
 const { mockClient, mockFrom, mockDbChain } = vi.hoisted(() => {
   const mockDbChain = {
@@ -16,18 +16,16 @@ const { mockClient, mockFrom, mockDbChain } = vi.hoisted(() => {
   return { mockClient, mockFrom, mockDbChain };
 });
 
-vi.mock("pdnd-common", () => ({ client: mockClient }));
+vi.mock("../../src/index.js", () => ({ client: mockClient }));
 
 describe("SubjectRepositoryDirect", () => {
-  const repository: SubjectRepositoryDirect = new SubjectRepositoryDirect();
-
   afterEach(() => {
     vi.clearAllMocks();
   });
 
   it("findWithAddressBySubjectId should build and execute the correct query", async () => {
     vi.mocked(mockDbChain.execute).mockResolvedValue([]);
-    await repository.findWithAddressBySubjectId("test-id");
+    await SubjectRepositoryDirect.findWithAddressBySubjectId("test-id");
 
     expect(mockClient.select).toHaveBeenCalled();
     expect(mockFrom).toHaveBeenCalledWith(subjectTable);
@@ -38,7 +36,9 @@ describe("SubjectRepositoryDirect", () => {
 
   it("findWithAddressByPersonalInfo should build and execute query when params are provided", async () => {
     vi.mocked(mockDbChain.execute).mockResolvedValue([]);
-    await repository.findWithAddressByPersonalInfo({ name: "Test" });
+    await SubjectRepositoryDirect.findWithAddressByPersonalInfo({
+      name: "Test",
+    });
 
     expect(mockClient.select).toHaveBeenCalled();
     expect(mockFrom).toHaveBeenCalledWith(subjectTable);
@@ -47,7 +47,9 @@ describe("SubjectRepositoryDirect", () => {
   });
 
   it("findWithAddressByPersonalInfo should return empty array if no params are provided", async () => {
-    const result = await repository.findWithAddressByPersonalInfo({});
+    const result = await SubjectRepositoryDirect.findWithAddressByPersonalInfo(
+      {}
+    );
 
     expect(result).toEqual([]);
     expect(mockClient.select).not.toHaveBeenCalled();
