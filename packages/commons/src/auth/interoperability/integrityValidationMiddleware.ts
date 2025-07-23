@@ -262,7 +262,6 @@ export const checkValueTrial = (
   operationMethod: string,
   signedHeaderName: string
 ): void => {
-  // Aggiunto export
   if (signedHeaderName === "content-type") {
     void TrialService.insert(
       operationPath,

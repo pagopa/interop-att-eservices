@@ -20,7 +20,6 @@ export const readAuthDataFromJwtToken = (
       clientId: token.data.client_id,
     };
   } catch (err) {
-    // logger.error(`Unexpected error parsing token: ${err}`);
     return new Error(`Unexpected error parsing token: ${err}`);
   }
 };

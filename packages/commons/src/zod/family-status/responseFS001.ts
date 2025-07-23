@@ -1,4 +1,3 @@
-// model/schema.ts
 import { z } from "zod";
 
 export const RequestFS001 = z.object({
@@ -44,6 +43,5 @@ export const ResponseFS001 = z.object({
   warnings: z.array(z.any()).optional(),
 });
 
-// Tipi TypeScript
 export type RequestFS001Type = z.infer<typeof RequestFS001>;
 export type ResponseFS001Type = z.infer<typeof ResponseFS001>;

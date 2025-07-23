@@ -7,7 +7,6 @@ import { client } from "../../db/postgres/client.js";
 import { VerifyRequest } from "../../db/model/verifyRequest.js";
 import { logger } from "../../index.js";
 
-// Aggiungo gli import necessari per i repository
 import { VerificationRequestRepository } from "../../repositories/digital-address-verification/verificationRequestRepository.js";
 import { DataPreparationRepository } from "../../repositories/digital-address-verification/dataPreparationRepository.js";
 import { ListRequestRepository } from "../../repositories/digital-address-verification/listRequestRepository.js";
@@ -20,7 +19,6 @@ const listRequestRepo = ListRequestRepository;
 const subjectDataResponseRepo = SubjectDataResponseRepository;
 const digitalAddressRepo = DigitalAddressRepository;
 
-// --- Oggetto Servizio Esportato ---
 export const digitalAddressService = {
   async saveVerificationRequest(data: VerifyRequest): Promise<void> {
     await verificationRequestRepo.save(data);

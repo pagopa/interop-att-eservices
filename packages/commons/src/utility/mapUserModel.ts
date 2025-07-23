@@ -59,7 +59,6 @@ function mapCivicNumber(address: Address): TipoNumeroCivicoModel {
   };
 }
 
-// MODIFICA: Sostituito 'Address' con 'addressTable'
 function mapForeignState(address: Address): TipoLocalitaEsteraModel {
   return {
     foreignAddress: {
@@ -82,7 +81,6 @@ function mapForeignState(address: Address): TipoLocalitaEsteraModel {
   };
 }
 
-// MODIFICA: Sostituito 'Address' con 'addressTable'
 function mapAddressData(address: Address): TipoResidenzaModel {
   return {
     addressType: address.address_type ?? "",
@@ -90,7 +88,7 @@ function mapAddressData(address: Address): TipoResidenzaModel {
     addressStartDate: address.address_start_date ?? "",
     presso: address.presso ?? "",
     address: {
-      cap: address.foreign_cap ?? "", // Verificare se questo campo è corretto qui o se c'è un cap nazionale
+      cap: address.foreign_cap ?? "",
       municipality: mapMunicipality(address),
       fraction: "",
       toponym: mapToponym(address),
@@ -100,7 +98,6 @@ function mapAddressData(address: Address): TipoResidenzaModel {
   };
 }
 
-// MODIFICA: Sostituito 'Subject' con 'subjectTable'
 function mapBirthPlace(subject: Subject): TipoLuogoNascitaModel {
   return {
     exceptionalPlace: subject.birth_exceptional_place ?? "",
@@ -120,7 +117,6 @@ function mapBirthPlace(subject: Subject): TipoLuogoNascitaModel {
   };
 }
 
-// MODIFICA: Sostituito 'Subject' con 'subjectTable'
 function mapSubjectData(subject: Subject): SoggettoModel {
   return {
     subjectId: subject.subject_id ?? "",
@@ -135,7 +131,6 @@ function mapSubjectData(subject: Subject): SoggettoModel {
   };
 }
 
-// MODIFICA: Aggiornata la firma della funzione per usare 'addressTable'
 export async function mapUserModel(
   uuid: string,
   subject: Subject,
@@ -149,7 +144,6 @@ export async function mapUserModel(
     };
   } catch (error) {
     logger.error("Error while mapping the UserModel:", error);
-    // È meglio lanciare un errore più specifico se possibile
     throw new Error("An error occurred while mapping the user model.");
   }
 }

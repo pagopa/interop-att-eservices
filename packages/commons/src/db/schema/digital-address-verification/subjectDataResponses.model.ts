@@ -5,11 +5,11 @@ import {
   uuid,
   check,
   index,
-  unique, // <--- **NUOVO: Importa 'unique' da drizzle-orm/pg-core**
+  unique,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm/sql";
-import { customSchema } from "../schema.js"; // Ensure this path is correct
-import { listRequestsTable } from "./listRequest.model.js"; // Ensure this path is correct
+import { customSchema } from "../schema.js";
+import { listRequestsTable } from "./listRequest.model.js";
 
 export const subjectDataResponsesTable = customSchema.table(
   "subject_data_responses",

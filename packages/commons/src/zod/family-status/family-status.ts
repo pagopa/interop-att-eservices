@@ -1,4 +1,3 @@
-// src/zod/familyStatus.ts
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { familyStatus } from "../../db/schema/family-status/family-status.js";
 

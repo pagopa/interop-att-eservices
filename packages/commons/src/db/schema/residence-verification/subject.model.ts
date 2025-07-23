@@ -8,7 +8,6 @@ export const subjectTable = customSchema.table("subjects", {
   id: text("id").notNull(),
   subject_id: text("subject_id").notNull(),
 
-  // Dati Anagrafici
   surname: text("surname"),
   name: text("name"),
   gender: text("gender"),

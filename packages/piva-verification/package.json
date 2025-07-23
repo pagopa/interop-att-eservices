@@ -12,7 +12,7 @@
     "format:check": "prettier --check src",
     "format:write": "prettier --write src",
     "debug": "node --inspect --no-warnings --loader ts-node/esm -r dotenv-flow/config ./src/index.ts",
-    "start": "node --no-warnings --loader ts-node/esm -r dotenv-flow/config ./src/index.ts",
+    "start": "node --trace-warnings --loader ts-node/esm -r dotenv-flow/config ./src/index.ts",
     "build": "tsc",
     "check": "tsc --project tsconfig.check.json",
     "generate-model": "pnpm openapi-zod-client ./open-api/organizationIdVerification_v1.0.yaml -o ./src/model/generated/api.ts",

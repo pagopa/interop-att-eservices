@@ -30,7 +30,6 @@ function patchLatestMigration(): void {
     "DROP TABLE IF EXISTS "
   );
 
-  // ALTER TABLE ADD COLUMN
   const addColumnRegex =
     /ALTER TABLE\s+("[^"]+"\.)?"?([a-zA-Z0-9_]+)"?\s+ADD COLUMN\s+([^;]+);/g;
   const addColumnMatches = [...withDropFixed.matchAll(addColumnRegex)];
@@ -59,7 +58,6 @@ END $$$$;
     return acc.replace(match[0], block);
   }, withDropFixed);
 
-  // ALTER TABLE ADD CONSTRAINT
   const addConstraintRegex =
     /ALTER TABLE\s+("[^"]+"\.)?"?([a-zA-Z0-9_]+)"?\s+ADD CONSTRAINT\s+([^;]+);/g;
   const addConstraintMatches = [
@@ -76,7 +74,7 @@ END $$$$;
     const constraintNameMatch = constraintDef.trim().match(/^"([^"]+)"/);
     if (!constraintNameMatch) {
       return acc;
-    } // fallback safety
+    }
     const constraintName = constraintNameMatch[1];
 
     const block = `
@@ -101,7 +99,6 @@ END $$$$;
     return acc.replace(match[0], block);
   }, withAddColumnWrapped);
 
-  // CREATE INDEX
   const createIndexRegex =
     /CREATE INDEX\s+"([^"]+)"\s+ON\s+("[^"]+"\.)?"?([a-zA-Z0-9_]+)"?\s+USING\s+btree\s*\([^)]+\);/g;
   const createIndexMatches = [
@@ -125,7 +122,6 @@ END $$$$;
     return acc.replace(createStmt, block);
   }, withAddConstraintWrapped);
 
-  // CREATE TYPE
   const createTypeRegex =
     /CREATE TYPE\s+("[^"]+"\.)?"?([a-zA-Z0-9_]+)"?\s+AS ENUM\s*\(([^;]+)\);/g;
   const createTypeMatches = [

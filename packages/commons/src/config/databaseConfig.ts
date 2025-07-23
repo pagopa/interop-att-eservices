@@ -25,7 +25,6 @@ export const databaseConfig: () => DatabaseConfig | null = () => {
     "DATABASE_SCHEMA",
   ];
 
-  // Verifica se tutte le variabili di ambiente richieste sono definite
   const allVariablesDefined = requiredEnvVars.every(
     (varName) => envVars[varName] !== undefined
   );

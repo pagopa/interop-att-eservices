@@ -81,14 +81,11 @@ export const buildSignerService = (): SignerService => {
           SigningAlgorithm: SigningAlgorithmSpec.RSASSA_PKCS1_V1_5_SHA_256,
         };
 
-        // Effettua una richiesta di test al servizio KMS
         const command = new SignCommand(input);
         await kmsClient.send(command);
 
-        // Se la richiesta ha avuto successo, il servizio KMS è raggiungibile
         return true;
       } catch (error) {
-        // Se si verifica un errore, gestiscilo di conseguenza
         logger.error(`Error reaching KMS service: ${error}`);
         return false;
       }

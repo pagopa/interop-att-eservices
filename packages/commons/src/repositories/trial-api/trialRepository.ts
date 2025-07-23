@@ -16,18 +16,14 @@ export const TrialRepository = {
       throw new Error(`Unknown check name: ${checkName}`);
     }
 
-    // Assuming the check_id can fit within a JS number range, convert it to number
-    const checkIdAsNumber = Number(check_id); // Convert BigInt to number (if safe)
-
-    // Alternatively, if the value is too large, you can convert it to a string:
-    // const checkIdAsString = check_id.toString(); // Use this if you're unsure about number range
+    const checkIdAsNumber = Number(check_id);
 
     await client.insert(Trial).values({
       purpose_id: "unknown",
       correlation_id: "not_set",
       operation_path: operationPath,
       operation_method: operationMethod,
-      check_id: checkIdAsNumber, // Pass the converted value
+      check_id: checkIdAsNumber,
       response: response ?? null,
       created_date: new Date(),
       message: message ?? null,

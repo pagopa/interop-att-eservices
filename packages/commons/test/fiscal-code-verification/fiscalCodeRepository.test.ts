@@ -19,7 +19,6 @@ const {
   const mockValues = vi.fn();
   const mockOnConflictDoUpdate = vi.fn();
 
-  // Questo oggetto simula la catena di metodi di Drizzle.
   const dbChain = {
     select: vi.fn().mockReturnThis(),
     from: vi.fn().mockReturnThis(),
@@ -32,7 +31,6 @@ const {
     delete: vi.fn().mockReturnThis(),
   };
 
-  // Impostiamo il comportamento di default della catena per restituire se stessa.
   mockWhere.mockReturnValue(dbChain);
   mockValues.mockReturnValue(dbChain);
   mockOnConflictDoUpdate.mockReturnValue(dbChain);
@@ -67,7 +65,6 @@ describe("FiscalCodeRepository", () => {
   describe("findByFiscalCode", () => {
     it("should return a fiscal code if found", async () => {
       const mockFiscalCode = { fiscalCode: "RSSMRA80A01H501A" };
-      // Definiamo cosa deve restituire la fine della catena di query.
       mockLimit.mockResolvedValueOnce([mockFiscalCode]);
 
       const result = await FiscalCodeRepository.findByFiscalCode(
@@ -140,7 +137,6 @@ describe("FiscalCodeRepository", () => {
       const result = await FiscalCodeRepository.deleteByFiscalCode("NOTFOUND");
 
       expect(result).toBe(0);
-      // Verifichiamo che il logger non venga chiamato se non si cancella nulla.
       expect(mockLogger.info).not.toHaveBeenCalled();
     });
   });

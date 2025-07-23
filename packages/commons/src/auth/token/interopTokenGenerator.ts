@@ -1,9 +1,7 @@
-/* eslint-disable max-params */
 import { Algorithm, JwtPayload } from "jsonwebtoken";
 import { ErrorHandling } from "pdnd-models";
 import { v4 as uuidv4 } from "uuid";
 import { signerConfig } from "../../config/index.js";
-// import { logger } from "../../logging/index.js";
 import { userRoles } from "../authData.js";
 import { buildSignerService } from "../../aws-kms/signerService.js";
 import {
@@ -46,7 +44,6 @@ const createInternalToken = (
 };
 
 export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
-  // Hosting all the dependencies to collect all process env reading at one time
   const signerService = buildSignerService();
   const config = signerConfig();
 
@@ -54,9 +51,7 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
     seed: TokenPayload,
     jwtHeaders: TokenHeader
   ): Promise<string> => {
-    const customHeaders = {
-      // use: "sig"
-    };
+    const customHeaders = {};
 
     const headers = { ...jwtHeaders, ...customHeaders };
 
@@ -92,7 +87,7 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
   ): Promise<InternalToken> => {
     try {
       const tokenSeed = createInternalToken(
-        tokenHeader.alg, // "RS256",
+        tokenHeader.alg,
         tokenHeader.kid,
         tokenPayloadSeed.subject,
         tokenPayloadSeed.audience,

@@ -8,11 +8,10 @@ export class CacheManager {
   constructor() {
     try {
       this.client = createClient({
-        url: process.env.REDIS_ENDPOINT, // Usa l'URL fornito o il default se non specificato
+        url: process.env.REDIS_ENDPOINT,
       });
 
       this.client.on("error", (error: Error) => {
-        // eslint-disable-next-line no-console
         logger.error(`Redis client error: ${error}`);
         ErrorHandling.genericError();
       });

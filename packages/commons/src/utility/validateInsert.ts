@@ -1,4 +1,3 @@
-// src/utility/validateInsert.ts
 import { z } from "zod";
 import { DBClient } from "../types/db.js";
 
