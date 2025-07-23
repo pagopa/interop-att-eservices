@@ -1,5 +1,5 @@
 {
-  "id": "486d9500-4870-4eeb-92aa-257c28d53f4e",
+  "id": "771f03dc-32e4-4f19-b908-d8faf84e202b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1022,65 +1022,6 @@
           "nullsNotDistinct": false,
           "columns": [
             "fiscal_code"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "att.handshakes": {
-      "name": "handshakes",
-      "schema": "att",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "purpose_id": {
-          "name": "purpose_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "certificate": {
-          "name": "certificate",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "context_key": {
-          "name": "context_key",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "handshakes_purpose_id_unique": {
-          "name": "handshakes_purpose_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "purpose_id"
           ]
         }
       },

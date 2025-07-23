@@ -177,16 +177,6 @@ CREATE TABLE IF NOT EXISTS "att"."fiscal_codes" (
 	CONSTRAINT "fiscal_codes_fiscal_code_unique" UNIQUE("fiscal_code")
 );
 
-CREATE TABLE IF NOT EXISTS "att"."handshakes" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"purpose_id" text NOT NULL,
-	"certificate" text NOT NULL,
-	"context_key" text NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "handshakes_purpose_id_unique" UNIQUE("purpose_id")
-);
-
 CREATE TABLE IF NOT EXISTS "att"."piva" (
 	"organization_id" text PRIMARY KEY NOT NULL
 );
