@@ -1,5 +1,5 @@
 {
-  "id": "771f03dc-32e4-4f19-b908-d8faf84e202b",
+  "id": "0e69347c-322b-4be1-816c-7ec80467d6f9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1225,6 +1225,31 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.handshakes": {
+      "name": "handshakes",
+      "schema": "att",
+      "columns": {
+        "apikey": {
+          "name": "apikey",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "context_key": {
+          "name": "context_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},

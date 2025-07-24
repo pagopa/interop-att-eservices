@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { KMSClient, SignCommand } from "@aws-sdk/client-kms";
-import { keychainSignatureUtility } from "../../../src/utilities/keychainSignatureUtility"; // Assumi che sia nel percorso corretto
+import { keychainSignatureUtility } from "../src/utilities/keychainSignatureUtility.js"; // Assumi che sia nel percorso corretto
 import { logger } from "pdnd-common";
 // Mock dell'intero modulo `pdnd-common`
 vi.mock("pdnd-common", () => ({

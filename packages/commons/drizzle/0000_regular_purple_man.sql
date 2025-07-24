@@ -209,6 +209,11 @@ CREATE TABLE IF NOT EXISTS "att"."trial" (
 	"message" varchar(255)
 );
 
+CREATE TABLE IF NOT EXISTS "att"."handshakes" (
+	"apikey" text PRIMARY KEY NOT NULL,
+	"context_key" text NOT NULL
+);
+
 DO $$
 BEGIN
   IF EXISTS (

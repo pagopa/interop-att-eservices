@@ -2,7 +2,6 @@ import { ZodiosRouterContextRequestHandler } from "@zodios/express";
 import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
 import { makeApiProblemBuilder, ErrorHandling } from "pdnd-models";
 import { match } from "ts-pattern";
-import stringify from "json-stable-stringify";
 import { ExpressContext } from "../../index.js";
 import { InteroperabilityConfig } from "../../config/commonConfig.js";
 import { logger } from "../../logging/index.js";
@@ -238,9 +237,17 @@ export const verifyJwtPayload = (jwtToken: string, req: any): void => {
     throw ErrorHandling.tokenNotValid();
   }
 
-  const hashBody = encodeBase64(
-    generateHashFromString(stringify(req.body) ?? "")
-  );
+  const bodyAsString = JSON.stringify(req.body);
+  logger.info(` bodyAsString: ${bodyAsString}`);
+
+  if (bodyAsString === null || bodyAsString === undefined) {
+    throw new Error(
+      "Il corpo della richiesta è obbligatorio per calcolare l'hash."
+    );
+  }
+
+  const hashBody = encodeBase64(generateHashFromString(bodyAsString));
+  logger.info(` hashBody: ${hashBody}`);
 
   if (hashBody !== signedHeaders.digest.substring(8)) {
     logger.error(

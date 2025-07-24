@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "pdnd-models": ["src/lib/models"],
+      "pdnd-common": ["src/lib/common"],
+      "~/*": ["src/*"]
+    }
+  }
+}

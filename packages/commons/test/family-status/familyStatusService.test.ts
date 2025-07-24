@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-
 import { FamilyStatusService, RawPayload } from "../../src/index.js";
 import { familyStatusRepo } from "../../src/repositories/family-status/family-status.js";
 import { FamilyStatusDto } from "../../src/types/familyStatusDTO.js";
