@@ -1,53 +1,52 @@
-import { ExpressContext, getContext, logger, TrialService } from "pdnd-common";
+import {
+  ExpressContext,
+  getContext,
+  logger,
+  DataPreparationHandshakeService,
+} from "pdnd-common";
 import { ZodiosRouterContextRequestHandler } from "@zodios/express";
 import { match } from "ts-pattern";
-import DataPreparationHandshakeService from "../services/dataPreparationHandshakeService.js";
+import { makeApiProblem } from "../exceptions/errors.js";
 import { getSerialNumberFromUrlEncodedCert } from "../utilities/certificateUtility.js";
-import {
-  ErrorHandling,
-  makeApiProblemBuilder,
-} from "../../../models/dist/errorHandling.js";
-
-const makeApiProblem = makeApiProblemBuilder(logger, {});
+import { ErrorHandling } from "../../../models/dist/errorHandling.js";
 
 export const verifyCertValidity: ZodiosRouterContextRequestHandler<
   ExpressContext
 > = async (req, res, next) => {
   try {
-    // Verifica se è stato caricato un file
     const headerCert = Array.isArray(req.headers["x-amzn-mtls-clientcert"])
       ? req.headers["x-amzn-mtls-clientcert"][0]
       : req.headers["x-amzn-mtls-clientcert"] ?? null;
 
     if (!headerCert) {
-      logger.error("Nessun certificato caricato");
+      logger.error("No certificate uploaded");
       throw ErrorHandling.certificateNotValidError();
     }
 
     const apiKey: string | undefined = req.headers.apikey as string | undefined;
     if (!apiKey) {
-      logger.error("Header apikey mandatory.");
+      logger.error("Header apikey is mandatory.");
       throw ErrorHandling.apikeyNotValidError();
     }
 
     const serialNumber = getSerialNumberFromUrlEncodedCert(headerCert);
 
     const appContext = getContext();
-    const handshake = await DataPreparationHandshakeService.getByPurposeId(
+    const handshake = await DataPreparationHandshakeService.getByApikey(
       appContext.authData.purposeId
     );
 
     if (handshake?.cert !== serialNumber) {
-      logger.error(`Certificato non valido`);
+      logger.error(`Invalid certificate`);
       throw ErrorHandling.certificateNotValidError();
     }
-    void TrialService.insert(req.url, req.method, "CERT_VERIFICATION_OK", "OK");
-    next(); // Chiamare next solo se il certificato è valido
+    next();
   } catch (error) {
     logger.error(
-      `Si è verificato un errore durante la verifica della validità del certificato: ${error}`
+      `An error occurred while verifying the certificate validity: ${error}`
     );
-    const problem = makeApiProblem(error, (err) =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const problem = makeApiProblem(error, (err: { code: any }) =>
       match(err.code)
         .with("unauthorizedError", () => 401)
         .with("operationForbidden", () => 403)
@@ -55,13 +54,6 @@ export const verifyCertValidity: ZodiosRouterContextRequestHandler<
         .with("certNotValid", () => 400)
         .with("apikeyNotValid", () => 400)
         .otherwise(() => 500)
-    );
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "CERT_VERIFICATION_NOT_VALID",
-      "KO",
-      JSON.stringify(problem)
     );
     res.status(problem.status).json(problem).end();
   }

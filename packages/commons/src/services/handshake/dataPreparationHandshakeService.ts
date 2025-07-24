@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { logger, certNotValidError } from "../../logging/index.js";
 import { HandshakeModel } from "../../db/model/handshake.js";
 import dataPreparationHandshakeRepository from "../../repositories/handshake/dataPreparationHandshakeRepository.js";
@@ -6,10 +7,9 @@ import {
   isCertUnique,
 } from "../../utility/handshakeUtilities.js";
 
-class DataPreparationHandshakeService {
-  private key: string = "piva-verification-handshake";
-
-  public async saveList(
+const key = "piva-verification-handshake";
+export const DataPreparationHandshakeService = {
+  async saveList(
     handshakeModel: HandshakeModel
   ): Promise<HandshakeModel[] | null> {
     try {
@@ -17,7 +17,7 @@ class DataPreparationHandshakeService {
       const handshakeData: HandshakeModel[] = [handshakeModel];
 
       const persistedHandshakeData =
-        await dataPreparationHandshakeRepository.findAllByKey(this.key);
+        await dataPreparationHandshakeRepository.findAllByKey(key);
       if (!isCertUnique(persistedHandshakeData, handshakeData)) {
         logger.info(
           "The provided certificate is associated with another api key."
@@ -28,22 +28,16 @@ class DataPreparationHandshakeService {
         persistedHandshakeData == null ||
         persistedHandshakeData.length === 0
       ) {
-        await dataPreparationHandshakeRepository.saveList(
-          handshakeData,
-          this.key
-        );
+        await dataPreparationHandshakeRepository.saveList(handshakeData, key);
       } else {
         const allHandshake = appendUniqueHandshakeModelsToArray(
           persistedHandshakeData,
           handshakeData
         );
-        await dataPreparationHandshakeRepository.saveList(
-          allHandshake,
-          this.key
-        );
+        await dataPreparationHandshakeRepository.saveList(allHandshake, key);
       }
       const response = await dataPreparationHandshakeRepository.findAllByKey(
-        this.key
+        key
       );
       logger.info(`[END] handshake-saveList`);
       return response;
@@ -54,13 +48,13 @@ class DataPreparationHandshakeService {
       );
       throw error;
     }
-  }
+  },
 
-  public async getAll(): Promise<HandshakeModel[] | null> {
+  async getAll(): Promise<HandshakeModel[] | null> {
     try {
       logger.info(`[START] handshake-getAll`);
       const response = await dataPreparationHandshakeRepository.findAllByKey(
-        this.key
+        key
       );
       logger.info(`[END] handshake-getAll`);
       return response;
@@ -71,13 +65,13 @@ class DataPreparationHandshakeService {
       );
       throw error;
     }
-  }
+  },
 
-  public async deleteAllByKey(): Promise<number | null> {
+  async deleteAllByKey(): Promise<number | null> {
     try {
       logger.info(`[START] handshake-deleteAllByKey`);
       const response = await dataPreparationHandshakeRepository.deleteAllByKey(
-        this.key
+        key
       );
       logger.info(`[END] handshake-deleteAllByKey`);
       return response;
@@ -88,18 +82,16 @@ class DataPreparationHandshakeService {
       );
       throw error;
     }
-  }
+  },
 
-  public async getByPurposeId(
-    purposeId: string
-  ): Promise<HandshakeModel | null> {
+  async getByApikey(apikey: string): Promise<HandshakeModel | null> {
     try {
-      logger.info(`[START] handshake-getByPurposeId`);
-      const response = await dataPreparationHandshakeRepository.findByPurposeId(
-        this.key,
-        purposeId
+      logger.info(`[START] handshake-getByApikey`);
+      const response = await dataPreparationHandshakeRepository.findByApikey(
+        key,
+        apikey
       );
-      logger.info(`[END] handshake-getByPurposeId`);
+      logger.info(`[END] handshake-getByApikey`);
       return response;
     } catch (error) {
       logger.error(
@@ -108,7 +100,5 @@ class DataPreparationHandshakeService {
       );
       throw error;
     }
-  }
-}
-
-export default new DataPreparationHandshakeService();
+  },
+};

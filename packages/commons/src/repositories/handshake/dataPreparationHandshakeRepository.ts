@@ -4,7 +4,7 @@ import { cacheManager } from "pdnd-common";
 import { parseJsonToHandshakeArray } from "../../utility/jsonHandshakeUtilities.js";
 import { findHandshakeModelByApikey } from "../../utility/handshakeUtilities.js";
 
-class dataPreparationHandshakeRepository {
+export class dataPreparationHandshakeRepository {
   public async saveList(
     genericRequest: HandshakeModel[],
     key: string
@@ -34,16 +34,16 @@ class dataPreparationHandshakeRepository {
     }
   }
 
-  public async findByPurposeId(
+  public async findByApikey(
     key: string,
-    purposeId: string
+    apikey: string
   ): Promise<HandshakeModel | null> {
     try {
-      logger.info(purposeId);
+      logger.info(apikey);
       const dataSaved = await cacheManager.getObjectByKey(key);
       const datas = parseJsonToHandshakeArray(dataSaved);
       logger.info(`dataPreparationRepository: Item successfully retrieved.`);
-      return findHandshakeModelByApikey(datas, purposeId);
+      return findHandshakeModelByApikey(datas, apikey);
     } catch (error) {
       logger.error(`HandshakeRepository: Error during item retrieval: `, error);
       throw error; // Re-throw the error for higher-level handling
