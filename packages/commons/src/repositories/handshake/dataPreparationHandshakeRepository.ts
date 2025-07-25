@@ -46,7 +46,7 @@ export class dataPreparationHandshakeRepository {
       return findHandshakeModelByApikey(datas, apikey);
     } catch (error) {
       logger.error(`HandshakeRepository: Error during item retrieval: `, error);
-      throw error; // Re-throw the error for higher-level handling
+      throw error;
     }
   }
 

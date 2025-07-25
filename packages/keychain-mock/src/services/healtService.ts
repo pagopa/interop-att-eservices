@@ -24,7 +24,6 @@ class HealtService {
     }
 
     try {
-      // Prova a connetterti al database
       await testDbConnection();
     } catch (error) {
       logger.error(`Errore nella connessione al database: ${error}`);
