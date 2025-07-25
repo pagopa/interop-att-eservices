@@ -1,5 +1,4 @@
-import { DbRecord } from "../../types/dbRecord.js";
-import { ResponseFS001Type } from "../../zod/family-status/responseFS001.js";
+import { DbRecord, ResponseFS001Type } from "pdnd-common";
 
 export function mapDbRecordToResponseFS001(
   record: DbRecord,

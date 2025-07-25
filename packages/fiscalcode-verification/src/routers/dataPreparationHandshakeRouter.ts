@@ -1,10 +1,13 @@
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
-import { ExpressContext, ZodiosContext, logger } from "pdnd-common";
+import {
+  DataPreparationHandshakeService,
+  ExpressContext,
+  ZodiosContext,
+  logger,
+} from "pdnd-common";
 import multer from "multer";
-import { getContext } from "pdnd-common";
 import { authenticationMiddleware } from "pdnd-common";
-import dataPreparationHandshakeService from "../services/dataPreparationHandshakeService.js";
 import { api } from "../model/generated/api.js";
 import {
   certNotValidError,
@@ -48,13 +51,12 @@ const dataPreparationHandshakeRouter = (
         const serialNumber =
           getCertificateFingerprintFromBuffer(certificateData);
         const handshakeData = {
-          pourposeId: getContext().authData.purposeId,
           apikey: apiKey,
           cert: serialNumber,
         };
         logger.info(`cert: ${handshakeData.cert}`);
 
-        await dataPreparationHandshakeService.saveList(handshakeData);
+        await DataPreparationHandshakeService.saveList(handshakeData);
         logger.info("certificato salvato con successo");
         return res.status(200).end();
       } catch (error) {

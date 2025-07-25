@@ -1,10 +1,11 @@
-import { logger, getContext, mapDbRecordToResponseFS001 } from "pdnd-common";
+import { logger, getContext } from "pdnd-common";
 import { FamilyStatusService } from "pdnd-common";
 import {
   requestParamNotValid,
   userModelNotFound,
 } from "../exceptions/errors.js";
 import { RequestFS001, ResponseFS001 } from "../model/domain/models.js";
+import { mapDbRecordToResponseFS001 } from "../utilities/mapDbRecordToResponseFS001.js";
 
 class FamilyStatusController {
   public appContext = getContext();
