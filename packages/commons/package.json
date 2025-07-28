@@ -77,7 +77,6 @@
     "node-jose": "^2.0.0",
     "pdnd-models": "workspace:*",
     "pg": "^8.13.3",
-    "redis": "^4.6.13",
     "ts-pattern": "^5.0.6",
     "uuid": "^9.0.0",
     "winston": "^3.9.0",

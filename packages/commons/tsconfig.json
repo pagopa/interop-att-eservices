@@ -9,5 +9,5 @@
     "types": ["node"],
     "rootDir": "src"
   },
-  "include": ["src/**/*", "test/piva-verification"]
+  "include": ["src/**/*"]
 }
