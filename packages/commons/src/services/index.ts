@@ -6,3 +6,4 @@ export * from "./residence-verification/index.js";
 export * from "./residence-verification-direct/index.js";
 export * from "./trial-api/index.js";
 export * from "./handshake/index.js";
+export * from "./health/index.js";
