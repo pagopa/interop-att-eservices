@@ -1,3 +1,1 @@
-import PivaVerificationService from "./pivaService.js";
-
-export { PivaVerificationService };
+export * from "./pivaService.js";

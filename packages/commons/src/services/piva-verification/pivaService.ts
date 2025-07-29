@@ -2,26 +2,17 @@ import { PartitaIvaModel } from "pdnd-models";
 import { logger } from "../../index.js";
 import { PivaRepository } from "../../repositories/piva-verification/piva.js";
 
-class PivaVerificationService {
-  public eService: string = "piva-verification";
-  private pivaRepository: PivaRepository;
-
-  constructor() {
-    this.pivaRepository = new PivaRepository();
-  }
-
-  public async saveList(
-    pivaModel: PartitaIvaModel
-  ): Promise<PartitaIvaModel | null> {
+export const PivaVerificationService = {
+  async saveList(pivaModel: PartitaIvaModel): Promise<PartitaIvaModel | null> {
     try {
       logger.info(`[PivaService][START] saveIfNotExists`);
 
-      const exists = await this.pivaRepository.getPivaObjectByKey(
+      const exists = await PivaRepository.getPivaObjectByKey(
         pivaModel.organizationId
       );
 
       if (!exists) {
-        await this.pivaRepository.setPivaObject(pivaModel.organizationId);
+        await PivaRepository.setPivaObject(pivaModel.organizationId);
         logger.info(
           `[PivaService] organizationId salvato: ${pivaModel.organizationId}`
         );
@@ -39,17 +30,13 @@ class PivaVerificationService {
       );
       throw error;
     }
-  }
+  },
 
-  public async getByPiva(
-    organizationId: string
-  ): Promise<PartitaIvaModel | null> {
+  async getByPiva(organizationId: string): Promise<PartitaIvaModel | null> {
     try {
       logger.info(`[START] datapreparation-getByPiva`);
 
-      const response = await this.pivaRepository.getPivaObjectByKey(
-        organizationId
-      );
+      const response = await PivaRepository.getPivaObjectByKey(organizationId);
       logger.info(`[END] datapreparation-getByPiva`);
       return response;
     } catch (error) {
@@ -59,13 +46,13 @@ class PivaVerificationService {
       );
       throw error;
     }
-  }
+  },
 
-  public async getAll(): Promise<PartitaIvaModel[] | null> {
+  async getAll(): Promise<PartitaIvaModel[] | null> {
     try {
       logger.info(`[START] datapreparation-getAll`);
 
-      const response = await this.pivaRepository.getAllPivaObject();
+      const response = await PivaRepository.getAllPivaObject();
       logger.info(`[END] datapreparation-getAll`);
       return response;
     } catch (error) {
@@ -75,12 +62,12 @@ class PivaVerificationService {
       );
       throw error;
     }
-  }
+  },
 
-  public async deleteAllByKey(): Promise<string | null> {
+  async deleteAllByKey(): Promise<string | null> {
     try {
       logger.info(`[START] datapreparation-deleteAllByKey`);
-      await this.pivaRepository.deleteAllPivaObject();
+      await PivaRepository.deleteAllPivaObject();
       logger.info(`[END] datapreparation-deleteAllByKey`);
       return "Success";
     } catch (error) {
@@ -90,14 +77,14 @@ class PivaVerificationService {
       );
       throw error;
     }
-  }
+  },
 
-  public async deleteByPiva(
+  async deleteByPiva(
     pivaModel: PartitaIvaModel
   ): Promise<PartitaIvaModel | null> {
     try {
       logger.info(`[START] deleteByPiva`);
-      await this.pivaRepository.deletePivaObjectByKey(pivaModel.organizationId);
+      await PivaRepository.deletePivaObjectByKey(pivaModel.organizationId);
       logger.info(`[END] deleteByPiva`);
       return pivaModel;
     } catch (error) {
@@ -107,7 +94,5 @@ class PivaVerificationService {
       );
       throw error;
     }
-  }
-}
-
-export default new PivaVerificationService();
+  },
+};
