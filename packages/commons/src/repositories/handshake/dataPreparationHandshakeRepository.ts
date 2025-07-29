@@ -1,7 +1,7 @@
-import { client, logger } from "pdnd-common";
 import { HandshakeModel } from "pdnd-models";
 import { eq } from "drizzle-orm";
 import { handshakes } from "../../db/index.js";
+import { client, logger } from "../../index.js";
 
 export const dataPreparationHandshakeRepository = {
   async saveList(genericRequest: HandshakeModel[]): Promise<void> {
