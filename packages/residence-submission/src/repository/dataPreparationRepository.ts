@@ -7,7 +7,6 @@ import { Address } from "../model/db/addresses.model.js";
 import { Usecase } from "../model/db/usecases.model.js";
 
 class DataPreparationRepository {
-  // READ METHODS
   public async findSubjectById(subjectId: string): Promise<Subject | null> {
     const result = await db
       .select()
@@ -23,7 +22,6 @@ class DataPreparationRepository {
       .where(eq(Usecase.subject_id, subjectId));
   }
 
-  // CREATE METHODS
   public async createPurpose(data: Purpose): Promise<void> {
     const result = await db.insert(Purpose).values(data);
     if (result.rowCount === 0) {
@@ -52,7 +50,6 @@ class DataPreparationRepository {
     }
   }
 
-  // UPDATE METHODS
   public async updatePurposeById(id: string, data: Purpose): Promise<void> {
     const result = await db
       .update(Purpose)
@@ -86,7 +83,6 @@ class DataPreparationRepository {
     }
   }
 
-  // DELETE METHODS
   public async deleteUsecaseById(id: string): Promise<void> {
     const result = await db.delete(Usecase).where(eq(Usecase.id, id));
     if (result.rowCount === 0) {
