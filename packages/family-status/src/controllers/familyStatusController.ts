@@ -47,46 +47,49 @@ class FamilyStatusController {
       throw error;
     }
   }
-  /* eslint-disable */
+
   public async findUserVerify(request: RequestFS001): Promise<ResponseFS001> {
     try {
       logger.info(`post request: ${request}`);
-      let resultData;
+
       if (request.criteria.subjectId) {
         const data = await FamilyStatusService.verifyBySubjectId(
           request.criteria.subjectId
         );
         return mapDbRecordToResponseFS001(data, request.operationId);
-      } else if (checkPersonalInfoVerify(request)) {
+      }
 
-        const data = await FamilyStatusService.findByPersonalInfo(request.criteria);
-        resultData = mapDbRecordToResponseFS001(
+      if (checkPersonalInfoVerify(request)) {
+        const data = await FamilyStatusService.findByPersonalInfo(
+          request.criteria
+        );
+        const resultData = mapDbRecordToResponseFS001(
           data[0],
           request.operationId
         );
-        
-      } else if (request.criteria.id) {
-        if (request.criteria.id) {
 
-          const data = await FamilyStatusService.findById(request.criteria.id);
-          resultData = mapDbRecordToResponseFS001(
-            data,
-            request.operationId
-          );
+        if (!resultData || resultData.subjects?.subject?.length === 0) {
+          throw userModelNotFound();
         }
-      } else {
-        throw requestParamNotValid(
-          "The request body has one or more required param not valid"
-        );
+        return resultData;
       }
 
-      const response: ResponseFS001 = {};
-      response.idOp = request.operationId;
-      if (!resultData || resultData.subjects?.subject?.length === 0) {
-        throw userModelNotFound();
+      if (request.criteria.id) {
+        const data = await FamilyStatusService.findById(request.criteria.id);
+        const resultData = mapDbRecordToResponseFS001(
+          data,
+          request.operationId
+        );
+
+        if (!resultData || resultData.subjects?.subject?.length === 0) {
+          throw userModelNotFound();
+        }
+        return resultData;
       }
-      /* eslint-enable */
-      return response;
+
+      throw requestParamNotValid(
+        "The request body has one or more required param not valid"
+      );
     } catch (error) {
       logger.error(`Error during in method controller 'findUser': `, error);
       throw error;

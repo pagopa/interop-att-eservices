@@ -107,7 +107,6 @@ class DigitalAddressVerificationSingleController {
     }
   }
 
-  /* eslint-disable */
   public async getByIdRequest(
     idRichiesta: string
   ): Promise<ResponseListDigitalAddress> {
@@ -115,24 +114,36 @@ class DigitalAddressVerificationSingleController {
       list: [],
     };
     try {
-      const richiesta = await digitalAddressService.findVerificationRequestById(idRichiesta);
-      if (richiesta?.count == 1) {
+      const richiesta = await digitalAddressService.findVerificationRequestById(
+        idRichiesta
+      );
+      if (richiesta?.count === 1) {
         const requestListDigitalAddress = parseJsonToRequestListDigitalAddress(
           richiesta.jsonRequest
         );
         if (requestListDigitalAddress) {
-          for (const idSubject of requestListDigitalAddress.idSubjects) {
-            const addressModel = await digitalAddressService.findSingleDataPreparationByFiscalCode(
-              idSubject
-            );
-            if (addressModel) {
-              const address =
-                responseRequestDigitalAddressModelToResponseRequestDigitalAddress(
-                  addressModel
+          const addressPromises = requestListDigitalAddress.idSubjects.map(
+            async (idSubject) => {
+              const addressModel =
+                await digitalAddressService.findSingleDataPreparationByFiscalCode(
+                  idSubject
                 );
-              responseListDigitalAddress.list.push(address);
+              return addressModel
+                ? responseRequestDigitalAddressModelToResponseRequestDigitalAddress(
+                    addressModel
+                  )
+                : null;
             }
-          }
+          );
+          const resolvedAddresses = await Promise.all(addressPromises);
+          const newList = resolvedAddresses.filter(
+            (address): address is NonNullable<typeof address> =>
+              address !== null
+          );
+          return {
+            ...responseListDigitalAddress,
+            list: newList,
+          };
         }
       } else {
         throw requestVerificationNotFountError(
@@ -147,6 +158,6 @@ class DigitalAddressVerificationSingleController {
       );
       throw error;
     }
-  } /* eslint-enable */
+  }
 }
 export default new DigitalAddressVerificationSingleController();

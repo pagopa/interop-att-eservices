@@ -1,3 +1,4 @@
+// eslint-disable-next-line id-blacklist
 import { bigserial, boolean, timestamp } from "drizzle-orm/pg-core";
 import { customSchema } from "../schema.js";
 

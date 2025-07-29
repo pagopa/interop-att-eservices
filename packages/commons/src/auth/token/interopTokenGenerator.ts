@@ -18,14 +18,23 @@ export type InteropTokenGenerator = {
   ) => Promise<InternalToken>;
 };
 
-const createInternalToken = (
-  algorithm: Algorithm,
-  kid: string,
-  subject: string,
-  audience: string,
-  tokenIssuer: string,
-  validityDurationSeconds: number
-): TokenPayload => {
+type CreateInternalTokenParams = {
+  algorithm: Algorithm;
+  kid: string;
+  subject: string;
+  audience: string;
+  tokenIssuer: string;
+  validityDurationSeconds: number;
+};
+
+const createInternalToken = ({
+  algorithm,
+  kid,
+  subject,
+  audience,
+  tokenIssuer,
+  validityDurationSeconds,
+}: CreateInternalTokenParams): TokenPayload => {
   const issuedAt = new Date().getTime() / 1000;
   const expireAt = validityDurationSeconds + issuedAt;
 
@@ -52,9 +61,7 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
     jwtHeaders: TokenHeader
   ): Promise<string> => {
     const customHeaders = {};
-
     const headers = { ...jwtHeaders, ...customHeaders };
-
     const payload: JwtPayload = {
       ...seed.customClaims,
       jti: seed.id,
@@ -65,7 +72,6 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
       nbf: seed.nbf,
       exp: seed.expireAt,
     };
-
     const encodedHeader = Buffer.from(JSON.stringify(headers)).toString(
       "base64url"
     );
@@ -77,7 +83,6 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
       config.kmsKeyId,
       serializedToken
     );
-
     return `${serializedToken}.${signature}`;
   };
 
@@ -86,14 +91,14 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
     tokenHeader: TokenHeader
   ): Promise<InternalToken> => {
     try {
-      const tokenSeed = createInternalToken(
-        tokenHeader.alg,
-        tokenHeader.kid,
-        tokenPayloadSeed.subject,
-        tokenPayloadSeed.audience,
-        tokenPayloadSeed.tokenIssuer,
-        tokenPayloadSeed.expirationInSeconds
-      );
+      const tokenSeed = createInternalToken({
+        algorithm: tokenHeader.alg,
+        kid: tokenHeader.kid,
+        subject: tokenPayloadSeed.subject,
+        audience: tokenPayloadSeed.audience,
+        tokenIssuer: tokenPayloadSeed.tokenIssuer,
+        validityDurationSeconds: tokenPayloadSeed.expirationInSeconds,
+      });
 
       const signedJwt = await createSignedJWT(tokenSeed, tokenHeader);
 

@@ -50,11 +50,10 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
           throw ErrorHandling.missingHeader("agid-jwt-trackingevidence");
         }
 
-        /* eslint-disable */
-                if (process.env.SKIP_AGID_PAYLOAD_VERIFICATION != "true") {
-                    verifyJwtPayload(trackingEvidenceToken, req.url, req.method);
-                }
-                /* eslint-enable */
+        if (process.env.SKIP_AGID_PAYLOAD_VERIFICATION !== "true") {
+          verifyJwtPayload(trackingEvidenceToken, req.url, req.method);
+        }
+
         void TrialService.insert(
           req.url,
           req.method,

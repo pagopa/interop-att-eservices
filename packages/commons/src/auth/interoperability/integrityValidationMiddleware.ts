@@ -2,6 +2,7 @@ import { ZodiosRouterContextRequestHandler } from "@zodios/express";
 import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
 import { makeApiProblemBuilder, ErrorHandling } from "pdnd-models";
 import { match } from "ts-pattern";
+import { Request } from "express";
 import { ExpressContext } from "../../index.js";
 import { InteroperabilityConfig } from "../../config/commonConfig.js";
 import { logger } from "../../logging/index.js";
@@ -82,186 +83,23 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
     return integrityMiddleware;
   };
 
-/* eslint-disable */
-export const verifyJwtPayload = (jwtToken: string, req: any): void => {
-    /* eslint-enable */
+export const verifyJwtPayload = (jwtToken: string, req: Request): void => {
   const decodedToken = jwt.decode(jwtToken, { complete: true }) as {
     header: JwtHeader;
     payload: JwtPayload;
   };
 
-  if (!decodedToken.payload) {
-    logger.error(`verifyJwtPayload - Token not valid`);
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_PAYLOAD_NOT_PRESENT"
-    );
-    throw ErrorHandling.tokenNotValid();
-  }
+  const payload = decodedToken.payload;
 
-  const dateNowSeconds = Math.floor(Date.now() / 1000);
-  if (!decodedToken.payload.exp) {
-    logger.error(`verifyJwtPayload - "exp" in payload is required`);
-    void TrialService.insert(req.url, req.method, "SIGNATURE_EXP_NOT_PRESENT");
-    throw ErrorHandling.tokenNotValid();
-  }
-  if (dateNowSeconds > decodedToken.payload.exp) {
-    logger.error(`verifyJwtPayload - Request Token has expired`);
-    void TrialService.insert(req.url, req.method, "SIGNATURE_EXP_IS_EXPIRED");
-    throw ErrorHandling.tokenExpired();
-  }
+  verifyPayloadExists(payload, req);
 
-  if (!decodedToken.payload.iat) {
-    logger.error(`verifyJwtPayload - "iat" in payload is required`);
-    void TrialService.insert(req.url, req.method, "SIGNATURE_IAT_NOT_PRESENT");
-    throw ErrorHandling.tokenNotValid();
-  }
-  if (dateNowSeconds < decodedToken.payload.iat) {
-    logger.error(`verifyJwtPayload - Request Token has an invalid issue time`);
-    void TrialService.insert(req.url, req.method, "SIGNATURE_IAT_IS_EXPIRED");
-    throw ErrorHandling.tokenExpired();
-  }
+  verifyTemporalClaims(payload, req);
 
-  if (!decodedToken.payload.aud) {
-    logger.error(`verifyJwtPayload - "aud" in payload is required`);
-    void TrialService.insert(req.url, req.method, "SIGNATURE_AUD_NOT_PRESENT");
-    throw ErrorHandling.tokenNotValid();
-  }
-  if (decodedToken.payload.aud !== process.env.TOKEN_AUD) {
-    logger.error(`verifyJwtPayload - Request header aud is not valid`);
-    void TrialService.insert(req.url, req.method, "SIGNATURE_AUD_NOT_VALID");
-    throw ErrorHandling.tokenNotValid();
-  }
+  verifyAudience(payload, req);
 
-  if (!req.headers["content-type"]) {
-    logger.error(
-      `verifyJwtPayload - "content-type" value in header is required`
-    );
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_CONTENT_TYPE_NOT_PRESENT"
-    );
-    throw ErrorHandling.tokenNotValid();
-  }
-  if (!req.headers["content-encoding"]) {
-    logger.error(
-      `verifyJwtPayload - "content-encoding" value in header is required`
-    );
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_CONTENT_ENCODING_NOT_PRESENT"
-    );
-    throw ErrorHandling.tokenNotValid();
-  }
-  if (!decodedToken.payload.signed_headers) {
-    logger.error(
-      `verifyJwtPayload - "signed_headers" value in token payload is required`
-    );
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_SIGNED_NOT_PRESENT"
-    );
-    throw ErrorHandling.tokenNotValid();
-  }
+  verifySignedHeaders(payload, req);
 
-  const signedHeaders = decodedToken.payload.signed_headers;
-
-  if (
-    typeof signedHeaders !== "object" ||
-    signedHeaders === null ||
-    Array.isArray(signedHeaders)
-  ) {
-    logger.error(
-      `verifyJwtPayload - "signed_headers" in token payload must be a non-null object`
-    );
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_SIGNED_HEADERS_INVALID"
-    );
-    throw ErrorHandling.tokenNotValid();
-  }
-
-  const requiredSignatureHeaders = [
-    "content-type",
-    "content-encoding",
-    "digest",
-  ];
-  for (const headerName of requiredSignatureHeaders) {
-    if (!signedHeaders[headerName]) {
-      logger.error(
-        `verifyJwtPayload - The '${headerName}' value in token payload is required`
-      );
-      checkValueTrial(req.url, req.method, headerName);
-      throw ErrorHandling.tokenNotValid();
-    }
-  }
-
-  if (signedHeaders["content-type"] !== req.headers["content-type"]) {
-    logger.error(
-      `verifyJwtPayload - The content-type '${req.headers["content-type"]}' in request header does not match payload value '${signedHeaders["content-type"]}'`
-    );
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_SIGNED_CONTENT_TYPE_NOT_MATCH"
-    );
-    throw ErrorHandling.tokenNotValid();
-  }
-
-  if (signedHeaders["content-encoding"] !== req.headers["content-encoding"]) {
-    logger.error(
-      `verifyJwtPayload - The content-encoding '${req.headers["content-encoding"]}' in request header does not match payload value '${signedHeaders["content-encoding"]}'`
-    );
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_SIGNED_CONTENT_ENCODING_NOT_MATCH"
-    );
-    throw ErrorHandling.tokenNotValid();
-  }
-
-  if (!signedHeaders.digest.startsWith("SHA-256")) {
-    logger.error(
-      `verifyJwtPayload - The digest '${signedHeaders.digest}' in token payload is invalid`
-    );
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_SIGNED_DIGEST_NOT_VALID"
-    );
-    throw ErrorHandling.tokenNotValid();
-  }
-
-  const bodyAsString = JSON.stringify(req.body);
-  logger.info(` bodyAsString: ${bodyAsString}`);
-
-  if (bodyAsString === null || bodyAsString === undefined) {
-    throw new Error(
-      "Il corpo della richiesta è obbligatorio per calcolare l'hash."
-    );
-  }
-
-  const hashBody = encodeBase64(generateHashFromString(bodyAsString));
-  logger.info(` hashBody: ${hashBody}`);
-
-  if (hashBody !== signedHeaders.digest.substring(8)) {
-    logger.error(
-      `verifyJwtPayload - Request body digest does not match the signed digest ${hashBody} digest: ${signedHeaders.digest.substring(
-        8
-      )}`
-    );
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_DIGEST_BODY_NOT_MATCH_SIGNED_DIGEST"
-    );
-    throw ErrorHandling.tokenNotValid();
-  }
+  verifyDigest(payload, req);
 };
 
 export const checkValueTrial = (
@@ -287,5 +125,128 @@ export const checkValueTrial = (
       operationMethod,
       "SIGNATURE_SIGNED_DIGEST_NOT_PRESENT"
     );
+  }
+};
+
+const verifyPayloadExists = (
+  payload: JwtPayload | undefined,
+  req: Request
+): void => {
+  if (!payload) {
+    logger.error(`verifyJwtPayload - Token not valid`);
+    void TrialService.insert(
+      req.url,
+      req.method,
+      "SIGNATURE_PAYLOAD_NOT_PRESENT"
+    );
+    throw ErrorHandling.tokenNotValid();
+  }
+};
+
+const verifyTemporalClaims = (payload: JwtPayload, req: Request): void => {
+  const dateNowSeconds = Math.floor(Date.now() / 1000);
+
+  if (!payload.exp || dateNowSeconds > payload.exp) {
+    logger.error(
+      `verifyJwtPayload - "exp" claim is missing or token has expired`
+    );
+    void TrialService.insert(req.url, req.method, "SIGNATURE_EXP_INVALID");
+    throw ErrorHandling.tokenExpired();
+  }
+
+  if (!payload.iat || dateNowSeconds < payload.iat) {
+    logger.error(`verifyJwtPayload - "iat" claim is missing or invalid`);
+    void TrialService.insert(req.url, req.method, "SIGNATURE_IAT_INVALID");
+    throw ErrorHandling.tokenNotValid();
+  }
+};
+
+const verifyAudience = (payload: JwtPayload, req: Request): void => {
+  if (!payload.aud || payload.aud !== process.env.TOKEN_AUD) {
+    logger.error(`verifyJwtPayload - "aud" claim is missing or not valid`);
+    void TrialService.insert(req.url, req.method, "SIGNATURE_AUD_NOT_VALID");
+    throw ErrorHandling.tokenNotValid();
+  }
+};
+
+const verifySignedHeaders = (payload: JwtPayload, req: Request): void => {
+  if (!req.headers["content-type"] || !req.headers["content-encoding"]) {
+    logger.error(
+      `verifyJwtPayload - Missing "content-type" or "content-encoding" in request headers`
+    );
+    void TrialService.insert(
+      req.url,
+      req.method,
+      "SIGNATURE_HEADER_NOT_PRESENT"
+    );
+    throw ErrorHandling.tokenNotValid();
+  }
+
+  const { signed_headers: signedHeaders } = payload;
+  if (typeof signedHeaders !== "object" || !signedHeaders) {
+    logger.error(
+      `verifyJwtPayload - "signed_headers" in token payload must be a non-null object`
+    );
+    void TrialService.insert(
+      req.url,
+      req.method,
+      "SIGNATURE_SIGNED_HEADERS_INVALID"
+    );
+    throw ErrorHandling.tokenNotValid();
+  }
+
+  const requiredHeaders = ["content-type", "content-encoding", "digest"];
+  for (const header of requiredHeaders) {
+    if (!signedHeaders[header]) {
+      logger.error(
+        `verifyJwtPayload - The '${header}' is required in signed_headers`
+      );
+      checkValueTrial(req.url, req.method, header);
+      throw ErrorHandling.tokenNotValid();
+    }
+  }
+
+  if (
+    signedHeaders["content-type"] !== req.headers["content-type"] ||
+    signedHeaders["content-encoding"] !== req.headers["content-encoding"]
+  ) {
+    logger.error(
+      `verifyJwtPayload - Signed headers do not match request headers`
+    );
+    void TrialService.insert(
+      req.url,
+      req.method,
+      "SIGNATURE_SIGNED_HEADERS_NOT_MATCH"
+    );
+    throw ErrorHandling.tokenNotValid();
+  }
+};
+
+const verifyDigest = (payload: JwtPayload, req: Request): void => {
+  const { signed_headers: signedHeaders } = payload;
+
+  if (!signedHeaders?.digest || !signedHeaders.digest.startsWith("SHA-256")) {
+    logger.error(`verifyJwtPayload - The digest in token payload is invalid`);
+    void TrialService.insert(
+      req.url,
+      req.method,
+      "SIGNATURE_SIGNED_DIGEST_NOT_VALID"
+    );
+    throw ErrorHandling.tokenNotValid();
+  }
+
+  const bodyAsString = JSON.stringify(req.body);
+  const hashBody = encodeBase64(generateHashFromString(bodyAsString));
+
+  if (hashBody !== signedHeaders.digest.substring(8)) {
+    logger.error(
+      `verifyJwtPayload - Request body digest does not match the signed digest`
+    );
+    void TrialService.insert(
+      req.url,
+      req.method,
+      "SIGNATURE_DIGEST_BODY_NOT_MATCH_SIGNED_DIGEST"
+    );
+    throw ErrorHandling.tokenNotValid();
   }
 };

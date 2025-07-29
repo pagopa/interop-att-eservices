@@ -74,11 +74,6 @@ const residenceVerificationRouter = (
     auditValidationMiddleware(),
     async (req, res) => {
       try {
-        logger.info(
-          `[START] Check ResidenceVerificationRouter: ${JSON.stringify(
-            req.body
-          )}`
-        );
         const data = await ResidenceVerificationController.findUserVerify(
           req.body
         );

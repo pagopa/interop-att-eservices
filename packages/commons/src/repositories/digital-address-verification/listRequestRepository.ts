@@ -1,15 +1,11 @@
-/* eslint-disable prettier/prettier */
 import { v4 as uuidv4 } from "uuid";
 
 import { listRequestsTable } from "../../db/schema/digital-address-verification/listRequest.model.js";
 import { requestSubjectsTable } from "../../db/schema/digital-address-verification/requestSubjects.model.js";
 import { client, logger } from "../../index.js";
 
-
-
 export const ListRequestRepository = {
-
-   async createListRequest(): Promise<string> {
+  async createListRequest(): Promise<string> {
     try {
       const insertData = {
         id: uuidv4(),
@@ -32,7 +28,10 @@ export const ListRequestRepository = {
     }
   },
 
-   async addRequestSubject( listRequestId: string, subjectId: string): Promise<void> {
+  async addRequestSubject(
+    listRequestId: string,
+    subjectId: string
+  ): Promise<void> {
     try {
       const insertData = {
         listRequestId,
@@ -43,7 +42,10 @@ export const ListRequestRepository = {
         .values(insertData)
         .onConflictDoNothing();
     } catch (error: unknown) {
-      logger.error(`[ListRequestRepo] Error adding request subject ${subjectId} to list ${listRequestId}.`, error);
+      logger.error(
+        `[ListRequestRepo] Error adding request subject ${subjectId} to list ${listRequestId}.`,
+        error
+      );
       throw error;
     }
   },
