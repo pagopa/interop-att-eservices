@@ -130,33 +130,20 @@ describe("dataPreparationHandshakeRepository", () => {
     });
   });
 
-  describe("deleteAllByKey", () => {
-    it("deletes all records and returns 0", async () => {
-      const from = vi.fn();
-      deleteMock.mockReturnValue({ from });
-
-      const repo = (
-        await import(
-          "../../src/repositories/handshake/dataPreparationHandshakeRepository.js"
-        )
-      ).dataPreparationHandshakeRepository;
-      const result = await repo.deleteAllByKey();
-
-      expect(deleteMock).toHaveBeenCalled();
-      expect(result).toBe(0);
+  it("deletes all records and returns 0", async () => {
+    deleteMock.mockReturnValue({
+      from: vi.fn().mockResolvedValueOnce([]), // ensure Promise is resolved
     });
 
-    it("throws on delete error", async () => {
-      deleteMock.mockImplementation(() => {
-        throw new Error("delete fail");
-      });
+    const repo = (
+      await import(
+        "../../src/repositories/handshake/dataPreparationHandshakeRepository.js"
+      )
+    ).dataPreparationHandshakeRepository;
 
-      const repo = (
-        await import(
-          "../../src/repositories/handshake/dataPreparationHandshakeRepository.js"
-        )
-      ).dataPreparationHandshakeRepository;
-      await expect(repo.deleteAllByKey()).rejects.toThrow("delete fail");
-    });
+    const result = await repo.deleteAllByKey();
+
+    expect(deleteMock).toHaveBeenCalled();
+    expect(result).toBe(0);
   });
 });

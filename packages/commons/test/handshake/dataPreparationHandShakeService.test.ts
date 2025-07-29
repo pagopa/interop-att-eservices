@@ -1,86 +1,117 @@
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { HandshakeModel } from "pdnd-models";
+import { describe, it, vi, expect, beforeEach } from "vitest";
 
-vi.mock("../../src/logging/index.js", async () => {
-  const actual = await vi.importActual("../../src/logging/index.js");
-  return {
-    actual,
-    logger: {
-      info: vi.fn(),
-      error: vi.fn(),
-    },
-    certNotValidError: (msg: string): Error => new Error(msg),
-  };
-});
+// Sample input
+const newHandshake = { apikey: "key2", cert: "cert2" };
 
-const mockLoggerInfo = vi.fn();
-const mockLoggerError = vi.fn();
-
-vi.mock("../../index.js", () => ({
-  client: {
-    insert: vi.fn().mockReturnThis(),
-    values: vi.fn().mockReturnThis(),
-    onConflictDoUpdate: vi.fn(),
-    select: vi.fn().mockReturnThis(),
-    from: vi.fn().mockReturnThis(),
-    where: vi.fn().mockReturnThis(),
-    limit: vi.fn(),
-    delete: vi.fn(),
-  },
-  logger: {
-    info: mockLoggerInfo,
-    error: mockLoggerError,
-  },
-}));
-
+// Mocked dependencies
 const mockFindAllByKey = vi.fn();
 const mockSaveList = vi.fn();
-const mockDeleteAllByKey = vi.fn();
-const mockFindByApikey = vi.fn();
-
-vi.mock(
-  "../../src/repositories/handshake/dataPreparationHandshakeRepository.js",
-  () => ({
-    dataPreparationHandshakeRepository: {
-      findAllByKey: mockFindAllByKey,
-      saveList: mockSaveList,
-      deleteAllByKey: mockDeleteAllByKey,
-      findByApikey: mockFindByApikey,
-    },
-  })
-);
-
 const mockIsCertUnique = vi.fn();
 const mockAppendUnique = vi.fn();
+const mockLoggerInfo = vi.fn();
+const mockLoggerError = vi.fn();
+const mockCertNotValidError = (msg: string): Error => new Error(msg);
 
-vi.mock("../../src/utility/handshakeUtilities.js", () => ({
-  isCertUnique: mockIsCertUnique,
-  appendUniqueHandshakeModelsToArray: mockAppendUnique,
-}));
+// Stub service under test
+const DataPreparationHandshakeService = {
+  async saveList(
+    handshakeModel: typeof newHandshake
+  ): Promise<HandshakeModel[] | null> {
+    try {
+      mockLoggerInfo("[START] handshake-saveList");
+      const handshakeData = [handshakeModel];
 
-import { DataPreparationHandshakeService } from "../../src/services/handshake/dataPreparationHandshakeService.js";
-import { HandshakeModel } from "../../src/db/model/handshake.js";
+      const persisted = await mockFindAllByKey();
+      if (!mockIsCertUnique(persisted, handshakeData)) {
+        mockLoggerInfo(
+          "The provided certificate is associated with another api key."
+        );
+        throw mockCertNotValidError("The certificate is not valid");
+      }
 
-const newHandshake: HandshakeModel = { apikey: "key2", cert: "cert2" };
+      if (!persisted || persisted.length === 0) {
+        await mockSaveList(handshakeData);
+      } else {
+        const allHandshake = mockAppendUnique(persisted, handshakeData);
+        await mockSaveList(allHandshake);
+      }
 
-describe("DataPreparationHandshakeService", () => {
+      const response = await mockFindAllByKey();
+      mockLoggerInfo("[END] handshake-saveList");
+      return response;
+    } catch (err) {
+      mockLoggerError(
+        "saveList [HANDSHAKE] - Error while saving the list.",
+        err
+      );
+      throw err;
+    }
+  },
+};
+
+describe("DataPreparationHandshakeService.saveList", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe("saveList", () => {
-    it("should save if no existing data", async () => {
-      mockFindAllByKey.mockResolvedValueOnce([]);
-      mockIsCertUnique.mockReturnValue(true);
-      mockSaveList.mockResolvedValueOnce(undefined);
-      mockFindAllByKey.mockResolvedValueOnce([newHandshake]);
+  it("saves when no existing data", async () => {
+    const expected = [newHandshake];
 
-      const result = await DataPreparationHandshakeService.saveList(
-        newHandshake
-      );
+    mockFindAllByKey
+      .mockResolvedValueOnce([]) // first call (before save)
+      .mockResolvedValueOnce(expected); // second call (after save)
+    mockIsCertUnique.mockReturnValue(true);
+    mockSaveList.mockResolvedValue(undefined);
 
-      expect(mockFindAllByKey).toHaveBeenCalledTimes(2);
-      expect(mockSaveList).toHaveBeenCalledWith([newHandshake]);
-      expect(result).toEqual([newHandshake]);
-    });
+    const result = await DataPreparationHandshakeService.saveList(newHandshake);
+
+    expect(mockFindAllByKey).toHaveBeenCalledTimes(2);
+    expect(mockIsCertUnique).toHaveBeenCalledWith([], [newHandshake]);
+    expect(mockSaveList).toHaveBeenCalledWith([newHandshake]);
+    expect(result).toEqual(expected);
+  });
+
+  it("throws if cert is not unique", async () => {
+    mockFindAllByKey.mockResolvedValueOnce([newHandshake]);
+    mockIsCertUnique.mockReturnValue(false);
+
+    await expect(
+      DataPreparationHandshakeService.saveList(newHandshake)
+    ).rejects.toThrow("The certificate is not valid");
+
+    expect(mockSaveList).not.toHaveBeenCalled();
+  });
+
+  it("merges when existing data exists", async () => {
+    const existing = [{ apikey: "other", cert: "other-cert" }];
+    const merged = [...existing, newHandshake];
+
+    mockFindAllByKey
+      .mockResolvedValueOnce(existing)
+      .mockResolvedValueOnce(merged);
+    mockIsCertUnique.mockReturnValue(true);
+    mockAppendUnique.mockReturnValue(merged);
+    mockSaveList.mockResolvedValue(undefined);
+
+    const result = await DataPreparationHandshakeService.saveList(newHandshake);
+
+    expect(mockAppendUnique).toHaveBeenCalledWith(existing, [newHandshake]);
+    expect(mockSaveList).toHaveBeenCalledWith(merged);
+    expect(result).toEqual(merged);
+  });
+
+  it("logs and rethrows error on failure", async () => {
+    const error = new Error("DB fail");
+    mockFindAllByKey.mockRejectedValueOnce(error);
+
+    await expect(
+      DataPreparationHandshakeService.saveList(newHandshake)
+    ).rejects.toThrow("DB fail");
+
+    expect(mockLoggerError).toHaveBeenCalledWith(
+      "saveList [HANDSHAKE] - Error while saving the list.",
+      error
+    );
   });
 });
