@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { logger, certNotValidError } from "../../logging/index.js";
 import { HandshakeModel } from "../../db/model/handshake.js";
-import dataPreparationHandshakeRepository from "../../repositories/handshake/dataPreparationHandshakeRepository.js";
 import {
   appendUniqueHandshakeModelsToArray,
   isCertUnique,
 } from "../../utility/handshakeUtilities.js";
+import { dataPreparationHandshakeRepository } from "../../repositories/handshake/dataPreparationHandshakeRepository.js";
 
-const key = "piva-verification-handshake";
+// const key = "piva-verification-handshake";
 export const DataPreparationHandshakeService = {
   async saveList(
     handshakeModel: HandshakeModel
@@ -17,7 +17,7 @@ export const DataPreparationHandshakeService = {
       const handshakeData: HandshakeModel[] = [handshakeModel];
 
       const persistedHandshakeData =
-        await dataPreparationHandshakeRepository.findAllByKey(key);
+        await dataPreparationHandshakeRepository.findAllByKey();
       if (!isCertUnique(persistedHandshakeData, handshakeData)) {
         logger.info(
           "The provided certificate is associated with another api key."
@@ -28,17 +28,15 @@ export const DataPreparationHandshakeService = {
         persistedHandshakeData == null ||
         persistedHandshakeData.length === 0
       ) {
-        await dataPreparationHandshakeRepository.saveList(handshakeData, key);
+        await dataPreparationHandshakeRepository.saveList(handshakeData);
       } else {
         const allHandshake = appendUniqueHandshakeModelsToArray(
           persistedHandshakeData,
           handshakeData
         );
-        await dataPreparationHandshakeRepository.saveList(allHandshake, key);
+        await dataPreparationHandshakeRepository.saveList(allHandshake);
       }
-      const response = await dataPreparationHandshakeRepository.findAllByKey(
-        key
-      );
+      const response = await dataPreparationHandshakeRepository.findAllByKey();
       logger.info(`[END] handshake-saveList`);
       return response;
     } catch (error) {
@@ -53,9 +51,7 @@ export const DataPreparationHandshakeService = {
   async getAll(): Promise<HandshakeModel[] | null> {
     try {
       logger.info(`[START] handshake-getAll`);
-      const response = await dataPreparationHandshakeRepository.findAllByKey(
-        key
-      );
+      const response = await dataPreparationHandshakeRepository.findAllByKey();
       logger.info(`[END] handshake-getAll`);
       return response;
     } catch (error) {
@@ -70,9 +66,8 @@ export const DataPreparationHandshakeService = {
   async deleteAllByKey(): Promise<number | null> {
     try {
       logger.info(`[START] handshake-deleteAllByKey`);
-      const response = await dataPreparationHandshakeRepository.deleteAllByKey(
-        key
-      );
+      const response =
+        await dataPreparationHandshakeRepository.deleteAllByKey();
       logger.info(`[END] handshake-deleteAllByKey`);
       return response;
     } catch (error) {
@@ -88,7 +83,6 @@ export const DataPreparationHandshakeService = {
     try {
       logger.info(`[START] handshake-getByApikey`);
       const response = await dataPreparationHandshakeRepository.findByApikey(
-        key,
         apikey
       );
       logger.info(`[END] handshake-getByApikey`);

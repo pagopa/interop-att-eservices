@@ -1,19 +1,32 @@
-import { logger } from "pdnd-common";
+import { client, logger } from "pdnd-common";
 import { HandshakeModel } from "pdnd-models";
-import { cacheManager } from "pdnd-common";
-import { parseJsonToHandshakeArray } from "../../utility/jsonHandshakeUtilities.js";
-import { findHandshakeModelByApikey } from "../../utility/handshakeUtilities.js";
+import { eq } from "drizzle-orm";
+import { handshakes } from "../../db/index.js";
 
-export class dataPreparationHandshakeRepository {
-  public async saveList(
-    genericRequest: HandshakeModel[],
-    key: string
-  ): Promise<string | null> {
+export const dataPreparationHandshakeRepository = {
+  async saveList(genericRequest: HandshakeModel[]): Promise<void> {
+    if (!genericRequest || genericRequest.length === 0) {
+      return;
+    }
     try {
-      await cacheManager.setObject(key, JSON.stringify(genericRequest));
-      const saved = await cacheManager.getObjectByKey(key);
-      logger.info(`dataPreparationRepository: Item successfully saved.`);
-      return saved;
+      const valuesToInsert = genericRequest.map((item) => ({
+        apikey: item.apikey,
+        cert: item.cert,
+      }));
+
+      await client
+        .insert(handshakes)
+        .values(valuesToInsert)
+        .onConflictDoUpdate({
+          target: handshakes.apikey,
+          set: {
+            cert: genericRequest[0].cert,
+          },
+        });
+
+      logger.info(
+        `dataPreparationRepository: ${valuesToInsert.length} item(s) successfully saved or updated.`
+      );
     } catch (error) {
       logger.error(
         `dataPreparationRepository: Error during item saving: `,
@@ -21,51 +34,64 @@ export class dataPreparationHandshakeRepository {
       );
       throw error;
     }
-  }
+  },
 
-  public async findAllByKey(key: string): Promise<HandshakeModel[] | null> {
+  async findAllByKey(): Promise<HandshakeModel[] | null> {
     try {
-      const dataSaved = await cacheManager.getObjectByKey(key);
-      logger.info(`dataPreparationRepository: Item successfully retrieved.`);
-      return parseJsonToHandshakeArray(dataSaved);
+      const dataSaved = await client.select().from(handshakes);
+      logger.info(
+        `dataPreparationRepository: ${dataSaved.length} item(s) successfully retrieved.`
+      );
+      return dataSaved as HandshakeModel[];
     } catch (error) {
-      logger.error(`HandshakeRepository: Error during item retrieval: `, error);
+      logger.error(
+        `dataPreparationRepository: Error during item retrieval: `,
+        error
+      );
       throw error;
     }
-  }
+  },
 
-  public async findByApikey(
-    key: string,
-    apikey: string
-  ): Promise<HandshakeModel | null> {
+  async findByApikey(apikey: string): Promise<HandshakeModel | null> {
     try {
-      logger.info(apikey);
-      const dataSaved = await cacheManager.getObjectByKey(key);
-      const datas = parseJsonToHandshakeArray(dataSaved);
-      logger.info(`dataPreparationRepository: Item successfully retrieved.`);
-      return findHandshakeModelByApikey(datas, apikey);
-    } catch (error) {
-      logger.error(`HandshakeRepository: Error during item retrieval: `, error);
-      throw error;
-    }
-  }
+      logger.info(`Searching for apikey: ${apikey}`);
+      const result = await client
+        .select()
+        .from(handshakes)
+        .where(eq(handshakes.apikey, apikey))
+        .limit(1);
 
-  public async deleteAllByKey(key: string): Promise<number | null> {
-    try {
-      await cacheManager.deleteAllObjectByKey(key);
-
-      const dataSaved = await cacheManager.getObjectByKey(key);
-      const arrayHandshake = parseJsonToHandshakeArray(dataSaved);
-      if (arrayHandshake == null) {
-        return 0;
-      } else {
-        return arrayHandshake?.length;
+      if (result.length > 0) {
+        logger.info(
+          `dataPreparationRepository: Item successfully retrieved for apikey ${apikey}.`
+        );
+        return result[0] as HandshakeModel;
       }
+
+      logger.info(
+        `dataPreparationRepository: No item found for apikey ${apikey}.`
+      );
+      return null;
     } catch (error) {
-      logger.error(`HandshakeRepository: Error during item retrieval: `, error);
+      logger.error(
+        `dataPreparationRepository: Error during item retrieval for apikey ${apikey}:`,
+        error
+      );
       throw error;
     }
-  }
-}
+  },
 
-export default new dataPreparationHandshakeRepository();
+  async deleteAllByKey(): Promise<number | null> {
+    try {
+      await client.delete(handshakes);
+      logger.info(`dataPreparationRepository: All items successfully deleted.`);
+      return 0;
+    } catch (error) {
+      logger.error(
+        `dataPreparationRepository: Error during item deletion: `,
+        error
+      );
+      throw error;
+    }
+  },
+};
