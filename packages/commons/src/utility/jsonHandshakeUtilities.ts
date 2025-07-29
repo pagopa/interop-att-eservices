@@ -1,6 +1,6 @@
 import { HandshakeModel } from "pdnd-models";
 import { classToPlain } from "class-transformer";
-import { logger } from "pdnd-common";
+import { logger } from "../index.js";
 
 export function parseJsonToHandshake(
   inputString: string | null
