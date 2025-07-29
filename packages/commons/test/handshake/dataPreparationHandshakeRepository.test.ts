@@ -1,108 +1,162 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, vi, beforeEach, expect } from "vitest";
 import type { HandshakeModel } from "pdnd-models";
-import { dataPreparationHandshakeRepository } from "../../src/repositories/handshake/dataPreparationHandshakeRepository.js";
 
-const { mockClient, mockDbChain, mockLogger } = vi.hoisted(() => {
-  const mockDbChain = {
-    values: vi.fn().mockReturnThis(),
-    onConflictDoUpdate: vi.fn().mockReturnThis(),
-    from: vi.fn().mockReturnThis(),
-    where: vi.fn().mockReturnThis(),
-    limit: vi.fn(),
-    then: vi.fn(),
-  };
+const sampleHandshake: HandshakeModel = {
+  apikey: "test-api-key",
+  cert: "test-cert",
+};
 
-  const mockClient = {
-    insert: vi.fn().mockReturnValue(mockDbChain),
-    select: vi.fn().mockReturnValue(mockDbChain),
-    delete: vi.fn().mockReturnValue(mockDbChain),
-  };
-
-  const mockLogger = {
-    info: vi.fn(),
-    error: vi.fn(),
-  };
-
-  return { mockClient, mockDbChain, mockLogger };
+// Reset mocks before every test
+beforeEach(() => {
+  vi.resetModules();
+  vi.clearAllMocks();
 });
 
-vi.mock("pdnd-common", () => ({
-  client: mockClient,
-  logger: mockLogger,
+// Mocks with deep structure
+const insertMock = vi.fn();
+const selectMock = vi.fn();
+const deleteMock = vi.fn();
+
+vi.mock("../../src/index", async () => ({
+  client: {
+    insert: insertMock,
+    select: selectMock,
+    delete: deleteMock,
+  },
+  logger: {
+    info: vi.fn(),
+    error: vi.fn(),
+  },
+}));
+
+vi.mock("../../src/db/index", async () => ({
+  handshakes: {
+    apikey: "apikey",
+    cert: "cert",
+  },
 }));
 
 describe("dataPreparationHandshakeRepository", () => {
-  const sampleHandshake: HandshakeModel = {
-    apikey: "key-123",
-    cert: "cert-abc",
-  };
-  const sampleHandshakeList: HandshakeModel[] = [
-    sampleHandshake,
-    { apikey: "key-456", cert: "cert-def" },
-  ];
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   describe("saveList", () => {
-    it("dovrebbe eseguire un'operazione di upsert (insert with onConflict)", async () => {
-      vi.mocked(mockDbChain.then).mockImplementation((resolve) =>
-        resolve(undefined)
-      );
-      await dataPreparationHandshakeRepository.saveList([sampleHandshake]);
-      expect(mockClient.insert).toHaveBeenCalled();
-      expect(mockDbChain.values).toHaveBeenCalledWith([
+    it("does not call insert if list is empty", async () => {
+      const repo = (
+        await import(
+          "../../src/repositories/handshake/dataPreparationHandshakeRepository.js"
+        )
+      ).dataPreparationHandshakeRepository;
+      await expect(repo.saveList([])).resolves.toBeUndefined();
+      expect(insertMock).not.toHaveBeenCalled();
+    });
+
+    it("calls insert and update on conflict", async () => {
+      const onConflictDoUpdate = vi.fn();
+      const values = vi.fn().mockReturnValue({ onConflictDoUpdate });
+      insertMock.mockReturnValue({ values });
+
+      const repo = (
+        await import(
+          "../../src/repositories/handshake/dataPreparationHandshakeRepository.js"
+        )
+      ).dataPreparationHandshakeRepository;
+      await repo.saveList([sampleHandshake]);
+
+      expect(insertMock).toHaveBeenCalled();
+      expect(values).toHaveBeenCalledWith([
         { apikey: sampleHandshake.apikey, cert: sampleHandshake.cert },
       ]);
-      expect(mockDbChain.onConflictDoUpdate).toHaveBeenCalled();
-      expect(mockLogger.info).toHaveBeenCalled();
+      expect(onConflictDoUpdate).toHaveBeenCalled();
     });
   });
 
   describe("findAllByKey", () => {
-    it("dovrebbe trovare e restituire tutti i dati", async () => {
-      vi.mocked(mockDbChain.then).mockImplementation((resolve) =>
-        resolve(sampleHandshakeList)
-      );
+    it("returns all records", async () => {
+      const from = vi.fn().mockResolvedValueOnce([sampleHandshake]);
+      selectMock.mockReturnValue({ from });
 
-      const result = await dataPreparationHandshakeRepository.findAllByKey();
+      const repo = (
+        await import(
+          "../../src/repositories/handshake/dataPreparationHandshakeRepository.js"
+        )
+      ).dataPreparationHandshakeRepository;
+      const result = await repo.findAllByKey();
 
-      expect(mockClient.select).toHaveBeenCalled();
-      expect(result).toEqual(sampleHandshakeList);
-      expect(mockLogger.info).toHaveBeenCalled();
+      expect(result).toEqual([sampleHandshake]);
+    });
+
+    it("throws on DB error", async () => {
+      const from = vi.fn().mockRejectedValueOnce(new Error("fail"));
+      selectMock.mockReturnValue({ from });
+
+      const repo = (
+        await import(
+          "../../src/repositories/handshake/dataPreparationHandshakeRepository.js"
+        )
+      ).dataPreparationHandshakeRepository;
+      await expect(repo.findAllByKey()).rejects.toThrow("fail");
     });
   });
 
   describe("findByApikey", () => {
-    it("dovrebbe trovare e restituire un dato per apikey", async () => {
-      vi.mocked(mockDbChain.limit).mockResolvedValue([sampleHandshake]);
-      const result = await dataPreparationHandshakeRepository.findByApikey(
-        "key-123"
-      );
-      expect(mockClient.select).toHaveBeenCalled();
-      expect(mockDbChain.where).toHaveBeenCalled();
+    it("returns one record if found", async () => {
+      const limit = vi.fn().mockResolvedValue([sampleHandshake]);
+      const where = vi.fn().mockReturnValue({ limit });
+      const from = vi.fn().mockReturnValue({ where });
+      selectMock.mockReturnValue({ from });
+
+      const repo = (
+        await import(
+          "../../src/repositories/handshake/dataPreparationHandshakeRepository.js"
+        )
+      ).dataPreparationHandshakeRepository;
+      const result = await repo.findByApikey("test-api-key");
+
       expect(result).toEqual(sampleHandshake);
     });
 
-    it("dovrebbe restituire null se non trova dati", async () => {
-      vi.mocked(mockDbChain.limit).mockResolvedValue([]);
-      const result = await dataPreparationHandshakeRepository.findByApikey(
-        "key-non-existent"
-      );
+    it("returns null if not found", async () => {
+      const limit = vi.fn().mockResolvedValue([]);
+      const where = vi.fn().mockReturnValue({ limit });
+      const from = vi.fn().mockReturnValue({ where });
+      selectMock.mockReturnValue({ from });
+
+      const repo = (
+        await import(
+          "../../src/repositories/handshake/dataPreparationHandshakeRepository.js"
+        )
+      ).dataPreparationHandshakeRepository;
+      const result = await repo.findByApikey("not-found");
+
       expect(result).toBeNull();
     });
   });
 
   describe("deleteAllByKey", () => {
-    it("dovrebbe cancellare tutti i dati e restituire 0", async () => {
-      vi.mocked(mockDbChain.then).mockImplementation((resolve) =>
-        resolve(undefined)
-      );
-      const result = await dataPreparationHandshakeRepository.deleteAllByKey();
-      expect(mockClient.delete).toHaveBeenCalled();
+    it("deletes all records and returns 0", async () => {
+      const from = vi.fn();
+      deleteMock.mockReturnValue({ from });
+
+      const repo = (
+        await import(
+          "../../src/repositories/handshake/dataPreparationHandshakeRepository.js"
+        )
+      ).dataPreparationHandshakeRepository;
+      const result = await repo.deleteAllByKey();
+
+      expect(deleteMock).toHaveBeenCalled();
       expect(result).toBe(0);
-      expect(mockLogger.info).toHaveBeenCalled();
+    });
+
+    it("throws on delete error", async () => {
+      deleteMock.mockImplementation(() => {
+        throw new Error("delete fail");
+      });
+
+      const repo = (
+        await import(
+          "../../src/repositories/handshake/dataPreparationHandshakeRepository.js"
+        )
+      ).dataPreparationHandshakeRepository;
+      await expect(repo.deleteAllByKey()).rejects.toThrow("delete fail");
     });
   });
 });
