@@ -138,6 +138,8 @@ CREATE TABLE IF NOT EXISTS "att"."addresses" (
 	"floor" text,
 	"nui" text,
 	"isolated" text,
+	"latitude" text,
+	"longitude" text,
 	"foreign_cap" text,
 	"foreign_place_description" text,
 	"foreign_country_description" text,
@@ -146,13 +148,14 @@ CREATE TABLE IF NOT EXISTS "att"."addresses" (
 	"foreign_toponym_denomination" text,
 	"foreign_toponym_civic_number" text,
 	"consulate_cod" text,
-	"consulate_description" text
+	"consulate_description" text,
+	"subject_id" text NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "att"."subjects" (
-	"uuid" uuid PRIMARY KEY NOT NULL,
+	"uuid" uuid NOT NULL,
 	"id" text NOT NULL,
-	"subject_id" text NOT NULL,
+	"subject_id" text PRIMARY KEY NOT NULL,
 	"surname" text,
 	"name" text,
 	"gender" text,
@@ -165,8 +168,7 @@ CREATE TABLE IF NOT EXISTS "att"."subjects" (
 	"birth_place_description" text,
 	"birth_country_description" text,
 	"birth_cod_state" text,
-	"birth_province_county" text,
-	"address_id" uuid NOT NULL
+	"birth_province_county" text
 );
 
 CREATE TABLE IF NOT EXISTS "att"."fiscal_codes" (
@@ -257,12 +259,12 @@ DO $$
 BEGIN
   IF EXISTS (
     SELECT FROM information_schema.tables
-    WHERE table_name = 'subjects' AND table_schema = 'att'
+    WHERE table_name = 'addresses' AND table_schema = 'att'
   ) AND NOT EXISTS (
     SELECT FROM information_schema.table_constraints
-    WHERE constraint_name = 'subjects_address_id_addresses_id_fk' AND table_schema = 'att'
+    WHERE constraint_name = 'addresses_subject_id_subjects_subject_id_fk' AND table_schema = 'att'
   ) THEN
-    ALTER TABLE "att"."subjects" ADD CONSTRAINT "subjects_address_id_addresses_id_fk" FOREIGN KEY ("address_id") REFERENCES "att"."addresses"("id") ON DELETE no action ON UPDATE no action;
+    ALTER TABLE "att"."addresses" ADD CONSTRAINT "addresses_subject_id_subjects_subject_id_fk" FOREIGN KEY ("subject_id") REFERENCES "att"."subjects"("subject_id") ON DELETE no action ON UPDATE no action;
   END IF;
 END $$;
 

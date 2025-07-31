@@ -3,9 +3,9 @@ import { InferSelectModel } from "drizzle-orm";
 import { customSchema } from "../schema.js";
 
 export const subjectTable = customSchema.table("subjects", {
-  uuid: uuid("uuid").primaryKey(),
+  uuid: uuid("uuid").notNull(),
   id: text("id").notNull(),
-  subject_id: text("subject_id").notNull(),
+  subject_id: text("subject_id").primaryKey(),
 
   surname: text("surname"),
   name: text("name"),
