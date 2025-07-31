@@ -1,7 +1,6 @@
 import { text, uuid } from "drizzle-orm/pg-core";
 import { InferSelectModel } from "drizzle-orm";
 import { customSchema } from "../schema.js";
-import { addressTable } from "./address.model.js";
 
 export const subjectTable = customSchema.table("subjects", {
   uuid: uuid("uuid").primaryKey(),
@@ -25,10 +24,6 @@ export const subjectTable = customSchema.table("subjects", {
   birth_country_description: text("birth_country_description"),
   birth_cod_state: text("birth_cod_state"),
   birth_province_county: text("birth_province_county"),
-
-  address_id: uuid("address_id")
-    .notNull()
-    .references(() => addressTable.id),
 });
 
 export type Subject = InferSelectModel<typeof subjectTable>;
