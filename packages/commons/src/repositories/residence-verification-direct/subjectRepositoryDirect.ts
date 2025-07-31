@@ -23,7 +23,10 @@ export const SubjectRepositoryDirect = {
     return client
       .select()
       .from(subjectTable)
-      .innerJoin(addressTable, eq(subjectTable.address_id, addressTable.id))
+      .innerJoin(
+        addressTable,
+        eq(subjectTable.subject_id, addressTable.subject_id)
+      )
       .where(eq(subjectTable.subject_id, subjectId))
       .limit(1)
       .execute();
@@ -57,7 +60,10 @@ export const SubjectRepositoryDirect = {
     return client
       .select()
       .from(subjectTable)
-      .innerJoin(addressTable, eq(subjectTable.address_id, addressTable.id))
+      .innerJoin(
+        addressTable,
+        eq(subjectTable.subject_id, addressTable.subject_id)
+      )
       .where(and(...conditions))
       .execute();
   },

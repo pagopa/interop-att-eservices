@@ -18,6 +18,13 @@ export const DataPreparationRepository = {
     return result.length > 0 ? result[0] : null;
   },
 
+  async findAddressesBySubjectId(subjectId: string): Promise<Address[]> {
+    return await client
+      .select()
+      .from(addressTable)
+      .where(eq(addressTable.subject_id, subjectId));
+  },
+
   async createSubject(data: Subject): Promise<void> {
     const result = await client.insert(subjectTable).values(data);
     if (result.rowCount === 0) {

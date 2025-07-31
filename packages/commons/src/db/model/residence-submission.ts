@@ -44,6 +44,7 @@ export interface DbAddress {
   foreign_toponym_civic_number?: string;
   consulate_cod?: string;
   consulate_description?: string;
+  subject_id?: string;
 }
 
 export interface DbSubject {
@@ -63,7 +64,6 @@ export interface DbSubject {
   birth_country_description?: string;
   birth_cod_state?: string;
   birth_province_county?: string;
-  address_id?: string;
 }
 
 export interface MappedDbData {
