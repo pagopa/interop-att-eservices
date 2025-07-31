@@ -46,6 +46,9 @@ export const addressTable = customSchema.table("addresses", {
   nui: text("nui"),
   isolated: text("isolated"),
 
+  latitude: text("latitude"),
+  longitude: text("longitude"),
+
   foreign_cap: text("foreign_cap"),
   foreign_place_description: text("foreign_place_description"),
   foreign_country_description: text("foreign_country_description"),

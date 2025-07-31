@@ -46,13 +46,6 @@ export interface DbAddress {
   consulate_description?: string;
 }
 
-export interface DbUsecase {
-  id?: string;
-  purpose_id?: string;
-  subject_id?: string;
-  address_id?: string;
-}
-
 export interface DbSubject {
   uuid?: string;
   id?: string;
@@ -70,25 +63,15 @@ export interface DbSubject {
   birth_country_description?: string;
   birth_cod_state?: string;
   birth_province_county?: string;
-}
-
-export interface DbPurpose {
-  id?: string;
+  address_id?: string;
 }
 
 export interface MappedDbData {
-  purpose?: DbPurpose;
   subject?: DbSubject;
   addresses?: DbAddress[];
-  usecases?: DbUsecase[];
 }
 
-export type DebugSchema =
-  | DbAddress
-  | DbUsecase
-  | DbSubject
-  | DbPurpose
-  | MappedDbData;
+export type DebugSchema = DbAddress | DbSubject | MappedDbData;
 
 export interface TipoCodiceFiscale {
   subjectId?: string;

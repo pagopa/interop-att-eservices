@@ -36,7 +36,7 @@ const residenceSubissionController = (
         logger.info(`[START] residenceSubissionController: ${req.body}`);
         const data: any = await ResidenceSubmissionController.createUser(
           req.body
-        ); // TODO: handle the type of the "data" constant
+        );
         if (!data || data.subjects?.subject?.length === 0) {
           throw userModelNotFound();
         }
@@ -47,7 +47,6 @@ const residenceSubissionController = (
           "OK"
         );
         logger.info(`[END] residenceSubissionController`);
-        // TODO: handle the error after saving
         return res.status(200).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
@@ -79,7 +78,7 @@ const residenceSubissionController = (
         logger.info(`[START] residenceSubissionController update: ${req.body}`);
         const data: any = await ResidenceSubmissionController.updateUser(
           req.body
-        ); // TODO: handle the type of the "data" constant
+        );
         if (!data || data.subjects?.subject?.length === 0) {
           throw userModelNotFound();
         }
