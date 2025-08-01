@@ -24,22 +24,13 @@ services:
   #     chmod 600 /var/lib/pgadmin/storage/root_example.com/pgpass;
   #     /entrypoint.sh
   #     "
-  redis:
-    image: redis:4.0.6
-    ports:
-      - "6379:6379"
-    volumes:
-      - volume-redis:/data
-    environment:
-      REDIS_PASSWORD: psw
-    command: ["sh", "-c", 'exec redis-server --requirepass "$$REDIS_PASSWORD"']
 
   postgres:
     volumes:
       - ../migrations/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql
     image: postgres:14
     ports:
-      - 55000:5432
+      - 5432:5432
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
