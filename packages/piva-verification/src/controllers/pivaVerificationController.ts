@@ -1,6 +1,5 @@
 import { logger, getContext } from "pdnd-common";
 import { PivaVerificationService } from "pdnd-common";
-// import PivaVerificationService from "../services/pivaVerificationService.js";
 import { Richiesta, VerificaPartitaIva } from "../model/domain/models.js";
 import { requestParamNotValid } from "../exceptions/errors.js";
 
@@ -14,7 +13,6 @@ class PivaVerificationController {
           request.organizationId
         );
         const result: VerificaPartitaIva = {
-          // idOperazione: request.idOperazioneClient,
           data,
         };
         return result;
