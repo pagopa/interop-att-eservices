@@ -1,98 +1,117 @@
-// TODO: da implementare
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
+import { PartitaIvaModel } from "pdnd-models";
+import { PivaVerificationService } from "../../src/services/piva-verification/index.js";
+import { PivaRepository } from "../../src/repositories/piva-verification/piva.js";
 
-// import { describe, it, expect, vi, afterEach } from "vitest";
+vi.mock("../../src/repositories/piva-verification/piva.js", () => ({
+  PivaRepository: {
+    getPivaObjectByKey: vi.fn(),
+    setPivaObject: vi.fn(),
+    getAllPivaObject: vi.fn(),
+    deleteAllPivaObject: vi.fn(),
+    deletePivaObjectByKey: vi.fn(),
+  },
+}));
 
-// const mockPivaRepository = {
-//   getPivaObjectByKey: vi.fn(),
-//   setPivaObject: vi.fn(),
-//   getAllPivaObject: vi.fn(),
-//   deleteAllPivaObject: vi.fn(),
-//   deletePivaObjectByKey: vi.fn(),
-// };
+vi.mock("../../src/index.js", () => ({
+  logger: {
+    info: vi.fn(),
+    error: vi.fn(),
+  },
+}));
 
-// vi.mock("../../repositories/piva-verification/piva.js", () => ({
-//   PivaRepository: vi.fn().mockImplementation(() => mockPivaRepository),
-// }));
+describe("PivaVerificationService", () => {
+  const pivaModel: PartitaIvaModel = { organizationId: "12345678901" };
 
-// vi.mock("pdnd-common", () => ({
-//   logger: {
-//     info: vi.fn(),
-//     error: vi.fn(),
-//   },
-// }));
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
-// import PivaVerificationService from "../../services/piva-verification/pivaService.js";
+  describe("saveList", () => {
+    it("should save the VAT number if it does not exist and return the model", async () => {
+      (PivaRepository.getPivaObjectByKey as Mock).mockResolvedValue(null);
+      (PivaRepository.setPivaObject as Mock).mockResolvedValue(
+        pivaModel.organizationId
+      );
 
-// const testModel = { organizationId: "ORG123456" };
-// const existingModel = { organizationId: "EXISTING123" };
-// const testResultList = [{ organizationId: "ORG1" }, { organizationId: "ORG2" }];
+      const result = await PivaVerificationService.saveList(pivaModel);
 
-// describe("PivaVerificationService", () => {
-//   afterEach(() => {
-//     vi.clearAllMocks();
-//   });
+      expect(PivaRepository.getPivaObjectByKey).toHaveBeenCalledWith(
+        pivaModel.organizationId
+      );
+      expect(PivaRepository.setPivaObject).toHaveBeenCalledWith(
+        pivaModel.organizationId
+      );
+      expect(result).toEqual(pivaModel);
+    });
 
-//   describe("saveList", () => {
-//     it("dovrebbe salvare l'organizationId se non esiste", async () => {
-//       mockPivaRepository.getPivaObjectByKey.mockResolvedValueOnce(null);
+    it("should return null if the VAT number already exists", async () => {
+      (PivaRepository.getPivaObjectByKey as Mock).mockResolvedValue(pivaModel);
 
-//       const result = await PivaVerificationService.saveList(testModel);
+      const result = await PivaVerificationService.saveList(pivaModel);
 
-//       expect(mockPivaRepository.getPivaObjectByKey).toHaveBeenCalledWith(
-//         testModel.organizationId
-//       );
-//       expect(mockPivaRepository.setPivaObject).toHaveBeenCalledWith(
-//         testModel.organizationId
-//       );
-//       expect(result).toEqual(testModel);
-//     });
+      expect(PivaRepository.getPivaObjectByKey).toHaveBeenCalledWith(
+        pivaModel.organizationId
+      );
+      expect(PivaRepository.setPivaObject).not.toHaveBeenCalled();
+      expect(result).toBeNull();
+    });
 
-//     it("non dovrebbe salvare l'organizationId se esiste già", async () => {
-//       mockPivaRepository.getPivaObjectByKey.mockResolvedValueOnce(
-//         existingModel
-//       );
+    it("should throw an error if the repository fails", async () => {
+      const error = new Error("Repository Error");
+      (PivaRepository.getPivaObjectByKey as Mock).mockRejectedValue(error);
 
-//       const result = await PivaVerificationService.saveList(existingModel);
+      await expect(PivaVerificationService.saveList(pivaModel)).rejects.toThrow(
+        error
+      );
+    });
+  });
 
-//       expect(mockPivaRepository.getPivaObjectByKey).toHaveBeenCalledWith(
-//         existingModel.organizationId
-//       );
-//       expect(mockPivaRepository.setPivaObject).not.toHaveBeenCalled();
-//       expect(result).toBeNull();
-//     });
-//   });
+  describe("getByPiva", () => {
+    it("should return a VAT number object if found", async () => {
+      (PivaRepository.getPivaObjectByKey as Mock).mockResolvedValue(pivaModel);
 
-//   describe("getAll", () => {
-//     it("dovrebbe restituire tutti gli oggetti salvati", async () => {
-//       mockPivaRepository.getAllPivaObject.mockResolvedValueOnce(testResultList);
+      const result = await PivaVerificationService.getByPiva(
+        pivaModel.organizationId
+      );
 
-//       const result = await PivaVerificationService.getAll();
+      expect(result).toEqual(pivaModel);
+    });
+  });
 
-//       expect(mockPivaRepository.getAllPivaObject).toHaveBeenCalled();
-//       expect(result).toEqual(testResultList);
-//     });
-//   });
+  describe("getAll", () => {
+    it("should return an array of VAT numbers", async () => {
+      const pivaList = [pivaModel];
+      (PivaRepository.getAllPivaObject as Mock).mockResolvedValue(pivaList);
 
-//   describe("deleteByPiva", () => {
-//     it("dovrebbe eliminare un oggetto tramite la sua chiave (organizationId)", async () => {
-//       mockPivaRepository.deletePivaObjectByKey.mockResolvedValueOnce(undefined);
+      const result = await PivaVerificationService.getAll();
 
-//       const result = await PivaVerificationService.deleteByPiva(testModel);
+      expect(result).toEqual(pivaList);
+    });
+  });
 
-//       expect(mockPivaRepository.deletePivaObjectByKey).toHaveBeenCalledWith(
-//         testModel.organizationId
-//       );
-//       expect(result).toEqual(testModel);
-//     });
-//   });
+  describe("deleteAllByKey", () => {
+    it('should return "Success" after deletion', async () => {
+      (PivaRepository.deleteAllPivaObject as Mock).mockResolvedValue(undefined);
 
-//   describe("deleteAllByKey", () => {
-//     it("dovrebbe eliminare tutti i record", async () => {
-//       mockPivaRepository.deleteAllPivaObject.mockResolvedValueOnce(undefined);
+      const result = await PivaVerificationService.deleteAllByKey();
 
-//       await PivaVerificationService.deleteAllByKey();
+      expect(result).toBe("Success");
+    });
+  });
 
-//       expect(mockPivaRepository.deleteAllPivaObject).toHaveBeenCalled();
-//     });
-//   });
-// });
+  describe("deleteByPiva", () => {
+    it("should return the VAT number model after deletion", async () => {
+      (PivaRepository.deletePivaObjectByKey as Mock).mockResolvedValue(
+        undefined
+      );
+
+      const result = await PivaVerificationService.deleteByPiva(pivaModel);
+
+      expect(PivaRepository.deletePivaObjectByKey).toHaveBeenCalledWith(
+        pivaModel.organizationId
+      );
+      expect(result).toEqual(pivaModel);
+    });
+  });
+});
