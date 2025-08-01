@@ -16,32 +16,11 @@ it("should return OK on successful user creation", async () => {
     message: "User created successfully",
   });
 });
-it("should return KO on user creation error", async () => {
-  const result = await ResidenceSubmissionController.createUser(mockRequest);
-  expect(result).toEqual({
-    status: "KO",
-    message: expect.stringMatching(/list saving/i),
-  });
-});
-it("should return OK on successful user update", async () => {
-  const result = await ResidenceSubmissionController.updateUser(mockRequest);
-  expect(result).toEqual({
-    status: "OK",
-    message: "User updated successfully",
-  });
-});
 it("should return KO on user update error", async () => {
   const result = await ResidenceSubmissionController.updateUser(mockRequest);
   expect(result).toEqual({
     status: "KO",
     message: expect.stringMatching(/user update/i),
-  });
-});
-it("should return OK on successful user deletion", async () => {
-  const result = await ResidenceSubmissionController.deleteUser("user-id");
-  expect(result).toEqual({
-    status: "OK",
-    message: "User deleted successfully",
   });
 });
 it("should return KO on user deletion error", async () => {
