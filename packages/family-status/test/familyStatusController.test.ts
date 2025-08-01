@@ -1,7 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { FamilyStatusService, mapDbRecordToResponseFS001 } from "pdnd-common";
-import controller from "../src/controllers/FamilyStatusController.js";
+import { DbRecord, FamilyStatusService } from "pdnd-common";
 import { RequestFS001 } from "../src/model/domain/models.js";
+import controller from "../src/controllers/FamilyStatusController.js";
+import { mapDbRecordToResponseFS001 } from "../src/utilities/mapDbRecordToResponseFS001.js";
+
+vi.mock("../src/utilities/mapDbRecordToResponseFS001.js", () => ({
+  mapDbRecordToResponseFS001: vi.fn(),
+}));
 
 vi.mock("pdnd-common", () => ({
   logger: {
@@ -9,7 +14,6 @@ vi.mock("pdnd-common", () => ({
     error: vi.fn(),
   },
   getContext: vi.fn(),
-  mapDbRecordToResponseFS001: vi.fn(),
   FamilyStatusService: {
     verifyBySubjectId: vi.fn(),
     findByPersonalInfo: vi.fn(),
@@ -42,8 +46,9 @@ describe("FamilyStatusController", () => {
       const mockFinalResponse = { idOp: "op123", subjects: { subject: [] } };
 
       vi.mocked(FamilyStatusService.verifyBySubjectId).mockResolvedValue(
-        mockDbRecord
+        mockDbRecord as unknown as DbRecord
       );
+
       vi.mocked(mapDbRecordToResponseFS001).mockReturnValue(mockFinalResponse);
 
       const result = await controller.findUser(mockRequest);
@@ -85,8 +90,9 @@ describe("FamilyStatusController", () => {
       const mockFinalResponse = { idOp: "op456", subjects: { subject: [] } };
 
       vi.mocked(FamilyStatusService.findByPersonalInfo).mockResolvedValue(
-        mockDbRecordArray
+        mockDbRecordArray as unknown as DbRecord[]
       );
+
       vi.mocked(mapDbRecordToResponseFS001).mockReturnValue(mockFinalResponse);
 
       const result = await controller.findUser(mockRequest);
@@ -120,17 +126,20 @@ describe("FamilyStatusController", () => {
         subjects: { subject: [{ id: "user-1" }, { id: "user-2" }] },
       };
       const mockConverterResponse = {
+        idOp: "op-verify-1",
         subjects: { subject: [{ id: "user-1" }] },
       };
 
-      vi.mocked(FamilyStatusService.findById).mockResolvedValue(mockDbRecord);
+      vi.mocked(FamilyStatusService.findById).mockResolvedValue(
+        mockDbRecord as unknown as DbRecord
+      );
       vi.mocked(mapDbRecordToResponseFS001).mockReturnValue(
         mockConverterResponse
       );
 
       const result = await controller.findUserVerify(mockRequest);
 
-      expect(result).toEqual({ idOp: "op-verify-1" });
+      expect(result).toEqual(mockConverterResponse);
     });
 
     it("should throw userModelNotFound if data has no subjects", async (): Promise<void> => {
@@ -138,34 +147,16 @@ describe("FamilyStatusController", () => {
         operationId: "op-verify-2",
         criteria: { id: "ID-EMPTY" },
       };
-      const mockDbRecord = {
-        id: "db-record-4",
-        uuid: "uuid-4",
-        subjectId: "subject-4",
-        surname: "Doe",
-        name: "John",
-        birthDate: { eventDate: "1990-01-01" },
-        gender: "M",
-        citizenship: "IT",
-        familyStatus: "single",
-        residence: {},
-        registryStatus: "active",
-        registryStatusDate: "2023-01-01",
-        registryStatusReason: "reason",
-        registryStatusPlace: "place",
-        registryStatusAuthority: "authority",
-        registryStatusProtocol: "protocol",
-        registryStatusProtocolDate: "2023-01-01",
-        registryStatusProtocolAuthority: "protocol-authority",
-        registryStatusProtocolPlace: "protocol-place",
-        registryStatusProtocolReason: "protocol-reason",
-        registryStatusProtocolType: "protocol-type",
-        registryStatusProtocolNote: "protocol-note",
-        registryStatusProtocolNoteDate: "2023-01-01",
+      const mockDbRecord = { id: "db-record-4" };
+      const mockConverterResponse = {
+        idOp: "op-verify-2",
+        subjects: { subject: [] },
       };
-      const mockConverterResponse = { subjects: { subject: [] } };
 
-      vi.mocked(FamilyStatusService.findById).mockResolvedValue(mockDbRecord);
+      vi.mocked(FamilyStatusService.findById).mockResolvedValue(
+        mockDbRecord as unknown as DbRecord
+      );
+
       vi.mocked(mapDbRecordToResponseFS001).mockReturnValue(
         mockConverterResponse
       );
