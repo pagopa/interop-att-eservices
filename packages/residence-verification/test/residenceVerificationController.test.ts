@@ -30,7 +30,7 @@ vi.mock("../src/utilities/equalsUtilities.js", async () => ({
   checkInfoSoggettoEquals: vi.fn(),
 }));
 
-import controller from "./../src/controllers/ResidenceVerificationController.js";
+import controller from "../src/controllers/residenceVerificationController.js";
 
 const mockUser = {
   subjectId: "UTENTE_123",

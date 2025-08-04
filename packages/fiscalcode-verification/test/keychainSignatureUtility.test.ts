@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { KMSClient, SignCommand } from "@aws-sdk/client-kms";
-import { keychainSignatureUtility } from "../src/utilities/keychainSignatureUtility.js"; // Assumi che sia nel percorso corretto
 import { logger } from "pdnd-common";
-// Mock dell'intero modulo `pdnd-common`
+import { keychainSignatureUtility } from "../src/utilities/keychainSignatureUtility.js";
 vi.mock("pdnd-common", () => ({
   logger: {
     info: vi.fn(),
@@ -10,21 +9,22 @@ vi.mock("pdnd-common", () => ({
   },
 }));
 
-
 describe("keychainSignatureUtility", () => {
   const mockKeyId = "mock-key-id";
   const dataToSign = "example data to sign";
 
   beforeEach(() => {
     // Mock di KMSClient e SignCommand
-    vi.spyOn(KMSClient.prototype, "send").mockImplementation(async (command) => {
-      if (command instanceof SignCommand) {
-        return {
-          Signature: new Uint8Array([104, 101, 108, 108, 111]), // 'hello' in ASCII
-        };
+    vi.spyOn(KMSClient.prototype, "send").mockImplementation(
+      async (command) => {
+        if (command instanceof SignCommand) {
+          return {
+            Signature: new Uint8Array([104, 101, 108, 108, 111]),
+          };
+        }
+        return { Signature: null };
       }
-      return { Signature: null };
-    });
+    );
   });
 
   afterEach(() => {
@@ -41,16 +41,18 @@ describe("keychainSignatureUtility", () => {
     const utility = new keychainSignatureUtility(mockKeyId);
     const signature = await utility.signData(dataToSign);
 
-    // Verifica che la firma sia stata generata correttamente in base64
-    expect(signature).toBe("aGVsbG8="); // 'hello' codificato in base64
+    expect(signature).toBe("aGVsbG8=");
   });
 
   it("dovrebbe lanciare un errore se non è possibile generare la firma", async () => {
-    vi.spyOn(KMSClient.prototype, "send").mockResolvedValueOnce({ Signature: null });
+    vi.spyOn(KMSClient.prototype, "send").mockResolvedValueOnce({
+      Signature: null,
+    });
     const utility = new keychainSignatureUtility(mockKeyId);
 
-    // Verifica che venga lanciato un errore se la firma non è generata
-    await expect(utility.signData(dataToSign)).rejects.toThrow("La firma non è stata generata correttamente");
+    await expect(utility.signData(dataToSign)).rejects.toThrow(
+      "La firma non è stata generata correttamente"
+    );
   });
 
   it("dovrebbe loggare un errore in caso di eccezione", async () => {
@@ -59,6 +61,9 @@ describe("keychainSignatureUtility", () => {
     const utility = new keychainSignatureUtility(mockKeyId);
 
     await expect(utility.signData(dataToSign)).rejects.toThrow("Mock error");
-    expect(logger.error).toHaveBeenCalledWith("Errore durante la generazione della firma:", error);
+    expect(logger.error).toHaveBeenCalledWith(
+      "Errore durante la generazione della firma:",
+      error
+    );
   });
 });
