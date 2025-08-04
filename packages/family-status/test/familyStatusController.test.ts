@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { DbRecord, FamilyStatusService } from "pdnd-common";
 import { RequestFS001 } from "../src/model/domain/models.js";
-import controller from "../src/controllers/FamilyStatusController.js";
 import { mapDbRecordToResponseFS001 } from "../src/utilities/mapDbRecordToResponseFS001.js";
+import controller from "./../src/controllers/familyStatusController.js";
 
 vi.mock("../src/utilities/mapDbRecordToResponseFS001.js", () => ({
   mapDbRecordToResponseFS001: vi.fn(),
