@@ -18,7 +18,7 @@ import { parseJsonToRequestListDigitalAddress } from "../utilities/jsonDigitalAd
 import { responseRequestDigitalAddressModelToResponseRequestDigitalAddress } from "../model/domain/apiConverter.js";
 import { calculateUpdatedRequestState } from "../utilities/simulationUtils.js";
 
-class DigitalAddressVerificationSingleController {
+class DigitalAddressVerificationMultipleController {
   public appContext = getContext();
 
   public async saveRequest(
@@ -160,4 +160,4 @@ class DigitalAddressVerificationSingleController {
     }
   }
 }
-export default new DigitalAddressVerificationSingleController();
+export default new DigitalAddressVerificationMultipleController();
