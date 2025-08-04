@@ -24,7 +24,7 @@ vi.mock("../src/utilities/fiscalcodeUtilities.js", async () => ({
   appendUniqueFiscalcodeModelsToArray: vi.fn(),
 }));
 
-import controller from "../src/controllers/DataPreparationController.js";
+import controller from "../src/controllers/dataPreparationController.js";
 
 const mockFiscalCode1: ResponseRequestDigitalAddressModel = {
   fiscalCode: "AAAAAA00A00A000A",
