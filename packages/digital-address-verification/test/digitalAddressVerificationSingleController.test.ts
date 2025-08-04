@@ -23,7 +23,7 @@ vi.mock("../src/model/domain/apiConverter.js", async () => ({
   responseRequestDigitalAddressModelToResponseRequestDigitalAddress: vi.fn(),
 }));
 
-import controller from "../src/controllers/DigitalAddressVerificationSingleController.js";
+import controller from "../src/controllers/digitalAddressVerificationSingleController.js";
 
 const mockDbRecord = {
   fiscalCode: "AAAAAA00A00A000A",
