@@ -14,11 +14,6 @@ logger.info(
   `config.skipInteroperabilityVerification  ${config.skipInteroperabilityVerification}`
 );
 
-/* if (!config.skipInteroperabilityVerification) {
-  //app.use(authenticationMiddleware(),integrityValidationMiddleware(), auditValidationMiddleware() );
-  app.use("/residence-verification/data-preparation", authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware());
-} */
-
 app.use("/", healthRouter(zodiosCtx));
 app.use("/", dataPreparationRouter(zodiosCtx));
 app.use("/", residenceVerificationRouter(zodiosCtx));
