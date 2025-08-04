@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { logger, FiscalCodeService } from "pdnd-common";
 import { Richiesta } from "../src/model/domain/models.js";
-import controller from "../src/controllers/fiscalcodeVerificationController.js";
+import controller from "./../src/controllers/fiscalcodeVerificationController.js";
 // 1. Importa la funzione che vuoi "ingannare"
 import { fiscalcodeModelToVerificaCodiceFiscale } from "../src/model/domain/apiConverter.js";
 

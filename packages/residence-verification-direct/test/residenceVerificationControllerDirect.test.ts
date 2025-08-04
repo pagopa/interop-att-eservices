@@ -41,7 +41,7 @@ vi.mock("../src/utilities/equalsUtilities.js", () => ({
 }));
 
 // Importa il controller DOPO aver configurato i mock
-import controller from "../src/controllers/residenceVerificationController.js";
+import controller from "./../src/controllers/residenceVerificationController.js";
 
 // --- Dati di Mock ---
 const mockUser = {
