@@ -56,7 +56,7 @@ vi.mock("../src/model/digitalAddress/VerifyRequest.js", async () => ({
 
 // FIX: Importa la classe mockata e il controller DOPO tutte le chiamate vi.mock.
 import { VerifyRequest } from "../src/model/digitalAddress/VerifyRequest.js";
-import controller from "./../src/controllers/digitalAddressVerificationMultipleController.js";
+import controller from "../src/controllers/digitalAddressVerificationMultipleController.js";
 
 describe("DigitalAddressVerificationSingleController", () => {
   beforeEach(() => {
