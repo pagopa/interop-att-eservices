@@ -3,6 +3,7 @@ import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
 import { makeApiProblemBuilder, ErrorHandling } from "pdnd-models";
 import { match } from "ts-pattern";
 import { Request } from "express";
+import { canonicalize } from "json-canonicalize";
 import { ExpressContext } from "../../index.js";
 import { InteroperabilityConfig } from "../../config/commonConfig.js";
 import { logger } from "../../logging/index.js";
@@ -235,7 +236,7 @@ const verifyDigest = (payload: JwtPayload, req: Request): void => {
     throw ErrorHandling.tokenNotValid();
   }
 
-  const bodyAsString = JSON.stringify(req.body);
+  const bodyAsString = canonicalize(req.body);
   const hashBody = encodeBase64(generateHashFromString(bodyAsString));
 
   if (hashBody !== signedHeaders.digest.substring(8)) {
