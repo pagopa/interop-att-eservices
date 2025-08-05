@@ -21,199 +21,199 @@ BEGIN
 END $$;
 
 CREATE TABLE IF NOT EXISTS "att"."data_preparation" (
-    "id_subject" text PRIMARY KEY NOT NULL,
-    "created_at" timestamp DEFAULT now() NOT NULL,
-    "updated_at" timestamp DEFAULT now() NOT NULL
+	"id_subject" text PRIMARY KEY NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "att"."digital_addresses" (
-    "id" bigserial PRIMARY KEY NOT NULL,
-    "subject_data_response_id" bigint NOT NULL,
-    "address" varchar(255) NOT NULL,
-    "profession" varchar(255),
-    "usage_reason" "att"."motivation_termination_enum" NOT NULL,
-    "usage_end_at" timestamp with time zone NOT NULL,
-    CONSTRAINT "email_check" CHECK (address ~ '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9.-]+)+$')
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"subject_data_response_id" bigint NOT NULL,
+	"address" varchar(255) NOT NULL,
+	"profession" varchar(255),
+	"usage_reason" "att"."motivation_termination_enum" NOT NULL,
+	"usage_end_at" timestamp with time zone NOT NULL,
+	CONSTRAINT "email_check" CHECK (address ~ '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9.-]+)+$')
 );
 
 CREATE TABLE IF NOT EXISTS "att"."list_requests" (
-    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-    "submitted_request_id" varchar(255) NOT NULL,
-    "status" "att"."status_processing_request_enum" NOT NULL,
-    "status_message" varchar(1024),
-    "created_at" timestamp with time zone NOT NULL,
-    CONSTRAINT "list_requests_submitted_request_id_unique" UNIQUE("submitted_request_id")
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"submitted_request_id" varchar(255) NOT NULL,
+	"status" "att"."status_processing_request_enum" NOT NULL,
+	"status_message" varchar(1024),
+	"created_at" timestamp with time zone NOT NULL,
+	CONSTRAINT "list_requests_submitted_request_id_unique" UNIQUE("submitted_request_id")
 );
 
 CREATE TABLE IF NOT EXISTS "att"."request_subjects" (
-    "list_request_id" uuid NOT NULL,
-    "subject_id" varchar(255) NOT NULL,
-    CONSTRAINT "request_subjects_list_request_id_subject_id_pk" PRIMARY KEY("list_request_id","subject_id")
+	"list_request_id" uuid NOT NULL,
+	"subject_id" varchar(255) NOT NULL,
+	CONSTRAINT "request_subjects_list_request_id_subject_id_pk" PRIMARY KEY("list_request_id","subject_id")
 );
 
 CREATE TABLE IF NOT EXISTS "att"."subject_data_responses" (
-    "id" bigserial PRIMARY KEY NOT NULL,
-    "list_request_id" uuid NOT NULL,
-    "subject_id" varchar(255) NOT NULL,
-    "data_from" timestamp with time zone NOT NULL,
-    CONSTRAINT "unique_sdr_list_req_subject" UNIQUE("list_request_id","subject_id"),
-    CONSTRAINT "id_subject_check" CHECK (subject_id ~ '^([0-9]{11})|([A-Za-z]{6}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{3}[A-Za-z]{1})$')
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"list_request_id" uuid NOT NULL,
+	"subject_id" varchar(255) NOT NULL,
+	"data_from" timestamp with time zone NOT NULL,
+	CONSTRAINT "unique_sdr_list_req_subject" UNIQUE("list_request_id","subject_id"),
+	CONSTRAINT "id_subject_check" CHECK (subject_id ~ '^([0-9]{11})|([A-Za-z]{6}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{3}[A-Za-z]{1})$')
 );
 
 CREATE TABLE IF NOT EXISTS "att"."verification_logs" (
-    "id" bigserial PRIMARY KEY NOT NULL,
-    "result" boolean NOT NULL,
-    "checked_at" timestamp with time zone NOT NULL
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"result" boolean NOT NULL,
+	"checked_at" timestamp with time zone NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "att"."verification_requests" (
-    "id" uuid PRIMARY KEY NOT NULL,
-    "count" integer NOT NULL,
-    "json_request" jsonb NOT NULL,
-    "created_at" timestamp DEFAULT now() NOT NULL,
-    "updated_at" timestamp DEFAULT now() NOT NULL
+	"id" uuid PRIMARY KEY NOT NULL,
+	"count" integer NOT NULL,
+	"json_request" jsonb NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "att"."purposes" (
-    "id" uuid PRIMARY KEY NOT NULL
+	"id" uuid PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "att"."family_status" (
-    "uuid" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-    "id" varchar(64) NOT NULL,
-    "subjectId" varchar(16) NOT NULL,
-    "surname" text NOT NULL,
-    "name" text NOT NULL,
-    "gender" varchar(1),
-    "birthDate" date,
-    "municipality_nameMunicipality" text,
-    "municipality_istatCode" text,
-    "municipality_acronymIstatProvince" text,
-    "municipality_placeDescription" text,
-    "place_placeDescription" text,
-    "place_countryDescription" text,
-    "place_codState" text,
-    "place_provinceCounty" text,
-    "relationshipType" text,
-    "startDate" date,
-    "relationshipCode" text,
-    "memberSequence" text,
-    "startDateRelationship" date,
-    "endDateRelationship" date,
-    CONSTRAINT "family_status_subjectId_unique" UNIQUE("subjectId")
+	"uuid" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" varchar(64) NOT NULL,
+	"subjectId" varchar(16) NOT NULL,
+	"surname" text NOT NULL,
+	"name" text NOT NULL,
+	"gender" varchar(1),
+	"birthDate" date,
+	"municipality_nameMunicipality" text,
+	"municipality_istatCode" text,
+	"municipality_acronymIstatProvince" text,
+	"municipality_placeDescription" text,
+	"place_placeDescription" text,
+	"place_countryDescription" text,
+	"place_codState" text,
+	"place_provinceCounty" text,
+	"relationshipType" text,
+	"startDate" date,
+	"relationshipCode" text,
+	"memberSequence" text,
+	"startDateRelationship" date,
+	"endDateRelationship" date,
+	CONSTRAINT "family_status_subjectId_unique" UNIQUE("subjectId")
 );
 
 CREATE TABLE IF NOT EXISTS "att"."addresses" (
-    "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-    "address_type" text,
-    "note_address" text,
-    "address_start_date" text,
-    "presso" text,
-    "address_municipality_name" text,
-    "address_municipality_istat_code" text,
-    "address_municipality_acronym_istat_province" text,
-    "address_municipality_place_description" text,
-    "toponym_cod_type" text,
-    "toponym_type" text,
-    "toponym_origin_type" text,
-    "toponym_cod" text,
-    "toponym_denomination" text,
-    "toponym_source" text,
-    "civic_cod" text,
-    "civic_source" text,
-    "civic_number" text,
-    "metric" text,
-    "prog_snc" text,
-    "letter" text,
-    "exponent1" text,
-    "color" text,
-    "internal_court" text,
-    "internal_stairs" text,
-    "internal1" text,
-    "esp_internal1" text,
-    "internal2" text,
-    "esp_internal2" text,
-    "external_stairs" text,
-    "secondary" text,
-    "floor" text,
-    "nui" text,
-    "isolated" text,
-    "latitude" text,
-    "longitude" text,
-    "foreign_cap" text,
-    "foreign_place_description" text,
-    "foreign_country_description" text,
-    "foreign_country_state" text,
-    "foreign_province_county" text,
-    "foreign_toponym_denomination" text,
-    "foreign_toponym_civic_number" text,
-    "consulate_cod" text,
-    "consulate_description" text,
-    "subject_id" text NOT NULL
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"address_type" text,
+	"note_address" text,
+	"address_start_date" text,
+	"presso" text,
+	"address_municipality_name" text,
+	"address_municipality_istat_code" text,
+	"address_municipality_acronym_istat_province" text,
+	"address_municipality_place_description" text,
+	"toponym_cod_type" text,
+	"toponym_type" text,
+	"toponym_origin_type" text,
+	"toponym_cod" text,
+	"toponym_denomination" text,
+	"toponym_source" text,
+	"civic_cod" text,
+	"civic_source" text,
+	"civic_number" text,
+	"metric" text,
+	"prog_snc" text,
+	"letter" text,
+	"exponent1" text,
+	"color" text,
+	"internal_court" text,
+	"internal_stairs" text,
+	"internal1" text,
+	"esp_internal1" text,
+	"internal2" text,
+	"esp_internal2" text,
+	"external_stairs" text,
+	"secondary" text,
+	"floor" text,
+	"nui" text,
+	"isolated" text,
+	"latitude" text,
+	"longitude" text,
+	"foreign_cap" text,
+	"foreign_place_description" text,
+	"foreign_country_description" text,
+	"foreign_country_state" text,
+	"foreign_province_county" text,
+	"foreign_toponym_denomination" text,
+	"foreign_toponym_civic_number" text,
+	"consulate_cod" text,
+	"consulate_description" text,
+	"subject_id" text NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "att"."subjects" (
-    "uuid" uuid NOT NULL,
-    "id" text NOT NULL,
-    "subject_id" text PRIMARY KEY NOT NULL,
-    "surname" text,
-    "name" text,
-    "gender" text,
-    "birth_event_date" text,
-    "birth_exceptional_place" text,
-    "birth_municipality_name" text,
-    "birth_municipality_istat_code" text,
-    "birth_municipality_acronym_istat_province" text,
-    "birth_municipality_place_description" text,
-    "birth_place_description" text,
-    "birth_country_description" text,
-    "birth_cod_state" text,
-    "birth_province_county" text
+	"uuid" uuid NOT NULL,
+	"id" text NOT NULL,
+	"subject_id" text PRIMARY KEY NOT NULL,
+	"surname" text,
+	"name" text,
+	"gender" text,
+	"birth_event_date" text,
+	"birth_exceptional_place" text,
+	"birth_municipality_name" text,
+	"birth_municipality_istat_code" text,
+	"birth_municipality_acronym_istat_province" text,
+	"birth_municipality_place_description" text,
+	"birth_place_description" text,
+	"birth_country_description" text,
+	"birth_cod_state" text,
+	"birth_province_county" text
 );
 
 CREATE TABLE IF NOT EXISTS "att"."fiscal_codes" (
-    "id" serial PRIMARY KEY NOT NULL,
-    "fiscal_code" text NOT NULL,
-    "created_at" timestamp DEFAULT now() NOT NULL,
-    "updated_at" timestamp DEFAULT now() NOT NULL,
-    CONSTRAINT "fiscal_codes_fiscal_code_unique" UNIQUE("fiscal_code")
+	"id" serial PRIMARY KEY NOT NULL,
+	"fiscal_code" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "fiscal_codes_fiscal_code_unique" UNIQUE("fiscal_code")
 );
 
 CREATE TABLE IF NOT EXISTS "att"."piva" (
-    "organization_id" text PRIMARY KEY NOT NULL
+	"organization_id" text PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "att"."category" (
-    "id" bigserial PRIMARY KEY NOT NULL,
-    "code" varchar(255) NOT NULL,
-    "eservice" varchar(255) NOT NULL,
-    "description" varchar(255),
-    "order" integer NOT NULL
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"code" varchar(255) NOT NULL,
+	"eservice" varchar(255) NOT NULL,
+	"description" varchar(255),
+	"order" integer NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "att"."check" (
-    "id" bigserial PRIMARY KEY NOT NULL,
-    "code" varchar(255) NOT NULL,
-    "description" varchar(255),
-    "order" integer NOT NULL,
-    "category_id" bigserial NOT NULL
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"code" varchar(255) NOT NULL,
+	"description" varchar(255),
+	"order" integer NOT NULL,
+	"category_id" bigserial NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "att"."trial" (
-    "id" bigserial PRIMARY KEY NOT NULL,
-    "purpose_id" varchar(255) NOT NULL,
-    "correlation_id" varchar(255) NOT NULL,
-    "operation_path" varchar(255) NOT NULL,
-    "operation_method" varchar(255),
-    "check_id" bigint,
-    "response" varchar(255),
-    "created_date" timestamp,
-    "message" varchar(255)
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"purpose_id" varchar(255) NOT NULL,
+	"correlation_id" varchar(255) NOT NULL,
+	"operation_path" varchar(255) NOT NULL,
+	"operation_method" varchar(255),
+	"check_id" bigint,
+	"response" varchar(255),
+	"created_date" timestamp,
+	"message" varchar(255)
 );
 
 CREATE TABLE IF NOT EXISTS "att"."handshakes" (
-    "apikey" text PRIMARY KEY NOT NULL,
-    "context_key" text NOT NULL
+	"apikey" text PRIMARY KEY NOT NULL,
+	"context_key" text NOT NULL
 );
 
 DO $$
@@ -330,10 +330,8 @@ BEGIN
   END IF;
 END $$;
 
--- =============================================
--- INSERIMENTO DATI DI SEED
--- =============================================
 
+-- ### Dati di seed da seed-data.sql ###
 INSERT INTO "att"."category" ("id", "code", "eservice", "description", "order") VALUES
 (1, 'VOUCHER', 'residence-verification,fiscalcode-verification,piva-verification,digital-address-verification-verify,digital-address-verification-extract', 'bearer token', 1),
 (2, 'Agid-JWT-Signature', 'residence-verification', 'token in Headers', 2),
