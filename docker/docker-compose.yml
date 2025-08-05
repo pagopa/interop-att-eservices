@@ -25,8 +25,19 @@ services:
   #     /entrypoint.sh
   #     "
 
+  localstack:
+    image: localstack/localstack
+    container_name: localstack-test
+    ports:
+      - "4566:4566"
+      - "4571:4571"
+    environment:
+      - SERVICES=s3,sqs,sns,lambda,dynamodb,apigateway,kms
+      - DEBUG=1
+    restart: unless-stopped
   postgres:
     image: postgres:14
+    container_name: postgres-test
     ports:
       - 5432:5432
     environment:
@@ -39,7 +50,3 @@ networks:
   develop-network:
     name: interop-att-eservice-network
     driver: bridge
-
-volumes:
-  volume-redis: # Definizione del volume per Redis
-    driver: local
