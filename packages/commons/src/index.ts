@@ -1,3 +1,4 @@
+import "./types/express/index.js";
 export * from "./db/postgres/client.js";
 export * from "./db/schema/index.js";
 export * from "./db/schema/purpose.model.js";

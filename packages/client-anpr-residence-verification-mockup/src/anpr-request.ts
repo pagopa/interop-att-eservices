@@ -2,7 +2,6 @@
 import fs from "fs";
 import dotenv from "dotenv";
 import express, { Application, Request, Response } from "express";
-import { canonicalize } from "json-canonicalize";
 import { sha256, encodeBase64 } from "./utils/commons";
 import {
   generate_agid_jwt_signature_integrity,
@@ -20,7 +19,7 @@ app.use(express.json());
 
 app.post("/", async (req: Request, res: Response): Promise<void> => {
   // Digest SHA-256
-  const canonicalBody = canonicalize(req.body);
+  const canonicalBody = JSON.stringify(req.body);
   console.log(`CANONICAL ${canonicalBody}`);
   const body_digest_bytes = sha256(canonicalBody);
   const body_digest_64 = encodeBase64(body_digest_bytes);

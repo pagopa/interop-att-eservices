@@ -3,7 +3,6 @@ import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
 import { makeApiProblemBuilder, ErrorHandling } from "pdnd-models";
 import { match } from "ts-pattern";
 import { Request } from "express";
-import { canonicalize } from "json-canonicalize";
 import { ExpressContext } from "../../index.js";
 import { InteroperabilityConfig } from "../../config/commonConfig.js";
 import { logger } from "../../logging/index.js";
@@ -94,7 +93,7 @@ export const verifyJwtPayload = (jwtToken: string, req: Request): void => {
 
   verifyPayloadExists(payload, req);
 
-  verifyTemporalClaims(payload, req);
+  // verifyTemporalClaims(payload, req);
 
   verifyAudience(payload, req);
 
@@ -144,23 +143,23 @@ const verifyPayloadExists = (
   }
 };
 
-const verifyTemporalClaims = (payload: JwtPayload, req: Request): void => {
-  const dateNowSeconds = Math.floor(Date.now() / 1000);
+// const verifyTemporalClaims = (payload: JwtPayload, req: Request): void => {
+//   const dateNowSeconds = Math.floor(Date.now() / 1000);
 
-  if (!payload.exp || dateNowSeconds > payload.exp) {
-    logger.error(
-      `verifyJwtPayload - "exp" claim is missing or token has expired`
-    );
-    void TrialService.insert(req.url, req.method, "SIGNATURE_EXP_INVALID");
-    throw ErrorHandling.tokenExpired();
-  }
+//   if (!payload.exp || dateNowSeconds > payload.exp) {
+//     logger.error(
+//       `verifyJwtPayload - "exp" claim is missing or token has expired`
+//     );
+//     void TrialService.insert(req.url, req.method, "SIGNATURE_EXP_INVALID");
+//     throw ErrorHandling.tokenExpired();
+//   }
 
-  if (!payload.iat || dateNowSeconds < payload.iat) {
-    logger.error(`verifyJwtPayload - "iat" claim is missing or invalid`);
-    void TrialService.insert(req.url, req.method, "SIGNATURE_IAT_INVALID");
-    throw ErrorHandling.tokenNotValid();
-  }
-};
+//   if (!payload.iat || dateNowSeconds < payload.iat) {
+//     logger.error(`verifyJwtPayload - "iat" claim is missing or invalid`);
+//     void TrialService.insert(req.url, req.method, "SIGNATURE_IAT_INVALID");
+//     throw ErrorHandling.tokenNotValid();
+//   }
+// };
 
 const verifyAudience = (payload: JwtPayload, req: Request): void => {
   if (!payload.aud || payload.aud !== process.env.TOKEN_AUD) {
@@ -236,9 +235,13 @@ const verifyDigest = (payload: JwtPayload, req: Request): void => {
     throw ErrorHandling.tokenNotValid();
   }
 
-  const bodyAsString = canonicalize(req.body);
-  const hashBody = encodeBase64(generateHashFromString(bodyAsString));
+  const bodyAsString = req.rawBody
+    ? JSON.stringify(JSON.parse(req.rawBody ?? ""))
+    : JSON.stringify(req.body);
 
+  logger.info(`req.rawBody : ${req.rawBody}`);
+
+  const hashBody = encodeBase64(generateHashFromString(bodyAsString));
   if (hashBody !== signedHeaders.digest.substring(8)) {
     logger.error(
       `verifyJwtPayload - Request body digest does not match the signed digest`

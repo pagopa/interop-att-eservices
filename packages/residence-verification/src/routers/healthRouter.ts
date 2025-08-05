@@ -1,14 +1,11 @@
-import { ZodiosRouter } from "@zodios/express";
-import { ZodiosEndpointDefinitions } from "@zodios/core";
-import { ExpressContext, HealtService, ZodiosContext } from "pdnd-common";
+import express from "express";
+import { HealtService, ZodiosContext } from "pdnd-common";
 import { api } from "../model/generated/api.js";
 
-const healthRouter = (
-  ctx: ZodiosContext
-): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
-  const healthRouter = ctx.router(api.api);
+const healthRouter = (ctx: ZodiosContext): express.Router => {
+  const router = ctx.router(api.api);
 
-  healthRouter.get("/residence-verification/status", async (req, res) => {
+  router.get("/residence-verification/status", async (req, res) => {
     if (!req) {
       return res.status(500);
     }
@@ -20,6 +17,6 @@ const healthRouter = (
     }
   });
 
-  return healthRouter;
+  return router as unknown as express.Router;
 };
 export default healthRouter;

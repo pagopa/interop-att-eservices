@@ -6,8 +6,9 @@
     "resolveJsonModule": true,
     "module": "nodenext",
     "outDir": "dist",
-    "types": ["node"],
-    "rootDir": "src"
+    "rootDir": "src",
+    "typeRoots": ["./node_modules/@types", "./src"],
+    "types": ["node"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "src/types/**/*.d.ts"]
 }
