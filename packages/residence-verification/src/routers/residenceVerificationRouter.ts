@@ -1,7 +1,9 @@
-import express from "express";
+import { ZodiosRouter } from "@zodios/express";
+import { ZodiosEndpointDefinitions } from "@zodios/core";
 import {
   authenticationCorrelationMiddleware,
   logger,
+  ExpressContext,
   ZodiosContext,
   integrityValidationMiddleware,
   auditValidationMiddleware,
@@ -17,10 +19,12 @@ import {
 } from "../exceptions/errors.js";
 import { contextDataResidenceMiddleware } from "../context/context.js";
 
-const residenceVerificationRouter = (ctx: ZodiosContext): express.Router => {
-  const router = ctx.router(api.api);
+const residenceVerificationRouter = (
+  ctx: ZodiosContext
+): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
+  const residenceVerificationRouter = ctx.router(api.api);
 
-  router.post(
+  residenceVerificationRouter.post(
     "/residence-verification",
     contextDataResidenceMiddleware,
     authenticationCorrelationMiddleware(true),
@@ -62,7 +66,7 @@ const residenceVerificationRouter = (ctx: ZodiosContext): express.Router => {
     }
   );
 
-  router.post(
+  residenceVerificationRouter.post(
     "/residence-verification/check",
     contextDataResidenceMiddleware,
     authenticationCorrelationMiddleware(true),
@@ -99,6 +103,6 @@ const residenceVerificationRouter = (ctx: ZodiosContext): express.Router => {
       }
     }
   );
-  return router as unknown as express.Router;
+  return residenceVerificationRouter;
 };
 export default residenceVerificationRouter;
