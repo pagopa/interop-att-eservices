@@ -73,7 +73,6 @@
     "pdnd-common": "workspace:*",
     "pdnd-models": "workspace:*",
     "pg": "^8.13.3",
-    "trial": "workspace:*",
     "ts-pattern": "^5.0.6",
     "uuid": "^9.0.0",
     "zod": "^3.21.4"
