@@ -1,4 +1,3 @@
-import express from "express";
 import {
   authenticationCorrelationMiddleware,
   logger,
@@ -6,7 +5,10 @@ import {
   TrialService,
   integrityValidationMiddleware,
   auditValidationMiddleware,
+  ExpressContext,
 } from "pdnd-common";
+import { ZodiosRouter } from "@zodios/express";
+import { ZodiosEndpointDefinitions } from "@zodios/core";
 import ResidenceVerificationController from "../controllers/residenceVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -17,10 +19,12 @@ import {
 } from "../exceptions/errors.js";
 import { contextDataResidenceMiddleware } from "../context/context.js";
 
-const residenceVerificationRouter = (ctx: ZodiosContext): express.Router => {
-  const router = ctx.router(api.api);
+const residenceVerificationRouter = (
+  ctx: ZodiosContext
+): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
+  const residenceVerificationDirectRouter = ctx.router(api.api);
 
-  router.post(
+  residenceVerificationDirectRouter.post(
     "/residence-verification-direct",
     contextDataResidenceMiddleware,
     authenticationCorrelationMiddleware(true),
@@ -62,7 +66,7 @@ const residenceVerificationRouter = (ctx: ZodiosContext): express.Router => {
     }
   );
 
-  router.post(
+  residenceVerificationDirectRouter.post(
     "/residence-verification-direct/check",
     contextDataResidenceMiddleware,
     authenticationCorrelationMiddleware(true),
@@ -99,6 +103,6 @@ const residenceVerificationRouter = (ctx: ZodiosContext): express.Router => {
       }
     }
   );
-  return router as unknown as express.Router;
+  return residenceVerificationDirectRouter;
 };
 export default residenceVerificationRouter;

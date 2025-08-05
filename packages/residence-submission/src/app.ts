@@ -1,25 +1,13 @@
 import express from "express";
-import { InteroperabilityConfig } from "pdnd-common";
 import { zodiosCtx } from "pdnd-common";
-
-import { logger } from "pdnd-common";
-const app = zodiosCtx.app();
-
 import residenceSubmissionRouter from "./routers/residenceSubmissionRouter.js";
 import healthRouter from "./routers/healthRouter.js";
+import { rawBodySaver } from "./middleware/rawBody.js";
 
-app.use(express.json());
-const config = InteroperabilityConfig.parse(process.env);
-logger.info(
-  `config.skipInteroperabilityVerification  ${config.skipInteroperabilityVerification}`
-);
+const app = express();
 
-/* if (!config.skipInteroperabilityVerification) {
-  //app.use(authenticationMiddleware(),integrityValidationMiddleware(), auditValidationMiddleware() );
-  app.use("/residence-verification/data-preparation", authenticationMiddleware(), integrityValidationMiddleware(), auditValidationMiddleware());
-} */
-
-app.use("/", healthRouter(zodiosCtx));
-app.use("/", residenceSubmissionRouter(zodiosCtx));
+app.use(express.json({ verify: rawBodySaver }));
+app.use("/", healthRouter(zodiosCtx) as unknown as express.Router);
+app.use("/", residenceSubmissionRouter(zodiosCtx) as unknown as express.Router);
 
 export default app;
