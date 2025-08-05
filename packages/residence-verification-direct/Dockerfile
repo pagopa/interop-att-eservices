@@ -11,8 +11,6 @@ COPY ./packages/residence-verification-direct/package.json /app/packages/residen
 COPY ./packages/commons/package.json /app/packages/commons/package.json
 COPY ./packages/models/package.json /app/packages/models/package.json
 COPY ./packages/interoperability-api/package.json /app/packages/interoperability-api/package.json
-COPY ./packages/trial-api/package.json /app/packages/trial-api/package.json
-
 # RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 
@@ -22,7 +20,6 @@ COPY ./packages/residence-verification-direct /app/packages/residence-verificati
 COPY ./packages/commons /app/packages/commons
 COPY ./packages/models /app/packages/models
 COPY ./packages/interoperability-api /app/packages/interoperability-api
-COPY ./packages/trial-api /app/packages/trial-api
 
 RUN pnpm build && \
     rm -rf /app/node_modules/.modules.yaml && \
@@ -34,7 +31,6 @@ RUN pnpm build && \
       packages/commons/ \
       packages/models/ \
       packages/interoperability-api/ \
-      packages/trial-api/ \
       packages/residence-verification-direct/dist && \
     find /out -exec touch -h --date=@0 {} \;
 
