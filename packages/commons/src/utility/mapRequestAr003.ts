@@ -296,12 +296,16 @@ export function mapApiBodyToDbModelsUpdate(subjectBody: RequestAR003Type): {
   addresses: Address[];
 } {
   try {
-    const subject: Subject = mapSourceSubjectToDbSubject(subjectBody);
+    const subject: Subject = mapSourceSubjectToDbSubject(
+      subjectBody.subjects.subject[0]
+    );
 
-    const addressList = Array.isArray(subjectBody.address)
-      ? subjectBody.address
-      : subjectBody.address
-      ? [subjectBody.address]
+    const addressList: Address[] = Array.isArray(
+      subjectBody.subjects.subject[0].address
+    )
+      ? subjectBody.subjects.subject[0].address
+      : subjectBody.subjects.subject[0].address
+      ? [subjectBody.subjects.subject[0].address]
       : [];
 
     if (addressList.length === 0) {

@@ -5,8 +5,8 @@ cd "$SCRIPT_DIR/.." || exit
 
 docker compose -f docker/docker-compose.yml up -d
 
-pnpm run build
 pnpm i
+pnpm run build
 cd packages/commons
 pnpm run drizzle:migrate
 cd ../..
