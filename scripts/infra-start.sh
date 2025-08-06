@@ -2,17 +2,16 @@
 
 docker compose -f ../docker/docker-compose.yml up -d
 
+pnpm turbo run build
 pnpm turbo install --filter pdnd-commons
 pnpm turbo run drizzle:migrate --filter pdnd-commons
-pnpm turbo run build --filter pdnd-commons
-pnpm turbo run build --filter interop-jwt-generator
 
 kms_output=$(aws --endpoint-url=http://localhost:4566 kms create-key --key-usage SIGN_VERIFY --customer-master-key-spec RSA_2048)
 key_id=$(echo "$kms_output" | jq -r '.KeyMetadata.KeyId')
 
 packages=(
   "digital-address-verification"
-  "faily-status"
+  "family-status"
   "fiscalcode-verification"
   "keychain-mock"
   "piva-verification"

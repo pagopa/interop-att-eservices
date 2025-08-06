@@ -93,7 +93,7 @@ export const verifyJwtPayload = (jwtToken: string, req: Request): void => {
 
   verifyPayloadExists(payload, req);
 
-  // verifyTemporalClaims(payload, req);
+  verifyTemporalClaims(payload, req);
 
   verifyAudience(payload, req);
 
@@ -143,23 +143,23 @@ const verifyPayloadExists = (
   }
 };
 
-// const verifyTemporalClaims = (payload: JwtPayload, req: Request): void => {
-//   const dateNowSeconds = Math.floor(Date.now() / 1000);
+const verifyTemporalClaims = (payload: JwtPayload, req: Request): void => {
+  const dateNowSeconds = Math.floor(Date.now() / 1000);
 
-//   if (!payload.exp || dateNowSeconds > payload.exp) {
-//     logger.error(
-//       `verifyJwtPayload - "exp" claim is missing or token has expired`
-//     );
-//     void TrialService.insert(req.url, req.method, "SIGNATURE_EXP_INVALID");
-//     throw ErrorHandling.tokenExpired();
-//   }
+  if (!payload.exp || dateNowSeconds > payload.exp) {
+    logger.error(
+      `verifyJwtPayload - "exp" claim is missing or token has expired`
+    );
+    void TrialService.insert(req.url, req.method, "SIGNATURE_EXP_INVALID");
+    throw ErrorHandling.tokenExpired();
+  }
 
-//   if (!payload.iat || dateNowSeconds < payload.iat) {
-//     logger.error(`verifyJwtPayload - "iat" claim is missing or invalid`);
-//     void TrialService.insert(req.url, req.method, "SIGNATURE_IAT_INVALID");
-//     throw ErrorHandling.tokenNotValid();
-//   }
-// };
+  if (!payload.iat || dateNowSeconds < payload.iat) {
+    logger.error(`verifyJwtPayload - "iat" claim is missing or invalid`);
+    void TrialService.insert(req.url, req.method, "SIGNATURE_IAT_INVALID");
+    throw ErrorHandling.tokenNotValid();
+  }
+};
 
 const verifyAudience = (payload: JwtPayload, req: Request): void => {
   if (!payload.aud || payload.aud !== process.env.TOKEN_AUD) {
