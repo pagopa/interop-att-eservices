@@ -5,9 +5,11 @@ cd "$SCRIPT_DIR/.." || exit
 
 docker compose -f docker/docker-compose.yml up -d
 
-pnpm turbo run build
-pnpm turbo install --filter pdnd-commons
-pnpm turbo run drizzle:migrate --filter pdnd-commons
+pnpm run build
+pnpm i
+cd packages/commons
+pnpm run drizzle:migrate
+cd ../..
 
 kms_output=$(aws --endpoint-url=http://localhost:4566 kms create-key --key-usage SIGN_VERIFY --customer-master-key-spec RSA_2048)
 key_id=$(echo "$kms_output" | jq -r '.KeyMetadata.KeyId')
