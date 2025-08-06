@@ -1,6 +1,9 @@
 #!/bin/bash
 
-docker compose -f ../docker/docker-compose.yml up -d
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR/.." || exit
+
+docker compose -f docker/docker-compose.yml up -d
 
 pnpm turbo run build
 pnpm turbo install --filter pdnd-commons
@@ -21,10 +24,8 @@ packages=(
   "trial-service-api"
 )
 
-base_dir="../packages"
-
 for package in "${packages[@]}"; do
-  env_file="$base_dir/$package/.env"
+  env_file="packages/$package/.env"
   if [ -f "$env_file" ]; then
     if [[ "$OSTYPE" == "darwin"* ]]; then
       sed -i '' '/^KMS_KEYID = /d' "$env_file"
@@ -35,6 +36,6 @@ for package in "${packages[@]}"; do
   echo "KMS_KEYID = $key_id" >> "$env_file"
 done
 
-echo "KMS_KEYID updated in all .env files" &&
+echo "KMS_KEYID updated in all .env files"
 
-cd ../packages/trial-service-api && pnpm run start
+cd "packages/trial-service-api" && pnpm run start
