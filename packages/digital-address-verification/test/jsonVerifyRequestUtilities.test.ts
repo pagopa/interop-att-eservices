@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import { describe, it, expect, vi } from "vitest";
 import { classToPlain } from "class-transformer";
 import { logger } from "pdnd-common";
@@ -9,8 +11,6 @@ import {
 } from "../src/utilities/jsonVerifyRequestUtilities.js";
 import { VerifyRequest } from "../src/model/digitalAddress/VerifyRequest.js";
 
-// Mock data
-
 const validVerifyRequestJsonString =
   '{"idRequest": "12345", "jsonRequest": "{}", "count": 1}';
 const invalidJsonString = "{idRequest: 12345}";
@@ -19,7 +19,6 @@ const validVerifyRequestArrayJsonString =
 const validResponseRequestDigitalAddressJsonString =
   '{"digitalAddress": "address1", "idSubject": "ABC123", "from": "2024-01-01"}';
 
-// Mock the logger
 vi.mock("pdnd-common", () => ({
   logger: {
     error: vi.fn(),

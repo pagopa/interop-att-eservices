@@ -1,15 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import { describe, it, expect, vi } from "vitest";
 import { classToPlain } from "class-transformer";
 import { logger } from "pdnd-common";
 import { parseJsonToRequestListDigitalAddress } from "../src/utilities/jsonDigitalAddressUtilities.js";
 
 import { RequestListDigitalAddress } from "../src/model/domain/models.js";
-// Mock data
 const validJsonString = '{"someField": "someValue"}';
 const invalidJsonString = "{someField: someValue}";
 const validObject = { someField: "someValue" };
 
-// Mock the logger
 vi.mock("pdnd-common", () => ({
   logger: {
     error: vi.fn(),

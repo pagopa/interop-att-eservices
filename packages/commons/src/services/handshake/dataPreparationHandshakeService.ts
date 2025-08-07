@@ -7,7 +7,6 @@ import {
 } from "../../utility/handshakeUtilities.js";
 import { dataPreparationHandshakeRepository } from "../../repositories/handshake/dataPreparationHandshakeRepository.js";
 
-// const key = "piva-verification-handshake";
 export const DataPreparationHandshakeService = {
   async saveList(
     handshakeModel: HandshakeModel

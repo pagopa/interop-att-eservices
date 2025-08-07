@@ -100,8 +100,8 @@ const dataPreparationRouter = (
 
   dataPreparationRouter.delete(
     "/digital-address-verification/data-preparation",
-    // contextDataDigitalAddressMiddleware,
-    // authenticationMiddleware(false),
+    contextDataDigitalAddressMiddleware,
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {
@@ -122,8 +122,8 @@ const dataPreparationRouter = (
   );
   dataPreparationRouter.delete(
     "/digital-address-verification/data-preparation/:idSubject",
-    // contextDataDigitalAddressMiddleware,
-    // authenticationMiddleware(false),
+    contextDataDigitalAddressMiddleware,
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {

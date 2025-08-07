@@ -1,12 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { generateHashFromString } from "pdnd-common";
 import generateHash from "../src/utilities/hashUtilities.js";
-// Test for generateHash
 describe("generateHash", () => {
   it("should generate the correct SHA-256 hash for an empty array", () => {
     const input: string[] = [];
     const expectedHash =
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"; // Hash of an empty string
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
     const result = generateHash(input);
 
@@ -24,12 +23,11 @@ describe("generateHash", () => {
   });
 });
 
-// Test for generateHashFromString
 describe("generateHashFromString", () => {
   it("should generate the correct SHA-256 hash for an empty string", () => {
     const input = "";
     const expectedHash =
-      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"; // Hash of an empty string
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
     const result = generateHashFromString(input);
 

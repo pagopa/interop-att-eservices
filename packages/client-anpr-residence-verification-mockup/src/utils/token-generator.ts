@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";

@@ -1,9 +1,7 @@
 import { ErrorHandling } from "pdnd-models";
 import { JWK } from "interoperability";
 import { logger } from "pdnd-common";
-// import { signerConfig } from "../index.js";
 import jose from "node-jose";
-// import { JWS, JWK } from 'node-jose';
 export async function decodePublicKey(
   publicKey: Uint8Array
 ): Promise<jose.JWK.Key> {
@@ -28,7 +26,7 @@ export async function decodePublicKey(
     throw ErrorHandling.thirdPartyCallError("PK_DECODE", JSON.stringify(err));
   }
 }
-// rs256
+
 export async function generateRSAPublicKey(jwk: JWK): Promise<jose.JWK.Key> {
   try {
     const result = await jose.JWK.asKey(jwk, "json");
@@ -45,10 +43,8 @@ export async function verify(
   token: string
 ): Promise<boolean> {
   try {
-    // Crea un verificatore per il token JWT utilizzando la chiave pubblica
     const verifier = jose.JWS.createVerify(key);
 
-    // Verifica il token JWT
     const result = await verifier.verify(token);
     logger.info(`La firma del token è valida: ${result}`);
 

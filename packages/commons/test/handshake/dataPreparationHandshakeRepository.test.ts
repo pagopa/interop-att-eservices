@@ -6,13 +6,11 @@ const sampleHandshake: HandshakeModel = {
   cert: "test-cert",
 };
 
-// Reset mocks before every test
 beforeEach(() => {
   vi.resetModules();
   vi.clearAllMocks();
 });
 
-// Mocks with deep structure
 const insertMock = vi.fn();
 const selectMock = vi.fn();
 const deleteMock = vi.fn();
@@ -132,7 +130,7 @@ describe("dataPreparationHandshakeRepository", () => {
 
   it("deletes all records and returns 0", async () => {
     deleteMock.mockReturnValue({
-      from: vi.fn().mockResolvedValueOnce([]), // ensure Promise is resolved
+      from: vi.fn().mockResolvedValueOnce([]),
     });
 
     const repo = (

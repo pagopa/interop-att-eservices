@@ -45,7 +45,6 @@ vi.mock("../src/utilities/simulationUtils.js", async () => ({
   calculateUpdatedRequestState: vi.fn(),
 }));
 
-// FIX: Il mock è ora autonomo e non dipende da variabili esterne.
 vi.mock("../src/model/digitalAddress/VerifyRequest.js", async () => ({
   VerifyRequest: vi.fn(() => ({
     idRequest: "mock-uuid",
@@ -54,7 +53,6 @@ vi.mock("../src/model/digitalAddress/VerifyRequest.js", async () => ({
   })),
 }));
 
-// FIX: Importa la classe mockata e il controller DOPO tutte le chiamate vi.mock.
 import { VerifyRequest } from "../src/model/digitalAddress/VerifyRequest.js";
 import controller from "../src/controllers/digitalAddressVerificationMultipleController.js";
 
@@ -82,7 +80,6 @@ describe("DigitalAddressVerificationSingleController", () => {
       const mockInstance = (VerifyRequest as Mock).mock.results[0].value;
 
       expect(getMaxNumber).toHaveBeenCalledOnce();
-      // FIX: Usa la classe mockata importata per l'asserzione.
       expect(VerifyRequest).toHaveBeenCalledWith(
         request.idRequest,
         JSON.stringify(request),

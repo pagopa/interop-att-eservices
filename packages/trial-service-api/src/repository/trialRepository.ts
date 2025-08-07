@@ -74,7 +74,7 @@ export class TrialRepository {
       group.trials.push({
         id: trial.id,
         operation_path: trial.operation_path,
-        operation_method: trial.operation_method ?? undefined, // Convert null to undefined
+        operation_method: trial.operation_method ?? undefined,
         response: trial.response ?? undefined,
         created_date: trial.created_date
           ? trial.created_date.toISOString()

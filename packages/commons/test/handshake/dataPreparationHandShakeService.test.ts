@@ -1,10 +1,8 @@
 import { HandshakeModel } from "pdnd-models";
 import { describe, it, vi, expect, beforeEach } from "vitest";
 
-// Sample input
 const newHandshake = { apikey: "key2", cert: "cert2" };
 
-// Mocked dependencies
 const mockFindAllByKey = vi.fn();
 const mockSaveList = vi.fn();
 const mockIsCertUnique = vi.fn();
@@ -13,7 +11,6 @@ const mockLoggerInfo = vi.fn();
 const mockLoggerError = vi.fn();
 const mockCertNotValidError = (msg: string): Error => new Error(msg);
 
-// Stub service under test
 const DataPreparationHandshakeService = {
   async saveList(
     handshakeModel: typeof newHandshake
@@ -58,9 +55,7 @@ describe("DataPreparationHandshakeService.saveList", () => {
   it("saves when no existing data", async () => {
     const expected = [newHandshake];
 
-    mockFindAllByKey
-      .mockResolvedValueOnce([]) // first call (before save)
-      .mockResolvedValueOnce(expected); // second call (after save)
+    mockFindAllByKey.mockResolvedValueOnce([]).mockResolvedValueOnce(expected);
     mockIsCertUnique.mockReturnValue(true);
     mockSaveList.mockResolvedValue(undefined);
 

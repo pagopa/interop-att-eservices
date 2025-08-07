@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import { describe, it, expect, vi } from "vitest";
 import { classToPlain } from "class-transformer";
 import { logger } from "pdnd-common";
@@ -8,14 +10,12 @@ import {
   convertStringToRichiesta,
 } from "../src/utilities/jsonFiscalcodeUtilities.js";
 
-// Mock data
 const validJsonString =
   '{"idSubject": "ABC123", "someField": "someValue", "digitalAddress": [{"digitalAddress": "address1", "profession": "profession1", "information": {"reason": "reason1", "endDate": "2024-12-31"}}]}';
 const invalidJsonString = "{idSubject: ABC123}";
 const validArrayJsonString =
   '[{"idSubject": "ABC123", "someField": "someValue", "digitalAddress": [{"digitalAddress": "address1", "profession": "profession1", "information": {"reason": "reason1", "endDate": "2024-12-31"}}]}]';
 
-// Mock the logger
 vi.mock("pdnd-common", () => ({
   logger: {
     error: vi.fn(),

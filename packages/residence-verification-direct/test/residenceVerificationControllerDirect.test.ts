@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import type { Mock } from "vitest";
 
-// Importa le dipendenze da mockare (usando percorsi coerenti)
 import { logger, userServiceDirect, CoordinatesService } from "pdnd-common";
 import {
   requestParamNotValid,
@@ -9,8 +8,6 @@ import {
 } from "../src/exceptions/errors.js";
 import { UserModelToApiTipoDatiSoggettiEnte } from "../src/model/domain/apiConverter.js";
 import { checkInfoSoggettoEquals } from "../src/utilities/equalsUtilities.js";
-
-// --- Mocking dei Moduli (con percorsi corretti e strategia robusta) ---
 
 vi.mock("pdnd-common", () => ({
   logger: {
@@ -40,10 +37,8 @@ vi.mock("../src/utilities/equalsUtilities.js", () => ({
   checkInfoSoggettoEquals: vi.fn(),
 }));
 
-// Importa il controller DOPO aver configurato i mock
 import controller from "../src/controllers/residenceVerificationController.js";
 
-// --- Dati di Mock ---
 const mockUser = {
   subjectId: "USER_123",
   name: "Mario",
@@ -70,7 +65,6 @@ const mockUser = {
 
 const mockCoordinates = { latitude: 41.9027835, longitude: 12.4963655 };
 
-// --- Inizio dei Test ---
 describe("ResidenceVerificationController", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -80,10 +74,8 @@ describe("ResidenceVerificationController", () => {
     vi.restoreAllMocks();
   });
 
-  // --- Test per il metodo findUser ---
   describe("findUser", () => {
     it("should return user data when found by subjectId", async () => {
-      // Arrange
       const request = {
         operationId: "op1",
         criteria: { subjectId: "USER_123" },
@@ -94,15 +86,12 @@ describe("ResidenceVerificationController", () => {
       (CoordinatesService.getCoordinates as Mock).mockResolvedValue(
         mockCoordinates
       );
-      // Ora il mock funziona correttamente
       (UserModelToApiTipoDatiSoggettiEnte as Mock).mockReturnValue({
         subjectId: "USER_123",
       });
 
-      // Act
       const result = await controller.findUser(request);
 
-      // Assert
       expect(userServiceDirect.getUserBySubjectId).toHaveBeenCalledWith(
         "USER_123"
       );
@@ -113,7 +102,6 @@ describe("ResidenceVerificationController", () => {
     });
 
     it("should return user data when found by personal info", async () => {
-      // Arrange
       const request = {
         operationId: "op2",
         criteria: {
@@ -134,15 +122,12 @@ describe("ResidenceVerificationController", () => {
       (CoordinatesService.getCoordinates as Mock).mockResolvedValue(
         mockCoordinates
       );
-      // FIX 2: Aggiunto il mock mancante. L'errore precedente nascondeva questa necessità.
       (UserModelToApiTipoDatiSoggettiEnte as Mock).mockReturnValue({
         subjectId: "USER_123",
       });
 
-      // Act
       const result = await controller.findUser(request);
 
-      // Assert
       expect(userServiceDirect.getByPersonalInfo).toHaveBeenCalledWith(
         request.criteria
       );
@@ -150,15 +135,12 @@ describe("ResidenceVerificationController", () => {
     });
 
     it('should throw a "requestParamNotValid" error if the user is not found', async () => {
-      // Arrange
       const request = {
         operationId: "op3",
         criteria: { subjectId: "USER_UNKNOWN" },
       };
       (userServiceDirect.getUserBySubjectId as Mock).mockResolvedValue(null);
 
-      // Act & Assert
-      // FIX 3: Il messaggio dell'errore deve corrispondere a quello del mock
       await expect(controller.findUser(request)).rejects.toThrow(
         "Request param not valid"
       );
@@ -167,7 +149,6 @@ describe("ResidenceVerificationController", () => {
       );
     });
 
-    // Questo test passava già, rimane invariato
     it("should throw an error and log it if the service fails", async () => {
       const request = {
         operationId: "op4",
@@ -185,17 +166,13 @@ describe("ResidenceVerificationController", () => {
     });
   });
 
-  // --- Test per il metodo findUserVerify ---
   describe("findUserVerify", () => {
     it("should successfully verify a user's address", async () => {
-      // Arrange
       const request = {
         operationId: "op-verify-1",
         criteria: { subjectId: "USER_123" },
         check: {
-          address: {
-            /* dati indirizzo da verificare */
-          },
+          address: {},
         },
       };
       const checkResult = { esito: "OK" };
@@ -205,13 +182,10 @@ describe("ResidenceVerificationController", () => {
       (CoordinatesService.getCoordinates as Mock).mockResolvedValue(
         mockCoordinates
       );
-      // Ora il mock funziona correttamente
       (checkInfoSoggettoEquals as Mock).mockReturnValue(checkResult);
 
-      // Act
       const result = await controller.findUserVerify(request);
 
-      // Assert
       expect(checkInfoSoggettoEquals).toHaveBeenCalled();
       expect(result).toBeDefined();
       expect(result.idOp).toBe("op-verify-1");
@@ -219,22 +193,18 @@ describe("ResidenceVerificationController", () => {
     });
 
     it('should throw "userModelNotFound" if the user is not found', async () => {
-      // Arrange
       const request = {
         operationId: "op-verify-2",
         criteria: { subjectId: "USER_UNKNOWN" },
       };
       (userServiceDirect.getUserBySubjectId as Mock).mockResolvedValue(null);
 
-      // Act & Assert
-      // FIX 4: Allineato messaggio di errore con quello del mock
       await expect(controller.findUserVerify(request)).rejects.toThrow(
         "User model not found"
       );
       expect(userModelNotFound).toHaveBeenCalled();
     });
 
-    // Questo test passava già, rimane invariato
     it("should throw an error and log it if the service fails during verification", async () => {
       const request = {
         operationId: "op-verify-3",

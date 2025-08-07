@@ -1,4 +1,3 @@
-// AGGIUNTA: Importa 'Mock' da vitest
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { logger } from "pdnd-common";
 import checkService from "../src/services/checkService.js";
@@ -32,12 +31,10 @@ describe("CheckService", () => {
       { id: 2, description: "Check Two" },
     ];
 
-    // CORREZIONE: Aggiunto il cast "(... as Mock)" per TypeScript
     (CheckRepository.findAllChecksWithCategories as Mock).mockResolvedValue(
       mockChecksFromRepo
     );
 
-    // ... resto del test ...
     const expectedResponse = [
       { id: 1, description: "Check One", mapped: true },
       { id: 2, description: "Check Two", mapped: true },
@@ -54,7 +51,6 @@ describe("CheckService", () => {
   it("should throw an error and log it if repository fails", async () => {
     const error = new Error("Repository Error");
 
-    // CORREZIONE: Aggiunto il cast "(... as Mock)" per TypeScript
     (CheckRepository.findAllChecksWithCategories as Mock).mockRejectedValue(
       error
     );

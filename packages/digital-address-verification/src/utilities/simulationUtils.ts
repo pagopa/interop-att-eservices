@@ -1,5 +1,3 @@
-// File: /logic/simulationUtils.ts
-
 import { VerifyRequest } from "../model/digitalAddress/VerifyRequest.js";
 
 export function calculateUpdatedRequestState(

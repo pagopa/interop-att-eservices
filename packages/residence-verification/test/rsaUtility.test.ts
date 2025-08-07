@@ -7,7 +7,6 @@ import {
   verify,
 } from "../src/utilities/rsaUtility";
 
-// Mock the logger
 vi.mock("pdnd-common", () => ({
   logger: {
     info: vi.fn(),

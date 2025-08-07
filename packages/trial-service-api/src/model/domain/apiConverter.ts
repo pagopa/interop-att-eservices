@@ -32,7 +32,7 @@ export const categoryToCategoryResponse = (
   id: category.id,
   code: category.code,
   eservice: category.eservice,
-  description: category.description ?? "", // handle possible null
+  description: category.description ?? "",
   order: category.order,
 });
 

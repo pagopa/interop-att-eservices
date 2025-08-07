@@ -7,7 +7,6 @@ import {
   verify,
 } from "../src/utilities/rsaUtility.js";
 
-// Mock the logger
 vi.mock("pdnd-common", () => ({
   logger: {
     info: vi.fn(),
@@ -24,21 +23,6 @@ const mockJWK = {
 };
 
 describe("decodePublicKey", () => {
-  // it("should throw an error if publicKey is null", async () => {
-  //   await expect(decodePublicKey(null)).rejects.toThrow(
-  //     "Error: public key not valid"
-  //   );
-  //   expect(logger.error).toHaveBeenCalledWith(
-  //     expect.stringContaining("Error decode public key")
-  //   );
-  // });
-
-  /* it('should return a JWK key for a valid public key', async () => {
-    const key = await decodePublicKey(mockPublicKey);
-    expect(key).toBeDefined();
-    expect(logger.info).toHaveBeenCalledWith('publicKeyService: decodePublicKey done');
-  }); */
-
   it("should log an error and throw an error for an invalid public key", async () => {
     const invalidPublicKey = new Uint8Array([1, 2, 3]);
     await expect(decodePublicKey(invalidPublicKey)).rejects.toThrow();
@@ -66,13 +50,6 @@ describe("generateRSAPublicKey", () => {
 });
 
 describe("verify", () => {
-  /* it('should return true for a valid token', async () => {
-    const key = await generateRSAPublicKey(mockJWK as any);
-    const result = await verify(key, mockToken);
-    expect(result).toBe(true);
-    expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('La firma del token è valida'));
-  }); */
-
   it("should return false for an invalid token", async () => {
     const key = await generateRSAPublicKey(mockJWK as any);
     const invalidToken = "invalid.token";

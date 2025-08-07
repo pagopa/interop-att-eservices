@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi } from "vitest";
-import { ErrorHandling } from "pdnd-models";
 import { logger } from "pdnd-common";
 import {
   decodePublicKey,
@@ -7,7 +7,6 @@ import {
   verify,
 } from "../src/utilities/rsaUtility";
 
-// Mock the logger
 vi.mock("pdnd-common", () => ({
   logger: {
     info: vi.fn(),
@@ -15,7 +14,6 @@ vi.mock("pdnd-common", () => ({
   },
 }));
 
-const mockPublicKey = new Uint8Array([65, 66, 67]); // Replace with a valid key for actual testing
 const mockJWK = {
   kty: "RSA",
   e: "AQAB",
@@ -23,7 +21,6 @@ const mockJWK = {
   alg: "RS256",
   kid: "2011-04-29",
 };
-const mockToken = "your.mock.token"; // Replace with a valid token for actual testing
 
 describe("decodePublicKey", () => {
   it("should throw an error if publicKey is null", async () => {
@@ -34,12 +31,6 @@ describe("decodePublicKey", () => {
       expect.stringContaining("Error decode public key")
     );
   });
-
-  /*it('should return a JWK key for a valid public key', async () => {
-    const key = await decodePublicKey(mockPublicKey);
-    expect(key).toBeDefined();
-    expect(logger.info).toHaveBeenCalledWith('publicKeyService: decodePublicKey done');
-  });*/
 
   it("should log an error and throw an error for an invalid public key", async () => {
     const invalidPublicKey = new Uint8Array([1, 2, 3]);
@@ -67,13 +58,6 @@ describe("generateRSAPublicKey", () => {
 });
 
 describe("verify", () => {
-  /*it('should return true for a valid token', async () => {
-    const key = await generateRSAPublicKey(mockJWK as any);
-    const result = await verify(key, mockToken);
-    expect(result).toBe(true);
-    expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('La firma del token è valida'));
-  });*/
-
   it("should return false for an invalid token", async () => {
     const key = await generateRSAPublicKey(mockJWK as any);
     const invalidToken = "invalid.token";
