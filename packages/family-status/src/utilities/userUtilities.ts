@@ -116,7 +116,6 @@ export function findUserModelById(
   return userModelFound;
 }
 
-
 export function findUserModelByUUID(
   existingArray: UserModel[] | null,
   uuid: string
