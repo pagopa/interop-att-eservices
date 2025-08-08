@@ -32,7 +32,6 @@ const dataPreparationHandshakeRouter = (
     upload.single("certificate"),
     async (req, res) => {
       try {
-        // Verifica se è stato caricato un file
         if (!req.file) {
           logger.error("Nessun certificato caricato");
           throw certNotValidError(`mandatory certificate`);
@@ -45,7 +44,6 @@ const dataPreparationHandshakeRouter = (
           logger.error("'Header apikey mandatory.'");
           throw requestParamNotValid(`missing header`);
         }
-        // Il certificato sarà accessibile tramite req.file.buffer
         const certificateData: Buffer = req.file.buffer;
 
         const serialNumber =
@@ -60,7 +58,6 @@ const dataPreparationHandshakeRouter = (
         logger.info("certificato salvato con successo");
         return res.status(200).end();
       } catch (error) {
-        // Gestione dell'errore
         logger.error(
           `si è verificato un errore durante l upload dell certificato: ${error}`
         );

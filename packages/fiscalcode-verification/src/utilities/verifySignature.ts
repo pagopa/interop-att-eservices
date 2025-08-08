@@ -1,7 +1,6 @@
 import crypto from "crypto";
 import { logger } from "pdnd-common";
 
-// Definisci la chiave pubblica in formato PEM
 const publicKey: string = `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvvUQjnpILrt6c3ORihSM
 mswDkdxd55ECsSGWT02Cb5tXASdUDjxtNEbVXvzyZ2XruF0GW7r1BdswA4Mavbfl
@@ -13,32 +12,27 @@ AwIDAQAB
 -----END PUBLIC KEY-----`;
 
 /**
- * Verifica la validità di una firma digitale utilizzando la chiave pubblica e l'algoritmo SHA256.
+ * Verifies the validity of a digital signature using the public key and the SHA256 algorithm.
  *
- * @param data - I dati originali che sono stati firmati
- * @param signatureBase64 - La firma in formato base64
- * @returns `true` se la firma è valida, altrimenti `false`
- */
+ * @param data - The original data that was signed
+ * @param signatureBase64 - The signature in base64 format
+ * @returns `true` if the signature is valid, otherwise `false
+ *  */
 export function verifySignature(
   data: string,
   signatureBase64: string
 ): boolean {
-  // Converti la firma da base64 a Buffer
   const signature: Buffer = Buffer.from(signatureBase64, "base64");
 
-  // Crea un oggetto per la verifica della firma
   const verify = crypto.createVerify("SHA256");
   verify.update(data);
   verify.end();
 
-  // Verifica la firma utilizzando la chiave pubblica
   const isVerified: boolean = verify.verify(publicKey, signature);
 
-  // Stampa dei dettagli (facoltativo, può essere rimosso per produzione)
   logger.info(`Dati originali: ${data}`);
   logger.info(`Firma (in byte): ${signature.toString("hex")}`);
   logger.info(`Risultato verifica: ${isVerified ? "valida" : "non valida"}`);
 
-  // Ritorna il risultato della verifica
   return isVerified;
 }

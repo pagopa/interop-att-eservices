@@ -54,7 +54,6 @@ const dataPreparationHandshakeRouter = (
         logger.info("certificato salvato con successo");
         return res.status(200).end();
       } catch (error) {
-        // Gestione dell'errore
         logger.error(
           `si è verificato un errore durante l upload dell certificato: ${error}`
         );

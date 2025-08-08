@@ -14,7 +14,6 @@ describe("keychainSignatureUtility", () => {
   const dataToSign = "example data to sign";
 
   beforeEach(() => {
-    // Mock di KMSClient e SignCommand
     vi.spyOn(KMSClient.prototype, "send").mockImplementation(
       async (command) => {
         if (command instanceof SignCommand) {

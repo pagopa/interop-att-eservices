@@ -12,7 +12,7 @@ export function appendUniqueFiscalcodeModelsToArray(
       "L'array esistente e la lista dei modelli da aggiungere devono essere definiti."
     );
   }
-  // Creiamo una nuova copia dell'array esistente
+
   const newArray = existingArray.slice();
 
   const modelMap = new Map<string, ResponseRequestDigitalAddressModel>();

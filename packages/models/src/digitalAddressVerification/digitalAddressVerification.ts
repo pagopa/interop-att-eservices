@@ -1,18 +1,15 @@
 import { z } from "zod";
 
-// 1. CodiceFiscale
 export const CodiceFiscaleModel = z.object({
   fiscalCode: z.string(),
 });
 export type CodiceFiscaleModel = z.infer<typeof CodiceFiscaleModel>;
 
-// 2. Digital_Address
 export const DigitalAddressModel = z.object({
   digitalAddress: z.string(),
 });
 export type DigitalAddressModel = z.infer<typeof DigitalAddressModel>;
 
-// 3. Motivation_Termination
 export const MotivationTerminationModel = z.enum([
   "CESSAZIONE_UFFICIO",
   "CESSAZIONE_VOLONTARIA",
@@ -21,7 +18,6 @@ export type MotivationTerminationModel = z.infer<
   typeof MotivationTerminationModel
 >;
 
-// 4. Usage_Info
 export const UsageInfoModel = z
   .object({
     reason: MotivationTerminationModel,
@@ -30,7 +26,6 @@ export const UsageInfoModel = z
   .passthrough();
 export type UsageInfoModel = z.infer<typeof UsageInfoModel>;
 
-// 5. Element_Digital_Address
 export const ElementDigitalAddressModel = z
   .object({
     digitalAddress: z
@@ -44,7 +39,6 @@ export type ElementDigitalAddressModel = z.infer<
   typeof ElementDigitalAddressModel
 >;
 
-// 6. ResponseRequestDigitalAddress
 export const ResponseRequestDigitalAddressModel = z
   .object({
     idSubject: z
@@ -60,7 +54,6 @@ export type ResponseRequestDigitalAddressModel = z.infer<
   typeof ResponseRequestDigitalAddressModel
 >;
 
-// 7. Response_List_Request_Digital_Address
 export const ResponseListRequestDigitalAddressModel = z
   .object({
     data: z.array(ResponseRequestDigitalAddressModel).optional(),
@@ -70,13 +63,11 @@ export type ResponseListRequestDigitalAddressModel = z.infer<
   typeof ResponseListRequestDigitalAddressModel
 >;
 
-// 8. PracticalReference
 export const PracticalReferenceModel = z.object({
   practicalReference: z.string(),
 });
 export type PracticalReferenceModel = z.infer<typeof PracticalReferenceModel>;
 
-// 9. Request_List_Digital_Address
 export const RequestListDigitalAddressModel = z
   .object({
     idSubjects: z.array(z.string()),
@@ -87,7 +78,6 @@ export type RequestListDigitalAddressModel = z.infer<
   typeof RequestListDigitalAddressModel
 >;
 
-// 10. Status_Processing_Request
 export const StatusProcessingRequestModel = z.enum([
   "PRESA_IN_CARICO",
   "IN_ELABORAZIONE",
@@ -97,11 +87,9 @@ export type StatusProcessingRequestModel = z.infer<
   typeof StatusProcessingRequestModel
 >;
 
-// 11. UUID
 export const UUIDModel = z.string();
 export type UUIDModel = z.infer<typeof UUIDModel>;
 
-// 12. Response_Request_List_Digital_Address
 export const ResponseRequestListDigitalAddressModel = z
   .object({
     state: StatusProcessingRequestModel,
@@ -118,7 +106,6 @@ export type ResponseRequestListDigitalAddressModel = z.infer<
   typeof ResponseRequestListDigitalAddressModel
 >;
 
-// 13. Response_Verify_Digital_Address
 export const ResponseVerifyDigitalAddressModel = z
   .object({
     result: z.boolean(),
@@ -129,7 +116,6 @@ export type ResponseVerifyDigitalAddressModel = z.infer<
   typeof ResponseVerifyDigitalAddressModel
 >;
 
-// 14. Response_Status_List_Digital_Address
 export const ResponseStatusListDigitalAddressModel = z
   .object({
     status: StatusProcessingRequestModel,
@@ -140,7 +126,6 @@ export type ResponseStatusListDigitalAddressModel = z.infer<
   typeof ResponseStatusListDigitalAddressModel
 >;
 
-// 15. Response_List_Digital_Address
 export const ResponseListDigitalAddressModel = z
   .object({
     list: z.array(ResponseRequestDigitalAddressModel),

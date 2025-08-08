@@ -211,7 +211,6 @@ export const apiTipoResidenzaToTipoResidenzaModel = (
   addressStartDate: tipoResidenza?.addressStartDate ?? "",
 });
 
-//* ********************************************************************************************************** */
 export const tipoComuneModelToApiTipoComune = (
   tipoComuneModel: TipoComuneModel
 ): TipoComune => ({
@@ -353,8 +352,6 @@ export const tipoResidenzaModelToApiTipoResidenza = (
   presso: tipoResidenzaModel?.presso,
   addressStartDate: tipoResidenzaModel?.addressStartDate,
 });
-
-//* ********************************************************************************************************** */
 
 export const TipoDatiNascitaModelToApiTipoDatiNascita = (
   tipoDatiNascitaModel: TipoDatiNascitaModel

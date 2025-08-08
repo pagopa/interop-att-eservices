@@ -23,7 +23,6 @@ const fiscalcodeVerificationRouter = (
 
   fiscalcodeVerificationRouter.post(
     "/subject-id-verification/check",
-    // logHeadersMiddleware,
     contextDataFiscalCodeMiddleware,
     authenticationCorrelationMiddleware(true),
     verifyCertValidity,
@@ -62,7 +61,6 @@ const fiscalcodeVerificationRouter = (
 
   fiscalcodeVerificationRouter.post(
     "/subject-id-verification/check-with-payload-signature",
-    // logHeadersMiddleware,
     contextDataFiscalCodeMiddleware,
     authenticationCorrelationMiddleware(true),
     verifyCertValidity,
@@ -85,7 +83,6 @@ const fiscalcodeVerificationRouter = (
           "FISCALCODE_VERIFICATION",
           "OK"
         );
-        // TODO: INSERT HEADERS
         logger.info(`[END] Post - '/check-with-payload-signature' `);
         const signature = await signatureUtility.signData(JSON.stringify(data));
         res.setHeader("x-payload-signature", signature);

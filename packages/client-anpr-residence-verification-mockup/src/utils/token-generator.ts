@@ -6,18 +6,15 @@ import { v4 as uuidv4 } from "uuid";
 
 dotenv.config();
 
-// JWT headers
 const headers = {
   alg: process.env.ALG || "RS256",
   typ: process.env.TYP || "JWT",
   kid: process.env.KID,
 };
 
-// JWT Timestamps
 const now = Math.floor(Date.now() / 1000);
 const exp = now + 60 * 60;
 
-// Agid-JWT-Signature (integrity)
 export const generate_agid_jwt_signature_integrity = (
   digest_header: string,
   private_key: string
@@ -54,7 +51,6 @@ export const generate_agid_jwt_signature_integrity = (
   }
 };
 
-// Agid-JWT-TrackingEvidence (audit)
 export const generate_agid_jwt_trackingevidence_audit = (
   private_key: string
 ): string => {

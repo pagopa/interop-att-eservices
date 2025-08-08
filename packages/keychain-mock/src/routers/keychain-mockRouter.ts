@@ -17,7 +17,6 @@ const keychainMockRouter = (
 
   keychainMockRouter.get(
     "/keychain-mock/signature",
-    // logHeadersMiddleware,
     contextDataKeychainMockMiddleware,
     authenticationCorrelationMiddleware(true),
     async (req, res) => {
@@ -68,23 +67,19 @@ const keychainMockRouter = (
 
   keychainMockRouter.post(
     "/keychain-mock/verify",
-    // logHeadersMiddleware,
     contextDataKeychainMockMiddleware,
     authenticationCorrelationMiddleware(true),
     async (req, res) => {
       try {
         logger.info(`[START] Post - '/keychain-mock/verify'`);
-        // Recupera il valore dell'header X-Payload-Signature
         const payloadSignature = req.headers["x-payload-signature"];
 
-        // Controlla se l'header è presente
         if (!payloadSignature) {
           logger.error(`[ERROR] X-Payload-Signature header is missing.`);
           const responseBodyError = {
             status: "KO",
             message: "X-Payload-Signature header is missing",
           };
-          // Solleva un errore 500 se l'header non è presente
           return res.status(200).json(responseBodyError).end();
         }
 
