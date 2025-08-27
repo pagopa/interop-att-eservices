@@ -64,14 +64,27 @@ export const ResidenceSubmissionService = {
 
         const existingAddresses =
           await DataPreparationRepository.findAddressesBySubjectId(id);
-        const existingAddressIds = new Set(
-          existingAddresses.map((addr) => addr.id)
+        logger.info(`existingAddresses: ${JSON.stringify(existingAddresses)}`);
+        const existingAddressIds = existingAddresses.map(
+          (addr) => addr.subject_id
         );
-
+        logger.info(
+          `existingAddressIds: ${JSON.stringify(existingAddressIds)}`
+        );
         for (const address of updatedAddresses) {
-          if (address.id && existingAddressIds.has(address.id)) {
+          logger.info(`address id: ${address.subject_id}`);
+          logger.info(
+            `condition subject_id: ${
+              address.subject_id &&
+              existingAddressIds.includes(address.subject_id)
+            }`
+          );
+          if (
+            address.subject_id &&
+            existingAddressIds.includes(address.subject_id)
+          ) {
             await DataPreparationRepository.updateAddressById(
-              address.id,
+              address.subject_id,
               address
             );
           }

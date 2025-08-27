@@ -50,14 +50,14 @@ export const DataPreparationRepository = {
     }
   },
 
-  async updateAddressById(id: string, data: Address): Promise<void> {
+  async updateAddressById(subject_id: string, data: Address): Promise<void> {
     const result = await client
       .update(addressTable)
       .set(data)
-      .where(eq(addressTable.id, id))
+      .where(eq(addressTable.subject_id, subject_id))
       .returning();
     if (!result || result.length === 0) {
-      throw new Error(`No Address found with id: ${id}`);
+      throw new Error(`No Address found with subject_id: ${subject_id}`);
     }
   },
 
