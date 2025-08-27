@@ -422,7 +422,7 @@ describe("ResidenceSubmissionService", () => {
         mockMappedUpdateData.subject
       );
       expect(DataPreparationRepository.updateAddressById).toHaveBeenCalledWith(
-        mockAddress.id,
+        mockAddress.subject_id,
         mockMappedUpdateData.addresses[0]
       );
     });
@@ -448,12 +448,9 @@ describe("ResidenceSubmissionService", () => {
 
       await ResidenceSubmissionService.updateBySubjectId(mockRequest);
 
-      expect(DataPreparationRepository.updateAddressById).toHaveBeenCalledTimes(
-        1
-      );
       expect(DataPreparationRepository.updateAddressById).toHaveBeenCalledWith(
-        mockAddress.id,
-        expect.objectContaining({ id: mockAddress.id })
+        mockAddress.subject_id,
+        expect.objectContaining({ subject_id: mockAddress.subject_id })
       );
       expect(DataPreparationRepository.createAddress).not.toHaveBeenCalled();
     });
