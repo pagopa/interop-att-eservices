@@ -2,7 +2,7 @@ import { logger } from "pdnd-common";
 import { testDbConnection } from "pdnd-common";
 import app from "./app.js";
 
-const port = process.env.PORT || 3004;
+const port = process.env.PORT || 3007;
 
 const startServer = async (): Promise<void> => {
   try {
