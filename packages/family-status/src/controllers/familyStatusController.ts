@@ -14,17 +14,24 @@ class FamilyStatusController {
     request: RequestFS001
   ): Promise<ResponseFS001 | null | undefined> {
     try {
-      logger.info(`[START] findUser: ${request}`);
+      logger.info(`[START] findUser: ${JSON.stringify(request.criteria)}`);
       if (request.criteria.subjectId) {
         const data = await FamilyStatusService.verifyBySubjectId(
           request.criteria.subjectId
         );
+
+        if (!data || Object.keys(data).length === 0) {
+          throw userModelNotFound();
+        }
 
         return mapDbRecordToResponseFS001(data, request.operationId);
       } else if (checkPersonalInfo(request)) {
         const data = await FamilyStatusService.findByPersonalInfo(
           request.criteria
         );
+        if (!data || Object.keys(data).length === 0) {
+          throw userModelNotFound();
+        }
         const mappedData = mapDbRecordToResponseFS001(
           data[0],
           request.operationId
@@ -34,6 +41,9 @@ class FamilyStatusController {
       } else if (request.criteria.id) {
         if (request.criteria.id) {
           const data = await FamilyStatusService.findById(request.criteria.id);
+          if (!data || Object.keys(data).length === 0) {
+            throw userModelNotFound();
+          }
           return mapDbRecordToResponseFS001(data, request.operationId);
         }
         return null;
