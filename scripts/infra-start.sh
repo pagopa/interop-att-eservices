@@ -11,8 +11,11 @@ cd packages/commons
 pnpm run drizzle:migrate
 cd ../..
 
-kms_output=$(aws --endpoint-url=http://localhost:4566 kms create-key --key-usage SIGN_VERIFY --customer-master-key-spec RSA_2048)
-key_id=$(echo "$kms_output" | jq -r '.KeyMetadata.KeyId')
+key_id=$(aws --endpoint-url=http://localhost:4566 kms create-key \
+    --key-usage SIGN_VERIFY \
+    --customer-master-key-spec RSA_2048 \
+    --query 'KeyMetadata.KeyId' \
+    --output text)
 
 packages=(
   "digital-address-verification"
@@ -29,13 +32,21 @@ packages=(
 for package in "${packages[@]}"; do
   env_file="packages/$package/.env"
   if [ -f "$env_file" ]; then
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-      sed -i '' '/^KMS_KEYID = /d' "$env_file"
+    if grep -q '^KMS_KEYID = ' "$env_file"; then
+      echo "Updating KMS_KEYID in $env_file"
+      if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' "s/^KMS_KEYID = .*/KMS_KEYID = $key_id/" "$env_file"
+      else
+        sed -i "s/^KMS_KEYID = .*/KMS_KEYID = $key_id/" "$env_file"
+      fi
     else
-      sed -i '/^KMS_KEYID = /d' "$env_file"
+      echo "Adding KMS_KEYID to $env_file"
+      if [ -s "$env_file" ]; then
+        echo "" >> "$env_file"
+      fi
+      echo "KMS_KEYID = $key_id" >> "$env_file"
     fi
   fi
-  echo "KMS_KEYID = $key_id" >> "$env_file"
 done
 
 echo "KMS_KEYID updated in all .env files"
