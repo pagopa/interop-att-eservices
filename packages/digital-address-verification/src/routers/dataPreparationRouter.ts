@@ -107,12 +107,7 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        const data = await dataPreparationController.deleteAllByKey();
-        if (data !== 0) {
-          throw ErrorHandling.genericError(
-            `Not all data could be deleted. Remaining: ${data}`
-          );
-        }
+        await dataPreparationController.deleteAllByKey();
         return res.status(200).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
