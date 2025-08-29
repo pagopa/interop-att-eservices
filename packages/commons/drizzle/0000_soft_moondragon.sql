@@ -208,7 +208,7 @@ CREATE TABLE IF NOT EXISTS "att"."trial" (
 	"check_id" bigint,
 	"response" varchar(255),
 	"created_date" timestamp,
-	"message" varchar(255)
+	"message" varchar(500)
 );
 
 CREATE TABLE IF NOT EXISTS "att"."handshakes" (

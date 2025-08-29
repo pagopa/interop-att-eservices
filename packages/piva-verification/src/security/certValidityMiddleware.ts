@@ -1,6 +1,5 @@
 import {
   ExpressContext,
-  getContext,
   logger,
   DataPreparationHandshakeService,
 } from "pdnd-common";
@@ -31,9 +30,8 @@ export const verifyCertValidity: ZodiosRouterContextRequestHandler<
 
     const serialNumber = getSerialNumberFromUrlEncodedCert(headerCert);
 
-    const appContext = getContext();
     const handshake = await DataPreparationHandshakeService.getByApikey(
-      appContext.authData.purposeId
+      req.headers.apikey as string
     );
 
     if (handshake?.cert !== serialNumber) {

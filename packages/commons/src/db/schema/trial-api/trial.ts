@@ -11,5 +11,5 @@ export const Trial = customSchema.table("trial", {
   check_id: bigint("check_id", { mode: "number" }).references(() => Check.id),
   response: varchar("response", { length: 255 }),
   created_date: timestamp("created_date"),
-  message: varchar("message", { length: 255 }),
+  message: varchar("message", { length: 500 }),
 });

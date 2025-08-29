@@ -35,7 +35,7 @@ const pivaVerificationRouter = (
         void TrialService.insert(
           req.url,
           req.method,
-          "PIVA-VERIFICATION",
+          "PIVA_VERIFICATION",
           "OK"
         );
         logger.info(`[END] Post - '/check'`);
