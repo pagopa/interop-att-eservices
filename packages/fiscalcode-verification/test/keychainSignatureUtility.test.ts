@@ -30,27 +30,27 @@ describe("keychainSignatureUtility", () => {
     vi.clearAllMocks();
   });
 
-  it("dovrebbe inizializzare correttamente il client KMS con l'ID chiave", () => {
+  it("it should properly initialize the KMS client with the key ID", () => {
     const utility = new keychainSignatureUtility(mockKeyId);
     expect(utility).toBeDefined();
     expect(utility["keyId"]).toBe(mockKeyId);
   });
 
-  it("dovrebbe generare correttamente una firma in base64", async () => {
+  it("it should correctly generate a base64 signature", async () => {
     const utility = new keychainSignatureUtility(mockKeyId);
     const signature = await utility.signData(dataToSign);
 
     expect(signature).toBe("aGVsbG8=");
   });
 
-  it("dovrebbe lanciare un errore se non è possibile generare la firma", async () => {
+  it("it should throw an error if the signature cannot be generated", async () => {
     vi.spyOn(KMSClient.prototype, "send").mockResolvedValueOnce({
       Signature: null,
     });
     const utility = new keychainSignatureUtility(mockKeyId);
 
     await expect(utility.signData(dataToSign)).rejects.toThrow(
-      "La firma non è stata generata correttamente"
+      "Signature generation failure"
     );
   });
 
@@ -61,7 +61,7 @@ describe("keychainSignatureUtility", () => {
 
     await expect(utility.signData(dataToSign)).rejects.toThrow("Mock error");
     expect(logger.error).toHaveBeenCalledWith(
-      "Errore durante la generazione della firma:",
+      "Error during signature generation:",
       error
     );
   });
