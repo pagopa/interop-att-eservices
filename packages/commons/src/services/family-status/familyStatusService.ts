@@ -4,7 +4,7 @@ import {
   type InsertFamilyStatus,
 } from "../../zod/family-status/family-status.js";
 import { familyStatusRepo } from "../../repositories/family-status/family-status.js";
-import { RawPayload } from "../../types/rawPayload.js";
+import { RawPayload } from "../../zod/family-status/rawPayload.js";
 import { FamilyStatusDto } from "../../types/familyStatusDTO.js";
 import { DbRecord } from "../../types/dbRecord.js";
 import { CriteriaTypeFS001 } from "../../types/criteriaTypeFS001.js";

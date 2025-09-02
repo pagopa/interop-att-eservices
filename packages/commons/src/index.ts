@@ -15,6 +15,5 @@ export * from "./middleware/index.js";
 export * from "./services/index.js";
 export * from "./zod/family-status/index.js";
 export { testDbConnection } from "./utility/index.js";
-export { RawPayload } from "./types/index.js";
 export { auditValidationMiddleware } from "./auth/interoperability/auditValidationMiddleware.js";
 export { integrityValidationMiddleware } from "./auth/interoperability/integrityValidationMiddleware.js";
