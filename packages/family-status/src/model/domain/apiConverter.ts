@@ -8,7 +8,6 @@ import {
   CriteriaTypeFS001,
   DataPreparationResponse,
   DataPreparationTemplate,
-  DataPreparationTemplateResponse,
   DataSubjectsInstitution,
   EventPlaceType,
   SubjectIdType,
@@ -41,34 +40,23 @@ export const userModelToApiDataPreparationResponseCf = (
   codiceFiscale?: string | null
 ): DataPreparationResponse | null => {
   if (!userModels || userModels.length === 0) {
-    return null; // Return undefined if the list of UserModel is empty or undefined
+    return null;
   }
 
   if (!codiceFiscale) {
-    return null; // Return undefined if the list of UserModel is empty or undefined
+    return null;
   }
-  // Find the UserModel with the specified codice fiscale
+
   const userModel = getUserModelByCodiceFiscale(userModels, codiceFiscale);
 
   if (!userModel) {
-    return null; // Return undefined if UserModel with the specified codice fiscale is not found
+    return null;
   }
 
-  // Return DataPreparationResponse with the uuid from the found UserModel
   return {
     uuid: userModel.uuid,
   };
 };
-
-export const userModelToApiDataPreparationTemplateResponse = (
-  userModel: UserModel
-): DataPreparationTemplateResponse => ({
-  uuid: userModel?.uuid,
-  subject: userModel?.subject,
-  subjectLink: userModel?.subjectLink,
-});
-
-//* ********************************************************************************************************** */
 
 export const UserModelToDataSubjectsInstitution = (
   userModel: UserModel
@@ -115,5 +103,3 @@ export const BirthDateTypeToEventPlaceType = (
   municipality: birthDateType.placeOfBirth?.municipality,
   place: birthDateType.placeOfBirth?.place,
 });
-
-//* ********************************************************************************************************** */

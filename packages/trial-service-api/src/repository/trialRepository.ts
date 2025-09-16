@@ -2,7 +2,7 @@
 /* eslint-disable functional/immutable-data */
 /* eslint-disable max-params */
 import { eq, and, asc } from "drizzle-orm";
-import { Trial, db, Check, Category } from "trial";
+import { Category, Check, client, Trial } from "pdnd-common";
 import {
   PaginatedTrialResponse,
   PaginatedTrials,
@@ -30,7 +30,7 @@ export class TrialRepository {
       filters.push(eq(Trial.operation_method, method));
     }
 
-    const trials = await db
+    const trials = await client
       .select({
         id: Trial.id,
         purpose_id: Trial.purpose_id,
@@ -74,7 +74,7 @@ export class TrialRepository {
       group.trials.push({
         id: trial.id,
         operation_path: trial.operation_path,
-        operation_method: trial.operation_method ?? undefined, // Convert null to undefined
+        operation_method: trial.operation_method ?? undefined,
         response: trial.response ?? undefined,
         created_date: trial.created_date
           ? trial.created_date.toISOString()

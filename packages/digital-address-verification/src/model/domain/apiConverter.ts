@@ -34,7 +34,6 @@ import {
   ResponseListDigitalAddress,
 } from "./models.js";
 
-// 1. CodiceFiscale
 export const convertCodiceFiscaleToCodiceFiscaleModel = (
   codiceFiscale: CodiceFiscale
 ): CodiceFiscaleModel => ({
@@ -45,7 +44,6 @@ export const convertCodiceFiscaleModelToCodiceFiscale = (
   model: CodiceFiscaleModel
 ): CodiceFiscale => model.fiscalCode;
 
-// 2.Digital_Address
 export const DigitalAddressToDigitalAddressModel = (
   digitalAddress: DigitalAddressModel
 ): DigitalAddressModel => ({
@@ -56,7 +54,6 @@ export const digitalAddressModelToDigitalAddress = (
   model: DigitalAddressModel
 ): DigitalAddress => model.digitalAddress;
 
-// 3. Motivation_Termination
 export const MotivationTerminationToMotivationTerminationModel = (
   motivationTermination: MotivationTermination
 ): MotivationTerminationModel => motivationTermination;
@@ -65,7 +62,6 @@ export const motivationTerminationModelToMotivationTermination = (
   model: MotivationTerminationModel
 ): MotivationTermination => model;
 
-// 4. Usage_Info
 export const usageInfoToUsageInfoModel = (
   template: UsageInfo
 ): UsageInfoModel => ({
@@ -80,7 +76,6 @@ export const usageInfoModelTousageInfo = (
   endDate: model.endDate,
 });
 
-// 5. Element_Digital_Address
 export const ElementDigitalAddressToElementDigitalAddressModel = (
   object: ElementDigitalAddress
 ): ElementDigitalAddressModel => ({
@@ -97,7 +92,6 @@ export const elementDigitalAddressModelToElementDigitalAddress = (
   information: usageInfoModelTousageInfo(model.information),
 });
 
-// 6. Response_Request_Digital_Address
 export const ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel =
   (
     object: ResponseRequestDigitalAddress
@@ -120,21 +114,17 @@ export const responseRequestDigitalAddressModelToResponseRequestDigitalAddress =
     ),
   });
 
-// Funzione che prende in input un array di ResponseRequestDigitalAddressModel, chiama la funzione di conversione e restituisce un array di ResponseRequestDigitalAddress
 export const convertArrayOfModelToResponseRequestDigitalAddress = (
   models: ResponseRequestDigitalAddressModel[]
 ): ResponseRequestDigitalAddress[] =>
   models.map(responseRequestDigitalAddressModelToResponseRequestDigitalAddress);
 
-// Funzione unificata
 export const convertArrayOfModelsToResponseListRequestDigitalAddress = (
   models: ResponseRequestDigitalAddressModel[]
 ): ResponseListRequestDigitalAddress => {
-  // Converti l'array di ResponseRequestDigitalAddressModel a ResponseRequestDigitalAddress
   const convertedModels: ResponseRequestDigitalAddress[] =
     convertArrayOfModelToResponseRequestDigitalAddress(models);
 
-  // Crea un oggetto conforme a ResponseListRequestDigitalAddress
   const responseList: ResponseListRequestDigitalAddress = {
     data: convertedModels.length ? convertedModels : [],
   };
@@ -142,7 +132,6 @@ export const convertArrayOfModelsToResponseListRequestDigitalAddress = (
   return responseList;
 };
 
-// 7. Response_Request_Digital_Address
 export const ResponseListRequestDigitalAddressToResponseListRequestDigitalAddressModel =
   (
     object: ResponseListRequestDigitalAddress
@@ -161,7 +150,6 @@ export const responseListRequestDigitalAddressModelToResponseListRequestDigitalA
     ),
   });
 
-// 8. Response_Request_Digital_Address
 export const PracticalReferenceToPracticalReferenceModel = (
   praticaReference: PracticalReference
 ): PracticalReferenceModel => ({
@@ -172,7 +160,6 @@ export const practicalReferenceModelToPracticalReference = (
   model: PracticalReferenceModel
 ): PracticalReference => model.practicalReference;
 
-// 9. Request_List_Digital_Address
 export const RequestListDigitalAddressToRequestListDigitalAddressModel = (
   object: RequestListDigitalAddress
 ): RequestListDigitalAddressModel => ({
@@ -187,7 +174,6 @@ export const requestListDigitalAddressModelToRequestListDigitalAddress = (
   idRequest: model.idRequest,
 });
 
-// 10. Status_Processing_Request
 export const StatusProcessingRequestToStatusProcessingRequestModel = (
   object: StatusProcessingRequest
 ): StatusProcessingRequestModel => object;
@@ -196,12 +182,10 @@ export const statusProcessingRequestModelToStatusProcessingRequest = (
   model: StatusProcessingRequestModel
 ): StatusProcessingRequest => model;
 
-// 11. UUID
 export const UUIDToUUIDModel = (object: UUID): UUIDModel => object;
 
 export const uuidModelToUUID = (model: UUIDModel): UUID => model;
 
-// 12. Response_Request_List_Digital_Address
 export const ResponseRequestListDigitalAddressToResponseRequestListDigitalAddressModel =
   (
     object: ResponseRequestListDigitalAddress
@@ -222,7 +206,6 @@ export const responseRequestListDigitalAddressModelToResponseRequestListDigitalA
     requestTimestamp: model.requestTimestamp,
   });
 
-// 13. Response_Verify_Digital_Address
 export const ResponseVerifyDigitalAddressToResponseVerifyDigitalAddressModel = (
   object: ResponseVerifyDigitalAddress
 ): ResponseVerifyDigitalAddressModel => ({
@@ -237,7 +220,6 @@ export const responseVerifyDigitalAddressModelToResponseVerifyDigitalAddress = (
   timestampCheck: model.timestampCheck,
 });
 
-// 14. Response_Status_List_Digital_Address
 export const ResponseStatusListDigitalAddressToResponseStatusListDigitalAddressModel =
   (
     object: ResponseStatusListDigitalAddress
@@ -256,9 +238,8 @@ export const responseStatusListDigitalAddressModelToResponseStatusListDigitalAdd
     message: model.message,
   });
 
-// 15. Response_List_Digital_Address
 export const ResponseListDigitalAddressToResponseListDigitalAddressModel = (
-  object: ResponseListDigitalAddress // Replace 'any' with the appropriate type if known
+  object: ResponseListDigitalAddress
 ): ResponseListDigitalAddressModel => ({
   list: (object?.list || []).map(
     ResponseRequestDigitalAddressToResponseRequestDigitalAddressModel
@@ -268,7 +249,6 @@ export const ResponseListDigitalAddressToResponseListDigitalAddressModel = (
 export const responseListDigitalAddressModelToResponseListDigitalAddress = (
   model: ResponseListDigitalAddressModel
 ): ResponseListDigitalAddress => ({
-  // Replace 'any' with the appropriate type if known
   list: model.list.map(
     responseRequestDigitalAddressModelToResponseRequestDigitalAddress
   ),

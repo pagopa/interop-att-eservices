@@ -1,9 +1,7 @@
-/* eslint-disable max-params */
 import { Algorithm, JwtPayload } from "jsonwebtoken";
 import { ErrorHandling } from "pdnd-models";
 import { v4 as uuidv4 } from "uuid";
 import { signerConfig } from "../../config/index.js";
-// import { logger } from "../../logging/index.js";
 import { userRoles } from "../authData.js";
 import { buildSignerService } from "../../aws-kms/signerService.js";
 import {
@@ -20,14 +18,23 @@ export type InteropTokenGenerator = {
   ) => Promise<InternalToken>;
 };
 
-const createInternalToken = (
-  algorithm: Algorithm,
-  kid: string,
-  subject: string,
-  audience: string,
-  tokenIssuer: string,
-  validityDurationSeconds: number
-): TokenPayload => {
+type CreateInternalTokenParams = {
+  algorithm: Algorithm;
+  kid: string;
+  subject: string;
+  audience: string;
+  tokenIssuer: string;
+  validityDurationSeconds: number;
+};
+
+const createInternalToken = ({
+  algorithm,
+  kid,
+  subject,
+  audience,
+  tokenIssuer,
+  validityDurationSeconds,
+}: CreateInternalTokenParams): TokenPayload => {
   const issuedAt = new Date().getTime() / 1000;
   const expireAt = validityDurationSeconds + issuedAt;
 
@@ -46,7 +53,6 @@ const createInternalToken = (
 };
 
 export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
-  // Hosting all the dependencies to collect all process env reading at one time
   const signerService = buildSignerService();
   const config = signerConfig();
 
@@ -54,12 +60,8 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
     seed: TokenPayload,
     jwtHeaders: TokenHeader
   ): Promise<string> => {
-    const customHeaders = {
-      // use: "sig"
-    };
-
+    const customHeaders = {};
     const headers = { ...jwtHeaders, ...customHeaders };
-
     const payload: JwtPayload = {
       ...seed.customClaims,
       jti: seed.id,
@@ -70,7 +72,6 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
       nbf: seed.nbf,
       exp: seed.expireAt,
     };
-
     const encodedHeader = Buffer.from(JSON.stringify(headers)).toString(
       "base64url"
     );
@@ -82,7 +83,6 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
       config.kmsKeyId,
       serializedToken
     );
-
     return `${serializedToken}.${signature}`;
   };
 
@@ -91,14 +91,14 @@ export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
     tokenHeader: TokenHeader
   ): Promise<InternalToken> => {
     try {
-      const tokenSeed = createInternalToken(
-        tokenHeader.alg, // "RS256",
-        tokenHeader.kid,
-        tokenPayloadSeed.subject,
-        tokenPayloadSeed.audience,
-        tokenPayloadSeed.tokenIssuer,
-        tokenPayloadSeed.expirationInSeconds
-      );
+      const tokenSeed = createInternalToken({
+        algorithm: tokenHeader.alg,
+        kid: tokenHeader.kid,
+        subject: tokenPayloadSeed.subject,
+        audience: tokenPayloadSeed.audience,
+        tokenIssuer: tokenPayloadSeed.tokenIssuer,
+        validityDurationSeconds: tokenPayloadSeed.expirationInSeconds,
+      });
 
       const signedJwt = await createSignedJWT(tokenSeed, tokenHeader);
 

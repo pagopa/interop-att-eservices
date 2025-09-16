@@ -1,9 +1,12 @@
-import { logger } from "pdnd-common";
+import {
+  logger,
+  authenticationCorrelationMiddleware,
+  ExpressContext,
+  ZodiosContext,
+  TrialService,
+} from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
-import { ExpressContext, ZodiosContext } from "pdnd-common";
-import { authenticationCorrelationMiddleware } from "pdnd-common";
-import { TrialService } from "trial";
 import FiscalcodeVerificationController from "../controllers/fiscalcodeVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -20,7 +23,6 @@ const fiscalcodeVerificationRouter = (
 
   fiscalcodeVerificationRouter.post(
     "/subject-id-verification/check",
-    // logHeadersMiddleware,
     contextDataFiscalCodeMiddleware,
     authenticationCorrelationMiddleware(true),
     verifyCertValidity,
@@ -59,7 +61,6 @@ const fiscalcodeVerificationRouter = (
 
   fiscalcodeVerificationRouter.post(
     "/subject-id-verification/check-with-payload-signature",
-    // logHeadersMiddleware,
     contextDataFiscalCodeMiddleware,
     authenticationCorrelationMiddleware(true),
     verifyCertValidity,
@@ -82,7 +83,6 @@ const fiscalcodeVerificationRouter = (
           "FISCALCODE_VERIFICATION",
           "OK"
         );
-        // TODO: INSERT HEADERS
         logger.info(`[END] Post - '/check-with-payload-signature' `);
         const signature = await signatureUtility.signData(JSON.stringify(data));
         res.setHeader("x-payload-signature", signature);

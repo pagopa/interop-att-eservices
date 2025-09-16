@@ -1,22 +1,17 @@
-// import { zodiosRouter } from "@zodios/express";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ErrorHandling } from "pdnd-models";
-import { ExpressContext, ZodiosContext } from "pdnd-common";
-import { authenticationMiddleware } from "pdnd-common";
-import DataPreparationService from "../services/dataPreparationService.js";
+import {
+  authenticationMiddleware,
+  ExpressContext,
+  ZodiosContext,
+  FamilyStatusService,
+  RawPayload,
+} from "pdnd-common";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, userModelNotFound } from "../exceptions/errors.js";
-import {
-  DataPreparationTemplateResponse,
-  UserModel,
-} from "../model/domain/models.js";
 import { contextDataFamilyMiddleware } from "../context/context.js";
-import {
-  userModelToApiDataPreparationResponseCf,
-  userModelToApiDataPreparationTemplateResponse,
-} from "../model/domain/apiConverter.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -26,20 +21,18 @@ const dataPreparationRouter = (
   dataPreparationRouter.post(
     "/family-status/data-preparation",
     contextDataFamilyMiddleware,
-    authenticationMiddleware(false),
+    authenticationMiddleware(true),
     async (req, res) => {
       try {
-        const data = await DataPreparationService.saveList(req.body);
-        const result = userModelToApiDataPreparationResponseCf(
-          data,
-          req.body.subject?.subjectId
+        const data = await FamilyStatusService.prepareData(
+          req.body as RawPayload
         );
-        if (!result) {
+        if (!data) {
           throw userModelNotFound(
             `Data with subjectId '${req.body.subject?.subjectId}' not found`
           );
         }
-        return res.status(200).json(result).end();
+        return res.status(200).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();
@@ -56,14 +49,9 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        const data = await DataPreparationService.getAll();
-        const result: DataPreparationTemplateResponse[] = data
-          ? data.map((user: UserModel) =>
-              userModelToApiDataPreparationTemplateResponse(user)
-            )
-          : [];
+        const data = await FamilyStatusService.getAll();
 
-        return res.status(200).json(result).end();
+        return res.status(200).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();
@@ -80,10 +68,8 @@ const dataPreparationRouter = (
         if (!req) {
           return res.status(500);
         }
-        const data = await DataPreparationService.getByUUID(req.params.uuid);
-        const result: DataPreparationTemplateResponse | null = data
-          ? userModelToApiDataPreparationTemplateResponse(data)
-          : null;
+        const data = await FamilyStatusService.getByUUID(req.params.uuid);
+        const result: RawPayload | null = data ? (data as RawPayload) : null;
         return result
           ? res.status(200).json(result).end()
           : res.status(200).end();
@@ -103,12 +89,7 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
-        const data = await DataPreparationService.deleteAllByKey();
-        if (data !== 0) {
-          throw ErrorHandling.genericError(
-            `Not all data could be deleted. Remaining: ${data}`
-          );
-        }
+        await FamilyStatusService.deleteAll();
         return res.status(200).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
@@ -126,7 +107,7 @@ const dataPreparationRouter = (
         if (!req) {
           return res.status(500);
         }
-        await DataPreparationService.deleteByUUID(req.params.uuid);
+        await FamilyStatusService.deleteByUUID(req.params.uuid);
         return res.status(200).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);

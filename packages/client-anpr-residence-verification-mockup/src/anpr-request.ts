@@ -1,6 +1,7 @@
-import dotenv from "dotenv";
-import express, { Application, Request, Response } from 'express';
+/* eslint-disable no-console */
 import fs from "fs";
+import dotenv from "dotenv";
+import express, { Application, Request, Response } from "express";
 import { sha256, encodeBase64 } from "./utils/commons";
 import {
   generate_agid_jwt_signature_integrity,
@@ -16,13 +17,13 @@ dotenv.config();
 
 app.use(express.json());
 
-app.post('/', async (req: Request, res: Response): Promise<void> => {
-  // Digest SHA-256
-  const body_digest_bytes = sha256(JSON.stringify(req.body));
+app.post("/", async (req: Request, res: Response): Promise<void> => {
+  const canonicalBody = JSON.stringify(req.body);
+  console.log(`CANONICAL ${canonicalBody}`);
+  const body_digest_bytes = sha256(canonicalBody);
   const body_digest_64 = encodeBase64(body_digest_bytes);
   const digest_header = `SHA-256=${body_digest_64}`;
 
-  // Read private key
   const filePathKey = process.env.PRIVATE_KEY_PATH;
   if (!filePathKey) {
     throw new Error("File private key not defined in .env configuration");
@@ -36,28 +37,22 @@ app.post('/', async (req: Request, res: Response): Promise<void> => {
 
   const tracking_jwt = generate_agid_jwt_trackingevidence_audit(privateKey);
 
-
-  // Prepare digest for tracking jwt in order to add it to client-assertion
   const tracking_jwt_digest = sha256(tracking_jwt);
 
-  // Exec PDND Client-assertion
   const client_assertion = exec_pdnd_client_assertion(
     tracking_jwt_digest,
     privateKey
   );
 
-
   const pdnd_token = await get_pdnd_token(client_assertion);
 
   const myJson = {
-    "signature_jwt": signature_jwt,
-    "tracking_jwt": tracking_jwt,
-    "pdnd_token": pdnd_token
-  }
+    signature_jwt,
+    tracking_jwt,
+    pdnd_token,
+  };
 
   res.json(myJson);
 });
 
-
 export default app;
-

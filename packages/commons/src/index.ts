@@ -1,4 +1,7 @@
-export { cacheManager } from "./db/index.js";
+import "./types/express/index.js";
+export * from "./db/postgres/client.js";
+export * from "./db/schema/index.js";
+export * from "./db/schema/purpose.model.js";
 export * from "./auth/index.js";
 export * from "./config/index.js";
 export * from "./context/index.js";
@@ -9,3 +12,8 @@ export * from "./utility/index.js";
 export * from "./security/index.js";
 export * from "./events/index.js";
 export * from "./middleware/index.js";
+export * from "./services/index.js";
+export * from "./zod/family-status/index.js";
+export { testDbConnection } from "./utility/index.js";
+export { auditValidationMiddleware } from "./auth/interoperability/auditValidationMiddleware.js";
+export { integrityValidationMiddleware } from "./auth/interoperability/integrityValidationMiddleware.js";

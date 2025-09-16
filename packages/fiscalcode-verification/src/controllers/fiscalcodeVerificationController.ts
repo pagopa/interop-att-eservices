@@ -1,21 +1,32 @@
-import { logger, getContext } from "pdnd-common";
-import FiscalcodeVerificationService from "../services/fiscalcodeVerificationService.js";
+import { logger, FiscalCodeService } from "pdnd-common";
 import { Richiesta, VerificaCodiceFiscale } from "../model/domain/models.js";
 import { requestParamNotValid } from "../exceptions/errors.js";
+import { fiscalcodeModelToVerificaCodiceFiscale } from "../model/domain/apiConverter.js";
 
 class FiscalcodeVerificationController {
-  public appContext = getContext();
-
   public async findFiscalcode(
     request: Richiesta
   ): Promise<VerificaCodiceFiscale> {
     try {
       if (request.idSubject) {
-        const data = await FiscalcodeVerificationService.getByFiscalCode(
+        const foundFiscalCode = await FiscalCodeService.getByFiscalCode(
           request.idSubject
         );
+
+        const data = foundFiscalCode
+          ? fiscalcodeModelToVerificaCodiceFiscale(
+              foundFiscalCode,
+              true,
+              "Codice fiscale valido"
+            )
+          : fiscalcodeModelToVerificaCodiceFiscale(
+              null,
+              false,
+              "Codice fiscale non valido",
+              request.idSubject
+            );
+
         const result: VerificaCodiceFiscale = {
-          // idOperazione: request.operationId,
           data,
         };
         return result;

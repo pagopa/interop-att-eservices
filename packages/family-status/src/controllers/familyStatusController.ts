@@ -1,15 +1,11 @@
 import { logger, getContext } from "pdnd-common";
+import { FamilyStatusService } from "pdnd-common";
 import {
   requestParamNotValid,
   userModelNotFound,
 } from "../exceptions/errors.js";
-import {
-  RequestFS001,
-  ResponseFS001,
-  UserModel,
-} from "../model/domain/models.js";
-import { UserModelToDataSubjectsInstitution } from "../model/domain/apiConverter.js";
-import familyStatusService from "../services/familyStatusService.js";
+import { RequestFS001, ResponseFS001 } from "../model/domain/models.js";
+import { mapDbRecordToResponseFS001 } from "../utilities/mapDbRecordToResponseFS001.js";
 
 class FamilyStatusController {
   public appContext = getContext();
@@ -18,53 +14,37 @@ class FamilyStatusController {
     request: RequestFS001
   ): Promise<ResponseFS001 | null | undefined> {
     try {
-      logger.info(`[START] findUser: ${request}`);
+      logger.info(`[START] findUser: ${JSON.stringify(request.criteria)}`);
       if (request.criteria.subjectId) {
-        const data = await familyStatusService.getBySubjectId(
+        const data = await FamilyStatusService.verifyBySubjectId(
           request.criteria.subjectId
         );
 
-        const list: UserModel[] = data ? [data] : [];
+        if (!data || Object.keys(data).length === 0) {
+          throw userModelNotFound();
+        }
 
-        const result: ResponseFS001 = {
-          idOp: request.operationId,
-          subjects: {
-            subject: list.map((element) =>
-              UserModelToDataSubjectsInstitution(element)
-            ),
-          },
-        };
-        return result;
+        return mapDbRecordToResponseFS001(data, request.operationId);
       } else if (checkPersonalInfo(request)) {
-        const data = await familyStatusService.getByPersonalInfo(
+        const data = await FamilyStatusService.findByPersonalInfo(
           request.criteria
         );
-
-        const result: ResponseFS001 = {
-          idOp: request.operationId,
-          subjects: {
-            subject: data.map((element) =>
-              UserModelToDataSubjectsInstitution(element)
-            ),
-          },
-        };
+        if (!data || Object.keys(data).length === 0) {
+          throw userModelNotFound();
+        }
+        const mappedData = mapDbRecordToResponseFS001(
+          data[0],
+          request.operationId
+        );
         logger.info(`[END] findUser: ${request}`);
-        return result;
+        return mappedData;
       } else if (request.criteria.id) {
         if (request.criteria.id) {
-          const data = await familyStatusService.getById(request.criteria.id);
-
-          const list: UserModel[] = data ? [data] : [];
-
-          const result: ResponseFS001 = {
-            idOp: request.operationId,
-            subjects: {
-              subject: list.map((element) =>
-                UserModelToDataSubjectsInstitution(element)
-              ),
-            },
-          };
-          return result;
+          const data = await FamilyStatusService.findById(request.criteria.id);
+          if (!data || Object.keys(data).length === 0) {
+            throw userModelNotFound();
+          }
+          return mapDbRecordToResponseFS001(data, request.operationId);
         }
         return null;
       } else {
@@ -77,69 +57,49 @@ class FamilyStatusController {
       throw error;
     }
   }
-  /* eslint-disable */
+
   public async findUserVerify(request: RequestFS001): Promise<ResponseFS001> {
     try {
       logger.info(`post request: ${request}`);
-      let resultData;
+
       if (request.criteria.subjectId) {
-        const data = await familyStatusService.getBySubjectId(
+        const data = await FamilyStatusService.verifyBySubjectId(
           request.criteria.subjectId
         );
+        return mapDbRecordToResponseFS001(data, request.operationId);
+      }
 
-        const list: UserModel[] = data ? [data] : [];
-
-        resultData = {
-          idOp: request.operationId,
-          subjects: {
-            subject: list.map((element) =>
-              UserModelToDataSubjectsInstitution(element)
-            ),
-          },
-        };
-      } else if (checkPersonalInfoVerify(request)) {
-        const data = await familyStatusService.getByPersonalInfo(
+      if (checkPersonalInfoVerify(request)) {
+        const data = await FamilyStatusService.findByPersonalInfo(
           request.criteria
         );
-
-        resultData = {
-          idOp: request.operationId,
-          subjects: {
-            subject: data.map((element) =>
-              UserModelToDataSubjectsInstitution(element)
-            ),
-          },
-        };
-      } else if (request.criteria.id) {
-        if (request.criteria.id) {
-          const data = await familyStatusService.getById(
-            `${request.criteria.id}`
-          );
-
-          const list: UserModel[] = data ? [data] : [];
-
-          resultData = {
-            idOp: request.operationId,
-            subjects: {
-              subject: list.map((element) =>
-                UserModelToDataSubjectsInstitution(element)
-              ),
-            },
-          };
-        }
-      } else {
-        throw requestParamNotValid(
-          "The request body has one or more required param not valid"
+        const resultData = mapDbRecordToResponseFS001(
+          data[0],
+          request.operationId
         );
+
+        if (!resultData || resultData.subjects?.subject?.length === 0) {
+          throw userModelNotFound();
+        }
+        return resultData;
       }
 
-      const response: ResponseFS001 = {};
-      response.idOp = request.operationId;
-      if (!resultData || resultData.subjects?.subject?.length === 0) {
-        throw userModelNotFound();
+      if (request.criteria.id) {
+        const data = await FamilyStatusService.findById(request.criteria.id);
+        const resultData = mapDbRecordToResponseFS001(
+          data,
+          request.operationId
+        );
+
+        if (!resultData || resultData.subjects?.subject?.length === 0) {
+          throw userModelNotFound();
+        }
+        return resultData;
       }
-      /* eslint-enable */
-      return response;
+
+      throw requestParamNotValid(
+        "The request body has one or more required param not valid"
+      );
     } catch (error) {
       logger.error(`Error during in method controller 'findUser': `, error);
       throw error;

@@ -3,19 +3,16 @@ import {
   buildPublicKeyService,
   buildSignerService,
   logger,
+  getContext,
+  testDbConnection,
 } from "pdnd-common";
-import axios, { AxiosResponse } from "axios";
-import { testDbConnection } from "trial";
-import healtRepository from "../repository/healthRepository.js";
 
-class healtService {
+class HealtService {
+  public appContext = getContext();
+
   public async status(): Promise<boolean | null> {
     const config = signerConfig();
 
-    if (!(await healtRepository.checkConnection())) {
-      return false;
-    }
-    /* const config = signerConfig.parse(process.env); */
     const publicKeyService = buildPublicKeyService();
 
     if (!(await publicKeyService.KMSAvailability(config.kmsKeyId))) {
@@ -23,12 +20,6 @@ class healtService {
     }
     const signerService = buildSignerService();
     if (!(await signerService.KMSAvailability(config.kmsKeyId, "token"))) {
-      return false;
-    }
-    if (!(await checkStatusInteropAuth())) {
-      return false;
-    }
-    if (!(await checkStatusinterop())) {
       return false;
     }
 
@@ -39,37 +30,9 @@ class healtService {
       return false;
     }
     logger.info("status: OK");
+
     return true;
   }
 }
 
-async function checkStatusInteropAuth(): Promise<boolean> {
-  try {
-    /* eslint-disable */
-    const response: AxiosResponse<any> = await axios.get(
-      "https://auth.uat.interop.pagopa.it/status"
-    );
-    /* eslint-enable */
-    return response.status === 200;
-  } catch (error) {
-    logger.error(`Error: https://auth.uat.interop.pagopa.it/status ${error}`);
-    return false;
-  }
-}
-
-async function checkStatusinterop(): Promise<boolean> {
-  try {
-    /* eslint-disable */
-    const response: AxiosResponse<any> = await axios.get(
-      "https://api.att.interop.pagopa.it/1.0/status"
-    );
-    /* eslint-enable */
-    return response.status === 200;
-  } catch (error) {
-    logger.error(
-      `Error: https://api.att.interop.pagopa.it/1.0/status ${error}`
-    );
-    return false;
-  }
-}
-export default new healtService();
+export default new HealtService();

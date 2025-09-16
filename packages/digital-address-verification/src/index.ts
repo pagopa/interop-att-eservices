@@ -1,8 +1,8 @@
 import { logger } from "pdnd-common";
-import { testDbConnection } from "trial";
+import { testDbConnection } from "pdnd-common";
 import app from "./app.js";
 
-const port = process.env.PORT || 3004;
+const port = process.env.PORT || 3007;
 
 const startServer = async (): Promise<void> => {
   try {
@@ -17,11 +17,3 @@ const startServer = async (): Promise<void> => {
 };
 
 await startServer();
-/* import { logger } from "pagopa-interop-commons";
-import { config } from "./utilities/config.js";
-import app from "./app.js";
-
-app.listen(config.port, config.host, () => {
-  logger.info(`listening on ${config.host}:${config.port}`);
-});
- */

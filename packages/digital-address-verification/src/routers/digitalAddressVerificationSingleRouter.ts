@@ -1,14 +1,18 @@
-import { logger } from "pdnd-common";
+import {
+  logger,
+  ExpressContext,
+  ZodiosContext,
+  authenticationCorrelationMiddleware,
+  TrialService,
+} from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
-import { ExpressContext, ZodiosContext } from "pdnd-common";
-import { authenticationCorrelationMiddleware } from "pdnd-common";
-import { TrialService } from "trial";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataDigitalAddressMiddleware } from "../context/context.js";
 import digitalAddressVerificationSingleController from "../controllers/digitalAddressVerificationSingleController.js";
+import logHeadersMiddleware from "../middlewares/logHeaderMiddleware.js";
 const DigitalAddressVerificationSingleRouter = (
   ctx: ZodiosContext
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
@@ -16,7 +20,7 @@ const DigitalAddressVerificationSingleRouter = (
 
   digitalAddressVerificationSingleRouter.get(
     "/digital-address-verification/verify/:id_subject",
-    // logHeadersMiddleware,
+    logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
     authenticationCorrelationMiddleware(true),
     async (req, res) => {
@@ -59,7 +63,7 @@ const DigitalAddressVerificationSingleRouter = (
 
   digitalAddressVerificationSingleRouter.get(
     "/digital-address-verification/retrieve/:id_subject",
-    // logHeadersMiddleware,
+    logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
     authenticationCorrelationMiddleware(true),
     async (req, res) => {

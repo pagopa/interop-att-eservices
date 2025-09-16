@@ -1,12 +1,14 @@
-import { ZodiosRouter } from "@zodios/express";
-import { ZodiosEndpointDefinitions } from "@zodios/core";
 import {
   authenticationCorrelationMiddleware,
   logger,
-  ExpressContext,
   ZodiosContext,
+  TrialService,
+  integrityValidationMiddleware,
+  auditValidationMiddleware,
+  ExpressContext,
 } from "pdnd-common";
-import { TrialService } from "trial";
+import { ZodiosRouter } from "@zodios/express";
+import { ZodiosEndpointDefinitions } from "@zodios/core";
 import ResidenceVerificationController from "../controllers/residenceVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -15,16 +17,14 @@ import {
   mapGeneralErrorModel,
   userModelNotFound,
 } from "../exceptions/errors.js";
-import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
-import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
 import { contextDataResidenceMiddleware } from "../context/context.js";
 
 const residenceVerificationRouter = (
   ctx: ZodiosContext
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
-  const residenceVerificationRouter = ctx.router(api.api);
+  const residenceVerificationDirectRouter = ctx.router(api.api);
 
-  residenceVerificationRouter.post(
+  residenceVerificationDirectRouter.post(
     "/residence-verification-direct",
     contextDataResidenceMiddleware,
     authenticationCorrelationMiddleware(true),
@@ -66,7 +66,7 @@ const residenceVerificationRouter = (
     }
   );
 
-  residenceVerificationRouter.post(
+  residenceVerificationDirectRouter.post(
     "/residence-verification-direct/check",
     contextDataResidenceMiddleware,
     authenticationCorrelationMiddleware(true),
@@ -74,11 +74,6 @@ const residenceVerificationRouter = (
     auditValidationMiddleware(),
     async (req, res) => {
       try {
-        logger.info(
-          `[START] Check ResidenceVerificationRouter: ${JSON.stringify(
-            req.body
-          )}`
-        );
         const data = await ResidenceVerificationController.findUserVerify(
           req.body
         );
@@ -108,6 +103,6 @@ const residenceVerificationRouter = (
       }
     }
   );
-  return residenceVerificationRouter;
+  return residenceVerificationDirectRouter;
 };
 export default residenceVerificationRouter;

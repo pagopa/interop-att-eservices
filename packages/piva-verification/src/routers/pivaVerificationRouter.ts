@@ -1,9 +1,12 @@
 import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
-import { ExpressContext, ZodiosContext } from "pdnd-common";
-import { authenticationCorrelationMiddleware } from "pdnd-common";
-import { TrialService } from "trial";
+import {
+  ExpressContext,
+  ZodiosContext,
+  authenticationCorrelationMiddleware,
+  TrialService,
+} from "pdnd-common";
 import PivaVerificationController from "../controllers/pivaVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -32,7 +35,7 @@ const pivaVerificationRouter = (
         void TrialService.insert(
           req.url,
           req.method,
-          "PIVA-VERIFICATION",
+          "PIVA_VERIFICATION",
           "OK"
         );
         logger.info(`[END] Post - '/check'`);

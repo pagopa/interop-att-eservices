@@ -15,6 +15,9 @@ export const KeychainSignerConfig = z.preprocess(
         KMS_KEYID: z.string(),
         KMS_KEYCHAIN_PUBLICKEY_KID: z.string(),
         KMS_KEYCHAIN_ENDPOINT: z.string(),
+        KMS_KEYCHAIN_REGION: z.string(),
+        KMS_KEYCHAIN_ACCESS_KEYID: z.string(),
+        KMS_KEYCHAIN_SECRET_ACCESS_KEYID: z.string(),
       }),
       z.object({
         KMS_KEYCHAIN_LOCAL_CONFIG: z.literal("false"),
@@ -22,6 +25,9 @@ export const KeychainSignerConfig = z.preprocess(
         KMS_KEYCHAIN_PUBLICKEY_KID: z.string(),
         KMS_KEYID: z.string(),
         KMS_KEYCHAIN_ENDPOINT: z.undefined(),
+        KMS_KEYCHAIN_REGION: z.string(),
+        KMS_KEYCHAIN_ACCESS_KEYID: z.string(),
+        KMS_KEYCHAIN_SECRET_ACCESS_KEYID: z.string(),
       }),
     ])
 
@@ -32,6 +38,9 @@ export const KeychainSignerConfig = z.preprocess(
       KeychainKeyId: c.KMS_KEYCHAIN_PUBLICKEY_KID,
       kmsKeychainEndpoint: c.KMS_KEYCHAIN_ENDPOINT,
       localKeychainConfig: c.KMS_KEYCHAIN_LOCAL_CONFIG,
+      kmsRegion: c.KMS_KEYCHAIN_REGION,
+      kmsAccessKeyId: c.KMS_KEYCHAIN_ACCESS_KEYID,
+      kmsAccessKeySecret: c.KMS_KEYCHAIN_SECRET_ACCESS_KEYID,
     }))
 );
 

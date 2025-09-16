@@ -17,7 +17,7 @@ export const generateInternalAccessCode = async (
         subject: config.subject,
         audience: config.audience,
         tokenIssuer: config.issuer,
-        expirationInSeconds: parseInt(config.expirationInSeconds, 10), // Durata di validità del token in secondi
+        expirationInSeconds: parseInt(config.expirationInSeconds, 10),
       };
       const jwtHeaders: TokenHeader = {
         alg: "RS256",
@@ -30,7 +30,7 @@ export const generateInternalAccessCode = async (
           jwtHeaders
         );
         logger.info(`generate InternalAccessCode: done`);
-        return internalToken; // Restituisce il token interno generato
+        return internalToken;
       }
       return null;
     }
@@ -38,7 +38,6 @@ export const generateInternalAccessCode = async (
   } catch (error) {
     logger.error(`
     An error occurred while generating the access token: ${error}`);
-    // Gestisci gli errori di generazione del token
-    throw error; // Lanciare l'errore per la gestione esterna, se necessario
+    throw error;
   }
 };

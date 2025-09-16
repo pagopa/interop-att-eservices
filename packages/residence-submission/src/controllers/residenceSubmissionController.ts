@@ -1,5 +1,4 @@
-import { logger, getContext } from "pdnd-common";
-import residenceSubmissionService from "../services/residenceSubmissionService.js";
+import { logger, getContext, ResidenceSubmissionService } from "pdnd-common";
 import { RichiestaAR003 } from "../model/domain/models.js";
 
 class ResidenceSubmissionController {
@@ -9,7 +8,7 @@ class ResidenceSubmissionController {
     request: RichiestaAR003
   ): Promise<{ status: string; message: string }> {
     try {
-      await residenceSubmissionService.create(request);
+      await ResidenceSubmissionService.create(request);
 
       return {
         status: "OK",
@@ -28,7 +27,7 @@ class ResidenceSubmissionController {
     request: RichiestaAR003
   ): Promise<{ status: string; message: string }> {
     try {
-      await residenceSubmissionService.updateByUsecasesIdService(request);
+      await ResidenceSubmissionService.updateBySubjectId(request);
 
       return {
         status: "OK",
@@ -47,7 +46,7 @@ class ResidenceSubmissionController {
     id: string
   ): Promise<{ status: string; message: string }> {
     try {
-      await residenceSubmissionService.delete(id);
+      await ResidenceSubmissionService.delete(id);
 
       return {
         status: "OK",

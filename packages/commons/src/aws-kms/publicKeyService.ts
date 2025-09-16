@@ -48,14 +48,10 @@ export const buildPublicKeyService = (): PublicKeyService => {
 
     KMSAvailability: async (keyId: string): Promise<boolean> => {
       try {
-        // Effettua una richiesta di test al servizio KMS
         const command = new GetPublicKeyCommand({ KeyId: keyId });
         await kmsClient.send(command);
-
-        // Se la richiesta ha avuto successo, il servizio KMS è raggiungibile
         return true;
       } catch (error) {
-        // Se si verifica un errore, gestiscilo di conseguenza
         logger.error(`Error reaching KMS service: ${error}`);
         return false;
       }

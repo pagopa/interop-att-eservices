@@ -1,4 +1,4 @@
-import { logger, getContext } from "pdnd-common";
+import { logger, getContext, digitalAddressService } from "pdnd-common";
 import {
   requestParamNotValid,
   requestVerificationNotFountError,
@@ -9,17 +9,16 @@ import {
   ResponseRequestListDigitalAddress,
   ResponseStatusListDigitalAddress,
 } from "../model/domain/models.js";
-import DigitalAddressVerificationService from "../services/digitalAddressVerificationService.js";
 import { VerifyRequest } from "../model/digitalAddress/VerifyRequest.js";
 import {
   getMaxNumber,
   getStatusFromNumber,
 } from "../utilities/statusRequestUtility.js";
-import dataPreparationService from "../services/dataPreparationService.js";
 import { parseJsonToRequestListDigitalAddress } from "../utilities/jsonDigitalAddressUtilities.js";
 import { responseRequestDigitalAddressModelToResponseRequestDigitalAddress } from "../model/domain/apiConverter.js";
+import { calculateUpdatedRequestState } from "../utilities/simulationUtils.js";
 
-class DigitalAddressVerificationSingleController {
+class DigitalAddressVerificationMultipleController {
   public appContext = getContext();
 
   public async saveRequest(
@@ -28,11 +27,17 @@ class DigitalAddressVerificationSingleController {
     try {
       if (request.idSubjects) {
         const jsonRequest = JSON.stringify(request);
-        const count = getMaxNumber(); // presa in carico
+        const count = getMaxNumber();
 
-        const verifyRequestInstance = new VerifyRequest(jsonRequest, count);
+        const verifyRequestInstance = new VerifyRequest(
+          request.idRequest,
+          jsonRequest,
+          count
+        );
 
-        await DigitalAddressVerificationService.saveAll(verifyRequestInstance);
+        await digitalAddressService.saveVerificationRequest(
+          verifyRequestInstance
+        );
 
         const result: ResponseRequestListDigitalAddress = {
           state: getStatusFromNumber(count),
@@ -55,33 +60,53 @@ class DigitalAddressVerificationSingleController {
     }
   }
 
-  // Response_Status_List_Digital_Address
   public async verify(
     idRichiesta: string
   ): Promise<ResponseStatusListDigitalAddress> {
+    logger.info(
+      `[CONTROLLER] Avvio verifica e simulazione per richiesta: ${idRichiesta}`
+    );
     try {
-      const richiesta =
-        await DigitalAddressVerificationService.simulateWorkByIdRequest(
-          idRichiesta
+      const originalRequest =
+        await digitalAddressService.findVerificationRequestById(idRichiesta);
+
+      if (!originalRequest) {
+        logger.warn(
+          `[CONTROLLER] Richiesta non trovata con id: ${idRichiesta}`
         );
-      if (richiesta) {
-        const result: ResponseStatusListDigitalAddress = {
-          status: getStatusFromNumber(richiesta.count),
-          message: getStatusFromNumber(richiesta.count),
-        };
-        return result;
-      } else {
         throw requestVerificationNotFountError(
           `The request verification not found with id: ${idRichiesta}`
         );
       }
+
+      const finalRequestState = calculateUpdatedRequestState(originalRequest);
+
+      if (finalRequestState !== originalRequest) {
+        logger.info(
+          `[CONTROLLER] Aggiornamento stato per ${idRichiesta}. Nuovo conteggio: ${finalRequestState.count}`
+        );
+        await digitalAddressService.updateVerificationRequest(
+          finalRequestState
+        );
+      } else {
+        logger.info(
+          `[CONTROLLER] Nessun aggiornamento necessario per ${idRichiesta}. Conteggio: ${finalRequestState.count}`
+        );
+      }
+      const result: ResponseStatusListDigitalAddress = {
+        status: getStatusFromNumber(finalRequestState.count),
+        message: getStatusFromNumber(finalRequestState.count),
+      };
+      return result;
     } catch (error) {
-      logger.error(`Error during in method controller 'verify': `, error);
+      logger.error(
+        `[CONTROLLER] Errore nel metodo 'verify' per id ${idRichiesta}: `,
+        error
+      );
       throw error;
     }
   }
 
-  /* eslint-disable */
   public async getByIdRequest(
     idRichiesta: string
   ): Promise<ResponseListDigitalAddress> {
@@ -89,26 +114,36 @@ class DigitalAddressVerificationSingleController {
       list: [],
     };
     try {
-      const richiesta = await DigitalAddressVerificationService.getByIdRequest(
+      const richiesta = await digitalAddressService.findVerificationRequestById(
         idRichiesta
       );
-      if (richiesta?.count == 1) {
+      if (richiesta?.count === 1) {
         const requestListDigitalAddress = parseJsonToRequestListDigitalAddress(
           richiesta.jsonRequest
         );
         if (requestListDigitalAddress) {
-          for (const idSubject of requestListDigitalAddress.idSubjects) {
-            const addressModel = await dataPreparationService.findByFiscalCode(
-              idSubject
-            );
-            if (addressModel) {
-              const address =
-                responseRequestDigitalAddressModelToResponseRequestDigitalAddress(
-                  addressModel
+          const addressPromises = requestListDigitalAddress.idSubjects.map(
+            async (idSubject) => {
+              const addressModel =
+                await digitalAddressService.findSingleDataPreparationByFiscalCode(
+                  idSubject
                 );
-              responseListDigitalAddress.list.push(address);
+              return addressModel
+                ? responseRequestDigitalAddressModelToResponseRequestDigitalAddress(
+                    addressModel
+                  )
+                : null;
             }
-          }
+          );
+          const resolvedAddresses = await Promise.all(addressPromises);
+          const newList = resolvedAddresses.filter(
+            (address): address is NonNullable<typeof address> =>
+              address !== null
+          );
+          return {
+            ...responseListDigitalAddress,
+            list: newList,
+          };
         }
       } else {
         throw requestVerificationNotFountError(
@@ -123,6 +158,6 @@ class DigitalAddressVerificationSingleController {
       );
       throw error;
     }
-  } /* eslint-enable */
+  }
 }
-export default new DigitalAddressVerificationSingleController();
+export default new DigitalAddressVerificationMultipleController();

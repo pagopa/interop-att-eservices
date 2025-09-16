@@ -1,10 +1,13 @@
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
-import { ExpressContext, ZodiosContext, logger } from "pdnd-common";
+import {
+  DataPreparationHandshakeService,
+  ExpressContext,
+  ZodiosContext,
+  logger,
+} from "pdnd-common";
 import multer from "multer";
-import { getContext } from "pdnd-common";
 import { authenticationMiddleware } from "pdnd-common";
-import dataPreparationHandshakeService from "../services/dataPreparationHandshakeService.js";
 import { api } from "../model/generated/api.js";
 import {
   certNotValidError,
@@ -29,7 +32,6 @@ const dataPreparationHandshakeRouter = (
     upload.single("certificate"),
     async (req, res) => {
       try {
-        // Verifica se è stato caricato un file
         if (!req.file) {
           logger.error("Nessun certificato caricato");
           throw certNotValidError(`mandatory certificate`);
@@ -42,23 +44,20 @@ const dataPreparationHandshakeRouter = (
           logger.error("'Header apikey mandatory.'");
           throw requestParamNotValid(`missing header`);
         }
-        // Il certificato sarà accessibile tramite req.file.buffer
         const certificateData: Buffer = req.file.buffer;
 
         const serialNumber =
           getCertificateFingerprintFromBuffer(certificateData);
         const handshakeData = {
-          pourposeId: getContext().authData.purposeId,
           apikey: apiKey,
           cert: serialNumber,
         };
         logger.info(`cert: ${handshakeData.cert}`);
 
-        await dataPreparationHandshakeService.saveList(handshakeData);
+        await DataPreparationHandshakeService.saveList(handshakeData);
         logger.info("certificato salvato con successo");
         return res.status(200).end();
       } catch (error) {
-        // Gestione dell'errore
         logger.error(
           `si è verificato un errore durante l upload dell certificato: ${error}`
         );

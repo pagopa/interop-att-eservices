@@ -40,9 +40,6 @@ export type DataPreparationTemplate = z.infer<
 export type DataPreparationResponse = z.infer<
   typeof api.schemas.DataPreparationResponse
 >;
-export type DataPreparationTemplateResponse = z.infer<
-  typeof api.schemas.DataPreparationTemplateResponse
->;
 
 export const UserModel = z.object({
   uuid: z.string(),

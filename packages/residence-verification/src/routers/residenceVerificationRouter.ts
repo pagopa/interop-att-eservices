@@ -5,8 +5,10 @@ import {
   logger,
   ExpressContext,
   ZodiosContext,
+  integrityValidationMiddleware,
+  auditValidationMiddleware,
+  TrialService,
 } from "pdnd-common";
-import { TrialService } from "trial";
 import ResidenceVerificationController from "../controllers/residenceVerificationController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -15,8 +17,6 @@ import {
   mapGeneralErrorModel,
   userModelNotFound,
 } from "../exceptions/errors.js";
-import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
-import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
 import { contextDataResidenceMiddleware } from "../context/context.js";
 
 const residenceVerificationRouter = (
@@ -74,11 +74,6 @@ const residenceVerificationRouter = (
     auditValidationMiddleware(),
     async (req, res) => {
       try {
-        logger.info(
-          `[START] Check ResidenceVerificationRouter: ${JSON.stringify(
-            req.body
-          )}`
-        );
         const data = await ResidenceVerificationController.findUserVerify(
           req.body
         );

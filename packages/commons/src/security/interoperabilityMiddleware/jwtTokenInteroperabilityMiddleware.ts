@@ -1,4 +1,3 @@
-// import { signerConfig } from "../index.js";
 import axios, { AxiosResponse, AxiosError, AxiosRequestConfig } from "axios";
 import { ErrorHandling, TokenResponse } from "pdnd-models";
 import { InteroperabilityConfig } from "../../config/index.js";
@@ -33,7 +32,6 @@ export async function getOauth2Token(
       }
     );
 
-    // Stampa la stringa cURL
     const curlCommand = generateCurlCommand(response);
     logger.error(`cURL command: ${curlCommand}`);
     return response.data.access_token;
@@ -42,13 +40,11 @@ export async function getOauth2Token(
       const axiosError: AxiosError = error;
       logger.error(`[Error] generate oauth2Token: ${axiosError.message}`);
       if (axiosError.response) {
-        // Stampiamo il codice di stato e il messaggio di errore della risposta
         logger.error(`Response status: ${axiosError.response.status}`);
         logger.error(
           `Response data: ${JSON.stringify(axiosError.response.data)}`
         );
 
-        // Stampa la stringa cURL
         const curlCommand = generateCurlCommand(axiosError.response.config);
         logger.error(`cURL command: ${curlCommand}`);
       }
@@ -68,7 +64,6 @@ export async function getOauth2Token(
         if (requestConfig.headers) {
           return `-H '${key}: ${requestConfig.headers[key]}'`;
         } else {
-          // Se requestConfig.headers è undefined, restituisci una stringa vuota
           return "";
         }
       })

@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
@@ -24,7 +26,7 @@ export const exec_pdnd_client_assertion = (
     sub: process.env.CLIENT_ID,
     aud: process.env.AUTH_AUDIENCE,
     purposeId: process.env.PURPOSE_ID,
-    jti: jti,
+    jti,
     iat: issued,
     exp: expire_in,
     digest: {
@@ -46,7 +48,7 @@ export const get_pdnd_token = async (
     grant_type: "client_credentials",
     client_assertion_type:
       "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-    client_assertion: client_assertion,
+    client_assertion,
   };
   const headers = { "Content-Type": "application/x-www-form-urlencoded" };
 
@@ -59,9 +61,7 @@ export const get_pdnd_token = async (
         headers,
       }
     );
-    const access_token = response.data.access_token;
-    return access_token;
-    console.log("Response:", response.data); // Risposta dell'API
+    return response.data.access_token;
   } catch (error: any) {
     console.error(`Error making POST request: ${error.message}`);
   }

@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
-import { ExpressContext, ZodiosContext } from "pdnd-common";
-import { authenticationCorrelationMiddleware } from "pdnd-common";
-import { TrialService } from "trial";
+import {
+  logger,
+  ExpressContext,
+  ZodiosContext,
+  authenticationCorrelationMiddleware,
+  TrialService,
+  integrityValidationMiddleware,
+  auditValidationMiddleware,
+} from "pdnd-common";
 import ResidenceSubmissionController from "../controllers/residenceSubmissionController.js";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -13,8 +18,6 @@ import {
   mapGeneralErrorModel,
   userModelNotFound,
 } from "../exceptions/errors.js";
-import { integrityValidationMiddleware } from "../interoperability/integrityValidationMiddleware.js";
-import { auditValidationMiddleware } from "../interoperability/auditValidationMiddleware.js";
 import { contextDataResidenceMiddleware } from "../context/context.js";
 
 const residenceSubissionController = (
@@ -33,7 +36,7 @@ const residenceSubissionController = (
         logger.info(`[START] residenceSubissionController: ${req.body}`);
         const data: any = await ResidenceSubmissionController.createUser(
           req.body
-        ); // TODO: handle the type of the "data" constant
+        );
         if (!data || data.subjects?.subject?.length === 0) {
           throw userModelNotFound();
         }
@@ -44,7 +47,6 @@ const residenceSubissionController = (
           "OK"
         );
         logger.info(`[END] residenceSubissionController`);
-        // TODO: handle the error after saving
         return res.status(200).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
@@ -76,7 +78,7 @@ const residenceSubissionController = (
         logger.info(`[START] residenceSubissionController update: ${req.body}`);
         const data: any = await ResidenceSubmissionController.updateUser(
           req.body
-        ); // TODO: handle the type of the "data" constant
+        );
         if (!data || data.subjects?.subject?.length === 0) {
           throw userModelNotFound();
         }

@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { logger } from "pdnd-common";
 
-// Middleware per loggare tutti gli header della richiesta
 const logHeadersMiddleware = (
   req: Request,
   res: Response,
@@ -13,6 +12,6 @@ const logHeadersMiddleware = (
   }
   logger.error(`${res}`);
 
-  next(); // Passa il controllo al middleware o route handler successivo
+  next();
 };
 export default logHeadersMiddleware;

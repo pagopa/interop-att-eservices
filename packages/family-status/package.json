@@ -11,6 +11,7 @@
     "lint:autofix": "eslint . --ext .ts,.tsx --fix",
     "format:check": "prettier --check src",
     "format:write": "prettier --write src",
+    "debug": "node --inspect --no-warnings --loader ts-node/esm -r dotenv-flow/config ./src/index.ts",
     "start": "node --no-warnings --loader ts-node/esm -r dotenv-flow/config ./src/index.ts",
     "build": "tsc",
     "check": "tsc --project tsconfig.check.json",
@@ -21,8 +22,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@aws-sdk/client-kms": "^3.515.0",
     "@anatine/zod-mock": "^3.13.1",
+    "@aws-sdk/client-kms": "^3.515.0",
     "@pagopa/eslint-config": "^3.0.0",
     "@protobuf-ts/runtime": "^2.9.1",
     "@types/axios": "^0.14.0",
@@ -64,8 +65,6 @@
     "pdnd-common": "workspace:*",
     "pdnd-models": "workspace:*",
     "pg": "^8.11.5",
-    "redis": "^4.6.13",
-    "trial": "workspace:*",
     "ts-pattern": "^5.0.6",
     "uuid": "^9.0.0",
     "zod": "^3.21.4"

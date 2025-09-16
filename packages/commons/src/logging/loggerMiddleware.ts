@@ -28,7 +28,7 @@ const getLoggerMetadata = (): SessionMetaData => {
       }
     : {
         userId: appContext.authData.clientId,
-        organizationId: "", // appContext.authData.organizationId,
+        organizationId: "",
         correlationId: appContext.correlationId,
       };
 };

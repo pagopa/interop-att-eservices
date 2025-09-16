@@ -29,7 +29,7 @@ describe("isValidUUID", () => {
   });
 
   it("should return false for a valid UUID with incorrect version", () => {
-    const invalidVersionUUID = "123e4567-e89b-22d3-a456-426614174000"; // version 2 UUID
+    const invalidVersionUUID = "123e4567-e89b-22d3-a456-426614174000";
     expect(isValidUUID(invalidVersionUUID)).toBe(false);
   });
 
