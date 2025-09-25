@@ -42,7 +42,7 @@ const DigitalAddressVerificationMultipleRouter = (
           "DIGITAL_ADDRESS_VERIFICATION_LIST",
           "OK"
         );
-        return res.status(200).json(response).end();
+        return res.status(201).json(response).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;

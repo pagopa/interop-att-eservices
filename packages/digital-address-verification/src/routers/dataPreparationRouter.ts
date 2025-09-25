@@ -108,7 +108,7 @@ const dataPreparationRouter = (
           throw ErrorHandling.invalidApiRequest();
         }
         await dataPreparationController.deleteAllByKey();
-        return res.status(200).end();
+        return res.status(204).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();
@@ -133,7 +133,7 @@ const dataPreparationRouter = (
         await dataPreparationController.deleteByFiscalCode(
           req.params.idSubject
         );
-        return res.status(200).end();
+        return res.status(204).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();

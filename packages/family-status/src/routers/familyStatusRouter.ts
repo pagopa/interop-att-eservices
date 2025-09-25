@@ -41,7 +41,7 @@ const familyStatusRouter = (
         }
         void TrialService.insert(req.url, req.method, "FAMILY_STATUS", "OK");
         logger.info(`[END] familyStatusRouter`);
-        return res.status(200).json(data).end();
+        return res.status(201).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;
@@ -83,7 +83,7 @@ const familyStatusRouter = (
         res.setHeader("x-payload-signature-kid", keychainConfig.KeychainKeyId);
         res.setHeader("x-payload-signature-algorythm", "SHA256withRSA");
         logger.info(`[END] familyStatusRouter`);
-        return res.status(200).json(data).end();
+        return res.status(201).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;
