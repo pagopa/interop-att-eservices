@@ -39,7 +39,7 @@ const fiscalcodeVerificationRouter = (
           "OK"
         );
         logger.info(`[END] Post - '/verifica'`);
-        return res.status(200).json(data).end();
+        return res.status(201).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;
@@ -89,7 +89,7 @@ const fiscalcodeVerificationRouter = (
         res.setHeader("x-payload-signature-kid", keychainConfig.KeychainKeyId);
         res.setHeader("x-payload-signature-algorythm", "SHA256withRSA");
 
-        return res.status(200).json(data).end();
+        return res.status(201).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;

@@ -32,7 +32,7 @@ const dataPreparationRouter = (
             `Data with subjectId '${req.body.subject?.subjectId}' not found`
           );
         }
-        return res.status(200).json(data).end();
+        return res.status(201).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();
@@ -90,7 +90,7 @@ const dataPreparationRouter = (
           throw ErrorHandling.invalidApiRequest();
         }
         await FamilyStatusService.deleteAll();
-        return res.status(200).end();
+        return res.status(204).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();
@@ -108,7 +108,7 @@ const dataPreparationRouter = (
           return res.status(500);
         }
         await FamilyStatusService.deleteByUUID(req.params.uuid);
-        return res.status(200).end();
+        return res.status(204).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         return res.status(errorRes.status).json(errorRes).end();

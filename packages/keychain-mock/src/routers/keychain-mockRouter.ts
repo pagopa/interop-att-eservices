@@ -80,7 +80,7 @@ const keychainMockRouter = (
             status: "KO",
             message: "X-Payload-Signature header is missing",
           };
-          return res.status(200).json(responseBodyError).end();
+          return res.status(201).json(responseBodyError).end();
         }
 
         const responseBody = {
@@ -94,7 +94,7 @@ const keychainMockRouter = (
           "OK"
         );
         logger.info(`[END] Post - '/keychain-mock/verify'`);
-        return res.status(200).json(responseBody).end();
+        return res.status(201).json(responseBody).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;

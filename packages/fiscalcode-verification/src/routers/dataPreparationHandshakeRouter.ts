@@ -56,7 +56,7 @@ const dataPreparationHandshakeRouter = (
 
         await DataPreparationHandshakeService.saveList(handshakeData);
         logger.info("certificato salvato con successo");
-        return res.status(200).end();
+        return res.status(201).end();
       } catch (error) {
         logger.error(
           `si è verificato un errore durante l upload dell certificato: ${error}`

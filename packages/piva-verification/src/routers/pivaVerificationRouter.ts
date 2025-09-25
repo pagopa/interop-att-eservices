@@ -39,7 +39,7 @@ const pivaVerificationRouter = (
           "OK"
         );
         logger.info(`[END] Post - '/check'`);
-        return res.status(200).json(data).end();
+        return res.status(201).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;

@@ -46,7 +46,7 @@ const residenceVerificationRouter = (
           "OK"
         );
         logger.info(`[END] residenceVerificationRouter`);
-        return res.status(200).json(data).end();
+        return res.status(201).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;
@@ -84,7 +84,7 @@ const residenceVerificationRouter = (
           "OK"
         );
         logger.info(`[END] Verfy ResidenceVerificationRouter`);
-        return res.status(200).json(data).end();
+        return res.status(201).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;
