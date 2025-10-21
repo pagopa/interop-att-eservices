@@ -7,7 +7,7 @@ export async function generateObjectId(
   cryptoHashFunction: string,
   seed: string
 ): Promise<string> {
-  const data = fiscalCode + cryptoHashFunction + seed; // modifica string.concatm [codice fiscale + seed]
+  const data = fiscalCode.concat(seed);
 
   try {
     const hash = crypto

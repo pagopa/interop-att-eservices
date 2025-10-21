@@ -103,8 +103,25 @@ const residenceSubissionController = (
         }
 
         const seed = await SHService.findSeedByEserviceId(eserviceId);
+        if (!seed) {
+          throw new Error(
+            `Could not find 'seed' for eserviceId: ${eserviceId}`
+          );
+        }
+
         const objectId = await generateObjectId(fiscalCode, "sha256", seed);
+        if (!objectId) {
+          throw new Error("Failed to generate 'objectId'.");
+        }
+
         const signalId = await SHService.getNextSignalId(eserviceId);
+
+        if (signalId === null || signalId === undefined) {
+          throw new Error(
+            `Failed to retrieve next 'signalId' for eserviceId: ${eserviceId}`
+          );
+        }
+
         const singalObject: SignalPayload = {
           objectType: "residenza",
           eserviceId,
@@ -112,6 +129,7 @@ const residenceSubissionController = (
           signalId,
           signalType: "UPDATE",
         };
+
         await SHService.sendSignal(singalObject);
         void TrialService.insert(
           req.url,
@@ -167,11 +185,26 @@ const residenceSubissionController = (
             "Codice Fiscale non trovato per la generazione dell'objectId."
           );
         }
-        // aggiungere if controlli funzioni
         const seed = await SHService.findSeedByEserviceId(eserviceId);
+        if (!seed) {
+          throw new Error(
+            `Could not find 'seed' for eserviceId: ${eserviceId}`
+          );
+        }
+
         const objectId = await generateObjectId(fiscalCode, "sha256", seed);
+        if (!objectId) {
+          throw new Error("Failed to generate 'objectId'.");
+        }
+
         const signalId = await SHService.getNextSignalId(eserviceId);
-        // aggiungere il tipo
+
+        if (signalId === null || signalId === undefined) {
+          throw new Error(
+            `Failed to retrieve next 'signalId' for eserviceId: ${eserviceId}`
+          );
+        }
+
         const singalObject: SignalPayload = {
           objectType: "residenza",
           eserviceId,

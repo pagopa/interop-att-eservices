@@ -38,34 +38,44 @@ export const SHRepository = {
       throw new Error("Error retrieving seed configuration.");
     }
   },
-  async incrementAndGetSignalId(eserviceId: string): Promise<number> {
-    logger.info(`[SHRepository] Incrementing signalId for: ${eserviceId}`);
+  async ensureAndIncrementSignalId(eserviceId: string): Promise<number> {
+    logger.info(
+      `[SHRepository] Ensuring and incrementing signalId for: ${eserviceId}`
+    );
     try {
       const results = await client
-        .update(signalCounters)
-        .set({ signalId: sql`${signalCounters.signalId} + 1` })
-        .where(eq(signalCounters.eserviceId, eserviceId))
+        .insert(signalCounters)
+        .values({
+          eserviceId,
+          signalId: 1,
+        })
+        .onConflictDoUpdate({
+          target: signalCounters.eserviceId,
+          set: {
+            signalId: sql`${signalCounters.signalId} + 1`,
+          },
+        })
         .returning({ newId: signalCounters.signalId })
         .execute();
 
       if (!results || results.length === 0) {
         logger.error(
-          `[SHRepository] Counter not found for ${eserviceId}. Ensure the row exists in 'signal_counters'.`
+          `[SHRepository] Upsert operation failed unexpectedly for ${eserviceId}.`
         );
         throw new Error(
-          `Signal counter not initialized for e-service: ${eserviceId}`
+          `Signal counter operation failed for e-service: ${eserviceId}`
         );
       }
 
       const newSignalId = results[0].newId;
       logger.info(
-        `[SHRepository] New signalId generated: ${newSignalId} for ${eserviceId}`
+        `[SHRepository] New signalId is: ${newSignalId} for ${eserviceId}`
       );
       return newSignalId;
     } catch (error) {
       const errorMessage = (error as Error).message || String(error);
       logger.error(
-        `[SHRepository] DB Error during signalId increment: ${errorMessage}`
+        `[SHRepository] DB Error during signalId upsert: ${errorMessage}`
       );
       throw new Error("DB Error during signalId generation.");
     }
