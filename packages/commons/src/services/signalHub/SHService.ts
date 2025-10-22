@@ -1,10 +1,8 @@
-import { logger } from "pdnd-common";
+import { logger, shClientConfig } from "pdnd-common";
 import axios from "axios";
 import { SHRepository } from "../../repositories/singal-hub/SHRepository.js";
 
-const SIGNAL_HUB_MOCKUP_URL = process.env.SIGNAL_HUB_MOCKUP_URL;
-const SIGNAL_HUB_API_TOKEN = process.env.SIGNAL_HUB_API_TOKEN;
-
+const config = shClientConfig();
 export interface SignalPayload {
   signalId: number;
   objectType: string | "";
@@ -14,17 +12,17 @@ export interface SignalPayload {
 }
 
 export const SHService = {
-  async sendSignal(payload: SignalPayload): Promise<void> {
+  async sendSignal(payload: SignalPayload, pdndToken: string): Promise<void> {
     logger.info(`[SHService] Invio segnale (axios) per ${payload.objectId}`);
 
-    if (!SIGNAL_HUB_MOCKUP_URL) {
+    if (!config.signalHubHost) {
       logger.error(
         "[SHService] SIGNAL_HUB_MOCKUP_URL non è configurato nel .env"
       );
       return;
     }
 
-    if (!SIGNAL_HUB_API_TOKEN) {
+    if (!pdndToken) {
       logger.error(
         "[SHService] SIGNAL_HUB_API_TOKEN non è configurato nel .env"
       );
@@ -32,16 +30,13 @@ export const SHService = {
     }
 
     try {
-      const response = await axios.post(
-        `${SIGNAL_HUB_MOCKUP_URL}/push/signals`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${SIGNAL_HUB_API_TOKEN}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const apiUrl = `${config.signalHubHost}/${config.signalHubApiVersion}/push`;
+      const response = await axios.post(apiUrl, payload, {
+        headers: {
+          Authorization: `Bearer ${pdndToken}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       logger.info(
         `[ANPRService] Segnale inviato con successo. Status: ${response.status}`

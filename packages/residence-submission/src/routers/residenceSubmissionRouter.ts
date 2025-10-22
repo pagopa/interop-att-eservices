@@ -139,7 +139,7 @@ const residenceSubissionController = (
         };
         logger.info(`[singalObject]: ${JSON.stringify(singalObject)}`);
 
-        await SHService.sendSignal(singalObject);
+        await SHService.sendSignal(singalObject, pdndToken);
         void TrialService.insert(
           req.url,
           req.method,
@@ -225,7 +225,7 @@ const residenceSubissionController = (
           signalId,
           signalType: "DELETE",
         };
-        await SHService.sendSignal(singalObject);
+        await SHService.sendSignal(singalObject, pdndToken);
 
         void TrialService.insert(
           req.url,
