@@ -12,6 +12,7 @@ import {
   getEserviceIdFromToken,
   generateObjectId,
   SHService,
+  HashAlgorithm,
 } from "pdnd-common";
 import ResidenceSubmissionController from "../controllers/residenceSubmissionController.js";
 import { api } from "../model/generated/api.js";
@@ -94,8 +95,11 @@ const residenceSubissionController = (
         }
 
         const eserviceId = await getEserviceIdFromToken(pdndToken);
-        const fiscalCode = data.subjects?.subject[0]?.generality?.subjectId
-          .subjectId as string;
+        const fiscalCode =
+          req.body.subjects?.subject?.[0]?.generality?.subjectId?.subjectId;
+        logger.info(
+          `[SHRepository] Found fiscalCode: ${JSON.stringify(fiscalCode)}`
+        );
         if (!fiscalCode) {
           throw new Error(
             "Codice Fiscale non trovato per la generazione dell'objectId."
@@ -109,7 +113,11 @@ const residenceSubissionController = (
           );
         }
 
-        const objectId = await generateObjectId(fiscalCode, "sha256", seed);
+        const objectId = await generateObjectId(
+          fiscalCode,
+          HashAlgorithm.SHA256,
+          seed
+        );
         if (!objectId) {
           throw new Error("Failed to generate 'objectId'.");
         }
@@ -129,6 +137,7 @@ const residenceSubissionController = (
           signalId,
           signalType: "UPDATE",
         };
+        logger.info(`[singalObject]: ${JSON.stringify(singalObject)}`);
 
         await SHService.sendSignal(singalObject);
         void TrialService.insert(
@@ -192,7 +201,11 @@ const residenceSubissionController = (
           );
         }
 
-        const objectId = await generateObjectId(fiscalCode, "sha256", seed);
+        const objectId = await generateObjectId(
+          fiscalCode,
+          HashAlgorithm.SHA256,
+          seed
+        );
         if (!objectId) {
           throw new Error("Failed to generate 'objectId'.");
         }

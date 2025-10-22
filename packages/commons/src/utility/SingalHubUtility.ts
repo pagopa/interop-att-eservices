@@ -2,9 +2,21 @@ import * as crypto from "crypto";
 import * as jwt from "jsonwebtoken";
 import { logger } from "../index.js";
 
+export enum HashAlgorithm {
+  SHA256 = "sha256",
+  SHA512_256 = "sha512-256",
+  SHA384 = "sha384",
+  SHA512 = "sha512",
+  SHA3_256 = "sha3-256",
+  SHA3_384 = "sha3-384",
+  SHA3_512 = "sha3-512",
+  SHAKE128 = "shake128",
+  SHAKE256 = "shake256",
+}
+
 export async function generateObjectId(
   fiscalCode: string,
-  cryptoHashFunction: string,
+  cryptoHashFunction: HashAlgorithm,
   seed: string
 ): Promise<string> {
   const data = fiscalCode.concat(seed);
