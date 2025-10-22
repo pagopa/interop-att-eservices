@@ -5,15 +5,13 @@ export const ShConfig = z.preprocess(
     const config = c as Record<string, unknown>;
     return {
       seedExpireDays: config.seedExpireDays ?? "",
-      masterSaltKey: config.masterSaltKey ?? "",
       saltLength: config.saltLength ?? "",
       algorithm: config.algorithm ?? "",
     };
   },
   z.object({
-    seedExpireDays: z.string(),
-    masterSaltKey: z.string(),
-    saltLength: z.string(),
+    seedExpireDays: z.number(),
+    saltLength: z.number(),
     algorithm: z.string(),
   })
 );

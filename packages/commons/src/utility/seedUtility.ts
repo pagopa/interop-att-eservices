@@ -2,11 +2,8 @@ import crypto from "crypto";
 import { logger } from "../logging/index.js";
 import { shConfig } from "../config/shConfig.js";
 
-export function getRotatedSeed(): string {
-  // Handle the service call to determine which data to use from shConfig
-  const config = shConfig(); // Possibile prevere un controllo per vedere se i valori sono null
-
-  // Here there are four values (expiration, secret key, encryption algorithm, and maximum seed length)
+export function getRotatedSeed(masterSaltKey: string): string {
+  const config = shConfig();
   const nowMs: number = Date.now();
 
   const START_TIMESTAMP_MS: number = new Date(
@@ -22,7 +19,7 @@ export function getRotatedSeed(): string {
 
   const message: string = periodId.toString();
 
-  const hmac = crypto.createHmac("sha256", config.masterSaltKey);
+  const hmac = crypto.createHmac("sha256", masterSaltKey);
   hmac.update(message);
 
   const fullHash: string = hmac.digest("hex");
