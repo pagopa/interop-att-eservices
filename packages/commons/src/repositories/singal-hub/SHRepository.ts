@@ -1,37 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { eq, sql } from "drizzle-orm";
-import { logger } from "pdnd-common";
+import { sql } from "drizzle-orm";
+import { getRotatedSeed, logger, signalCounters } from "pdnd-common";
 import { client } from "../../index.js";
-import { signalCounters } from "../../db/schema/singalHub/signalCounters.model.js";
-import { Seed } from "../../db/schema/seed.model.js";
-
-type EserviceConfigRow = {
-  idSeed: string;
-  eServiceId: string;
-  algorithm: string;
-};
 
 export const SHRepository = {
-  async findConfigByEserviceId(
-    eserviceId: string
-  ): Promise<EserviceConfigRow | undefined> {
-    logger.info(`[SHRepository] Searching config for e-service: ${eserviceId}`);
-
+  async findConfigByEserviceId(eserviceId: string): Promise<string> {
     try {
-      const results = await client
-        .select()
-        .from(Seed)
-        .where(eq(Seed.eServiceId, eserviceId))
-        .limit(1)
-        .execute();
-
-      const config = results[0];
-
-      if (!config) {
-        logger.warn(`[SeedRepository] Config not found for ${eserviceId}`);
+      const seed = getRotatedSeed(eserviceId);
+      if (!seed) {
+        logger.error(
+          `[SeedRepository] Seed non configurato per l'e-service: ${eserviceId}`
+        );
+        throw new Error(`Seed non configurato per l'e-service: ${eserviceId}`);
       }
-
-      return config;
+      return seed;
     } catch (error) {
       const errorMessage = (error as Error).message || String(error);
       logger.error(`[SeedRepository] DB Error: ${errorMessage}`);

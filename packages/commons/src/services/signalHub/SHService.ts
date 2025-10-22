@@ -57,15 +57,7 @@ export const SHService = {
     logger.info(`[SeedRepository] Ricerca seed per e-service: ${eserviceId}`);
 
     try {
-      const result = await SHRepository.findConfigByEserviceId(eserviceId);
-
-      if (!result) {
-        logger.error(`[SeedRepository] Seed non trovato per ${eserviceId}`);
-        throw new Error(`Seed non configurato per l'e-service: ${eserviceId}`);
-      }
-
-      const seed = result.idSeed;
-
+      const seed = await SHRepository.findConfigByEserviceId(eserviceId);
       if (!seed) {
         logger.error(
           `[SeedRepository] Campo 'seed' nullo nel JSONB per ${eserviceId}`
