@@ -1,13 +1,12 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import {
-  authenticationCorrelationMiddleware,
   logger,
   ExpressContext,
   ZodiosContext,
-  integrityValidationMiddleware,
-  auditValidationMiddleware,
   TrialService,
+  // getKidFromJWTToken,
 } from "pdnd-common";
 import ResidenceVerificationController from "../controllers/residenceVerificationController.js";
 import { api } from "../model/generated/api.js";
@@ -17,7 +16,6 @@ import {
   mapGeneralErrorModel,
   userModelNotFound,
 } from "../exceptions/errors.js";
-import { contextDataResidenceMiddleware } from "../context/context.js";
 
 const residenceVerificationRouter = (
   ctx: ZodiosContext
@@ -26,10 +24,6 @@ const residenceVerificationRouter = (
 
   residenceVerificationRouter.post(
     "/residence-verification",
-    contextDataResidenceMiddleware,
-    authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
     async (req, res) => {
       try {
         logger.info(
@@ -68,10 +62,6 @@ const residenceVerificationRouter = (
 
   residenceVerificationRouter.post(
     "/residence-verification/check",
-    contextDataResidenceMiddleware,
-    authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
     async (req, res) => {
       try {
         const data = await ResidenceVerificationController.findUserVerify(
@@ -96,6 +86,57 @@ const residenceVerificationRouter = (
           req.url,
           req.method,
           "RESIDENCE_VERIFICATION_002",
+          "KO",
+          JSON.stringify(generalErrorResponse)
+        );
+        return res.status(errorRes.status).json(generalErrorResponse).end();
+      }
+    }
+  );
+
+  residenceVerificationRouter.get(
+    "/residence-verification/pseudonymization",
+    async (req, res) => {
+      try {
+        logger.info(`[START] pseudonymization GET`);
+
+        // const seed = ResidenceVerificationController.getRotatedSeed();
+        // const cryptoHashFunction = "sha256"; // TODO: integrate to environment variables
+        // const response = {
+        //   status: 200,
+        //   type: "Success",
+        //   title: "Pseudonymization data",
+        //   seed,
+        //   cryptoHashFunction,
+        //   errors: [],
+        // };
+        // void TrialService.insert(
+        //   req.url,
+        //   req.method,
+        //   "PSEUDONYMIZATION_001",
+        //   "OK"
+        // );
+        // TODO: remove eslint disable
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // getKidFromJWTToken("tokenStringHere").then((kid: any) => {
+        // eslint-disable-next-line no-console
+        // console.log(`KID: ${kid}`);
+        // });
+
+        logger.info(`[END] pseudonymization GET`);
+        // return res.status(200).json(response).end();
+        return res.status(200).end();
+      } catch (error) {
+        const errorRes = makeApiProblem(error, createEserviceDataPreparation);
+        const correlationId = req.headers["x-correlation-id"] as string;
+        const generalErrorResponse = mapGeneralErrorModel(
+          correlationId,
+          errorRes
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "PSEUDONYMIZATION_001",
           "KO",
           JSON.stringify(generalErrorResponse)
         );

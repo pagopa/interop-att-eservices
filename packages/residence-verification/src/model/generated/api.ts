@@ -352,6 +352,9 @@ const Problem = z
     errors: z.array(ProblemError).min(1),
   })
   .passthrough();
+const PseudonymizationResponse = z
+  .object({ seed: z.string(), cryptoHashFunction: z.string() })
+  .passthrough();
 
 export const schemas = {
   TipoComune,
@@ -397,6 +400,7 @@ export const schemas = {
   RispostaAR002OK,
   ProblemError,
   Problem,
+  PseudonymizationResponse,
 };
 
 const endpoints = makeApi([
@@ -469,6 +473,14 @@ const endpoints = makeApi([
         schema: z.void(),
       },
     ],
+  },
+  {
+    method: "get",
+    path: "/residence-verification/pseudonymization",
+    alias: "getPseudonymization",
+    description: `Info about crypto hash function and seed`,
+    requestFormat: "json",
+    response: PseudonymizationResponse,
   },
   {
     method: "get",
