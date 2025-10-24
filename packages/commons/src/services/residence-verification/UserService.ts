@@ -29,9 +29,6 @@ export const userService = {
     }
   },
 
-  /**
-   * Recupera una lista di utenti tramite i loro dati anagrafici.
-   */
   async getByPersonalInfo(parametriRicerca: any): Promise<UserModel[]> {
     try {
       const rows = await subjectRepository.findWithAddressByPersonalInfo(
