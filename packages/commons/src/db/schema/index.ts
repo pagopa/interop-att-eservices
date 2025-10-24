@@ -6,5 +6,4 @@ export * from "./fiscal-code-verification/index.js";
 export * from "./piva-verification/index.js";
 export * from "./trial-api/index.js";
 export * from "./handshake/index.js";
-// export * from "./seed.model.js";
 export * from "./signalHub/signalCounters.model.js";
