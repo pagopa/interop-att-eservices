@@ -6,7 +6,7 @@ import {
   ExpressContext,
   ZodiosContext,
   TrialService,
-  // getKidFromJWTToken,
+  getEserviceIdFromToken,
 } from "pdnd-common";
 import ResidenceVerificationController from "../controllers/residenceVerificationController.js";
 import { api } from "../model/generated/api.js";
@@ -99,33 +99,35 @@ const residenceVerificationRouter = (
     async (req, res) => {
       try {
         logger.info(`[START] pseudonymization GET`);
+        const authHeader = req.headers.authorization;
+        const pdndToken = authHeader?.split(" ")[1];
+        if (!pdndToken) {
+          throw new Error("Token PDND non trovato nella richiesta.");
+        }
 
-        // const seed = ResidenceVerificationController.getRotatedSeed();
-        // const cryptoHashFunction = "sha256"; // TODO: integrate to environment variables
-        // const response = {
-        //   status: 200,
-        //   type: "Success",
-        //   title: "Pseudonymization data",
-        //   seed,
-        //   cryptoHashFunction,
-        //   errors: [],
-        // };
-        // void TrialService.insert(
-        //   req.url,
-        //   req.method,
-        //   "PSEUDONYMIZATION_001",
-        //   "OK"
-        // );
-        // TODO: remove eslint disable
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        // getKidFromJWTToken("tokenStringHere").then((kid: any) => {
-        // eslint-disable-next-line no-console
-        // console.log(`KID: ${kid}`);
-        // });
+        const eserviceId = await getEserviceIdFromToken(pdndToken);
+
+        const seed = await ResidenceVerificationController.getRotatedSeed(
+          eserviceId
+        );
+        const cryptoHashFunction = "sha256";
+        const response = {
+          status: 200,
+          type: "Success",
+          title: "Pseudonymization data",
+          seed,
+          cryptoHashFunction,
+          errors: [],
+        };
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "PSEUDONYMIZATION_001",
+          "OK"
+        );
 
         logger.info(`[END] pseudonymization GET`);
-        // return res.status(200).json(response).end();
-        return res.status(200).end();
+        return res.status(200).json(response).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;

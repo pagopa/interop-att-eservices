@@ -2,9 +2,9 @@ import { z } from "zod";
 
 export const ShConfig = z
   .object({
-    SEED_EXPIRATION_DAYS: z.number(),
-    SALT_LENGTH: z.number(),
-    ALGORITHM: z.string(),
+    SEED_EXPIRATION_DAYS: z.coerce.number().int().positive(),
+    SALT_LENGTH: z.coerce.number().int().min(1),
+    ALGORITHM: z.string().min(1),
   })
   .transform((c) => ({
     seedExpireDays: c.SEED_EXPIRATION_DAYS,

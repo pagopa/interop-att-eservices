@@ -1,0 +1,1329 @@
+{
+  "id": "51a4ebec-7f5e-4cec-8a3f-d54abe4a7e25",
+  "prevId": "05c38675-2803-416a-9db6-e53b7cfa502f",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "att.data_preparation": {
+      "name": "data_preparation",
+      "schema": "att",
+      "columns": {
+        "id_subject": {
+          "name": "id_subject",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.digital_addresses": {
+      "name": "digital_addresses",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "subject_data_response_id": {
+          "name": "subject_data_response_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "profession": {
+          "name": "profession",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "usage_reason": {
+          "name": "usage_reason",
+          "type": "motivation_termination_enum",
+          "typeSchema": "att",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "usage_end_at": {
+          "name": "usage_end_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "da_sdr_response_id_idx": {
+          "name": "da_sdr_response_id_idx",
+          "columns": [
+            {
+              "expression": "subject_data_response_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "digital_addresses_subject_data_response_id_subject_data_responses_id_fk": {
+          "name": "digital_addresses_subject_data_response_id_subject_data_responses_id_fk",
+          "tableFrom": "digital_addresses",
+          "tableTo": "subject_data_responses",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "subject_data_response_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "email_check": {
+          "name": "email_check",
+          "value": "address ~ '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9.-]+)+$'"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "att.list_requests": {
+      "name": "list_requests",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "submitted_request_id": {
+          "name": "submitted_request_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "status_processing_request_enum",
+          "typeSchema": "att",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status_message": {
+          "name": "status_message",
+          "type": "varchar(1024)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "lr_submitted_req_id_idx_list_requests": {
+          "name": "lr_submitted_req_id_idx_list_requests",
+          "columns": [
+            {
+              "expression": "submitted_request_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "list_requests_submitted_request_id_unique": {
+          "name": "list_requests_submitted_request_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "submitted_request_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.request_subjects": {
+      "name": "request_subjects",
+      "schema": "att",
+      "columns": {
+        "list_request_id": {
+          "name": "list_request_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "request_subjects_list_request_id_list_requests_id_fk": {
+          "name": "request_subjects_list_request_id_list_requests_id_fk",
+          "tableFrom": "request_subjects",
+          "tableTo": "list_requests",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "list_request_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "request_subjects_list_request_id_subject_id_pk": {
+          "name": "request_subjects_list_request_id_subject_id_pk",
+          "columns": [
+            "list_request_id",
+            "subject_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.subject_data_responses": {
+      "name": "subject_data_responses",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "list_request_id": {
+          "name": "list_request_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "data_from": {
+          "name": "data_from",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "sdr_list_request_fk_idx_sdr": {
+          "name": "sdr_list_request_fk_idx_sdr",
+          "columns": [
+            {
+              "expression": "list_request_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "sdr_subject_id_idx_sdr": {
+          "name": "sdr_subject_id_idx_sdr",
+          "columns": [
+            {
+              "expression": "subject_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "subject_data_responses_list_request_id_list_requests_id_fk": {
+          "name": "subject_data_responses_list_request_id_list_requests_id_fk",
+          "tableFrom": "subject_data_responses",
+          "tableTo": "list_requests",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "list_request_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "unique_sdr_list_req_subject": {
+          "name": "unique_sdr_list_req_subject",
+          "nullsNotDistinct": false,
+          "columns": [
+            "list_request_id",
+            "subject_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "id_subject_check": {
+          "name": "id_subject_check",
+          "value": "subject_id ~ '^([0-9]{11})|([A-Za-z]{6}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{2}[A-Za-z]{1}[0-9LMNPQRSTUV]{3}[A-Za-z]{1})$'"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "att.verification_logs": {
+      "name": "verification_logs",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "result": {
+          "name": "result",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "checked_at": {
+          "name": "checked_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.verification_requests": {
+      "name": "verification_requests",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "count": {
+          "name": "count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "json_request": {
+          "name": "json_request",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.purposes": {
+      "name": "purposes",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.family_status": {
+      "name": "family_status",
+      "schema": "att",
+      "columns": {
+        "uuid": {
+          "name": "uuid",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subjectId": {
+          "name": "subjectId",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "surname": {
+          "name": "surname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gender": {
+          "name": "gender",
+          "type": "varchar(1)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birthDate": {
+          "name": "birthDate",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "municipality_nameMunicipality": {
+          "name": "municipality_nameMunicipality",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "municipality_istatCode": {
+          "name": "municipality_istatCode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "municipality_acronymIstatProvince": {
+          "name": "municipality_acronymIstatProvince",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "municipality_placeDescription": {
+          "name": "municipality_placeDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "place_placeDescription": {
+          "name": "place_placeDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "place_countryDescription": {
+          "name": "place_countryDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "place_codState": {
+          "name": "place_codState",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "place_provinceCounty": {
+          "name": "place_provinceCounty",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "relationshipType": {
+          "name": "relationshipType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "startDate": {
+          "name": "startDate",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "relationshipCode": {
+          "name": "relationshipCode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "memberSequence": {
+          "name": "memberSequence",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "startDateRelationship": {
+          "name": "startDateRelationship",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "endDateRelationship": {
+          "name": "endDateRelationship",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "family_status_subjectId_unique": {
+          "name": "family_status_subjectId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "subjectId"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.addresses": {
+      "name": "addresses",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "address_type": {
+          "name": "address_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "note_address": {
+          "name": "note_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address_start_date": {
+          "name": "address_start_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "presso": {
+          "name": "presso",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address_municipality_name": {
+          "name": "address_municipality_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address_municipality_istat_code": {
+          "name": "address_municipality_istat_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address_municipality_acronym_istat_province": {
+          "name": "address_municipality_acronym_istat_province",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address_municipality_place_description": {
+          "name": "address_municipality_place_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "toponym_cod_type": {
+          "name": "toponym_cod_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "toponym_type": {
+          "name": "toponym_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "toponym_origin_type": {
+          "name": "toponym_origin_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "toponym_cod": {
+          "name": "toponym_cod",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "toponym_denomination": {
+          "name": "toponym_denomination",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "toponym_source": {
+          "name": "toponym_source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "civic_cod": {
+          "name": "civic_cod",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "civic_source": {
+          "name": "civic_source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "civic_number": {
+          "name": "civic_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "metric": {
+          "name": "metric",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "prog_snc": {
+          "name": "prog_snc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "letter": {
+          "name": "letter",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "exponent1": {
+          "name": "exponent1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "color": {
+          "name": "color",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "internal_court": {
+          "name": "internal_court",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "internal_stairs": {
+          "name": "internal_stairs",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "internal1": {
+          "name": "internal1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "esp_internal1": {
+          "name": "esp_internal1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "internal2": {
+          "name": "internal2",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "esp_internal2": {
+          "name": "esp_internal2",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "external_stairs": {
+          "name": "external_stairs",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "secondary": {
+          "name": "secondary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "floor": {
+          "name": "floor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nui": {
+          "name": "nui",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "isolated": {
+          "name": "isolated",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "latitude": {
+          "name": "latitude",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "longitude": {
+          "name": "longitude",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foreign_cap": {
+          "name": "foreign_cap",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foreign_place_description": {
+          "name": "foreign_place_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foreign_country_description": {
+          "name": "foreign_country_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foreign_country_state": {
+          "name": "foreign_country_state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foreign_province_county": {
+          "name": "foreign_province_county",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foreign_toponym_denomination": {
+          "name": "foreign_toponym_denomination",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "foreign_toponym_civic_number": {
+          "name": "foreign_toponym_civic_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "consulate_cod": {
+          "name": "consulate_cod",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "consulate_description": {
+          "name": "consulate_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "addresses_subject_id_subjects_subject_id_fk": {
+          "name": "addresses_subject_id_subjects_subject_id_fk",
+          "tableFrom": "addresses",
+          "tableTo": "subjects",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "subject_id"
+          ],
+          "columnsTo": [
+            "subject_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.subjects": {
+      "name": "subjects",
+      "schema": "att",
+      "columns": {
+        "uuid": {
+          "name": "uuid",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subject_id": {
+          "name": "subject_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "surname": {
+          "name": "surname",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gender": {
+          "name": "gender",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_event_date": {
+          "name": "birth_event_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_exceptional_place": {
+          "name": "birth_exceptional_place",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_municipality_name": {
+          "name": "birth_municipality_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_municipality_istat_code": {
+          "name": "birth_municipality_istat_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_municipality_acronym_istat_province": {
+          "name": "birth_municipality_acronym_istat_province",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_municipality_place_description": {
+          "name": "birth_municipality_place_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_place_description": {
+          "name": "birth_place_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_country_description": {
+          "name": "birth_country_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_cod_state": {
+          "name": "birth_cod_state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "birth_province_county": {
+          "name": "birth_province_county",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.fiscal_codes": {
+      "name": "fiscal_codes",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "fiscal_code": {
+          "name": "fiscal_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "fiscal_codes_fiscal_code_unique": {
+          "name": "fiscal_codes_fiscal_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "fiscal_code"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.piva": {
+      "name": "piva",
+      "schema": "att",
+      "columns": {
+        "organization_id": {
+          "name": "organization_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.category": {
+      "name": "category",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "code": {
+          "name": "code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "eservice": {
+          "name": "eservice",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.check": {
+      "name": "check",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "code": {
+          "name": "code",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category_id": {
+          "name": "category_id",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "check_category_id_category_id_fk": {
+          "name": "check_category_id_category_id_fk",
+          "tableFrom": "check",
+          "tableTo": "category",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.trial": {
+      "name": "trial",
+      "schema": "att",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "purpose_id": {
+          "name": "purpose_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "correlation_id": {
+          "name": "correlation_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "operation_path": {
+          "name": "operation_path",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "operation_method": {
+          "name": "operation_method",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "check_id": {
+          "name": "check_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "response": {
+          "name": "response",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_date": {
+          "name": "created_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "message": {
+          "name": "message",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "trial_check_id_check_id_fk": {
+          "name": "trial_check_id_check_id_fk",
+          "tableFrom": "trial",
+          "tableTo": "check",
+          "schemaTo": "att",
+          "columnsFrom": [
+            "check_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.handshakes": {
+      "name": "handshakes",
+      "schema": "att",
+      "columns": {
+        "apikey": {
+          "name": "apikey",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "context_key": {
+          "name": "context_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "att.signal_counters": {
+      "name": "signal_counters",
+      "schema": "att",
+      "columns": {
+        "eservice_id": {
+          "name": "eservice_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "signal_id": {
+          "name": "signal_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "att.motivation_termination_enum": {
+      "name": "motivation_termination_enum",
+      "schema": "att",
+      "values": [
+        "CESSAZIONE_UFFICIO",
+        "CESSAZIONE_VOLONTARIA"
+      ]
+    },
+    "att.status_processing_request_enum": {
+      "name": "status_processing_request_enum",
+      "schema": "att",
+      "values": [
+        "PRESA_IN_CARICO",
+        "IN_ELABORAZIONE",
+        "DISPONIBILE"
+      ]
+    }
+  },
+  "schemas": {
+    "att": "att"
+  },
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
