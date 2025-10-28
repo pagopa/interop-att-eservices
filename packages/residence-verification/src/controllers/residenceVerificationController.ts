@@ -44,6 +44,15 @@ class ResidenceVerificationController {
     };
   }
 
+  public async getRotatedSeed(eserviceId: string): Promise<string> {
+    try {
+      return await userService.generateSeed(eserviceId);
+    } catch (error) {
+      logger.error(`Controller Error during getRotatedSeed`, error);
+      throw error;
+    }
+  }
+
   private async getUserData(
     request: RichiestaAR001 | RichiestaAR002
   ): Promise<UserModel[]> {
@@ -80,5 +89,4 @@ class ResidenceVerificationController {
     );
   }
 }
-
 export default new ResidenceVerificationController();

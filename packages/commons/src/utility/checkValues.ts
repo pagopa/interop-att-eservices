@@ -61,6 +61,7 @@ export const checkValuesMap: Record<string, number> = {
   RESIDENCE_SUBMISSION_001: 60,
   SIGNATURE_HEADER_NOT_PRESENT: 61,
   SIGNATURE_EXP_INVALID: 62,
+  PSEUDONYMIZATION_001: 63,
 };
 
 export const getCheckValue = (key: string): number | undefined =>
