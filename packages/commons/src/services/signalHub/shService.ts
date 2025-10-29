@@ -1,6 +1,7 @@
-import { logger, shClientConfig } from "pdnd-common";
 import axios from "axios";
 import { SHRepository } from "../../repositories/signalHub/index.js";
+import { logger } from "../../index.js";
+import { shClientConfig } from "../../config/shClientConfig.js";
 
 const config = shClientConfig();
 export interface SignalPayload {

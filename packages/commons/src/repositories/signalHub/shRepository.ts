@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { sql } from "drizzle-orm";
-import { getRotatedSeed, logger, signalCounters } from "pdnd-common";
 import { client } from "../../index.js";
+import { logger } from "../../index.js";
+import { signalCounters } from "../../db/schema/signalHub/index.js";
+import { getRotatedSeed } from "../../utility/seedUtility.js";
 
 export const SHRepository = {
   async findConfigByEserviceId(eserviceId: string): Promise<string> {
