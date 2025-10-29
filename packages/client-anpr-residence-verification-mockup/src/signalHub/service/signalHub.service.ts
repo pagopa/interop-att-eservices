@@ -1,10 +1,11 @@
+/* eslint-disable no-console */
+import axios from "axios";
 import {
   CryptoConfig,
   PullSignalsResponse,
   Signal,
 } from "../types/signalHub.types.js";
 import { calculatePseudonym } from "../utils/hashing.js";
-import axios from "axios";
 import { shClientMock } from "../../config/shClientMock.js";
 import { getEserviceIdFromToken } from "../utils/getEserviceIdForMockClient.js";
 import { getRotatedSeed } from "../utils/seedUtilityClientMock.js";
@@ -29,6 +30,7 @@ class SignalHubService {
     size: number,
     citizenCf: string,
     startSignalId: number
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     console.log(
       `[SignalHubService] Avvio test recupero segnali (Batch size: ${size}, CF: ${citizenCf})...`
@@ -36,11 +38,11 @@ class SignalHubService {
 
     const config = shClientMock();
 
-    const baseUrl = config.signalHubHost + `/${config.signalHubApiVersion}`;
+    const baseUrl = `${config.signalHubHost}/${config.signalHubApiVersion}`;
     if (!baseUrl) {
       throw new Error("Configurazione SignalHub (baseUrl) mancante.");
     }
-  console.log(
+    console.log(
       `[SignalHubService] authorizationHeader : ${authorizationHeader}`
     );
 
@@ -52,7 +54,7 @@ class SignalHubService {
     const cryptoConfig = this.getLocalCryptoConfig(eserviceId, config);
 
     const pseudonymMap = this.generatePseudonymMap(
-      [citizenCf], 
+      [citizenCf],
       cryptoConfig.seed,
       cryptoConfig.cryptoHashFunction
     );
@@ -69,7 +71,6 @@ class SignalHubService {
       size
     );
 
-
     console.log(
       `[SignalHubService] Polling completato. Totale segnali: ${pollResult.totalProcessed}, Rilevanti: ${pollResult.relevantFound}.`
     );
@@ -82,6 +83,7 @@ class SignalHubService {
     };
   }
 
+  // eslint-disable-next-line max-params
   private async pollBatchRecursive(
     authorizationHeader: string,
     eserviceId: string,
@@ -179,7 +181,7 @@ class SignalHubService {
         8
       )}...]`
     );
-    return { seed: seed, cryptoHashFunction: algorithm };
+    return { seed, cryptoHashFunction: algorithm };
   }
 
   private generatePseudonymMap(
@@ -189,12 +191,16 @@ class SignalHubService {
   ): Map<string, string> {
     const map = new Map<string, string>();
     // Ora 'citizens' è un array con un solo CF
-    for (const cf of citizens) { 
+    for (const cf of citizens) {
       const hash = calculatePseudonym(cf, seed, algorithm);
       map.set(hash, cf);
     }
     if (citizens.length > 0 && citizens[0]) {
-       console.log(`[SignalHubService] Hash generato per ${citizens[0]}: ${calculatePseudonym(citizens[0], seed, algorithm)}`);
+      console.log(
+        `[SignalHubService] Hash generato per ${
+          citizens[0]
+        }: ${calculatePseudonym(citizens[0], seed, algorithm)}`
+      );
     }
 
     return map;
@@ -259,8 +265,8 @@ class SignalHubService {
     const pullUrl = `${baseUrl}/pull/signals/${eserviceId}`;
 
     const params = {
-      signalId: signalId,
-      size: size,
+      signalId,
+      size,
     };
 
     console.log(
@@ -272,7 +278,7 @@ class SignalHubService {
     try {
       const response = await axios.get<PullSignalsResponse>(pullUrl, {
         headers: { Authorization: authorizationHeader },
-        params: params,
+        params,
         validateStatus: (status) => status === 200 || status === 206,
       });
       return { data: response.data, status: response.status };
