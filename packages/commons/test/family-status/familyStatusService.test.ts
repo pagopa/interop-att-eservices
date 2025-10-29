@@ -8,6 +8,32 @@ import {
 } from "../../src/zod/family-status/family-status.js";
 import { flattenPayload } from "../../src/zod/family-status/flattenPayload.js";
 
+vi.mock("pdnd-common", () => ({
+  logger: {
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  },
+  TrialService: {
+    insert: vi.fn(),
+  },
+  SHService: {
+    findSeedByEserviceId: vi.fn(),
+    getNextSignalId: vi.fn(),
+    sendSignal: vi.fn(),
+  },
+  getEserviceIdFromToken: vi.fn(),
+  generateObjectId: vi.fn(),
+  HashAlgorithm: {
+    SHA256: "SHA256",
+  },
+  authenticationCorrelationMiddleware: vi.fn(() => vi.fn()),
+  integrityValidationMiddleware: vi.fn(() => vi.fn()),
+  auditValidationMiddleware: vi.fn(() => vi.fn()),
+  shClientConfig: vi.fn(() => ({})),
+}));
+
 vi.mock("../../src/zod/family-status/flattenPayload.js", () => ({
   flattenPayload: vi.fn(),
 }));
