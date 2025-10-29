@@ -9,6 +9,10 @@ import {
   TrialService,
   integrityValidationMiddleware,
   auditValidationMiddleware,
+  getEserviceIdFromToken,
+  generateObjectId,
+  SHService,
+  HashAlgorithm,
 } from "pdnd-common";
 import ResidenceSubmissionController from "../controllers/residenceSubmissionController.js";
 import { api } from "../model/generated/api.js";
@@ -19,6 +23,7 @@ import {
   userModelNotFound,
 } from "../exceptions/errors.js";
 import { contextDataResidenceMiddleware } from "../context/context.js";
+import { SignalPayload } from "../../../commons/dist/services/signalHub/shService.js";
 
 const residenceSubissionController = (
   ctx: ZodiosContext
@@ -82,6 +87,59 @@ const residenceSubissionController = (
         if (!data || data.subjects?.subject?.length === 0) {
           throw userModelNotFound();
         }
+
+        const authHeader = req.headers.authorization;
+        const pdndToken = authHeader?.split(" ")[1];
+        if (!pdndToken) {
+          throw new Error("Token PDND non trovato nella richiesta.");
+        }
+
+        const eserviceId = await getEserviceIdFromToken(pdndToken);
+        const fiscalCode =
+          req.body.subjects?.subject?.[0]?.generality?.subjectId?.subjectId;
+        logger.info(
+          `[SHRepository] Found fiscalCode: ${JSON.stringify(fiscalCode)}`
+        );
+        if (!fiscalCode) {
+          throw new Error(
+            "Codice Fiscale non trovato per la generazione dell'objectId."
+          );
+        }
+
+        const seed = await SHService.findSeedByEserviceId(eserviceId);
+        if (!seed) {
+          throw new Error(
+            `Could not find 'seed' for eserviceId: ${eserviceId}`
+          );
+        }
+
+        const objectId = await generateObjectId(
+          fiscalCode,
+          HashAlgorithm.SHA256,
+          seed
+        );
+        if (!objectId) {
+          throw new Error("Failed to generate 'objectId'.");
+        }
+
+        const signalId = await SHService.getNextSignalId(eserviceId);
+
+        if (signalId === null || signalId === undefined) {
+          throw new Error(
+            `Failed to retrieve next 'signalId' for eserviceId: ${eserviceId}`
+          );
+        }
+
+        const singalObject: SignalPayload = {
+          objectType: "residenza",
+          eserviceId,
+          objectId,
+          signalId,
+          signalType: "UPDATE",
+        };
+        logger.info(`[singalObject]: ${JSON.stringify(singalObject)}`);
+
+        await SHService.sendSignal(singalObject, pdndToken);
         void TrialService.insert(
           req.url,
           req.method,
@@ -123,6 +181,52 @@ const residenceSubissionController = (
         if (!data) {
           throw userModelNotFound();
         }
+        const authHeader = req.headers.authorization;
+        const pdndToken = authHeader?.split(" ")[1];
+        if (!pdndToken) {
+          throw new Error("Token PDND non trovato nella richiesta.");
+        }
+
+        const eserviceId = await getEserviceIdFromToken(pdndToken);
+        const fiscalCode = req.params.id;
+        if (!fiscalCode) {
+          throw new Error(
+            "Codice Fiscale non trovato per la generazione dell'objectId."
+          );
+        }
+        const seed = await SHService.findSeedByEserviceId(eserviceId);
+        if (!seed) {
+          throw new Error(
+            `Could not find 'seed' for eserviceId: ${eserviceId}`
+          );
+        }
+
+        const objectId = await generateObjectId(
+          fiscalCode,
+          HashAlgorithm.SHA256,
+          seed
+        );
+        if (!objectId) {
+          throw new Error("Failed to generate 'objectId'.");
+        }
+
+        const signalId = await SHService.getNextSignalId(eserviceId);
+
+        if (signalId === null || signalId === undefined) {
+          throw new Error(
+            `Failed to retrieve next 'signalId' for eserviceId: ${eserviceId}`
+          );
+        }
+
+        const singalObject: SignalPayload = {
+          objectType: "residenza",
+          eserviceId,
+          objectId,
+          signalId,
+          signalType: "DELETE",
+        };
+        await SHService.sendSignal(singalObject, pdndToken);
+
         void TrialService.insert(
           req.url,
           req.method,
