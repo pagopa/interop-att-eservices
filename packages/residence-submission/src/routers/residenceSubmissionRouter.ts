@@ -91,7 +91,7 @@ const residenceSubissionController = (
         const authHeader = req.headers.authorization;
         const pdndToken = authHeader?.split(" ")[1];
         if (!pdndToken) {
-          throw new Error("Token PDND non trovato nella richiesta.");
+          throw new Error("PDND token not found in request.");
         }
 
         const eserviceId = await getEserviceIdFromToken(pdndToken);
@@ -101,9 +101,7 @@ const residenceSubissionController = (
           `[SHRepository] Found fiscalCode: ${JSON.stringify(fiscalCode)}`
         );
         if (!fiscalCode) {
-          throw new Error(
-            "Codice Fiscale non trovato per la generazione dell'objectId."
-          );
+          throw new Error("Fiscal Code not found for 'objectId' generation.");
         }
 
         const seed = await SHService.findSeedByEserviceId(eserviceId);
@@ -130,16 +128,16 @@ const residenceSubissionController = (
           );
         }
 
-        const singalObject: SignalPayload = {
+        const signalObject: SignalPayload = {
           objectType: "residenza",
           eserviceId,
           objectId,
           signalId,
           signalType: "UPDATE",
         };
-        logger.info(`[singalObject]: ${JSON.stringify(singalObject)}`);
+        logger.info(`[signalObject]: ${JSON.stringify(signalObject)}`);
 
-        await SHService.sendSignal(singalObject, pdndToken);
+        await SHService.sendSignal(signalObject, pdndToken);
         void TrialService.insert(
           req.url,
           req.method,
@@ -184,15 +182,13 @@ const residenceSubissionController = (
         const authHeader = req.headers.authorization;
         const pdndToken = authHeader?.split(" ")[1];
         if (!pdndToken) {
-          throw new Error("Token PDND non trovato nella richiesta.");
+          throw new Error("PDND token not found in request.");
         }
 
         const eserviceId = await getEserviceIdFromToken(pdndToken);
         const fiscalCode = req.params.id;
         if (!fiscalCode) {
-          throw new Error(
-            "Codice Fiscale non trovato per la generazione dell'objectId."
-          );
+          throw new Error("Fiscal Code not found for 'objectId' generation.");
         }
         const seed = await SHService.findSeedByEserviceId(eserviceId);
         if (!seed) {
@@ -218,14 +214,14 @@ const residenceSubissionController = (
           );
         }
 
-        const singalObject: SignalPayload = {
+        const signalObject: SignalPayload = {
           objectType: "residenza",
           eserviceId,
           objectId,
           signalId,
           signalType: "DELETE",
         };
-        await SHService.sendSignal(singalObject, pdndToken);
+        await SHService.sendSignal(signalObject, pdndToken);
 
         void TrialService.insert(
           req.url,
