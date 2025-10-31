@@ -112,12 +112,8 @@ const residenceVerificationRouter = (
         );
         const cryptoHashFunction = "sha256";
         const response = {
-          status: 200,
-          type: "Success",
-          title: "Pseudonymization data",
           seed,
           cryptoHashFunction,
-          errors: [],
         };
         void TrialService.insert(
           req.url,
