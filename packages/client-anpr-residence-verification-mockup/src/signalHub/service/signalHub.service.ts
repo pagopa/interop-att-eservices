@@ -16,6 +16,11 @@ type PollResult = {
   finalSignalId: number;
 };
 
+type RecursivePollResult = {
+  pollResult: PollResult;
+  lastRawResponse: PullSignalsResponse;
+};
+
 type BatchProcessResult = {
   relevantCount: number;
   seedUpdateFound: boolean;
@@ -24,23 +29,30 @@ type BatchProcessResult = {
   stop: boolean;
 };
 
+type PollingContext = {
+  authorizationHeader: string;
+  eserviceId: string;
+  baseUrl: string;
+  pseudonymMap: Map<string, string>;
+  size: number;
+};
+
 class SignalHubService {
   public async processSignalsForTest(
     authorizationHeader: string,
     size: number,
     citizenCf: string,
     startSignalId: number
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): Promise<any> {
+  ): Promise<PullSignalsResponse> {
     console.log(
-      `[SignalHubService] Avvio test recupero segnali (Batch size: ${size}, CF: ${citizenCf})...`
+      `[SignalHubService] Starting signal retrieval test (Batch size: ${size}, CF: ${citizenCf})...`
     );
 
     const config = shClientMock();
 
     const baseUrl = `${config.signalHubHost}/${config.signalHubApiVersion}`;
     if (!baseUrl) {
-      throw new Error("Configurazione SignalHub (baseUrl) mancante.");
+      throw new Error("SignalHub configuration (baseUrl) is missing.");
     }
     console.log(
       `[SignalHubService] authorizationHeader : ${authorizationHeader}`
@@ -48,7 +60,7 @@ class SignalHubService {
 
     const eserviceId = await getEserviceIdFromToken(authorizationHeader);
     console.log(
-      `[SignalHubService] EserviceId estratto dal token: ${eserviceId}`
+      `[SignalHubService] EserviceId extracted from token: ${eserviceId}`
     );
 
     const cryptoConfig = this.getLocalCryptoConfig(eserviceId, config);
@@ -58,78 +70,78 @@ class SignalHubService {
       cryptoConfig.seed,
       cryptoConfig.cryptoHashFunction
     );
-    console.log(
-      `[SignalHubService] Mappa pseudonimi generata per 1 cittadino.`
-    );
+    console.log(`[SignalHubService] Pseudonym map generated for 1 citizen.`);
 
-    const pollResult = await this.pollBatchRecursive(
-      authorizationHeader,
+    // TODO: This mock token should be removed and the real header used.
+    const mockToken =
+      "eyJhbGciOiJSUzI1NiIsInVzZSI6InNpZyIsInR5cCI6ImF0K2p3dCIsImtpZCI6ImFjYTA2MjVjLWUxMDctNDJhZS05NDRhLTE1ODQyMmFmNWQ5MiJ9.eyJqdGkiOiJmNjhiZWJkOS00Mjc4LTQ4MDgtOTNmMy1iMmU2NDUyMTU2NjEiLCJpc3MiOiJkZXYuaW50ZXJvcC5wYWdvcGEuaXQiLCJhdWQiOiJkZXYuaW50ZXJvcC5wYWdvcGEuaXQvbTJtIiwiY2xpZW50X2lkIjoiNmQ2MWM4NmMtMTUxOS00ZDBhLWIwYzMtOTRkYTVhMzMyNzVhIiwic3ViIjoiNmQ2MWM4NmMtMTUxOS00ZDBhLWIwYzMtOTRkYTVhMzMyNzVhIiwiaWF0IjoxNzYxOTA3NDUzLCJuYmYiOjE3NjE5MDc0NTMsImV4cCI6MTc2MTkzNjI1Mywib3JnYW5pemF0aW9uSWQiOiI2OWUyODY1ZS02NWFiLTRlNDgtYTYzOC0yMDM3YTllZTJlZTciLCJyb2xlIjoibTJtIn0.hn7cyRu9l6mOMKRQ85zGHaRedmcRA5u9Puk7vbM47weioFKNUv5Q1Yh_-UhOJ4t60fhHn3FN6bSefFVNFJwmCuup_4oZ6D-laK93TP1XqMfoKtW-mVvTSb6kgx6MSMjQ70PreEZI82oJgkQqjWs_FdA--VLdKYY3ngLHiwTbsZMoeGZm-gani32A-zSYbo9AZEn2HCt0iXPzIydoqxGoZt3NYpt3ndBRQvXOgEVsaNfk8fD80QVZen1c-GSy9rthitanN9WJqZXqBxgc1U_uUZmDcVJ-bo4if53F3euUPEAwN2VUgd46q0RZQmub1NXWTIqOlOV_UKup-Dn3jYwSOA";
+
+    const pollingContext: PollingContext = {
+      authorizationHeader: mockToken,
       eserviceId,
       baseUrl,
       pseudonymMap,
-      startSignalId,
-      size
-    );
+      size,
+    };
+
+    const result = await this.pollBatchRecursive(pollingContext, startSignalId);
 
     console.log(
-      `[SignalHubService] Polling completato. Totale segnali: ${pollResult.totalProcessed}, Rilevanti: ${pollResult.relevantFound}.`
+      `[SignalHubService] Polling completed. Total signals: ${result.pollResult.totalProcessed}, Relevant: ${result.pollResult.relevantFound}.`
     );
 
-    return {
-      status: "Completato",
-      totalProcessed: pollResult.totalProcessed,
-      relevantFound: pollResult.relevantFound,
-      lastSavedSignalId: pollResult.finalSignalId,
-    };
+    return result.lastRawResponse;
   }
 
-  // eslint-disable-next-line max-params
   private async pollBatchRecursive(
-    authorizationHeader: string,
-    eserviceId: string,
-    baseUrl: string,
-    pseudonymMap: Map<string, string>,
-    currentSignalId: number,
-    size: number
-  ): Promise<PollResult> {
+    context: PollingContext,
+    currentSignalId: number
+  ): Promise<RecursivePollResult> {
     console.log(
-      `[SignalHubService] Chiamata PULL a ${baseUrl} per e-service ${eserviceId}, da signalId ${currentSignalId}, size ${size}`
+      `[SignalHubService] PULL call to ${context.baseUrl} for e-service ${context.eserviceId}, from signalId ${currentSignalId}, size ${context.size}`
     );
 
     const response = await this.fetchSignalsBatch(
-      baseUrl,
-      authorizationHeader,
-      eserviceId,
+      context.baseUrl,
+      context.authorizationHeader,
+      context.eserviceId,
       currentSignalId,
-      size
+      context.size
     );
 
-    const { signals, lastSignalId } = response.data;
+    const rawResponseData = response.data;
+    const { signals, lastSignalId } = rawResponseData;
     const httpStatus = response.status;
 
     if (!signals || signals.length === 0) {
-      console.log("[SignalHubService] Nessun nuovo segnale ricevuto.");
+      console.log("[SignalHubService] No new signals received.");
       return {
-        totalProcessed: 0,
-        relevantFound: 0,
-        finalSignalId: currentSignalId,
+        pollResult: {
+          totalProcessed: 0,
+          relevantFound: 0,
+          finalSignalId: currentSignalId,
+        },
+        lastRawResponse: rawResponseData,
       };
     }
 
     console.log(
-      `[SignalHubService] Ricevuti ${signals.length} segnali. Status: ${httpStatus}`
+      `[SignalHubService] Received ${signals.length} signals. Status: ${httpStatus}`
     );
 
-    const processingResult = this.processBatch(signals, pseudonymMap);
+    const processingResult = this.processBatch(signals, context.pseudonymMap);
 
     if (processingResult.seedUpdateFound) {
       console.log(
-        "[SignalHubService] Trovato segnale 'seedUpdate'! Interrompo polling."
+        "[SignalHubService] 'seedUpdate' signal found! Stopping polling."
       );
       return {
-        totalProcessed: processingResult.processedCount,
-        relevantFound: processingResult.relevantCount,
-        finalSignalId: processingResult.seedUpdateSignalId!,
+        pollResult: {
+          totalProcessed: processingResult.processedCount,
+          relevantFound: processingResult.relevantCount,
+          finalSignalId: processingResult.seedUpdateSignalId!,
+        },
+        lastRawResponse: rawResponseData,
       };
     }
 
@@ -137,33 +149,37 @@ class SignalHubService {
 
     if (httpStatus === 206) {
       console.log(
-        "[SignalHubService] HTTP 206 Partial Content. Continuo il polling..."
+        "[SignalHubService] HTTP 206 Partial Content. Continuing polling..."
       );
 
       const nextBatchResult = await this.pollBatchRecursive(
-        authorizationHeader,
-        eserviceId,
-        baseUrl,
-        pseudonymMap,
-        newSignalId,
-        size
+        context,
+        newSignalId
       );
 
       return {
-        totalProcessed: signals.length + nextBatchResult.totalProcessed,
-        relevantFound:
-          processingResult.relevantCount + nextBatchResult.relevantFound,
-        finalSignalId: nextBatchResult.finalSignalId,
+        pollResult: {
+          totalProcessed:
+            signals.length + nextBatchResult.pollResult.totalProcessed,
+          relevantFound:
+            processingResult.relevantCount +
+            nextBatchResult.pollResult.relevantFound,
+          finalSignalId: nextBatchResult.pollResult.finalSignalId,
+        },
+        lastRawResponse: nextBatchResult.lastRawResponse,
       };
     }
 
     console.log(
-      "[SignalHubService] HTTP 200 OK. Non ci sono altri segnali al momento."
+      "[SignalHubService] HTTP 200 OK. No more signals at this time."
     );
     return {
-      totalProcessed: signals.length,
-      relevantFound: processingResult.relevantCount,
-      finalSignalId: newSignalId,
+      pollResult: {
+        totalProcessed: signals.length,
+        relevantFound: processingResult.relevantCount,
+        finalSignalId: newSignalId,
+      },
+      lastRawResponse: rawResponseData,
     };
   }
 
@@ -176,7 +192,7 @@ class SignalHubService {
     const seed = getRotatedSeed(eserviceId);
 
     console.log(
-      `[SignalHubService] Info crypto caricate: [Algo: ${algorithm}, Seed: ${seed.substring(
+      `[SignalHubService] Crypto info loaded: [Algo: ${algorithm}, Seed: ${seed.substring(
         0,
         8
       )}...]`
@@ -190,14 +206,13 @@ class SignalHubService {
     algorithm: string
   ): Map<string, string> {
     const map = new Map<string, string>();
-    // Ora 'citizens' è un array con un solo CF
     for (const cf of citizens) {
       const hash = calculatePseudonym(cf, seed, algorithm);
       map.set(hash, cf);
     }
     if (citizens.length > 0 && citizens[0]) {
       console.log(
-        `[SignalHubService] Hash generato per ${
+        `[SignalHubService] Hash generated for ${
           citizens[0]
         }: ${calculatePseudonym(citizens[0], seed, algorithm)}`
       );
@@ -206,7 +221,6 @@ class SignalHubService {
     return map;
   }
 
-  // ... (processBatch non cambia)
   private processBatch(
     signals: Signal[],
     pseudonymMap: Map<string, string>
@@ -228,7 +242,7 @@ class SignalHubService {
 
       if (signal.signalType === "SEEDUPDATE") {
         console.log(
-          `[SignalHubService] ==> Trovato SEGNALE CRITICO 'SEEDUPDATE' (SignalID: ${signal.signalId})`
+          `[SignalHubService] ==> Found CRITICAL 'SEEDUPDATE' SIGNAL (SignalID: ${signal.signalId})`
         );
         return {
           ...acc,
@@ -242,7 +256,7 @@ class SignalHubService {
       const clearTextId = pseudonymMap.get(signal.objectId);
       if (clearTextId) {
         console.log(
-          `[SignalHubService] ==> Trovato segnale RILEVANTE (SignalID: ${signal.signalId}) per l'utente ${clearTextId}.`
+          `[SignalHubService] ==> Found RELEVANT signal (SignalID: ${signal.signalId}) for user ${clearTextId}.`
         );
         return {
           ...acc,
@@ -270,14 +284,14 @@ class SignalHubService {
     };
 
     console.log(
-      `[SignalHubService] Chiamata API: GET ${pullUrl} - Parametri: ${JSON.stringify(
+      `[SignalHubService] API Call: GET ${pullUrl} - Parameters: ${JSON.stringify(
         params
       )}`
     );
 
     try {
       const response = await axios.get<PullSignalsResponse>(pullUrl, {
-        headers: { Authorization: authorizationHeader },
+        headers: { Authorization: `Bearer ${authorizationHeader}` },
         params,
         validateStatus: (status) => status === 200 || status === 206,
       });
@@ -285,10 +299,10 @@ class SignalHubService {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error(
-          `[SignalHubService] Errore API (${error.response?.status}): ${error.message}`
+          `[SignalHubService] API Error (${error.response?.status}): ${error.message}`
         );
       }
-      throw new Error(`Errore durante il pull dei segnali: ${error}`);
+      throw new Error(`Error during signal pull: ${error}`);
     }
   }
 }
