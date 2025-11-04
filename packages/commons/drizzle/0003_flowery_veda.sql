@@ -3,12 +3,6 @@ CREATE TABLE IF NOT EXISTS "att"."signal_counters" (
 	"signal_id" bigint DEFAULT 0 NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "att"."seed" (
-	"idSeed" text PRIMARY KEY NOT NULL,
-	"eServiceId" text NOT NULL,
-	"algorithmSpec" text NOT NULL
-);
-
 ALTER TABLE "att"."trial" ALTER COLUMN "message" SET DATA TYPE varchar(500);INSERT INTO "att"."category" ("id", "code", "eservice", "description", "order") VALUES
 (1, 'VOUCHER', 'residence-verification,fiscalcode-verification,piva-verification,digital-address-verification-verify,digital-address-verification-extract', 'bearer token', 1),
 (2, 'Agid-JWT-Signature', 'residence-verification', 'token in Headers', 2),
@@ -89,5 +83,6 @@ INSERT INTO "att"."check" ("id", "code", "description", "order", "category_id") 
 (59, 'VOUCHER_DIGEST_NOT_VALID', 'Voucher digest is not valid', 8, 1),
 (60, 'residence-submission-001', 'API for a submission of a residence', 1, 16),
 (61, 'SIGNATURE_HEADER_NOT_PRESENT', '"content-type" or "content-encoding" are missing', 24, 2),
-(62, 'SIGNATURE_EXP_INVALID', '"exp" claim is missing or token has expired', 25, 2)
+(62, 'SIGNATURE_EXP_INVALID', '"exp" claim is missing or token has expired', 25, 2),
+(63, 'PSEUDONYMIZATION_001', 'Pseudonymization service', 5, 5)
 ON CONFLICT (id) DO NOTHING;

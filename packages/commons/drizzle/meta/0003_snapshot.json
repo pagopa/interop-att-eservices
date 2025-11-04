@@ -1,5 +1,5 @@
 {
-  "id": "b20152cc-d69e-4958-878a-9d4ac11b9205",
+  "id": "d9f27e1c-048a-4034-8440-0f5f4cd87f7e",
   "prevId": "13922cdf-7b18-4dbb-8898-b8f07aa94e1e",
   "version": "7",
   "dialect": "postgresql",
@@ -1284,37 +1284,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": 0
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "att.seed": {
-      "name": "seed",
-      "schema": "att",
-      "columns": {
-        "idSeed": {
-          "name": "idSeed",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "eServiceId": {
-          "name": "eServiceId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "algorithmSpec": {
-          "name": "algorithmSpec",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
         }
       },
       "indexes": {},
