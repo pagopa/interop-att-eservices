@@ -12,6 +12,7 @@ import {
   get_pdnd_token,
 } from "./utils/client-assertion";
 import { signalHubService } from "./signalHub/service/signalHub.service";
+import { getPDNDTokenM2M } from "./signalHub/service/pdndTokneGenerator";
 
 const app: Application = express();
 dotenv.config();
@@ -93,10 +94,16 @@ app.get("/signalhub/test-pull-signals", async (req: Request, res: Response) => {
     console.warn("[ANPR-Request] Authorization Header is missing.");
     return res.status(401).json({ error: "Authorization Header is missing." });
   }
-
   try {
+    const m2mToken = await getPDNDTokenM2M();
+    if (!m2mToken) {
+      return res.status(500).json({
+        error: `Internal error when generating M2M token.`,
+      });
+    }
     const result = await signalHubService.processSignalsForTest(
       authorizationHeader,
+      m2mToken,
       size,
       cfParam,
       startSignalId

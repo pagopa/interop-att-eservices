@@ -37,9 +37,10 @@ type PollingContext = {
   size: number;
 };
 
-class SignalHubService {
-  public async processSignalsForTest(
+export const signalHubService = {
+  async processSignalsForTest(
     authorizationHeader: string,
+    m2mToken: string,
     size: number,
     citizenCf: string,
     startSignalId: number
@@ -47,7 +48,6 @@ class SignalHubService {
     console.log(
       `[SignalHubService] Starting signal retrieval test (Batch size: ${size}, CF: ${citizenCf})...`
     );
-
     const config = shClientMock();
 
     const baseUrl = `${config.signalHubHost}/${config.signalHubApiVersion}`;
@@ -63,37 +63,39 @@ class SignalHubService {
       `[SignalHubService] EserviceId extracted from token: ${eserviceId}`
     );
 
-    const cryptoConfig = this.getLocalCryptoConfig(eserviceId, config);
+    const cryptoConfig = signalHubService.getLocalCryptoConfig(
+      eserviceId,
+      config
+    );
 
-    const pseudonymMap = this.generatePseudonymMap(
+    const pseudonymMap = signalHubService.generatePseudonymMap(
       [citizenCf],
       cryptoConfig.seed,
       cryptoConfig.cryptoHashFunction
     );
     console.log(`[SignalHubService] Pseudonym map generated for 1 citizen.`);
 
-    // TODO: This mock token should be removed and the real header used.
-    const mockToken =
-      "eyJhbGciOiJSUzI1NiIsInVzZSI6InNpZyIsInR5cCI6ImF0K2p3dCIsImtpZCI6ImFjYTA2MjVjLWUxMDctNDJhZS05NDRhLTE1ODQyMmFmNWQ5MiJ9.eyJqdGkiOiJmNjhiZWJkOS00Mjc4LTQ4MDgtOTNmMy1iMmU2NDUyMTU2NjEiLCJpc3MiOiJkZXYuaW50ZXJvcC5wYWdvcGEuaXQiLCJhdWQiOiJkZXYuaW50ZXJvcC5wYWdvcGEuaXQvbTJtIiwiY2xpZW50X2lkIjoiNmQ2MWM4NmMtMTUxOS00ZDBhLWIwYzMtOTRkYTVhMzMyNzVhIiwic3ViIjoiNmQ2MWM4NmMtMTUxOS00ZDBhLWIwYzMtOTRkYTVhMzMyNzVhIiwiaWF0IjoxNzYxOTA3NDUzLCJuYmYiOjE3NjE5MDc0NTMsImV4cCI6MTc2MTkzNjI1Mywib3JnYW5pemF0aW9uSWQiOiI2OWUyODY1ZS02NWFiLTRlNDgtYTYzOC0yMDM3YTllZTJlZTciLCJyb2xlIjoibTJtIn0.hn7cyRu9l6mOMKRQ85zGHaRedmcRA5u9Puk7vbM47weioFKNUv5Q1Yh_-UhOJ4t60fhHn3FN6bSefFVNFJwmCuup_4oZ6D-laK93TP1XqMfoKtW-mVvTSb6kgx6MSMjQ70PreEZI82oJgkQqjWs_FdA--VLdKYY3ngLHiwTbsZMoeGZm-gani32A-zSYbo9AZEn2HCt0iXPzIydoqxGoZt3NYpt3ndBRQvXOgEVsaNfk8fD80QVZen1c-GSy9rthitanN9WJqZXqBxgc1U_uUZmDcVJ-bo4if53F3euUPEAwN2VUgd46q0RZQmub1NXWTIqOlOV_UKup-Dn3jYwSOA";
-
     const pollingContext: PollingContext = {
-      authorizationHeader: mockToken,
+      authorizationHeader: m2mToken,
       eserviceId,
       baseUrl,
       pseudonymMap,
       size,
     };
 
-    const result = await this.pollBatchRecursive(pollingContext, startSignalId);
+    const result = await signalHubService.pollBatchRecursive(
+      pollingContext,
+      startSignalId
+    );
 
     console.log(
       `[SignalHubService] Polling completed. Total signals: ${result.pollResult.totalProcessed}, Relevant: ${result.pollResult.relevantFound}.`
     );
 
     return result.lastRawResponse;
-  }
+  },
 
-  private async pollBatchRecursive(
+  async pollBatchRecursive(
     context: PollingContext,
     currentSignalId: number
   ): Promise<RecursivePollResult> {
@@ -101,7 +103,7 @@ class SignalHubService {
       `[SignalHubService] PULL call to ${context.baseUrl} for e-service ${context.eserviceId}, from signalId ${currentSignalId}, size ${context.size}`
     );
 
-    const response = await this.fetchSignalsBatch(
+    const response = await signalHubService.fetchSignalsBatch(
       context.baseUrl,
       context.authorizationHeader,
       context.eserviceId,
@@ -129,7 +131,10 @@ class SignalHubService {
       `[SignalHubService] Received ${signals.length} signals. Status: ${httpStatus}`
     );
 
-    const processingResult = this.processBatch(signals, context.pseudonymMap);
+    const processingResult = signalHubService.processBatch(
+      signals,
+      context.pseudonymMap
+    );
 
     if (processingResult.seedUpdateFound) {
       console.log(
@@ -152,7 +157,7 @@ class SignalHubService {
         "[SignalHubService] HTTP 206 Partial Content. Continuing polling..."
       );
 
-      const nextBatchResult = await this.pollBatchRecursive(
+      const nextBatchResult = await signalHubService.pollBatchRecursive(
         context,
         newSignalId
       );
@@ -181,14 +186,13 @@ class SignalHubService {
       },
       lastRawResponse: rawResponseData,
     };
-  }
+  },
 
-  private getLocalCryptoConfig(
+  getLocalCryptoConfig(
     eserviceId: string,
     config: ReturnType<typeof shClientMock>
   ): CryptoConfig {
     const algorithm = config.algorithm;
-
     const seed = getRotatedSeed(eserviceId);
 
     console.log(
@@ -198,9 +202,9 @@ class SignalHubService {
       )}...]`
     );
     return { seed, cryptoHashFunction: algorithm };
-  }
+  },
 
-  private generatePseudonymMap(
+  generatePseudonymMap(
     citizens: string[],
     seed: string,
     algorithm: string
@@ -217,11 +221,10 @@ class SignalHubService {
         }: ${calculatePseudonym(citizens[0], seed, algorithm)}`
       );
     }
-
     return map;
-  }
+  },
 
-  private processBatch(
+  processBatch(
     signals: Signal[],
     pseudonymMap: Map<string, string>
   ): BatchProcessResult {
@@ -267,9 +270,9 @@ class SignalHubService {
 
       return { ...acc, processedCount };
     }, initialResult);
-  }
+  },
 
-  private async fetchSignalsBatch(
+  async fetchSignalsBatch(
     baseUrl: string,
     authorizationHeader: string,
     eserviceId: string,
@@ -277,11 +280,7 @@ class SignalHubService {
     size: number
   ): Promise<{ data: PullSignalsResponse; status: number }> {
     const pullUrl = `${baseUrl}/pull/signals/${eserviceId}`;
-
-    const params = {
-      signalId,
-      size,
-    };
+    const params = { signalId, size };
 
     console.log(
       `[SignalHubService] API Call: GET ${pullUrl} - Parameters: ${JSON.stringify(
@@ -304,7 +303,5 @@ class SignalHubService {
       }
       throw new Error(`Error during signal pull: ${error}`);
     }
-  }
-}
-
-export const signalHubService = new SignalHubService();
+  },
+};

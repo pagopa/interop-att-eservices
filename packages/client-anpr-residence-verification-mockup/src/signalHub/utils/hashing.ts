@@ -10,7 +10,7 @@ export function calculatePseudonym(
   const hash = crypto.createHash(algorithm).update(dataToHash).digest("hex");
 
   if (!hash) {
-    throw new Error(`Errore nel calcolo dell'hash con algoritmo: ${algorithm}`);
+    throw new Error(`Error calculating hash with algorithm: ${algorithm}`);
   }
 
   return hash;
