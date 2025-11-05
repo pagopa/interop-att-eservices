@@ -24,7 +24,7 @@ export const SHService = {
     }
 
     if (!m2mToken) {
-      logger.error("[SHService] M2M_TOKEN is not configured in .env");
+      logger.error("[SHService] M2M_TOKEN was not configured");
       return;
     }
 

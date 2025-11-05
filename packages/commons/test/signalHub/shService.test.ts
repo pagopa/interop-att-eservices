@@ -100,7 +100,7 @@ describe("SHService", () => {
       await SHService.sendSignal(mockPayload, "");
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        "[SHService] SIGNAL_HUB_API_TOKEN is not configured in .env"
+        "[SHService] M2M_TOKEN was not configured"
       );
       expect(mockAxiosPost).not.toHaveBeenCalled();
     });
