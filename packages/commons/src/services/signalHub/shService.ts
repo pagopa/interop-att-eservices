@@ -13,7 +13,7 @@ export interface SignalPayload {
 }
 
 export const SHService = {
-  async sendSignal(payload: SignalPayload, pdndToken: string): Promise<void> {
+  async sendSignal(payload: SignalPayload, m2mToken: string): Promise<void> {
     logger.info(`[SHService] Sending signal (axios) for ${payload.objectId}`);
 
     if (!config.signalHubHost) {
@@ -23,10 +23,8 @@ export const SHService = {
       return;
     }
 
-    if (!pdndToken) {
-      logger.error(
-        "[SHService] SIGNAL_HUB_API_TOKEN is not configured in .env"
-      );
+    if (!m2mToken) {
+      logger.error("[SHService] M2M_TOKEN was not configured");
       return;
     }
 
@@ -34,7 +32,7 @@ export const SHService = {
       const apiUrl = `${config.signalHubHost}/${config.signalHubApiVersion}/push/signals`;
       const response = await axios.post(apiUrl, payload, {
         headers: {
-          Authorization: `Bearer ${pdndToken}`,
+          Authorization: `Bearer ${m2mToken}`,
           "Content-Type": "application/json",
         },
       });

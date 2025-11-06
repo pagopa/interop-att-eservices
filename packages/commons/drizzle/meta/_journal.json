@@ -12,20 +12,6 @@
     {
       "idx": 1,
       "version": "7",
-      "when": 1761649520961,
-      "tag": "0001_bright_gateway",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1761918839386,
-      "tag": "0002_large_oracle",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
       "when": 1762189351507,
       "tag": "0003_flowery_veda",
       "breakpoints": true

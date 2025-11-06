@@ -13,6 +13,7 @@ import {
   generateObjectId,
   SHService,
   HashAlgorithm,
+  getPDNDTokenM2M,
 } from "pdnd-common";
 import ResidenceSubmissionController from "../controllers/residenceSubmissionController.js";
 import { api } from "../model/generated/api.js";
@@ -128,6 +129,10 @@ const residenceSubissionController = (
           );
         }
 
+        const m2mToken = await getPDNDTokenM2M();
+        if (!m2mToken) {
+          throw new Error("M2M token generation failed.");
+        }
         const signalObject: SignalPayload = {
           objectType: "residenza",
           eserviceId,
@@ -137,7 +142,7 @@ const residenceSubissionController = (
         };
         logger.info(`[signalObject]: ${JSON.stringify(signalObject)}`);
 
-        await SHService.sendSignal(signalObject, pdndToken);
+        await SHService.sendSignal(signalObject, m2mToken);
         void TrialService.insert(
           req.url,
           req.method,
@@ -213,6 +218,10 @@ const residenceSubissionController = (
             `Failed to retrieve next 'signalId' for eserviceId: ${eserviceId}`
           );
         }
+        const m2mToken = await getPDNDTokenM2M();
+        if (!m2mToken) {
+          throw new Error("M2M token generation failed.");
+        }
 
         const signalObject: SignalPayload = {
           objectType: "residenza",
@@ -221,7 +230,7 @@ const residenceSubissionController = (
           signalId,
           signalType: "DELETE",
         };
-        await SHService.sendSignal(signalObject, pdndToken);
+        await SHService.sendSignal(signalObject, m2mToken);
 
         void TrialService.insert(
           req.url,
