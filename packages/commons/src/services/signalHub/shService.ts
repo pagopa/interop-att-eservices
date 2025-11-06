@@ -13,7 +13,6 @@ export interface SignalPayload {
 }
 
 export const SHService = {
-  // TODO: use to update seed
   async sendSignal(payload: SignalPayload, m2mToken: string): Promise<void> {
     logger.info(`[SHService] Sending signal (axios) for ${payload.objectId}`);
 

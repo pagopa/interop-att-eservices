@@ -1,7 +1,6 @@
-// src/controllers/SeedRotationController.ts
 import { logger } from "pdnd-common";
 import { SHRepository } from "../repositories/SHRepository.js";
-import { SignalHubClient } from "../repositories/SignalHubClient.js"; // TODO: da capire come importare
+import { SignalHubClient } from "../repositories/SignalHubClient.js";
 import { shConfig, ShConfig } from "../config/config.js";
 
 function isTodayFirstDayOfSeedPeriod(): boolean {

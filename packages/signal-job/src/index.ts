@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { runSeedRotationJob } from "./jobs/SeedRotationJob.js";
 
 runSeedRotationJob()
