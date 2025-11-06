@@ -29,15 +29,12 @@ function isTodayFirstDayOfSeedPeriod(): boolean {
 export class SeedRotationController {
   public static async executeSeedRotation(): Promise<void> {
     if (!isTodayFirstDayOfSeedPeriod()) {
-      logger.info("[SeedRotationController] Today is not a seed rotation day.");
       return;
     }
 
-    logger.info(
-      "[SeedRotationController] Today is the first day of a new seed period. Proceeding with SEEDUPDATE."
-    );
+    logger.info("[SeedRotationController] Proceeding with SEEDUPDATE.");
 
-    const eserviceIds = await this.getAllEserviceIds();
+    const eserviceIds = await SHRepository.getAllEserviceIds();
     logger.info(
       `[SeedRotationController] Found ${eserviceIds.length} e-services to update.`
     );
@@ -65,21 +62,5 @@ export class SeedRotationController {
     logger.info(
       "[SeedRotationController] Seed rotation completed successfully."
     );
-  }
-
-  private static async getAllEserviceIds(): Promise<string[]> {
-    try {
-      const result = await SHRepository.client
-        .select({ eserviceId: SHRepository.signalCounters.eserviceId })
-        .from(SHRepository.signalCounters)
-        .execute();
-      return result.map((row) => row.eserviceId);
-    } catch (error) {
-      logger.error(
-        "[SeedRotationController] Failed to retrieve e-service IDs:",
-        error
-      );
-      throw new Error("Failed to fetch eservice IDs from database");
-    }
   }
 }
