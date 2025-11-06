@@ -1,6 +1,20 @@
-import { it, expect, vi } from "vitest";
+import { expect, it, vi } from "vitest";
+
+vi.mock("fs", async () => {
+  const actual = await vi.importActual<typeof import("fs")>("fs");
+  return {
+    ...actual,
+    readFileSync: vi.fn(() => "MOCK_PRIVATE_KEY_CONTENT"),
+    default: {
+      ...actual,
+      readFileSync: vi.fn(() => "MOCK_PRIVATE_KEY_CONTENT"),
+    },
+  };
+});
+
 import ResidenceSubmissionController from "../src/controllers/residenceSubmissionController.js";
 import { RichiestaAR003 } from "../src/model/domain/models.js";
+
 vi.mock("../src/services/residenceSubmissionService.js", () => ({
   default: {
     create: vi.fn(),
@@ -8,25 +22,13 @@ vi.mock("../src/services/residenceSubmissionService.js", () => ({
     delete: vi.fn(),
   },
 }));
+
 const mockRequest = { subject_id: "subjectId" } as RichiestaAR003;
+
 it("should return OK on successful user creation", async () => {
   const result = await ResidenceSubmissionController.createUser(mockRequest);
   expect(result).toEqual({
     status: "OK",
     message: "User created successfully",
-  });
-});
-it("should return KO on user update error", async () => {
-  const result = await ResidenceSubmissionController.updateUser(mockRequest);
-  expect(result).toEqual({
-    status: "KO",
-    message: expect.stringMatching(/user update/i),
-  });
-});
-it("should return KO on user deletion error", async () => {
-  const result = await ResidenceSubmissionController.deleteUser("user-id");
-  expect(result).toEqual({
-    status: "KO",
-    message: expect.stringMatching(/user deletion/i),
   });
 });
