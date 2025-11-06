@@ -37,6 +37,7 @@ type PollingContext = {
   size: number;
 };
 
+// TODO: Convert log to logger.info and logger.error
 export const signalHubService = {
   async processSignalsForTest(
     authorizationHeader: string,
@@ -272,6 +273,7 @@ export const signalHubService = {
     }, initialResult);
   },
 
+  // TODO: use this for obtain dato to analyze
   async fetchSignalsBatch(
     baseUrl: string,
     authorizationHeader: string,
