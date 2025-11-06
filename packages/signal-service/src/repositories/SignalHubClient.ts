@@ -3,13 +3,12 @@ import { shConfig } from "../config/config.js";
 
 const config = shConfig();
 
-/
-const SIGNAL_HUB_HOST = config.SIGNAL_HUB_HOST;
-const SIGNAL_HUB_API_VERSION = config.SIGNAL_HUB_API_VERSION;
-const SIGNAL_HUB_AUTH_TOKEN = config.SIGNAL_HUB_AUTH_TOKEN
+const SIGNAL_HUB_HOST = config.signalHubHost;
+const SIGNAL_HUB_API_VERSION = config.signalHubApiVersion;
+const SIGNAL_HUB_AUTH_TOKEN = config.SIGNAL_HUB_AUTH_TOKEN // TODO: generate bearer token
 
 if (!SIGNAL_HUB_HOST || !SIGNAL_HUB_API_VERSION || !SIGNAL_HUB_AUTH_TOKEN) {
-  throw new Error("Missing Signal Hub configuration"); // TODO: add better error logger
+  throw new Error("Missing Signal Hub configuration"); // TODO: add better error logger using logger.error
 }
 
 export const SignalHubClient = {
