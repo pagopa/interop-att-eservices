@@ -12,6 +12,7 @@ import {
   get_pdnd_token,
 } from "./utils/client-assertion";
 import { signalHubService } from "./signalHub/service/signalHub.service";
+import { getPDNDTokenM2M } from "./signalHub/service/pdndTokneGenerator";
 
 const app: Application = express();
 dotenv.config();
@@ -93,10 +94,17 @@ app.get("/signalhub/test-pull-signals", async (req: Request, res: Response) => {
     console.warn("[ANPR-Request] Authorization Header is missing.");
     return res.status(401).json({ error: "Authorization Header is missing." });
   }
-
   try {
+    console.log(`headers: ${JSON.stringify(req.headers)}`);
+    const m2mToken = req.headers.m2mtoken as string | undefined;
+    if (!m2mToken) {
+      return res.status(500).json({
+        error: `Internal error when generating M2M token.`,
+      });
+    }
     const result = await signalHubService.processSignalsForTest(
       authorizationHeader,
+      m2mToken,
       size,
       cfParam,
       startSignalId
@@ -108,6 +116,23 @@ app.get("/signalhub/test-pull-signals", async (req: Request, res: Response) => {
     console.error(`[ANPR-Request] Critical error: ${errorMessage}`);
     res.status(500).json({
       error: "Internal server error during signal processing.",
+      details: errorMessage,
+    });
+  }
+});
+
+app.get("/signalhub/m2mToken", async (req: Request, res: Response) => {
+  try {
+    const token = await getPDNDTokenM2M();
+    if (!token) {
+      return res.status(500).json({ error: "Failed to generate M2M token." });
+    }
+    res.status(200).json({ m2mToken: token });
+  } catch (error) {
+    const errorMessage = (error as Error).message || String(error);
+    console.error(`[ANPR-Request] Critical error: ${errorMessage}`);
+    res.status(500).json({
+      error: "Internal server error during M2M token generation.",
       details: errorMessage,
     });
   }

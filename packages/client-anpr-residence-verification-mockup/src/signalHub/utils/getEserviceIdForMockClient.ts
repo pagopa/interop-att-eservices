@@ -10,39 +10,36 @@ export async function getEserviceIdFromToken(
   try {
     if (!authorizationHeader.startsWith("Bearer ")) {
       throw new Error(
-        "Header Authorization mancante o malformato (manca 'Bearer ')."
+        "Authorization header is missing or malformed (missing 'Bearer ')."
       );
     }
-    const token = authorizationHeader.split(" ")[1]; // Estrae il token puro
+    const token = authorizationHeader.split(" ")[1]; // Extracts the pure token
     if (!token) {
-      throw new Error("Token non presente nell'header.");
+      throw new Error("Token not present in header.");
     }
     const decodedPayload = jwt.decode(token) as CustomTokenPayload | null;
 
-    console.log(
-      "[getEserviceIdFromToken] Payload decodificato:",
-      decodedPayload
-    );
+    console.log("[getEserviceIdFromToken] Decoded payload:", decodedPayload);
 
     if (typeof decodedPayload !== "object" || decodedPayload === null) {
-      throw new Error("Payload del token non valido o nullo.");
+      throw new Error("Token payload is invalid or null.");
     }
 
     const eserviceId = decodedPayload.eserviceId;
 
     if (!eserviceId || typeof eserviceId !== "string") {
       console.error(
-        "[getEserviceIdFromToken] Campo 'eserviceId' non trovato o non valido nel token JWT."
+        "[getEserviceIdFromToken] 'eserviceId' field not found or invalid in JWT token."
       );
-      throw new Error("Payload token non valido o 'eserviceId' mancante.");
+      throw new Error("Invalid token payload or missing 'eserviceId'.");
     }
 
     return eserviceId;
   } catch (error) {
     const errorMessage = (error as Error).message || String(error);
     console.error(
-      `[getEserviceIdFromToken] Errore durante la decodifica del token JWT: ${errorMessage}`
+      `[getEserviceIdFromToken] Error during JWT token decoding: ${errorMessage}`
     );
-    throw new Error("Token JWT malformato o illeggibile.");
+    throw new Error("Malformed or unreadable JWT token.");
   }
 }
