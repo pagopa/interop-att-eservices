@@ -2,7 +2,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { sql } from "drizzle-orm";
 
-// 1. DEFINIRE TUTTI I MOCK CON VI.HOISTED
 const {
   mockLogger,
   mockClient,
@@ -13,7 +12,6 @@ const {
   mockOnConflict,
   mockReturning,
 } = vi.hoisted(() => {
-  // Definisci prima i mock che si concatenano
   const mockExecute = vi.fn();
   const mockReturning = vi.fn(() => ({ execute: mockExecute }));
   const mockOnConflict = vi.fn(() => ({ returning: mockReturning }));
@@ -35,7 +33,6 @@ const {
     },
     mockGetRotatedSeed: vi.fn(),
 
-    // Includi i mock a catena nel ritorno
     mockExecute,
     mockValues,
     mockOnConflict,
@@ -43,7 +40,6 @@ const {
   };
 });
 
-// 2. ESEGUIRE TUTTI I VI.MOCK USANDO I MOCK DEFINITI
 vi.mock("../../src/index.js", () => ({
   logger: mockLogger,
   client: mockClient,
@@ -64,10 +60,8 @@ vi.mock("../../src/utility/seedUtility.js", () => ({
   getRotatedSeed: mockGetRotatedSeed,
 }));
 
-// 3. SOLO ORA IMPORTARE IL MODULO DA TESTARE
 import { SHRepository } from "../../src/repositories/signalHub/index.js";
 
-// 4. ESEGUIRE I TEST
 describe("SHRepository", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -127,15 +121,11 @@ describe("SHRepository", () => {
         .spyOn(SHRepository, "getSeed")
         .mockResolvedValue(null as any);
 
-      // --- CORREZIONE 2 ---
-      // Il codice lancia un errore diverso da quello che mi aspettavo.
       await expect(
         SHRepository.findConfigByEserviceId(eserviceId)
       ).rejects.toThrow("Error retrieving seed configuration.");
 
       expect(getSeedSpy).toHaveBeenCalledWith(eserviceId);
-
-      // Aggiorniamo anche il log atteso per coerenza con l'errore
       expect(mockLogger.error).toHaveBeenCalledWith(
         "[SeedRepository] DB Error: Seed non configurato per l'e-service: eservice-no-seed"
       );
@@ -195,17 +185,13 @@ describe("SHRepository", () => {
       const eserviceId = "eservice-no-result";
       mockExecute.mockResolvedValue([]);
 
-      // --- CORREZIONE 3 ---
-      // Il codice lancia un errore più generico
       await expect(
         SHRepository.ensureAndIncrementSignalId(eserviceId)
       ).rejects.toThrow("DB Error during signalId generation.");
 
-      // Il log dell'errore specifico (Upsert failed) è ancora corretto
       expect(mockLogger.error).toHaveBeenCalledWith(
         `[SHRepository] Upsert operation failed unexpectedly for ${eserviceId}.`
       );
-      // --- FINE CORREZIONE 3 ---
     });
 
     it("should throw an error if the DB fails during execution", async () => {
