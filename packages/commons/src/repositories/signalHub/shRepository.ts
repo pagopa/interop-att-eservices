@@ -9,7 +9,7 @@ export const SHRepository = {
   async findConfigByEserviceId(eserviceId: string): Promise<string> {
     try {
       logger.info(`[SHRepository] Finding config for e-service: ${eserviceId}`);
-      const seed = getRotatedSeed(eserviceId);
+      const seed = await this.getSeed(eserviceId);
       if (!seed) {
         logger.error(
           `[SeedRepository] Seed non configurato per l'e-service: ${eserviceId}`
@@ -63,6 +63,14 @@ export const SHRepository = {
         `[SHRepository] DB Error during signalId upsert: ${errorMessage}`
       );
       throw new Error("DB Error during signalId generation.");
+    }
+  },
+  async getSeed(eserviceId: string): Promise<string> {
+    try {
+      return getRotatedSeed(eserviceId);
+    } catch (error) {
+      logger.error(`impossible get seed for ${eserviceId}:`, error);
+      throw error;
     }
   },
 };
