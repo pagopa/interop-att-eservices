@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { logger } from "pdnd-common";
-import { runSeedRotationJob } from "./jobs/seedRotationJob.js";
+import { runSeedRotationJob } from "./jobs/SeedRotationJob.js";
 
 logger.info("[App] Starting Seed Rotation Service...");
 try {
