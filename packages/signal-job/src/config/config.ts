@@ -10,8 +10,11 @@ export const ShConfig = z
     SIGNAL_HUB_API_VERSION: z.string().min(1),
     CRON_TIME_JOB: z
       .string()
-      .min(1, "CRON_TIME is required")
-      .regex(/^(\S+\s+){5}\S+$/, "CRON_TIME must be a 6-field cron expression"),
+      .min(1, "CRON_TIME_JOB is required")
+      .regex(
+        /^(\S+\s+){5}\S+$/,
+        "CRON_TIME_JOB must be a 6-field cron expression"
+      ),
   })
   .transform((c) => ({
     seedExpireDays: c.SEED_EXPIRATION_DAYS,
