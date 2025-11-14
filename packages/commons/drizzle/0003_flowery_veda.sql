@@ -1,4 +1,9 @@
-INSERT INTO "att"."category" ("id", "code", "eservice", "description", "order") VALUES
+CREATE TABLE IF NOT EXISTS "att"."signal_counters" (
+	"eservice_id" text PRIMARY KEY NOT NULL,
+	"signal_id" bigint DEFAULT 0 NOT NULL
+);
+
+ALTER TABLE "att"."trial" ALTER COLUMN "message" SET DATA TYPE varchar(500);INSERT INTO "att"."category" ("id", "code", "eservice", "description", "order") VALUES
 (1, 'VOUCHER', 'residence-verification,fiscalcode-verification,piva-verification,digital-address-verification-verify,digital-address-verification-extract', 'bearer token', 1),
 (2, 'Agid-JWT-Signature', 'residence-verification', 'token in Headers', 2),
 (3, 'Agid-JWT-TrackingEvidence', 'residence-verification', 'token in Headers', 3),

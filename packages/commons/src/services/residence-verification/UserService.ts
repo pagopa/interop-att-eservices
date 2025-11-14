@@ -2,7 +2,7 @@
 import { UserModel } from "pdnd-models";
 import { mapUserModel } from "../../utility/mapUserModel.js";
 import { SubjectRepository } from "../../repositories/residence-verification/index.js";
-import { logger } from "../../index.js";
+import { getRotatedSeed, logger } from "../../index.js";
 
 const subjectRepository = SubjectRepository;
 
@@ -28,9 +28,6 @@ export const userService = {
     }
   },
 
-  /**
-   * Recupera una lista di utenti tramite i loro dati anagrafici.
-   */
   async getByPersonalInfo(parametriRicerca: any): Promise<UserModel[]> {
     try {
       const rows = await subjectRepository.findWithAddressByPersonalInfo(
@@ -48,6 +45,21 @@ export const userService = {
       );
     } catch (error) {
       logger.error(`[UserService] Error in getByPersonalInfo`, error);
+      throw error;
+    }
+  },
+
+  async generateSeed(eServiceId: string): Promise<string> {
+    try {
+      logger.info(
+        `[UserService] Generating rotated seed for eServiceId: ${eServiceId}`
+      );
+      return getRotatedSeed(eServiceId);
+    } catch (error) {
+      logger.error(
+        `[UserService] Error in generateSeed for eServiceId: ${eServiceId}`,
+        error
+      );
       throw error;
     }
   },

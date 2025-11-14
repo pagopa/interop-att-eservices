@@ -8,6 +8,32 @@ import {
 } from "../../src/zod/family-status/family-status.js";
 import { flattenPayload } from "../../src/zod/family-status/flattenPayload.js";
 
+vi.mock("pdnd-common", () => ({
+  logger: {
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  },
+  TrialService: {
+    insert: vi.fn(),
+  },
+  SHService: {
+    findSeedByEserviceId: vi.fn(),
+    getNextSignalId: vi.fn(),
+    sendSignal: vi.fn(),
+  },
+  getEserviceIdFromToken: vi.fn(),
+  generateObjectId: vi.fn(),
+  HashAlgorithm: {
+    SHA256: "SHA256",
+  },
+  authenticationCorrelationMiddleware: vi.fn(() => vi.fn()),
+  integrityValidationMiddleware: vi.fn(() => vi.fn()),
+  auditValidationMiddleware: vi.fn(() => vi.fn()),
+  shClientConfig: vi.fn(() => ({})),
+}));
+
 vi.mock("../../src/zod/family-status/flattenPayload.js", () => ({
   flattenPayload: vi.fn(),
 }));
@@ -29,6 +55,24 @@ vi.mock("../../src/repositories/family-status/family-status.js", () => ({
     findById: vi.fn(),
     findByPersonalInfo: vi.fn(),
   },
+}));
+
+vi.mock("fs", () => ({
+  default: {
+    readFileSync: vi.fn(() => "--- FAKE MOCKED KEY ---"),
+  },
+  readFileSync: vi.fn(() => "--- FAKE MOCKED KEY ---"),
+}));
+
+vi.mock("../../src/config/m2mConfig.js", () => ({
+  m2mConfig: vi.fn(() => ({
+    privateKeyPath: "fake/path/to/key.priv",
+  })),
+}));
+
+vi.mock("../../src/utility/client-assertion-m2m.js", () => ({
+  exec_pdnd_client_assertion_m2m: vi.fn(() => "fake-client-assertion"),
+  get_pdnd_token_m2m: vi.fn(() => Promise.resolve("fake-m2m-token")),
 }));
 
 describe("FamilyStatusService", () => {

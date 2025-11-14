@@ -9,6 +9,11 @@ import {
   TrialService,
   integrityValidationMiddleware,
   auditValidationMiddleware,
+  getEserviceIdFromToken,
+  generateObjectId,
+  SHService,
+  HashAlgorithm,
+  getPDNDTokenM2M,
 } from "pdnd-common";
 import ResidenceSubmissionController from "../controllers/residenceSubmissionController.js";
 import { api } from "../model/generated/api.js";
@@ -19,6 +24,7 @@ import {
   userModelNotFound,
 } from "../exceptions/errors.js";
 import { contextDataResidenceMiddleware } from "../context/context.js";
+import { SignalPayload } from "../../../commons/dist/services/signalHub/shService.js";
 
 const residenceSubissionController = (
   ctx: ZodiosContext
@@ -82,6 +88,61 @@ const residenceSubissionController = (
         if (!data || data.subjects?.subject?.length === 0) {
           throw userModelNotFound();
         }
+
+        const authHeader = req.headers.authorization;
+        const pdndToken = authHeader?.split(" ")[1];
+        if (!pdndToken) {
+          throw new Error("PDND token not found in request.");
+        }
+
+        const eserviceId = await getEserviceIdFromToken(pdndToken);
+        const fiscalCode =
+          req.body.subjects?.subject?.[0]?.generality?.subjectId?.subjectId;
+        logger.info(
+          `[SHRepository] Found fiscalCode: ${JSON.stringify(fiscalCode)}`
+        );
+        if (!fiscalCode) {
+          throw new Error("Fiscal Code not found for 'objectId' generation.");
+        }
+
+        const seed = await SHService.findSeedByEserviceId(eserviceId);
+        if (!seed) {
+          throw new Error(
+            `Could not find 'seed' for eserviceId: ${eserviceId}`
+          );
+        }
+
+        const objectId = await generateObjectId(
+          fiscalCode,
+          HashAlgorithm.SHA256,
+          seed
+        );
+        if (!objectId) {
+          throw new Error("Failed to generate 'objectId'.");
+        }
+
+        const signalId = await SHService.getNextSignalId(eserviceId);
+
+        if (signalId === null || signalId === undefined) {
+          throw new Error(
+            `Failed to retrieve next 'signalId' for eserviceId: ${eserviceId}`
+          );
+        }
+
+        const m2mToken = await getPDNDTokenM2M();
+        if (!m2mToken) {
+          throw new Error("M2M token generation failed.");
+        }
+        const signalObject: SignalPayload = {
+          objectType: "residenza",
+          eserviceId,
+          objectId,
+          signalId,
+          signalType: "UPDATE",
+        };
+        logger.info(`[signalObject]: ${JSON.stringify(signalObject)}`);
+
+        await SHService.sendSignal(signalObject, m2mToken);
         void TrialService.insert(
           req.url,
           req.method,
@@ -123,6 +184,54 @@ const residenceSubissionController = (
         if (!data) {
           throw userModelNotFound();
         }
+        const authHeader = req.headers.authorization;
+        const pdndToken = authHeader?.split(" ")[1];
+        if (!pdndToken) {
+          throw new Error("PDND token not found in request.");
+        }
+
+        const eserviceId = await getEserviceIdFromToken(pdndToken);
+        const fiscalCode = req.params.id;
+        if (!fiscalCode) {
+          throw new Error("Fiscal Code not found for 'objectId' generation.");
+        }
+        const seed = await SHService.findSeedByEserviceId(eserviceId);
+        if (!seed) {
+          throw new Error(
+            `Could not find 'seed' for eserviceId: ${eserviceId}`
+          );
+        }
+
+        const objectId = await generateObjectId(
+          fiscalCode,
+          HashAlgorithm.SHA256,
+          seed
+        );
+        if (!objectId) {
+          throw new Error("Failed to generate 'objectId'.");
+        }
+
+        const signalId = await SHService.getNextSignalId(eserviceId);
+
+        if (signalId === null || signalId === undefined) {
+          throw new Error(
+            `Failed to retrieve next 'signalId' for eserviceId: ${eserviceId}`
+          );
+        }
+        const m2mToken = await getPDNDTokenM2M();
+        if (!m2mToken) {
+          throw new Error("M2M token generation failed.");
+        }
+
+        const signalObject: SignalPayload = {
+          objectType: "residenza",
+          eserviceId,
+          objectId,
+          signalId,
+          signalType: "DELETE",
+        };
+        await SHService.sendSignal(signalObject, m2mToken);
+
         void TrialService.insert(
           req.url,
           req.method,

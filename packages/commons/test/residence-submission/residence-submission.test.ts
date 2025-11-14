@@ -7,6 +7,32 @@ import {
   mapApiBodyToDbModelsUpdate,
 } from "../../src/utility/mapRequestAr003.js";
 
+vi.mock("pdnd-common", () => ({
+  logger: {
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  },
+  TrialService: {
+    insert: vi.fn(),
+  },
+  SHService: {
+    findSeedByEserviceId: vi.fn(),
+    getNextSignalId: vi.fn(),
+    sendSignal: vi.fn(),
+  },
+  getEserviceIdFromToken: vi.fn(),
+  generateObjectId: vi.fn(),
+  HashAlgorithm: {
+    SHA256: "SHA256",
+  },
+  authenticationCorrelationMiddleware: vi.fn(() => vi.fn()),
+  integrityValidationMiddleware: vi.fn(() => vi.fn()),
+  auditValidationMiddleware: vi.fn(() => vi.fn()),
+  shClientConfig: vi.fn(() => ({})),
+}));
+
 vi.mock(
   "../../src/repositories/residence-submission/dataPreparation.js",
   () => ({
@@ -28,6 +54,24 @@ vi.mock("../../src/utility/mapRequestAr003.js", () => ({
 }));
 vi.mock("../../repositories/residence-submission/dataPreparation.js");
 vi.mock("../../utility/mapRequestAr003.js");
+
+vi.mock("fs", () => ({
+  default: {
+    readFileSync: vi.fn(() => "--- FAKE MOCKED KEY ---"),
+  },
+  readFileSync: vi.fn(() => "--- FAKE MOCKED KEY ---"),
+}));
+
+vi.mock("../../src/config/m2mConfig.js", () => ({
+  m2mConfig: vi.fn(() => ({
+    privateKeyPath: "fake/path/to/key.priv",
+  })),
+}));
+
+vi.mock("../../src/utility/client-assertion-m2m.js", () => ({
+  exec_pdnd_client_assertion_m2m: vi.fn(() => "fake-client-assertion"),
+  get_pdnd_token_m2m: vi.fn(() => Promise.resolve("fake-m2m-token")),
+}));
 
 import { ResidenceSubmissionService } from "../../src/services/reisdence-submission/index.js";
 
@@ -54,7 +98,7 @@ export const mockSubject = {
 };
 
 export const mockAddress = {
-  id: "123e4567-e89b-12d3-a456-426614174000",
+  id: "123e4667-e89b-12d3-a456-426614174000",
 
   address_type: "residence",
   note_address: "Indirizzo principale del soggetto",

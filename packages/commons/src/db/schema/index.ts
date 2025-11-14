@@ -6,3 +6,4 @@ export * from "./fiscal-code-verification/index.js";
 export * from "./piva-verification/index.js";
 export * from "./trial-api/index.js";
 export * from "./handshake/index.js";
+export * from "./signalHub/index.js";
