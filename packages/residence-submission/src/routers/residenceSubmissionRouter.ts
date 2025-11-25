@@ -142,13 +142,23 @@ const residenceSubissionController = (
         };
         logger.info(`[signalObject]: ${JSON.stringify(signalObject)}`);
 
-        await SHService.sendSignal(signalObject, m2mToken);
-        void TrialService.insert(
-          req.url,
-          req.method,
-          "RESIDENCE_SUBMISSION_001",
-          "OK"
-        );
+        try {
+          await SHService.sendSignal(signalObject, m2mToken);
+          void TrialService.insert(
+            req.url,
+            req.method,
+            "RESIDENCE_SUBMISSION_001",
+            "OK"
+          );
+        } catch (error) {
+          logger.error(
+            `[Controller] Error sending signal. Reverting signalId for ${eserviceId}. Error: ${error}`
+          );
+          await SHService.rollbackSignalId(eserviceId);
+
+          // Rethrow the error to be caught by the outer catch
+          throw error;
+        }
         logger.info(`[END] residenceSubissionController update`);
         return res.status(200).json(data).end();
       } catch (error) {
@@ -230,14 +240,20 @@ const residenceSubissionController = (
           signalId,
           signalType: "DELETE",
         };
-        await SHService.sendSignal(signalObject, m2mToken);
-
-        void TrialService.insert(
-          req.url,
-          req.method,
-          "RESIDENCE_SUBMISSION_001",
-          "OK"
-        );
+        try {
+          await SHService.sendSignal(signalObject, m2mToken);
+          void TrialService.insert(
+            req.url,
+            req.method,
+            "RESIDENCE_SUBMISSION_001",
+            "OK"
+          );
+        } catch (error) {
+          logger.error(
+            `[Controller] Error sending signal. Reverting signalId for ${eserviceId}. Error: ${error}`
+          );
+          throw error;
+        }
         logger.info(`[END] residenceSubissionController delete`);
         return res.status(204).end();
       } catch (error) {

@@ -76,6 +76,6 @@ export const SHService = {
 
   async getNextSignalId(eserviceId: string): Promise<number> {
     logger.info(`[SHService] Requesting signalId increment for ${eserviceId}`);
-    return SHRepository.ensureAndIncrementSignalId(eserviceId);
+    return SHRepository.ensureAndIncrementSignalId(eserviceId); // split functionality
   },
 };
