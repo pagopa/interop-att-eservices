@@ -154,9 +154,6 @@ const residenceSubissionController = (
           logger.error(
             `[Controller] Error sending signal. Reverting signalId for ${eserviceId}. Error: ${error}`
           );
-          await SHService.rollbackSignalId(eserviceId);
-
-          // Rethrow the error to be caught by the outer catch
           throw error;
         }
         logger.info(`[END] residenceSubissionController update`);
