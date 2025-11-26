@@ -3,87 +3,86 @@ name: "Build & Push"
 on:
   push:
     branches:
-      - 'main'
-      - 'develop'
+      - "develop"
+      - "release/*"
     tags:
-      - '*'
+      - "*"
     paths:
-      - 'packages/**'
-      - '!packages/*/scripts/**'
-  pull_request:
-    branches:
-      - 'develop'
-
-env:
-  AWS_REGION: 'eu-south-1'
-  IAM_ROLE_ARN: 'arn:aws:iam::248862543363:role/GitHubActionIACRole'
+      - "packages/**"
+      - "!packages/*/scripts/**"
+      - ".github/workflows/build-push.yaml"
 
 jobs:
-  build_push_image:
-    name: ${{ matrix.image_name }}
+  find_dockerfiles:
+    name: Find Dockerfiles
     runs-on: ubuntu-latest
-    environment: dev
-    permissions:
-      contents: read
-      id-token: write
+    outputs:
+      packages: ${{ steps.set_packages_output.outputs.packages }}
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+      - name: Find packages
+        id: set_packages_output
+        run: |
+          PACKAGES=$(find packages -type f -path "*/Dockerfile" | awk -F'/' '{print $2}' | jq -R -s -c 'split("\n")[:-1]')
+          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
+
+  build_push_image:
+    name: ${{ matrix.package }}
+    runs-on: ubuntu-latest
+    environment: ecr
+    needs: [find_dockerfiles]
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - image_name: residence-verification
-            dockerfile_path: packages/residence-verification
-          - image_name: residence-verification-direct
-            dockerfile_path: packages/residence-verification-direct
-          - image_name: fiscalcode-verification
-            dockerfile_path: packages/fiscalcode-verification
-          - image_name: piva-verification
-            dockerfile_path: packages/piva-verification
-          - image_name: trial-service-api
-            dockerfile_path: packages/trial-service-api
-          - image_name: digital-address-verification
-            dockerfile_path: packages/digital-address-verification
-          - image_name: data-migration
-            dockerfile_path: migrations
-          - image_name: keychain-mock
-            dockerfile_path: packages/keychain-mock
-          - image_name: family-status
-            dockerfile_path: packages/family-status
-          - image_name: residence-submission
-            dockerfile_path: packages/residence-submission
+        package: ${{ fromJson(needs.find_dockerfiles.outputs.packages) }}
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      DOCKER_BUILD_SUMMARY: "false"
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4
         with:
-          aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ env.IAM_ROLE_ARN }}
-          role-session-name: att-eservices-build-push-${{ github.run_number }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ secrets.IAM_ROLE_ARN }}
+          role-session-name: interop-be-att-build-push-${{ github.run_number }}
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2
+
+      - name: Normalize ref name
+        id: norm_ref
+        run: |
+          set -euo pipefail
+
+          NORM_REF="$(echo ${{ github.ref_name }} | sed -e 's/\//-/g')"
+          echo "NORM_REF=$NORM_REF" >> $GITHUB_ENV
 
       - name: (latest) Docker metadata
-        id: meta_latest
+        id: meta_branch
         if: ${{ github.ref_type == 'branch' }}
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@f7b4ed12385588c3f9bc252f0a2b520d83b52d48
         with:
-          images: ${{ steps.login-ecr.outputs.registry }}/interop-att-eservice-${{ matrix.image_name }}
+          images: ${{ steps.login-ecr.outputs.registry }}/interop-be-att-${{ matrix.package }}
           flavor: |
             latest=false
             prefix=
             suffix=
           tags: |
-             type=raw,value=${{ github.head_ref || github.ref_name }}
+            type=raw,value=${{ env.NORM_REF }}
 
       - name: (tag) Docker metadata
         id: meta_tag
         if: ${{ github.ref_type == 'tag' }}
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@f7b4ed12385588c3f9bc252f0a2b520d83b52d48
         with:
-          images: ${{ steps.login-ecr.outputs.registry }}/interop-att-eservice-${{ matrix.image_name }}
+          images: ${{ steps.login-ecr.outputs.registry }}/interop-be-att-${{ matrix.package }}
           flavor: |
             latest=false
             prefix=
@@ -93,10 +92,10 @@ jobs:
 
       - name: Build and push Docker image
         id: build_push
-        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        uses: docker/build-push-action@84354d3b32f6fcad27a04f6b82436bfb39425d16
         with:
           context: .
-          file: ${{ matrix.dockerfile_path }}/Dockerfile
+          file: packages/${{ matrix.package }}/Dockerfile
           push: true
-          tags: ${{ github.ref_type == 'branch' && steps.meta_latest.outputs.tags || steps.meta_tag.outputs.tags }}
-          labels: ${{ github.ref_type == 'branch' && steps.meta_latest.outputs.labels || steps.meta_tag.outputs.labels }}
+          tags: ${{ github.ref_type == 'branch' && steps.meta_branch.outputs.tags || steps.meta_tag.outputs.tags }}
+          labels: ${{ github.ref_type == 'branch' && steps.meta_branch.outputs.labels || steps.meta_tag.outputs.labels }}
