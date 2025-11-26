@@ -143,7 +143,7 @@ const residenceSubissionController = (
         logger.info(`[signalObject]: ${JSON.stringify(signalObject)}`);
 
         try {
-          await SHService.sendSignal(signalObject, m2mToken);
+          await SHService.sendSignal(signalObject, "m2mToken");
           void TrialService.insert(
             req.url,
             req.method,
@@ -154,7 +154,7 @@ const residenceSubissionController = (
           logger.error(
             `[Controller] Error sending signal. Reverting signalId for ${eserviceId}. Error: ${error}`
           );
-          throw error;
+          throw new Error(`Signal Hub Deposit Failed: ${error}`);
         }
         logger.info(`[END] residenceSubissionController update`);
         return res.status(200).json(data).end();
@@ -249,7 +249,7 @@ const residenceSubissionController = (
           logger.error(
             `[Controller] Error sending signal. Reverting signalId for ${eserviceId}. Error: ${error}`
           );
-          throw error;
+          throw new Error(`Signal Hub Deposit Failed: ${error}`);
         }
         logger.info(`[END] residenceSubissionController delete`);
         return res.status(204).end();

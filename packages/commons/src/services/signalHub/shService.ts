@@ -49,6 +49,7 @@ export const SHService = {
         const errorMessage = (error as Error).message || String(error);
         logger.error(`[ANPRService] Connection Error: ${errorMessage}`);
       }
+      throw error;
     }
   },
 
