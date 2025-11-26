@@ -110,10 +110,13 @@ describe("SHService", () => {
         response: { status: 404 },
         message: "Not Found",
       };
+
       mockAxiosPost.mockRejectedValue(axiosError);
       mockIsAxiosError.mockReturnValue(true);
 
-      await SHService.sendSignal(mockPayload, mockToken);
+      await expect(
+        SHService.sendSignal(mockPayload, mockToken)
+      ).rejects.toEqual(axiosError);
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         `[ANPRService] API Error: 404 - Not Found`
@@ -122,10 +125,13 @@ describe("SHService", () => {
 
     it("should handle generic errors correctly", async () => {
       const genericError = new Error("Connection failed");
+
       mockAxiosPost.mockRejectedValue(genericError);
       mockIsAxiosError.mockReturnValue(false);
 
-      await SHService.sendSignal(mockPayload, mockToken);
+      await expect(
+        SHService.sendSignal(mockPayload, mockToken)
+      ).rejects.toThrow("Connection failed");
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         `[ANPRService] Connection Error: Connection failed`
