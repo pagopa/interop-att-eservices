@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { client } from "../../index.js";
 import { familyStatus } from "../../db/schema/family-status/family-status.js";
 import { InsertFamilyStatus } from "../../zod/family-status/family-status.js";
@@ -8,7 +8,9 @@ import { FamilyStatusDto } from "../../types/familyStatusDTO.js";
 import { CriteriaTypeFS001 } from "../../types/criteriaTypeFS001.js";
 
 export const familyStatusRepo = {
-  async upsert(data: InsertFamilyStatus): Promise<object> {
+  async upsert(
+    data: InsertFamilyStatus
+  ): Promise<{ uuid: string; isUpdate: boolean }> {
     const [result] = await client
       .insert(familyStatus)
       .values(data)
@@ -16,13 +18,14 @@ export const familyStatusRepo = {
         target: familyStatus.subjectId,
         set: data,
       })
-      .returning({ uuid: familyStatus.uuid });
+      .returning({ uuid: familyStatus.uuid, xmax: sql<string>`xmax::text` });
 
     if (!result?.uuid) {
       throw new Error("UUID not returned from database");
     }
+    const isUpdate = result.xmax !== "0";
 
-    return { uuid: result.uuid };
+    return { uuid: result.uuid, isUpdate };
   },
 
   async findByUUID(uuid: string): Promise<FamilyStatusDto> {

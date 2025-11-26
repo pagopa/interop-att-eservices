@@ -1,4 +1,4 @@
-import { logger, getContext } from "pdnd-common";
+import { logger, getContext, userService } from "pdnd-common";
 import { FamilyStatusService } from "pdnd-common";
 import {
   requestParamNotValid,
@@ -105,8 +105,15 @@ class FamilyStatusController {
       throw error;
     }
   }
+  public async getRotatedSeed(eserviceId: string): Promise<string> {
+    try {
+      return await userService.generateSeed(eserviceId);
+    } catch (error) {
+      logger.error(`Controller Error during getRotatedSeed`, error);
+      throw error;
+    }
+  }
 }
-
 const checkPersonalInfo = (request: RequestFS001): boolean =>
   !!request.criteria.name &&
   !!request.criteria.surname &&
