@@ -143,7 +143,7 @@ const residenceSubissionController = (
         logger.info(`[signalObject]: ${JSON.stringify(signalObject)}`);
 
         try {
-          await SHService.sendSignal(signalObject, "m2mToken");
+          await SHService.sendSignal(signalObject, m2mToken);
           void TrialService.insert(
             req.url,
             req.method,
