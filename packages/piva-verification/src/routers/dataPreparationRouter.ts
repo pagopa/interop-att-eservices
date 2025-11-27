@@ -154,7 +154,6 @@ const dataPreparationRouter = (
           logger.error(
             `[Controller] Error sending signal. Reverting signalId for ${eserviceId}. Error: ${error}`
           );
-          throw new Error(`Signal Hub Deposit Failed: ${error}`);
         }
         return res.status(201).end();
       } catch (error) {
