@@ -1,4 +1,4 @@
-import { logger } from "pdnd-common";
+import { getEserviceIdFromToken, logger } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import {
@@ -51,6 +51,54 @@ const pivaVerificationRouter = (
           req.url,
           req.method,
           "RESIDENCE_VERIFICATION_001",
+          "KO",
+          JSON.stringify(generalErrorResponse)
+        );
+        return res.status(errorRes.status).json(generalErrorResponse).end();
+      }
+    }
+  );
+  pivaVerificationRouter.get(
+    "/organization-id-verification/pseudonymization",
+    async (req, res) => {
+      try {
+        logger.info(`[START] pseudonymization GET`);
+        const authHeader = req.headers.authorization;
+        const pdndToken = authHeader?.split(" ")[1];
+        if (!pdndToken) {
+          throw new Error("Token PDND non trovato nella richiesta.");
+        }
+
+        const eserviceId = await getEserviceIdFromToken(pdndToken);
+
+        const seed = await PivaVerificationController.getRotatedSeed(
+          eserviceId
+        );
+        const cryptoHashFunction = "sha256";
+        const response = {
+          seed,
+          cryptoHashFunction,
+        };
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "PSEUDONYMIZATION_001",
+          "OK"
+        );
+
+        logger.info(`[END] pseudonymization GET`);
+        return res.status(200).json(response).end();
+      } catch (error) {
+        const errorRes = makeApiProblem(error, createEserviceDataPreparation);
+        const correlationId = req.headers["x-correlation-id"] as string;
+        const generalErrorResponse = mapGeneralErrorModel(
+          correlationId,
+          errorRes
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "PSEUDONYMIZATION_001",
           "KO",
           JSON.stringify(generalErrorResponse)
         );

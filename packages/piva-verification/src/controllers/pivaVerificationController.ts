@@ -1,4 +1,4 @@
-import { logger, getContext } from "pdnd-common";
+import { logger, getContext, userService } from "pdnd-common";
 import { PivaVerificationService } from "pdnd-common";
 import { Richiesta, VerificaPartitaIva } from "../model/domain/models.js";
 import { requestParamNotValid } from "../exceptions/errors.js";
@@ -23,6 +23,14 @@ class PivaVerificationController {
       }
     } catch (error) {
       logger.error(`Error during in method controller 'findPiva': `, error);
+      throw error;
+    }
+  }
+  public async getRotatedSeed(eserviceId: string): Promise<string> {
+    try {
+      return await userService.generateSeed(eserviceId);
+    } catch (error) {
+      logger.error(`Controller Error during getRotatedSeed`, error);
       throw error;
     }
   }
