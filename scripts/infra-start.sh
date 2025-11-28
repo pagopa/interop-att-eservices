@@ -27,6 +27,7 @@ packages=(
   "residence-verification"
   "residence-verification-direct"
   "trial-service-api"
+  "signal-service"
 )
 
 update_env_variable() {
