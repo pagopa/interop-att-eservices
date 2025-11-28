@@ -1,6 +1,7 @@
 import { z } from "zod";
 import * as api from "../generated/api.js";
 
+// --- COMUNI / AR001 ---
 export type TipoLocalita = z.infer<typeof api.schemas.TipoLocalita>;
 export type TipoComune = z.infer<typeof api.schemas.TipoComune>;
 export type TipoLuogoNascitaE000 = z.infer<
@@ -22,19 +23,13 @@ export type TipoLocalitaEstera1 = z.infer<
   typeof api.schemas.TipoLocalitaEstera1
 >;
 export type TipoResidenza = z.infer<typeof api.schemas.TipoResidenza>;
-
 export type TipoDatiNascitaE000 = z.infer<
   typeof api.schemas.TipoDatiNascitaE000
 >;
 export type TipoParametriRicercaAR001 = z.infer<
   typeof api.schemas.TipoParametriRicercaAR001
 >;
-
 export type TipoRichiestaAR001 = z.infer<typeof api.schemas.TipoRichiestaAR001>;
-export type TipoVerificaResidenza = z.infer<
-  typeof api.schemas.TipoVerificaResidenza
->;
-export type TipoLocalitaEstera = z.infer<typeof api.schemas.TipoLocalitaEstera>;
 export type RichiestaAR001 = z.infer<typeof api.schemas.RichiestaAR001>;
 export type TipoCodiceFiscale = z.infer<typeof api.schemas.TipoCodiceFiscale>;
 export type TipoLuogoEvento = z.infer<typeof api.schemas.TipoLuogoEvento>;
@@ -51,11 +46,13 @@ export type TipoDatiSoggettiEnte = z.infer<
   typeof api.schemas.TipoDatiSubjectsEnte
 >;
 export type TipoListaSoggetti = z.infer<typeof api.schemas.TipoListaSubjects>;
-export type InfoSoggettoEnte = z.infer<typeof api.schemas.InfoSoggettoEnte>;
-export type TipoInfoSoggetto = z.infer<typeof api.schemas.TipoInfoSoggetto>;
 export type TipoErroriAnomalia = z.infer<typeof api.schemas.TipoErroriAnomalia>;
 export type RispostaAR001 = z.infer<typeof api.schemas.RispostaAR001>;
-export type RichiestaAR002 = z.infer<typeof api.schemas.RichiestaAR002>;
-export type RispostaAR002OK = z.infer<typeof api.schemas.RispostaAR002OK>;
 export type ProblemError = z.infer<typeof api.schemas.ProblemError>;
 export type Problem = z.infer<typeof api.schemas.Problem>;
+
+export type RichiestaAR002 = z.infer<typeof api.schemas.RichiestaAR002>;
+export type RispostaAR002OK = z.infer<typeof api.schemas.RispostaAR002OK>;
+export type InfoSoggettoItemAR002 = z.infer<
+  typeof api.schemas.InfoSoggettoItemAR002
+>;

@@ -267,75 +267,186 @@ const RispostaAR001 = z
   })
   .partial()
   .passthrough();
-const TipocriteriaAR002 = z
+const TipoComuneAR002 = z
   .object({
-    subjectId: z.string(),
-    id: z.string(),
-    surname: z.string(),
-    nosurname: z.string(),
-    name: z.string(),
-    noname: z.string(),
-    gender: z.string(),
-    birthDate: TipoDatiNascitaE000,
+    nomeComune: z.string(),
+    codiceIstat: z.string(),
+    siglaProvinciaIstat: z.string(),
+    descrizioneLocalita: z.string(),
   })
   .partial()
   .passthrough();
-const TipoLocalitaEstera = z
-  .object({ foreignAddress: TipoIndirizzoEstero, consulate: TipoConsolato })
-  .partial()
-  .passthrough();
-const TipoVerificaResidenza = z
+const TipoLocalitaAR002 = z
   .object({
-    addressType: z.string(),
-    address: TipoIndirizzo,
-    foreignState: TipoLocalitaEstera,
+    descrizioneLocalita: z.string(),
+    descrizioneStato: z.string(),
+    codiceStato: z.string(),
+    provinciaContea: z.string(),
   })
   .partial()
   .passthrough();
-const TipoVerificaAR002 = z
-  .object({ address: TipoVerificaResidenza })
+const DatiNascitaAR002 = z
+  .object({
+    dataEvento: z.string(),
+    senzaGiorno: z.string(),
+    senzaGiornoMese: z.string(),
+    luogoNascita: z
+      .object({
+        luogoEccezionale: z.string(),
+        comune: TipoComuneAR002,
+        localita: TipoLocalitaAR002,
+      })
+      .partial()
+      .passthrough(),
+  })
   .partial()
   .passthrough();
-const TipoRequestDataAR002 = z
+const CriteriRicercaAR002 = z
   .object({
-    dateOfRequest: z.string(),
-    motivation: z.string(),
-    useCase: z.string(),
+    codiceFiscale: z.string(),
+    idANPR: z.string(),
+    cognome: z.string(),
+    senzaCognome: z.string(),
+    nome: z.string(),
+    senzaNome: z.string(),
+    sesso: z.string(),
+    datiNascita: DatiNascitaAR002,
+  })
+  .partial()
+  .passthrough();
+const TipoToponimoAR002 = z
+  .object({
+    codSpecie: z.string(),
+    specie: z.string(),
+    specieFonte: z.string(),
+    codToponimo: z.string(),
+    denominazioneToponimo: z.string(),
+    toponimoFonte: z.string(),
+  })
+  .partial()
+  .passthrough();
+const TipoCivicoInternoAR002 = z
+  .object({
+    corte: z.string(),
+    scala: z.string(),
+    interno1: z.string(),
+    espInterno1: z.string(),
+    interno2: z.string(),
+    espInterno2: z.string(),
+    scalaEsterna: z.string(),
+    secondario: z.string(),
+    piano: z.string(),
+    nui: z.string(),
+    isolato: z.string(),
+  })
+  .partial()
+  .passthrough();
+const TipoNumeroCivicoAR002 = z
+  .object({
+    codiceCivico: z.string(),
+    civicoFonte: z.string(),
+    numero: z.string(),
+    metrico: z.string(),
+    progSNC: z.string(),
+    lettera: z.string(),
+    esponente1: z.string(),
+    colore: z.string(),
+    civicoInterno: TipoCivicoInternoAR002,
+  })
+  .partial()
+  .passthrough();
+const TipoIndirizzoAR002 = z
+  .object({
+    cap: z.string(),
+    comune: TipoComuneAR002,
+    frazione: z.string(),
+    toponimo: TipoToponimoAR002,
+    numeroCivico: TipoNumeroCivicoAR002,
+  })
+  .partial()
+  .passthrough();
+const TipoLocalitaEsteraAR002 = z
+  .object({
+    indirizzoEstero: z
+      .object({
+        cap: z.string(),
+        localita: TipoLocalitaAR002,
+        toponimo: z
+          .object({ denominazione: z.string(), numeroCivico: z.string() })
+          .partial()
+          .passthrough(),
+      })
+      .partial()
+      .passthrough(),
+    consolato: z
+      .object({ codiceConsolato: z.string(), descrizioneConsolato: z.string() })
+      .partial()
+      .passthrough(),
+  })
+  .partial()
+  .passthrough();
+const VerificaAR002 = z
+  .object({
+    residenza: z
+      .object({
+        tipoIndirizzo: z.string(),
+        indirizzo: TipoIndirizzoAR002,
+        localitaEstera: TipoLocalitaEsteraAR002,
+      })
+      .partial()
+      .passthrough(),
+  })
+  .partial()
+  .passthrough();
+const DatiRichiestaAR002 = z
+  .object({
+    dataRiferimentoRichiesta: z.string(),
+    motivoRichiesta: z.string(),
+    casoUso: z.string(),
   })
   .passthrough();
 const RichiestaAR002 = z
   .object({
-    operationId: z.string(),
-    criteria: TipocriteriaAR002,
-    check: TipoVerificaAR002.optional(),
-    requestData: TipoRequestDataAR002,
+    idOperazioneClient: z.string(),
+    criteriRicerca: CriteriRicercaAR002,
+    verifica: VerificaAR002.optional(),
+    datiRichiesta: DatiRichiestaAR002,
   })
   .passthrough();
-const TipoInfoValore = z.enum(["A", "N", "S"]);
-const TipoInfoSoggetto = z
+const InfoSoggettoItemAR002 = z
   .object({
     id: z.string(),
-    key: z.string(),
-    value: TipoInfoValore,
-    textValue: z.string(),
-    dataValue: z.string(),
-    otherData: z.string(),
+    chiave: z.string(),
+    valore: z.enum(["A", "N", "S", "D"]),
+    valoreTesto: z.string(),
+    valoreData: z.string(),
+    dettaglio: z.string(),
   })
   .partial()
   .passthrough();
-const InfoSoggettoEnte = z
-  .object({ infoInstitution: z.array(TipoInfoSoggetto) })
+const DatiSoggettoEnteAR002 = z
+  .object({ infoSoggettoEnte: z.array(InfoSoggettoItemAR002) })
   .partial()
   .passthrough();
-const VerifyTipoDatiSubjects = z
-  .object({ infoSubject: z.array(InfoSoggettoEnte) })
+const AnomaliaAR002 = z
+  .object({
+    codiceErroreAnomalia: z.string(),
+    tipoErroreAnomalia: z.string(),
+    testoErroreAnomalia: z.string(),
+    oggettoErroreAnomalia: z.string(),
+    campoErroreAnomalia: z.string(),
+    valoreErroreAnomalia: z.string(),
+  })
   .partial()
   .passthrough();
 const RispostaAR002OK = z
   .object({
-    idOp: z.string(),
-    subjects: VerifyTipoDatiSubjects,
-    warnings: z.array(TipoErroriAnomalia),
+    idOperazioneANPR: z.string(),
+    listaSoggetti: z
+      .object({ datiSoggetto: z.array(DatiSoggettoEnteAR002) })
+      .partial()
+      .passthrough(),
+    listaAnomalie: z.array(AnomaliaAR002),
   })
   .partial()
   .passthrough();
@@ -387,16 +498,21 @@ export const schemas = {
   TipoListaSubjects,
   TipoErroriAnomalia,
   RispostaAR001,
-  TipocriteriaAR002,
-  TipoLocalitaEstera,
-  TipoVerificaResidenza,
-  TipoVerificaAR002,
-  TipoRequestDataAR002,
+  TipoComuneAR002,
+  TipoLocalitaAR002,
+  DatiNascitaAR002,
+  CriteriRicercaAR002,
+  TipoToponimoAR002,
+  TipoCivicoInternoAR002,
+  TipoNumeroCivicoAR002,
+  TipoIndirizzoAR002,
+  TipoLocalitaEsteraAR002,
+  VerificaAR002,
+  DatiRichiestaAR002,
   RichiestaAR002,
-  TipoInfoValore,
-  TipoInfoSoggetto,
-  InfoSoggettoEnte,
-  VerifyTipoDatiSubjects,
+  InfoSoggettoItemAR002,
+  DatiSoggettoEnteAR002,
+  AnomaliaAR002,
   RispostaAR002OK,
   ProblemError,
   Problem,
