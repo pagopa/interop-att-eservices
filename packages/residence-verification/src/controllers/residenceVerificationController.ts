@@ -34,10 +34,10 @@ class ResidenceVerificationController {
   public async findUserVerify(
     request: RichiestaAR002
   ): Promise<RispostaAR002OK> {
-    const internalRequest = translateKeys(
+    const internalRequest: InternalRequestAR002 = translateKeys(
       request,
       REQ_ITA_TO_ENG
-    ) as InternalRequestAR002;
+    );
 
     const data = await this.getUserData(internalRequest);
 
@@ -49,11 +49,11 @@ class ResidenceVerificationController {
       idOperazioneANPR: internalRequest.operationId,
       listaSoggetti: {
         datiSoggetto: data.map((user) => {
-          const flatItalianObj = translateKeys(
+          const flatItalianObj: RispostaAR002OK = translateKeys(
             user,
             RES_ENG_TO_ITA_KEYS,
             true
-          ) as Record<string, unknown>;
+          );
 
           const infoSoggettoEnte = Object.entries(flatItalianObj).map(
             ([chiave, valore]) => {
