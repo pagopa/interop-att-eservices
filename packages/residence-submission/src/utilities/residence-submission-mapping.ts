@@ -3,7 +3,6 @@ import { Mapping } from "pdnd-common";
 export const REQ_AR003_ITA_TO_ENG: Mapping = {
   idOperazioneClient: "operationId",
 
-  // --- ANAGRAFICA (Soggetto) ---
   "soggetto.codiceFiscale": "subjects.subject.generality.subjectId.subjectId",
   "soggetto.idANPR": "subjects.subject.generality.idSubjectData",
   "soggetto.cognome": "subjects.subject.generality.surname",
@@ -12,7 +11,6 @@ export const REQ_AR003_ITA_TO_ENG: Mapping = {
   "soggetto.senzaNome": "subjects.subject.generality.noName",
   "soggetto.sesso": "subjects.subject.generality.gender",
 
-  // Dati Nascita
   "soggetto.datiNascita.dataEvento":
     "subjects.subject.generality.birthDate.eventDate",
   "soggetto.datiNascita.senzaGiorno":
@@ -20,7 +18,6 @@ export const REQ_AR003_ITA_TO_ENG: Mapping = {
   "soggetto.datiNascita.senzaGiornoMese":
     "subjects.subject.generality.birthDate.noMonth",
 
-  // Luogo Nascita
   "soggetto.datiNascita.luogoNascita.luogoEccezionale":
     "subjects.subject.generality.birthDate.birthPlace.exceptionalPlace",
   "soggetto.datiNascita.luogoNascita.comune.nomeComune":
@@ -41,10 +38,8 @@ export const REQ_AR003_ITA_TO_ENG: Mapping = {
   "soggetto.datiNascita.luogoNascita.localita.provinciaContea":
     "subjects.subject.generality.birthDate.birthPlace.place.provinceCounty",
 
-  // --- RESIDENZA (Indirizzo) ---
   "soggetto.residenza.tipoIndirizzo": "subjects.subject.address.addressType",
 
-  // Indirizzo Italiano
   "soggetto.residenza.indirizzo.cap": "subjects.subject.address.address.cap",
   "soggetto.residenza.indirizzo.comune.nomeComune":
     "subjects.subject.address.address.municipality.nameMunicipality",
@@ -57,7 +52,6 @@ export const REQ_AR003_ITA_TO_ENG: Mapping = {
   "soggetto.residenza.indirizzo.frazione":
     "subjects.subject.address.address.fraction",
 
-  // Toponimo
   "soggetto.residenza.indirizzo.toponimo.codSpecie":
     "subjects.subject.address.address.toponym.codType",
   "soggetto.residenza.indirizzo.toponimo.specie":
@@ -71,7 +65,6 @@ export const REQ_AR003_ITA_TO_ENG: Mapping = {
   "soggetto.residenza.indirizzo.toponimo.toponimoFonte":
     "subjects.subject.address.address.toponym.toponymSource",
 
-  // Numero Civico
   "soggetto.residenza.indirizzo.numeroCivico.codiceCivico":
     "subjects.subject.address.address.civicNumber.civicCod",
   "soggetto.residenza.indirizzo.numeroCivico.civicoFonte":
@@ -89,7 +82,6 @@ export const REQ_AR003_ITA_TO_ENG: Mapping = {
   "soggetto.residenza.indirizzo.numeroCivico.colore":
     "subjects.subject.address.address.civicNumber.color",
 
-  // Civico Interno
   "soggetto.residenza.indirizzo.numeroCivico.civicoInterno.corte":
     "subjects.subject.address.address.civicNumber.internalCivic.court",
   "soggetto.residenza.indirizzo.numeroCivico.civicoInterno.scala":
@@ -113,7 +105,6 @@ export const REQ_AR003_ITA_TO_ENG: Mapping = {
   "soggetto.residenza.indirizzo.numeroCivico.civicoInterno.isolato":
     "subjects.subject.address.address.civicNumber.internalCivic.isolated",
 
-  // Estero
   "soggetto.residenza.localitaEstera.indirizzoEstero.cap":
     "subjects.subject.address.foreignState.foreignAddress.cap",
   "soggetto.residenza.localitaEstera.indirizzoEstero.localita.descrizioneLocalita":
