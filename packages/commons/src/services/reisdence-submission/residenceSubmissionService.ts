@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { RequestAR003 } from "../../zod/residence-submission/requestAR003.js";
 import { Subject } from "../../db/schema/residence-verification/subject.model.js";
+import { Address } from "../../db/schema/residence-verification/address.model.js";
 import { logger } from "../../index.js";
 import { userModelNotFound } from "../../logging/index.js";
 import { DataPreparationRepository } from "../../repositories/residence-submission/dataPreparation.js";
@@ -39,44 +40,34 @@ export const ResidenceSubmissionService = {
     try {
       logger.info(`[residence-submission][START] updateBySubjectId`);
 
-      const subjects = updatedUser?.subjects?.subject;
-      if (!Array.isArray(subjects)) {
-        throw new Error("Missing or invalid 'subjects.subject' array");
+      const id =
+        updatedUser.subjects?.subject?.generality?.subjectId?.subjectId;
+
+      if (!id) {
+        throw new Error("Subject ID missing in update request");
       }
 
-      for (const subject of subjects) {
-        const id: string = subject?.generality?.subjectId?.subjectId;
+      await this.getBySubjectId(id);
 
-        const existingSubject = await this.getBySubjectId(id);
-        if (!existingSubject) {
-          throw userModelNotFound(`User with subjectId ${id} not found`);
-        }
+      const { subject: updatedSubject, address: updatedAddress } =
+        mapApiBodyToDbModelsUpdate(updatedUser);
 
-        const queryData = mapApiBodyToDbModelsUpdate(updatedUser);
-        const updatedSubject = queryData.subject;
-        const updatedAddresses = queryData.addresses;
+      await DataPreparationRepository.updateSubjectById(
+        id,
+        updatedSubject as unknown as Subject
+      );
 
-        if (!updatedSubject || !updatedAddresses) {
-          throw new Error(`Mapping error for subjectId ${id}.`);
-        }
-
-        await DataPreparationRepository.updateSubjectById(id, updatedSubject);
-
+      if (updatedAddress && Object.keys(updatedAddress).length > 0) {
         const existingAddresses =
           await DataPreparationRepository.findAddressesBySubjectId(id);
-        const existingAddressIds = existingAddresses.map(
-          (addr) => addr.subject_id
-        );
-        for (const address of updatedAddresses) {
-          if (
-            address.subject_id &&
-            existingAddressIds.includes(address.subject_id)
-          ) {
-            await DataPreparationRepository.updateAddressById(
-              address.subject_id,
-              address
-            );
-          }
+
+        if (existingAddresses && existingAddresses.length > 0) {
+          await DataPreparationRepository.updateAddressById(
+            id,
+            updatedAddress as unknown as Address
+          );
+        } else {
+          logger.warn(`No existing address found for subject ${id} to update.`);
         }
       }
 
@@ -94,37 +85,33 @@ export const ResidenceSubmissionService = {
     try {
       logger.info(`[residence-submission][START] create`);
 
-      if (request.subjects && Array.isArray(request.subjects.subject)) {
-        for (const subject of request.subjects.subject) {
-          const queryData = mapApiBodyToDbModels(subject);
-          const newSubject = queryData.subject;
-          const newAddresses = queryData.addresses;
+      const subjectData = request.subjects?.subject;
+      if (!subjectData) {
+        throw new Error("Missing 'subjects.subject' data in the request.");
+      }
 
-          if (!newSubject || !newAddresses || newAddresses.length === 0) {
-            throw new Error(
-              "Subject or at least one address is missing in the request."
-            );
-          }
+      const { subject: newSubject, address: newAddress } =
+        mapApiBodyToDbModels(request);
 
-          const existingSubject =
-            await DataPreparationRepository.findSubjectById(
-              newSubject.subject_id
-            );
-          if (existingSubject) {
-            throw new Error(
-              `Subject with subject_id ${newSubject.subject_id} already exists.`
-            );
-          }
+      if (!newSubject) {
+        throw new Error("Subject data is missing after mapping.");
+      }
 
-          await DataPreparationRepository.createSubject(newSubject);
+      const existingSubject = await DataPreparationRepository.findSubjectById(
+        newSubject.subject_id
+      );
+      if (existingSubject) {
+        throw new Error(
+          `Subject with subject_id ${newSubject.subject_id} already exists.`
+        );
+      }
 
-          for (const address of newAddresses) {
-            await DataPreparationRepository.createAddress({
-              ...address,
-              subject_id: newSubject.subject_id,
-            });
-          }
-        }
+      await DataPreparationRepository.createSubject(newSubject);
+
+      if (newAddress) {
+        await DataPreparationRepository.createAddress(
+          newAddress as unknown as Address
+        );
       }
 
       logger.info(`[residence-submission][END] create`);
@@ -151,8 +138,13 @@ export const ResidenceSubmissionService = {
 
       const addresses =
         await DataPreparationRepository.findAddressesBySubjectId(subjectId);
-      for (const address of addresses) {
-        await DataPreparationRepository.deleteAddressById(address.id);
+
+      if (addresses && addresses.length > 0) {
+        await Promise.all(
+          addresses.map((address) =>
+            DataPreparationRepository.deleteAddressById(address.id)
+          )
+        );
       }
 
       await DataPreparationRepository.deleteSubjectById(subjectId);

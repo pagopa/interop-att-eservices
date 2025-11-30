@@ -85,7 +85,7 @@ const residenceSubissionController = (
         const data: any = await ResidenceSubmissionController.updateUser(
           req.body
         );
-        if (!data || data.subjects?.subject?.length === 0) {
+        if (!data) {
           throw userModelNotFound();
         }
 
@@ -96,8 +96,7 @@ const residenceSubissionController = (
         }
 
         const eserviceId = await getEserviceIdFromToken(pdndToken);
-        const fiscalCode =
-          req.body.subjects?.subject?.[0]?.generality?.subjectId?.subjectId;
+        const fiscalCode = req.body.soggetto.codiceFiscale;
         logger.info(
           `[SHRepository] Found fiscalCode: ${JSON.stringify(fiscalCode)}`
         );
@@ -239,7 +238,7 @@ const residenceSubissionController = (
           "OK"
         );
         logger.info(`[END] residenceSubissionController delete`);
-        return res.status(204).end();
+        return res.status(200).json(data).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;
