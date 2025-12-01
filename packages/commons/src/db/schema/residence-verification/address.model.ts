@@ -19,6 +19,9 @@ export const addressTable = customSchema.table("addresses", {
     "address_municipality_place_description"
   ),
 
+  cap: text("cap"),
+  fraction: text("fraction"),
+
   toponym_cod_type: text("toponym_cod_type"),
   toponym_type: text("toponym_type"),
   toponym_origin_type: text("toponym_origin_type"),

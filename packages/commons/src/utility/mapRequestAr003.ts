@@ -18,10 +18,17 @@ type MappedDataUpdate = {
   address: Partial<Address>;
 };
 
+// Interfaccia per tipizzare l'oggetto che otteniamo dal parsing della data
+interface BirthDateStructure {
+  eventDate?: string | number;
+  birthPlace?: unknown;
+  noDay?: string | boolean;
+  noMonth?: string | boolean;
+}
+
 const val = (v?: string | null): string => v ?? "";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const parseJsonSafe = (input: unknown): any => {
+const parseJsonSafe = (input: unknown): unknown => {
   if (typeof input === "string" && input.trim().startsWith("{")) {
     try {
       return JSON.parse(input);
@@ -32,14 +39,17 @@ const parseJsonSafe = (input: unknown): any => {
   return null;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const extractBirthData = (gen: any): { date: string; place: any } => {
+const extractBirthData = (
+  gen: TipoDatiSoggettiEnte["generality"]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): { date: string; place: any; noDay: string; noMonth: string } => {
   const rawDate = gen?.birthDate;
 
-  const sourceObj =
-    typeof rawDate === "object" && rawDate !== null
-      ? rawDate
-      : parseJsonSafe(rawDate);
+  const parsed = parseJsonSafe(rawDate);
+
+  const sourceObj = (
+    typeof rawDate === "object" && rawDate !== null ? rawDate : parsed
+  ) as BirthDateStructure | null;
 
   const place = sourceObj?.birthPlace ?? gen?.birthPlace;
 
@@ -49,7 +59,15 @@ const extractBirthData = (gen: any): { date: string; place: any } => {
     ? rawDate
     : "";
 
-  return { date, place };
+  const noDay = sourceObj?.noDay ?? gen?.noDay;
+  const noMonth = sourceObj?.noMonth ?? gen?.noMonth;
+
+  return {
+    date,
+    place,
+    noDay: String(noDay ?? ""),
+    noMonth: String(noMonth ?? ""),
+  };
 };
 
 const getAddressUpdateData = (address?: Address): Partial<Address> => {
@@ -63,7 +81,12 @@ const getAddressUpdateData = (address?: Address): Partial<Address> => {
 
 function mapSubject(source: TipoDatiSoggettiEnte): Subject {
   const gen = source.generality;
-  const { date: cleanBirthDate, place: birth } = extractBirthData(gen);
+  const {
+    date: cleanBirthDate,
+    place: birth,
+    noDay,
+    noMonth,
+  } = extractBirthData(gen);
 
   return {
     uuid: uuidv4(),
@@ -75,6 +98,8 @@ function mapSubject(source: TipoDatiSoggettiEnte): Subject {
     no_name: val(gen?.noName),
     gender: val(gen?.gender),
     birth_event_date: cleanBirthDate,
+    birth_no_day: noDay,
+    birth_no_day_month: noMonth,
     birth_exceptional_place: val(birth?.exceptionalPlace),
     birth_municipality_name: val(birth?.municipality?.nameMunicipality),
     birth_municipality_istat_code: val(birth?.municipality?.istatCode),
@@ -115,6 +140,8 @@ function mapAddress(
     address_municipality_place_description: val(
       addr?.municipality?.placeDescription
     ),
+    cap: val(addr?.cap),
+    fraction: val(addr?.fraction),
     toponym_cod_type: val(addr?.toponym?.codType),
     toponym_type: val(addr?.toponym?.type),
     toponym_origin_type: val(addr?.toponym?.originType),
