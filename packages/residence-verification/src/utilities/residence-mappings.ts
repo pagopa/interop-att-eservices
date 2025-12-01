@@ -107,7 +107,7 @@ export const REQ_ITA_TO_ENG: Mapping = {
   "verifica.residenza.localitaEstera.indirizzoEstero.localita.descrizioneStato":
     "check.address.foreignState.foreignAddress.place.countryDescription",
   "verifica.residenza.localitaEstera.indirizzoEstero.localita.codiceStato":
-    "check.address.foreignState.foreignAddress.place.countryState",
+    "check.address.foreignState.foreignAddress.place.codState",
   "verifica.residenza.localitaEstera.indirizzoEstero.localita.provinciaContea":
     "check.address.foreignState.foreignAddress.place.provinceCounty",
   "verifica.residenza.localitaEstera.indirizzoEstero.toponimo.denominazione":

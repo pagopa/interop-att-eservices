@@ -90,7 +90,7 @@ export function translateKeys<T = unknown>(
   mapping: Mapping,
   returnFlat = false
 ): T {
-  if (!obj) {
+  if (obj === null) {
     return obj as T;
   }
 

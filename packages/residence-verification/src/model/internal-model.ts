@@ -57,9 +57,9 @@ const TipocriteriaInternal = z
     subjectId: z.string(),
     id: z.string(),
     surname: z.string(),
-    nosurname: z.string(),
+    noSurname: z.string(),
     name: z.string(),
-    noname: z.string(),
+    noName: z.string(),
     gender: z.string(),
     birthDate: api.schemas.TipoDatiNascitaE000,
   })
