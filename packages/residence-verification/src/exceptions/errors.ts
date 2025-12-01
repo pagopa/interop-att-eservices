@@ -36,6 +36,14 @@ export function eServiceNotFound(eserviceId: string): ApiError<ErrorCodes> {
   });
 }
 
+export function userModelNotFound(details?: string): ApiError<ErrorCodes> {
+  return new ApiError({
+    detail: details != null ? details : "Data not found",
+    code: "userModelNotFound",
+    title: "Not found",
+  });
+}
+
 export function requestParamNotValid(details: string): ApiError<ErrorCodes> {
   return new ApiError({
     detail: details,
