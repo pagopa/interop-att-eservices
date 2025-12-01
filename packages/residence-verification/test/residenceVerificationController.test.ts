@@ -108,10 +108,10 @@ describe("ResidenceVerificationController", () => {
       (userService.getUserBySubjectId as Mock).mockResolvedValue(null);
 
       await expect(controller.findUser(request)).rejects.toThrow(
-        "No user found matching the criteria"
+        "Codice fiscale non trovato"
       );
       expect(userModelNotFound).toHaveBeenCalledWith(
-        "No user found matching the criteria"
+        "Codice fiscale non trovato"
       );
     });
   });
