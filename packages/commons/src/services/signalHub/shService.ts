@@ -49,6 +49,7 @@ export const SHService = {
         const errorMessage = (error as Error).message || String(error);
         logger.error(`[ANPRService] Connection Error: ${errorMessage}`);
       }
+      throw error;
     }
   },
 
@@ -76,6 +77,6 @@ export const SHService = {
 
   async getNextSignalId(eserviceId: string): Promise<number> {
     logger.info(`[SHService] Requesting signalId increment for ${eserviceId}`);
-    return SHRepository.ensureAndIncrementSignalId(eserviceId);
+    return SHRepository.ensureAndIncrementSignalId(eserviceId); // split functionality
   },
 };
