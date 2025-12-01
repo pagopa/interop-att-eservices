@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getPDNDTokenM2M } from "pdnd-common";
+import { getPDNDTokenM2M, logger } from "pdnd-common";
 import { shConfig } from "../config/config.js";
 
 const config = shConfig();
@@ -25,6 +25,10 @@ export const SignalHubClient = {
       objectType: "-",
       objectId: "-",
     };
+
+    logger.info(
+      `[SignalHubClient] Sending payload: ${JSON.stringify(payload)}`
+    );
 
     await axios.post(url, payload, {
       headers: {
