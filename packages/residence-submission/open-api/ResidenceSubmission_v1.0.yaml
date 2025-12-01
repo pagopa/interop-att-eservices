@@ -1,19 +1,19 @@
 openapi: 3.0.3
 info:
-  title: Residence Submission API
+  title: API Acquisizione Residenza
   description: |-
-    Service for submitting, updating, and deleting residence information.
+    Servizio per l'invio, l'aggiornamento e l'eliminazione delle informazioni sulla residenza.
   version: '1.0.0'
   termsOfService: 'http://swagger.io/terms/'
-  x-summary: Residence submission
+  x-summary: Acquisizione residenza
 servers:
   - url: 'http://eservices.att.interop.pagopa.it/'
-    description: Attestation Environment
+    description: Ambiente di Attestazione
 tags:
   - name: Residence Submission
-    description: Submission and update of residence information
+    description: Invio e aggiornamento delle informazioni sulla residenza
   - name: Health Check
-    description: Service health check
+    description: Controllo stato di salute del servizio
 security:
   - bearerAuth: []
   - Agid-JWT-Signature: []
@@ -23,8 +23,8 @@ paths:
     post:
       tags:
         - Residence Submission
-      summary: Upsert User
-      description: Creates a user based on the provided criteria.
+      summary: Inserisci Utente
+      description: Crea un utente in base ai criteri forniti.
       operationId: upsertUser
       security:
         - bearerAuth: []
@@ -36,7 +36,7 @@ paths:
               $ref: '#/components/schemas/RichiestaAR003'
       responses:
         '200':
-          description: Operation completed successfully
+          description: Operazione completata con successo
           content:
             application/json:
               schema:
@@ -73,8 +73,8 @@ paths:
     put:
       tags:
         - Residence Submission
-      summary: Update User
-      description: Updates an existing user based on the provided criteria.
+      summary: Aggiorna Utente
+      description: Aggiorna un utente esistente in base ai criteri forniti.
       operationId: updateUser
       security:
         - bearerAuth: []
@@ -86,7 +86,7 @@ paths:
               $ref: '#/components/schemas/RichiestaAR003'
       responses:
         '200':
-          description: Operation completed successfully
+          description: Operazione completata con successo
           content:
             application/json:
               schema:
@@ -131,8 +131,8 @@ paths:
     delete:
       tags:
         - Residence Submission
-      summary: Delete User
-      description: Deletes a user by their unique identifier.
+      summary: Elimina Utente
+      description: Elimina un utente tramite il suo identificativo univoco.
       operationId: deleteUser
       security:
         - bearerAuth: []
@@ -144,7 +144,7 @@ paths:
             type: string
       responses:
         '204':
-          description: User deleted successfully
+          description: Utente eliminato con successo
         '400':
           description: Invalid request parameters
           content:
@@ -180,12 +180,12 @@ paths:
     get:
       tags:
         - Health Check
-      summary: Health status endpoint
-      description: Return ok
+      summary: Endpoint stato di salute
+      description: Restituisce ok
       operationId: healthCheck
       responses:
         "200":
-          description: successful operation
+          description: Operazione riuscita
           content:
             application/json:
               schema:
@@ -436,11 +436,11 @@ components:
   securitySchemes:
     bearerAuth:
       type: http
-      description: 'A bearer token in the format of a JWS.'
+      description: 'Un token bearer nel formato JWS.'
       scheme: bearer
       bearerFormat: JWT
     Agid-JWT-Signature:
       type: apiKey
       in: header
       name: Agid-JWT-Signature
-      description: JWS signature header.
+      description: Intestazione della firma JWS.

@@ -150,7 +150,7 @@ const endpoints = makeApi([
     method: "post",
     path: "/residence-submission",
     alias: "upsertUser",
-    description: `Creates a user based on the provided criteria.`,
+    description: `Crea un utente in base ai criteri forniti.`,
     requestFormat: "json",
     parameters: [
       {
@@ -190,7 +190,7 @@ const endpoints = makeApi([
     method: "put",
     path: "/residence-submission",
     alias: "updateUser",
-    description: `Updates an existing user based on the provided criteria.`,
+    description: `Aggiorna un utente esistente in base ai criteri forniti.`,
     requestFormat: "json",
     parameters: [
       {
@@ -235,7 +235,7 @@ const endpoints = makeApi([
     method: "delete",
     path: "/residence-submission/:id",
     alias: "deleteUser",
-    description: `Deletes a user by their unique identifier.`,
+    description: `Elimina un utente tramite il suo identificativo univoco.`,
     requestFormat: "json",
     parameters: [
       {
@@ -277,7 +277,7 @@ const endpoints = makeApi([
     method: "get",
     path: "/residence-submission/status",
     alias: "healthCheck",
-    description: `Return ok`,
+    description: `Restituisce ok`,
     requestFormat: "json",
     response: z
       .object({ status: z.string(), uptime: z.number(), timestamp: z.string() })

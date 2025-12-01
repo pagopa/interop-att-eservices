@@ -238,7 +238,7 @@ const residenceSubissionController = (
           "OK"
         );
         logger.info(`[END] residenceSubissionController delete`);
-        return res.status(200).json(data).end();
+        return res.status(204).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
         const correlationId = req.headers["x-correlation-id"] as string;
