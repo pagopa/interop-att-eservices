@@ -20,7 +20,7 @@ class ResidenceVerificationController {
   public async findUser(request: RichiestaAR001): Promise<RispostaAR001> {
     const data = await this.getUserData(request);
     if (data.length === 0) {
-      throw userModelNotFound("No user found matching the criteria");
+      throw userModelNotFound("Codice fiscale non trovato");
     }
     return {
       idOp: request.operationId,
