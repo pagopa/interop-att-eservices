@@ -1,13 +1,12 @@
 import { UserModel } from "pdnd-models";
 import { logger, getContext, userService, translateKeys } from "pdnd-common";
 import { userModelNotFound } from "../exceptions/errors.js";
+import { RispostaAR002OK, RichiestaAR002 } from "../model/domain/models.js";
 import {
   RichiestaAR001,
-  RichiestaAR002,
   RispostaAR001,
-  RispostaAR002OK,
   TipoParametriRicercaAR001,
-} from "../model/domain/models.js";
+} from "../model/modelAr001.js";
 import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
 import {
   REQ_ITA_TO_ENG,

@@ -15,7 +15,7 @@ export type TipoDatoLocalitaEstera = z.infer<
   typeof api.schemas.TipoDatoLocalitaEstera
 >;
 export type TipoToponimoEstero = z.infer<typeof api.schemas.TipoToponimoEstero>;
-export type TipoIndirizzoEstero = z.infer<
+export type TipoIndirizzoEsterxo = z.infer<
   typeof api.schemas.TipoIndirizzoEstero
 >;
 export type TipoConsolato = z.infer<typeof api.schemas.TipoConsolato>;
