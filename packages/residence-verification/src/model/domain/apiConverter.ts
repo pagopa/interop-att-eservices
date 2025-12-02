@@ -35,7 +35,6 @@ import {
   ProblemModel,
 } from "pdnd-models";
 
-import { TipoDatiSoggettiEnte, TipoListaSoggetti } from "pdnd-common";
 import {
   TipoIndirizzoEstero,
   TipoLocalitaEstera1,
@@ -52,6 +51,8 @@ import {
   TipoAttoANSC,
   TipoAttoEvento,
   TipoDatiEvento,
+  TipoDatiSoggettiEnte,
+  TipoListaSoggetti,
 } from "../modelAr001.js";
 import {
   TipoLocalita,
