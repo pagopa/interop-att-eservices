@@ -1,334 +1,240 @@
 import { v4 as uuidv4 } from "uuid";
-import { z } from "zod";
 import { logger } from "../logging/index.js";
-import { RequestAR003 } from "../zod/residence-submission/requestAR003.js";
-import { Address } from "../db/schema/residence-verification/address.model.js";
 import { Subject } from "../db/schema/residence-verification/subject.model.js";
+import { Address } from "../db/schema/residence-verification/address.model.js";
+import {
+  TipoDatiSoggettiEnte,
+  TipoResidenza,
+  RichiestaAR003,
+} from "../db/model/residence-submission.js";
 
-type RequestAR003Type = z.infer<typeof RequestAR003>;
-
-export function mapSourceSubjectToDbSubject(
-  sourceSubject: RequestAR003Type
-): Subject {
-  return {
-    uuid: uuidv4(),
-    id: sourceSubject?.identifiers?.id ?? "",
-    subject_id: sourceSubject?.generality?.subjectId?.subjectId ?? "",
-    surname: sourceSubject?.generality?.surname ?? "",
-    name: sourceSubject?.generality?.name ?? "",
-    gender: sourceSubject?.generality?.gender ?? "",
-    birth_event_date: sourceSubject?.generality?.birthDate ?? "",
-    birth_exceptional_place:
-      sourceSubject?.generality?.birthPlace?.exceptionalPlace ?? "",
-    birth_municipality_name:
-      sourceSubject?.generality?.birthPlace?.municipality?.nameMunicipality ??
-      "",
-    birth_municipality_istat_code:
-      sourceSubject?.generality?.birthPlace?.municipality?.istatCode ?? "",
-    birth_municipality_acronym_istat_province:
-      sourceSubject?.generality?.birthPlace?.municipality
-        ?.acronymIstatProvince ?? "",
-    birth_municipality_place_description:
-      sourceSubject?.generality?.birthPlace?.municipality?.placeDescription ??
-      "",
-    birth_place_description:
-      sourceSubject?.generality?.birthPlace?.place?.placeDescription ?? "",
-    birth_country_description:
-      sourceSubject?.generality?.birthPlace?.place?.countryDescription ?? "",
-    birth_cod_state:
-      sourceSubject?.generality?.birthPlace?.place?.codState ?? "",
-    birth_province_county:
-      sourceSubject?.generality?.birthPlace?.place?.provinceCounty ?? "",
-  };
-}
-
-type SourceAddress = {
-  addressType?: string | null;
-  noteAddress?: string | null;
-  addressStartDate?: string | null;
-  presso?: string | null;
-  address?: {
-    municipality?: {
-      nameMunicipality?: string | null;
-      istatCode?: string | null;
-      acronymIstatProvince?: string | null;
-      placeDescription?: string | null;
-    } | null;
-    toponym?: {
-      codType?: string | null;
-      type?: string | null;
-      originType?: string | null;
-      toponymCod?: string | null;
-      toponymDenomination?: string | null;
-      toponymSource?: string | null;
-    } | null;
-    civicNumber?: {
-      civicCod?: string | null;
-      civicSource?: string | null;
-      civicNumber?: string | null;
-      metric?: string | null;
-      progSNC?: string | null;
-      letter?: string | null;
-      exponent1?: string | null;
-      color?: string | null;
-      internalCivic?: {
-        court?: string | null;
-        stairs?: string | null;
-        internal1?: string | null;
-        espInternal1?: string | null;
-        internal2?: string | null;
-        espInternal2?: string | null;
-        externalStairs?: string | null;
-        secondary?: string | null;
-        floor?: string | null;
-        nui?: string | null;
-        isolated?: string | null;
-      } | null;
-    } | null;
-    coords?: {
-      latitude?: number | string | null;
-      longitude?: number | string | null;
-    } | null;
-  } | null;
-  foreignState?: {
-    foreignAddress?: {
-      cap?: string | null;
-      place?: {
-        placeDescription?: string | null;
-        countryDescription?: string | null;
-        countryState?: string | null;
-        provinceCounty?: string | null;
-      } | null;
-      toponym?: {
-        denomination?: string | null;
-        civicNumber?: string | null;
-      } | null;
-    } | null;
-    consulate?: {
-      consulateCod?: string | null;
-      consulateDescription?: string | null;
-    } | null;
-  } | null;
-  generality?: {
-    subjectId?: {
-      subjectId?: string | null;
-    } | null;
-  } | null;
+type MappedDataStrict = {
+  subject: Subject;
+  address: Address | undefined;
 };
 
-function getMunicipalityData(addr: SourceAddress["address"]): {
-  address_municipality_name: string;
-  address_municipality_istat_code: string;
-  address_municipality_acronym_istat_province: string;
-  address_municipality_place_description: string;
-} {
-  const m = addr?.municipality;
-  return {
-    address_municipality_name: m?.nameMunicipality ?? "",
-    address_municipality_istat_code: m?.istatCode ?? "",
-    address_municipality_acronym_istat_province: m?.acronymIstatProvince ?? "",
-    address_municipality_place_description: m?.placeDescription ?? "",
-  };
+type MappedDataUpdate = {
+  subject: Partial<Subject>;
+  address: Partial<Address>;
+};
+
+// Interfaccia per tipizzare l'oggetto che otteniamo dal parsing della data
+interface BirthDateStructure {
+  eventDate?: string | number;
+  birthPlace?: unknown;
+  noDay?: string | boolean;
+  noMonth?: string | boolean;
 }
 
-function getToponymData(addr: SourceAddress["address"]): {
-  toponym_cod_type: string;
-  toponym_type: string;
-  toponym_origin_type: string;
-  toponym_cod: string;
-  toponym_denomination: string;
-  toponym_source: string;
-} {
-  const t = addr?.toponym;
+const val = (v?: string | null): string => v ?? "";
+
+const parseJsonSafe = (input: unknown): unknown => {
+  if (typeof input === "string" && input.trim().startsWith("{")) {
+    try {
+      return JSON.parse(input);
+    } catch {
+      return null;
+    }
+  }
+  return null;
+};
+
+const extractBirthData = (
+  gen: TipoDatiSoggettiEnte["generality"]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): { date: string; place: any; noDay: string; noMonth: string } => {
+  const rawDate = gen?.birthDate;
+
+  const parsed = parseJsonSafe(rawDate);
+
+  const sourceObj = (
+    typeof rawDate === "object" && rawDate !== null ? rawDate : parsed
+  ) as BirthDateStructure | null;
+
+  const place = sourceObj?.birthPlace ?? gen?.birthPlace;
+
+  const date = sourceObj?.eventDate
+    ? String(sourceObj.eventDate)
+    : typeof rawDate === "string" && !rawDate.trim().startsWith("{")
+    ? rawDate
+    : "";
+
+  const noDay = sourceObj?.noDay ?? gen?.noDay;
+  const noMonth = sourceObj?.noMonth ?? gen?.noMonth;
+
   return {
-    toponym_cod_type: t?.codType ?? "",
-    toponym_type: t?.type ?? "",
-    toponym_origin_type: t?.originType ?? "",
-    toponym_cod: t?.toponymCod ?? "",
-    toponym_denomination: t?.toponymDenomination ?? "",
-    toponym_source: t?.toponymSource ?? "",
+    date,
+    place,
+    noDay: String(noDay ?? ""),
+    noMonth: String(noMonth ?? ""),
   };
+};
+
+const getAddressUpdateData = (address?: Address): Partial<Address> => {
+  if (!address) {
+    return {};
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { id, subject_id, ...rest } = address;
+  return rest;
+};
+
+function mapSubject(source: TipoDatiSoggettiEnte): Subject {
+  const gen = source.generality;
+  const {
+    date: cleanBirthDate,
+    place: birth,
+    noDay,
+    noMonth,
+  } = extractBirthData(gen);
+
+  return {
+    uuid: uuidv4(),
+    id: val(gen?.idSubjectData),
+    subject_id: val(gen?.subjectId?.subjectId),
+    surname: val(gen?.surname),
+    no_surname: val(gen?.noSurname),
+    name: val(gen?.name),
+    no_name: val(gen?.noName),
+    gender: val(gen?.gender),
+    birth_event_date: cleanBirthDate,
+    birth_no_day: noDay,
+    birth_no_day_month: noMonth,
+    birth_exceptional_place: val(birth?.exceptionalPlace),
+    birth_municipality_name: val(birth?.municipality?.nameMunicipality),
+    birth_municipality_istat_code: val(birth?.municipality?.istatCode),
+    birth_municipality_acronym_istat_province: val(
+      birth?.municipality?.acronymIstatProvince
+    ),
+    birth_municipality_place_description: val(
+      birth?.municipality?.placeDescription
+    ),
+    birth_place_description: val(birth?.place?.placeDescription),
+    birth_country_description: val(birth?.place?.countryDescription),
+    birth_cod_state: val(birth?.place?.codState),
+    birth_province_county: val(birth?.place?.provinceCounty),
+  } as unknown as Subject;
 }
 
-function getCivicData(addr: SourceAddress["address"]): {
-  civic_cod: string;
-  civic_source: string;
-  civic_number: string;
-  metric: string;
-  prog_snc: string;
-  letter: string;
-  exponent1: string;
-  color: string;
-  internal_court: string;
-  internal_stairs: string;
-  internal1: string;
-  esp_internal1: string;
-  internal2: string;
-  esp_internal2: string;
-  external_stairs: string;
-  secondary: string;
-  floor: string;
-  nui: string;
-  isolated: string;
-} {
-  const c = addr?.civicNumber;
-  const ic = c?.internalCivic;
-  return {
-    civic_cod: c?.civicCod ?? "",
-    civic_source: c?.civicSource ?? "",
-    civic_number: c?.civicNumber ?? "",
-    metric: c?.metric ?? "",
-    prog_snc: c?.progSNC ?? "",
-    letter: c?.letter ?? "",
-    exponent1: c?.exponent1 ?? "",
-    color: c?.color ?? "",
-    internal_court: ic?.court ?? "",
-    internal_stairs: ic?.stairs ?? "",
-    internal1: ic?.internal1 ?? "",
-    esp_internal1: ic?.espInternal1 ?? "",
-    internal2: ic?.internal2 ?? "",
-    esp_internal2: ic?.espInternal2 ?? "",
-    external_stairs: ic?.externalStairs ?? "",
-    secondary: ic?.secondary ?? "",
-    floor: ic?.floor ?? "",
-    nui: ic?.nui ?? "",
-    isolated: ic?.isolated ?? "",
-  };
-}
-
-function getCoordsData(addr: SourceAddress["address"]): {
-  latitude: string;
-  longitude: string;
-} {
-  const coords = addr?.coords;
-  return {
-    latitude: coords?.latitude?.toString() ?? "",
-    longitude: coords?.longitude?.toString() ?? "",
-  };
-}
-
-function getForeignData(foreignState: SourceAddress["foreignState"]): {
-  foreign_cap: string;
-  foreign_place_description: string;
-  foreign_country_description: string;
-  foreign_country_state: string;
-  foreign_province_county: string;
-  foreign_toponym_denomination: string;
-  foreign_toponym_civic_number: string;
-  consulate_cod: string;
-  consulate_description: string;
-} {
-  const fa = foreignState?.foreignAddress;
-  const fp = fa?.place;
-  const ft = fa?.toponym;
-  const c = foreignState?.consulate;
-  return {
-    foreign_cap: fa?.cap ?? "",
-    foreign_place_description: fp?.placeDescription ?? "",
-    foreign_country_description: fp?.countryDescription ?? "",
-    foreign_country_state: fp?.countryState ?? "",
-    foreign_province_county: fp?.provinceCounty ?? "",
-    foreign_toponym_denomination: ft?.denomination ?? "",
-    foreign_toponym_civic_number: ft?.civicNumber ?? "",
-    consulate_cod: c?.consulateCod ?? "",
-    consulate_description: c?.consulateDescription ?? "",
-  };
-}
-
-export function mapSourceAddressToDbAddress(
-  sourceAddress: SourceAddress
+function mapAddress(
+  sourceResidenza: TipoResidenza,
+  subjectId: string
 ): Address {
+  const addr = sourceResidenza.address;
+  const foreign = sourceResidenza.foreignState;
+  const civic = addr?.civicNumber;
+  const internal = civic?.internalCivic;
+
   return {
     id: uuidv4(),
-    address_type: sourceAddress.addressType ?? "",
-    note_address: sourceAddress.noteAddress ?? "",
-    address_start_date: sourceAddress.addressStartDate ?? "",
-    presso: sourceAddress.presso ?? "",
-    ...getMunicipalityData(sourceAddress.address),
-    ...getToponymData(sourceAddress.address),
-    ...getCivicData(sourceAddress.address),
-    ...getCoordsData(sourceAddress.address),
-    ...getForeignData(sourceAddress.foreignState),
-    subject_id: sourceAddress.generality?.subjectId?.subjectId ?? "",
+    subject_id: subjectId,
+    address_type: val(sourceResidenza.addressType),
+    note_address: val(sourceResidenza.noteaddress),
+    address_start_date: val(sourceResidenza.addressStartDate),
+    presso: val(sourceResidenza.presso),
+    address_municipality_name: val(addr?.municipality?.nameMunicipality),
+    address_municipality_istat_code: val(addr?.municipality?.istatCode),
+    address_municipality_acronym_istat_province: val(
+      addr?.municipality?.acronymIstatProvince
+    ),
+    address_municipality_place_description: val(
+      addr?.municipality?.placeDescription
+    ),
+    cap: val(addr?.cap),
+    fraction: val(addr?.fraction),
+    toponym_cod_type: val(addr?.toponym?.codType),
+    toponym_type: val(addr?.toponym?.type),
+    toponym_origin_type: val(addr?.toponym?.originType),
+    toponym_cod: val(addr?.toponym?.toponymCod),
+    toponym_denomination: val(addr?.toponym?.toponymDenomination),
+    toponym_source: val(addr?.toponym?.toponymSource),
+    civic_cod: val(civic?.civicCod),
+    civic_source: val(civic?.civicSource),
+    civic_number: val(civic?.civicNumber),
+    metric: val(civic?.metric),
+    prog_snc: val(civic?.progSNC),
+    letter: val(civic?.letter),
+    exponent1: val(civic?.exponent1),
+    color: val(civic?.color),
+    internal_court: val(internal?.court),
+    internal_stairs: val(internal?.stairs),
+    internal1: val(internal?.internal1),
+    esp_internal1: val(internal?.espInternal1),
+    internal2: val(internal?.internal2),
+    esp_internal2: val(internal?.espInternal2),
+    external_stairs: val(internal?.externalStairs),
+    secondary: val(internal?.secondary),
+    floor: val(internal?.floor),
+    nui: val(internal?.nui),
+    isolated: val(internal?.isolated),
+    foreign_cap: val(foreign?.foreignAddress?.cap),
+    foreign_place_description: val(
+      foreign?.foreignAddress?.place?.placeDescription
+    ),
+    foreign_country_description: val(
+      foreign?.foreignAddress?.place?.countryDescription
+    ),
+    foreign_country_state: val(foreign?.foreignAddress?.place?.countryState),
+    foreign_province_county: val(
+      foreign?.foreignAddress?.place?.provinceCounty
+    ),
+    foreign_toponym_denomination: val(
+      foreign?.foreignAddress?.toponym?.denomination
+    ),
+    foreign_toponym_civic_number: val(
+      foreign?.foreignAddress?.toponym?.civicNumber
+    ),
+    consulate_cod: val(foreign?.consulate?.consulateCod),
+    consulate_description: val(foreign?.consulate?.consulateDescription),
+    latitude: "",
+    longitude: "",
+  } as unknown as Address;
+}
+
+export function mapApiBodyToDbModels(
+  request: RichiestaAR003
+): MappedDataStrict {
+  logger.info("DEBUG MAPPER INPUT:", JSON.stringify(request, null, 2));
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const reqAny = request as any;
+  const sourceSubject = reqAny.subjects?.subject;
+
+  if (!sourceSubject?.generality) {
+    logger.error("Missing generality data in request");
+    throw new Error("Missing generality data in request");
+  }
+
+  const dbSubject = mapSubject(sourceSubject);
+
+  const dbAddress = sourceSubject.address
+    ? mapAddress(sourceSubject.address, dbSubject.subject_id)
+    : undefined;
+
+  return {
+    subject: dbSubject,
+    address: dbAddress,
   };
 }
 
-export function mapApiBodyToDbModels(subjectBody: RequestAR003Type): {
-  subject: Subject;
-  addresses: Address[];
-} {
+export function mapApiBodyToDbModelsUpdate(
+  request: RichiestaAR003
+): MappedDataUpdate {
   try {
-    const subject = mapSourceSubjectToDbSubject(subjectBody);
-    const addresses: Address[] = [];
+    const fullMapped = mapApiBodyToDbModels(request);
+    const fullSubject = fullMapped.subject;
 
-    const addressList: Address[] = Array.isArray(subjectBody.address)
-      ? subjectBody.address
-      : subjectBody.address
-      ? [subjectBody.address]
-      : [];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, uuid, ...subjectWithoutIds } = fullSubject;
 
-    if (addressList.length === 0) {
-      throw new Error("Missing address in request body");
-    }
-
-    for (const sourceAddress of addressList) {
-      try {
-        const dbAddress = mapSourceAddressToDbAddress(sourceAddress);
-        // eslint-disable-next-line functional/immutable-data
-        addresses.push(dbAddress);
-      } catch (error) {
-        logger.error("Error during address conversion:", error, sourceAddress);
-      }
-    }
-
-    return { subject, addresses };
-  } catch (error) {
-    logger.error(
-      "Error during subject/address conversion in mapApiBodyToDbModels:",
-      error
-    );
-    throw error;
-  }
-}
-
-export function mapApiBodyToDbModelsUpdate(subjectBody: RequestAR003Type): {
-  subject: Subject;
-  addresses: Address[];
-} {
-  try {
-    const subject: Subject = mapSourceSubjectToDbSubject(
-      subjectBody.subjects.subject[0]
-    );
-
-    const addressList: Address[] = Array.isArray(
-      subjectBody.subjects.subject[0].address
-    )
-      ? subjectBody.subjects.subject[0].address
-      : subjectBody.subjects.subject[0].address
-      ? [subjectBody.subjects.subject[0].address]
-      : [];
-
-    if (addressList.length === 0) {
-      throw new Error("Missing address in request body");
-    }
-
-    const addresses: Address[] = addressList.map((sourceAddress: Address) => {
-      const mappedAddress = mapSourceAddressToDbAddress(sourceAddress);
-      return {
-        ...mappedAddress,
-        subject_id: subject.subject_id,
-      };
-    });
+    const partialAddress = getAddressUpdateData(fullMapped.address);
 
     return {
-      subject,
-      addresses,
+      subject: subjectWithoutIds,
+      address: partialAddress,
     };
   } catch (error) {
-    logger.error(
-      "Error during subject/address conversion in mapApiBodyToDbModelsUpdate:",
-      error
-    );
+    logger.error("Error in mapApiBodyToDbModelsUpdate:", error);
     throw error;
   }
 }
