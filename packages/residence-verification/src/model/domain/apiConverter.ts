@@ -36,20 +36,9 @@ import {
 } from "pdnd-models";
 
 import {
-  TipoLocalita,
-  TipoComune,
-  TipoLuogoNascitaE000,
-  TipoToponimo,
-  TipoCivicoInterno,
-  TipoNumeroCivico,
-  TipoIndirizzo,
-  TipoDatoLocalitaEstera,
-  TipoToponimoEstero,
   TipoIndirizzoEstero,
-  TipoConsolato,
   TipoLocalitaEstera1,
   TipoResidenza,
-  TipoDatiNascitaE000,
   TipoParametriRicercaAR001,
   TipoRichiestaAR001,
   RichiestaAR001,
@@ -64,6 +53,19 @@ import {
   TipoDatiEvento,
   TipoDatiSoggettiEnte,
   TipoListaSoggetti,
+} from "../modelAr001.js";
+import {
+  TipoLocalita,
+  TipoComune,
+  TipoLuogoNascitaE000,
+  TipoToponimo,
+  TipoCivicoInterno,
+  TipoNumeroCivico,
+  TipoIndirizzo,
+  TipoDatoLocalitaEstera,
+  TipoToponimoEstero,
+  TipoConsolato,
+  TipoDatiNascitaE000,
   TipoErroriAnomalia,
   ProblemError,
   Problem,
@@ -173,10 +175,10 @@ export const apiTipoIndirizzoEsteroToTipoIndirizzoEsteroModel = (
 ): TipoIndirizzoEsteroModel => ({
   cap: tipoIndirizzoEstero?.cap ?? "",
   place: apiTipoDatoLocalitaEsteraToTipoDatoLocalitaEsteraModel(
-    tipoIndirizzoEstero?.place
+    tipoIndirizzoEstero?.place as TipoDatoLocalitaEstera
   ),
   toponym: apiTipoToponimoEsteroToTipoToponimoEsteroModel(
-    tipoIndirizzoEstero?.toponym
+    tipoIndirizzoEstero?.toponym as TipoToponimoEstero
   ),
 });
 
@@ -194,7 +196,7 @@ export const apiTipoLocalitaEstera1ToTipoLocalitaEsteraModel = (
     tipoLocalitaEstera?.foreignAddress
   ),
   consulate: apiTipoConsolatoToTipoConsolatoModel(
-    tipoLocalitaEstera?.consulate
+    tipoLocalitaEstera?.consulate as TipoConsolato
   ),
 });
 
@@ -203,7 +205,9 @@ export const apiTipoResidenzaToTipoResidenzaModel = (
 ): TipoResidenzaModel => ({
   addressType: tipoResidenza?.addressType ?? "",
   noteaddress: tipoResidenza?.noteaddress ?? "",
-  address: apiTipoIndirizzoToTipoIndirizzoModel(tipoResidenza?.address),
+  address: apiTipoIndirizzoToTipoIndirizzoModel(
+    tipoResidenza?.address as TipoIndirizzo
+  ),
   foreignState: apiTipoLocalitaEstera1ToTipoLocalitaEsteraModel(
     tipoResidenza?.foreignState
   ),
@@ -372,7 +376,7 @@ export const TipoParametriRicercaModelToApiTipoParametriRicerca = (
   name: tipoParametriRicercaModel?.nome,
   noName: tipoParametriRicercaModel?.senzaNome,
   gender: tipoParametriRicercaModel?.sesso,
-  birthDate: tipoParametriRicercaModel?.datiNascita,
+  birthDate: tipoParametriRicercaModel?.datiNascita as TipoDatiNascitaE000,
 });
 
 export const TipoRichiestaModelModelToApiTipoRichiesta = (
@@ -417,7 +421,7 @@ export const TipoIdSchedaSoggettoComuneModelToApiTipoIdSchedaSoggettoComune = (
 export const TipoGeneralitaModelToApiTipoGeneralita = (
   tipoGeneralitaModel: TipoGeneralitaModel
 ): TipoGeneralita => ({
-  subjectId: tipoGeneralitaModel?.soggettoId,
+  subjectId: tipoGeneralitaModel?.soggettoId as TipoCodiceFiscale,
   surname: tipoGeneralitaModel?.cognome,
   noSurname: tipoGeneralitaModel?.senzaCognome,
   name: tipoGeneralitaModel?.nome,
@@ -426,10 +430,11 @@ export const TipoGeneralitaModelToApiTipoGeneralita = (
   birthDate: tipoGeneralitaModel?.dataNascita,
   noDay: tipoGeneralitaModel?.senzaGiorno,
   noMonth: tipoGeneralitaModel?.senzaGiornoMese,
-  birthPlace: tipoGeneralitaModel?.luogoNascita,
+  birthPlace: tipoGeneralitaModel?.luogoNascita as TipoLuogoEvento,
   AIRESubject: tipoGeneralitaModel?.soggettoAIRE,
   yearExpatriation: tipoGeneralitaModel?.annoEspatrio,
-  idCommonSubjectData: tipoGeneralitaModel?.idSchedaSoggettoComune,
+  idCommonSubjectData:
+    tipoGeneralitaModel?.idSchedaSoggettoComune as TipoIdSchedaSoggettoComune,
   idSubjectData: tipoGeneralitaModel?.idSchedaSoggetto,
   note: tipoGeneralitaModel?.note,
 });
@@ -479,8 +484,8 @@ export const TipoDatiEventoModelToApiTipoDatiEvento = (
   eventDate: tipoDatiEvento?.dataEvento,
   noDay: tipoDatiEvento?.senzaGiorno,
   noMonth: tipoDatiEvento?.senzaGiorno,
-  eventPlace: tipoDatiEvento?.luogoEvento,
-  eventAct: tipoDatiEvento?.attoEvento,
+  eventPlace: tipoDatiEvento?.luogoEvento as TipoLuogoEvento,
+  eventAct: tipoDatiEvento?.attoEvento as TipoAttoEvento,
 });
 
 export const TipoDatiSoggettiEnteModelToApiTipoDatiSoggettiEnte = (
@@ -489,13 +494,13 @@ export const TipoDatiSoggettiEnteModelToApiTipoDatiSoggettiEnte = (
   generality: tipoDatiSoggettiEnteModel?.generalita,
   address: tipoDatiSoggettiEnteModel?.residenza,
   identifiers: tipoDatiSoggettiEnteModel?.identificativi,
-  deathDate: tipoDatiSoggettiEnteModel?.datiDecesso,
+  deathDate: tipoDatiSoggettiEnteModel?.datiDecesso as TipoDatiEvento,
 });
 
 export const TipoListaSoggettiModelToApiTipoListaSoggetti = (
   tipoListaSoggettiModel: TipoListaSoggettiModel
 ): TipoListaSoggetti => ({
-  subject: tipoListaSoggettiModel?.soggetto,
+  subject: tipoListaSoggettiModel?.soggetto as TipoDatiSoggettiEnte[],
 });
 
 export const TipoErroriAnomaliaModelToApiTipoErroriAnomalia = (
