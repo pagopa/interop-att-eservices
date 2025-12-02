@@ -1,5 +1,5 @@
 import { UserModel } from "pdnd-models";
-import { logger, getContext, userService } from "pdnd-common";
+import { logger, getContext, userService, translateKeys } from "pdnd-common";
 import { userModelNotFound } from "../exceptions/errors.js";
 import { RispostaAR002OK, RichiestaAR002 } from "../model/domain/models.js";
 import {
@@ -8,7 +8,11 @@ import {
   TipoParametriRicercaAR001,
 } from "../model/modelAr001.js";
 import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
-import { checkInfoSoggettoEquals } from "../utilities/equalsUtilities.js";
+import {
+  REQ_ITA_TO_ENG,
+  RES_ENG_TO_ITA_KEYS,
+} from "../utilities/residence-mappings.js";
+import { InternalRequestAR002 } from "../model/internal-model.js";
 
 class ResidenceVerificationController {
   public appContext = getContext();
@@ -29,17 +33,43 @@ class ResidenceVerificationController {
   public async findUserVerify(
     request: RichiestaAR002
   ): Promise<RispostaAR002OK> {
-    const data = await this.getUserData(request);
+    const internalRequest: InternalRequestAR002 = translateKeys(
+      request,
+      REQ_ITA_TO_ENG
+    );
+
+    const data = await this.getUserData(internalRequest);
+
     if (data.length === 0) {
       throw userModelNotFound();
     }
+
     return {
-      idOp: request.operationId,
-      subjects: {
-        infoSubject: data.map((user) =>
-          checkInfoSoggettoEquals(request.check?.address, user)
-        ),
+      idOperazioneANPR: internalRequest.operationId,
+      listaSoggetti: {
+        datiSoggetto: data.map((user) => {
+          const flatItalianObj: RispostaAR002OK = translateKeys(
+            user,
+            RES_ENG_TO_ITA_KEYS,
+            true
+          );
+
+          const infoSoggettoEnte = Object.entries(flatItalianObj).map(
+            ([chiave, valore]) => {
+              const isDate = chiave.toUpperCase().includes("DATA");
+              return {
+                chiave,
+                valore: (isDate ? "D" : "A") as "A" | "N" | "S" | "D",
+                valoreTesto: !isDate ? String(valore) : undefined,
+                valoreData: isDate ? String(valore) : undefined,
+              };
+            }
+          );
+
+          return { infoSoggettoEnte };
+        }),
       },
+      listaAnomalie: [],
     };
   }
 
@@ -53,7 +83,7 @@ class ResidenceVerificationController {
   }
 
   private async getUserData(
-    request: RichiestaAR001 | RichiestaAR002
+    request: RichiestaAR001 | InternalRequestAR002
   ): Promise<UserModel[]> {
     try {
       const { subjectId } = request.criteria;
@@ -77,7 +107,9 @@ class ResidenceVerificationController {
     }
   }
 
-  private checkPersonalInfo(request: RichiestaAR001 | RichiestaAR002): boolean {
+  private checkPersonalInfo(
+    request: RichiestaAR001 | InternalRequestAR002
+  ): boolean {
     const birthDate = request.criteria.birthDate;
     return (
       !!request.criteria.name &&
