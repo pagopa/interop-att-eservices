@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import pkg from "pg";
 import { DatabaseConfig } from "../../config/databaseConfig.js";
-import { InteroperabilityConfig } from "../../config/commonConfig.js";
+import { InteroperabilityConfig } from "../../config/interoperabilityConfig.js";
 
 const { Pool } = pkg;
 

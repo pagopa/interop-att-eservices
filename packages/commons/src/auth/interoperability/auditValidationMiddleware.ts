@@ -4,7 +4,7 @@ import jwt, { JwtHeader, JwtPayload } from "jsonwebtoken";
 import { match } from "ts-pattern";
 
 import { ExpressContext } from "../../index.js";
-import { InteroperabilityConfig } from "../../config/commonConfig.js";
+import { InteroperabilityConfig } from "../../config/interoperabilityConfig.js";
 import { logger } from "../../logging/index.js";
 import { TrialService } from "../../services/trial-api/trialService.js";
 const makeApiProblem = makeApiProblemBuilder(logger, {});

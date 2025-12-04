@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as expressWinston from "express-winston";
 import * as winston from "winston";
-import { LoggerConfig } from "../config/commonConfig.js";
+import { LoggerConfig } from "../config/loggerConfig.js";
 import { getContext } from "../index.js";
 
 export type SessionMetaData = {

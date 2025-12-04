@@ -4,7 +4,7 @@ import { makeApiProblemBuilder, ErrorHandling } from "pdnd-models";
 import { match } from "ts-pattern";
 import { Request } from "express";
 import { ExpressContext } from "../../index.js";
-import { InteroperabilityConfig } from "../../config/commonConfig.js";
+import { InteroperabilityConfig } from "../../config/interoperabilityConfig.js";
 import { logger } from "../../logging/index.js";
 import {
   generateHashFromString,
