@@ -3,7 +3,6 @@ import {
   LoggerConfig,
   DatabaseConfig,
   ShConfig,
-  M2mConfig,
   SignerConfig,
   InteroperabilityConfig,
 } from "pdnd-common";
@@ -34,7 +33,6 @@ const ResidenceSpecificConfig = z
 
 export const ResidenceVerificationConfig = LoggerConfig.and(DatabaseConfig)
   .and(ShConfig)
-  .and(M2mConfig)
   .and(SignerConfig)
   .and(InteroperabilityConfig)
   .and(ResidenceSpecificConfig);

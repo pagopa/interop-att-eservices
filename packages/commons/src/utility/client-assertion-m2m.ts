@@ -2,11 +2,11 @@
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 import axios from "axios";
-import { logger, m2mConfig } from "../index.js";
-
-const config = m2mConfig();
+import { m2mConfig } from "../config/index.js";
+import { logger } from "../logging/index.js";
 
 export const exec_pdnd_client_assertion_m2m = (private_key: string): string => {
+  const config = m2mConfig();
   const issued = Math.floor(Date.now() / 1000);
   const expire_in = issued + 2592000;
   const jti = uuidv4();
@@ -35,6 +35,7 @@ export const exec_pdnd_client_assertion_m2m = (private_key: string): string => {
 export const get_pdnd_token_m2m = async (
   client_assertion: string
 ): Promise<string | undefined> => {
+  const config = m2mConfig();
   const data = {
     client_id: config.clientId,
     grant_type: "client_credentials",

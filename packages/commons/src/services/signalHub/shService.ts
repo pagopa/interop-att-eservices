@@ -3,7 +3,6 @@ import { SHRepository } from "../../repositories/signalHub/index.js";
 import { logger } from "../../index.js";
 import { shClientConfig } from "../../config/shClientConfig.js";
 
-const config = shClientConfig();
 export interface SignalPayload {
   signalId: number;
   objectType: string | "";
@@ -14,6 +13,7 @@ export interface SignalPayload {
 
 export const SHService = {
   async sendSignal(payload: SignalPayload, m2mToken: string): Promise<void> {
+    const config = shClientConfig();
     logger.info(`[SHService] Sending signal (axios) for ${payload.objectId}`);
 
     if (!config.signalHubHost) {
