@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { APIEndpoint } from "../model/apiEndpoint.js";
 
 export const JWTSeedConfig = z
   .object({
@@ -16,5 +17,48 @@ export const JWTSeedConfig = z
 
 export type JWTSeedConfig = z.infer<typeof JWTSeedConfig>;
 
-export const jwtSeedConfig: () => JWTSeedConfig = () =>
+export const jwtSeedConfig = (): JWTSeedConfig =>
   JWTSeedConfig.parse(process.env);
+
+export const JWTConfig = z.preprocess(
+  (c) =>
+    (c as { SKIP_JWT_VERIFICATION?: string }).SKIP_JWT_VERIFICATION ===
+    undefined
+      ? { ...(c as object), SKIP_JWT_VERIFICATION: "false" }
+      : c,
+
+  z
+    .discriminatedUnion("SKIP_JWT_VERIFICATION", [
+      z.object({
+        SKIP_JWT_VERIFICATION: z.literal("true"),
+      }),
+
+      z.object({
+        SKIP_JWT_VERIFICATION: z.literal("false"),
+        WELL_KNOWN_URLS: z
+          .string()
+          .transform((s) => s.split(","))
+          .pipe(z.array(APIEndpoint)),
+        TOKEN_ISS: z.string(),
+        TOKEN_AUD: z.string(),
+        TOKEN_TYP: z.string(),
+      }),
+    ])
+    .transform((c) =>
+      c.SKIP_JWT_VERIFICATION === "false"
+        ? {
+            skipJWTVerification: false as const,
+            wellKnownUrls: c.WELL_KNOWN_URLS,
+            issValue: c.TOKEN_ISS,
+            audValue: c.TOKEN_AUD,
+            typValue: c.TOKEN_TYP,
+          }
+        : {
+            skipJWTVerification: true as const,
+          }
+    )
+);
+
+export type JWTConfig = z.infer<typeof JWTConfig>;
+
+export const jwtConfig = (): JWTConfig => JWTConfig.parse(process.env);
