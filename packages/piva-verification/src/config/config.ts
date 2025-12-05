@@ -5,14 +5,14 @@ import {
   HTTPServerConfig,
   SignerConfig,
   JWTConfig,
-  HandShakesConfig,
+  SslConfig,
 } from "pdnd-common";
 
 export const PivaVerificationConfig = LoggerConfig.and(DatabaseConfig)
   .and(HTTPServerConfig)
   .and(SignerConfig)
   .and(JWTConfig)
-  .and(HandShakesConfig);
+  .and(SslConfig);
 
 export type PivaVerificationConfig = z.infer<typeof PivaVerificationConfig>;
 
