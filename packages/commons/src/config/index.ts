@@ -7,3 +7,4 @@ export * from "./m2mConfig.js";
 export * from "./interoperabilityConfig.js";
 export * from "./httpServerConfig.js";
 export * from "./loggerConfig.js";
+export * from "./handShakesConfig.js";
