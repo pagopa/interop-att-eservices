@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const HandShakesConfig = z
+export const SslConfig = z
   .object({
     HTTPS_KEY_PATH: z.string(),
     HTTPS_CERT_PATH: z.string(),
@@ -9,7 +9,6 @@ export const HandShakesConfig = z
     httpsKeyPath: c.HTTPS_KEY_PATH,
     httpsCertPath: c.HTTPS_CERT_PATH,
   }));
-export type HandShakesConfig = z.infer<typeof HandShakesConfig>;
+export type SslConfig = z.infer<typeof SslConfig>;
 
-export const handShakesConfig = (): HandShakesConfig =>
-  HandShakesConfig.parse(process.env);
+export const sslConfig = (): SslConfig => SslConfig.parse(process.env);
