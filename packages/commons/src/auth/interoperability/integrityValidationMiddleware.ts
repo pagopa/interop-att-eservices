@@ -49,7 +49,7 @@ export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHand
           throw ErrorHandling.missingHeader("agid-jwt-signature");
         }
 
-        if (process.env.SKIP_AGID_PAYLOAD_VERIFICATION !== "true") {
+        if (config.skipAgidPayloadVerification !== true) {
           verifyJwtPayload(signatureToken, req);
         }
 
@@ -162,7 +162,8 @@ const verifyTemporalClaims = (payload: JwtPayload, req: Request): void => {
 };
 
 const verifyAudience = (payload: JwtPayload, req: Request): void => {
-  if (!payload.aud || payload.aud !== process.env.TOKEN_AUD) {
+  const config = InteroperabilityConfig.parse(process.env);
+  if (!payload.aud || payload.aud !== config.tokenAud) {
     logger.error(`verifyJwtPayload - "aud" claim is missing or not valid`);
     void TrialService.insert(req.url, req.method, "SIGNATURE_AUD_NOT_VALID");
     throw ErrorHandling.tokenNotValid();

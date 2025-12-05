@@ -50,7 +50,7 @@ export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<
           throw ErrorHandling.missingHeader("agid-jwt-trackingevidence");
         }
 
-        if (process.env.SKIP_AGID_PAYLOAD_VERIFICATION !== "true") {
+        if (config.skipAgidPayloadVerification !== true) {
           verifyJwtPayload(trackingEvidenceToken, req.url, req.method);
         }
 
@@ -94,6 +94,7 @@ const verifyJwtPayload = (
     header: JwtHeader;
     payload: JwtPayload;
   };
+  const config = InteroperabilityConfig.parse(process.env);
 
   if (!decodedToken.payload) {
     logger.error(`verifyJwtPayload - Token not valid`);
@@ -133,7 +134,7 @@ const verifyJwtPayload = (
     void TrialService.insert(url, method, "TRACKING_EVIDENCE_AUD_NOT_PRESENT");
     throw ErrorHandling.tokenNotValid();
   }
-  if (decodedToken.payload.aud !== process.env.TOKEN_AUD) {
+  if (decodedToken.payload.aud !== config.tokenAud) {
     logger.error(`verifyJwtPayload - Request header 'aud' is not valid`);
     void TrialService.insert(url, method, "TRACKING_EVIDENCE_AUD_NOT_VALID");
     throw ErrorHandling.tokenNotValid();

@@ -16,6 +16,7 @@ const config: LoggerConfig = parsedLoggerConfig.success
   ? parsedLoggerConfig.data
   : {
       logLevel: "info",
+      nodeEnv: "test",
     };
 
 const getLoggerMetadata = (): SessionMetaData => {
@@ -79,7 +80,7 @@ const getLogger = (serviceName?: string) =>
       winston.format.errors({ stack: true }),
       customFormat(serviceName)
     ),
-    silent: process.env.NODE_ENV === "test",
+    silent: config.nodeEnv === "test",
   });
 
 export const loggerMiddleware = (serviceName: string) => () =>
