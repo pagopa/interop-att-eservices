@@ -80,7 +80,10 @@ const familyStatusRouter = (
         void TrialService.insert(req.url, req.method, "FAMILY_STATUS", "OK");
         const signature = await signatureUtility.signData(JSON.stringify(data));
         res.setHeader("x-payload-signature", signature);
-        res.setHeader("x-payload-signature-kid", keychainConfig.KeychainKeyId);
+        res.setHeader(
+          "x-payload-signature-kid",
+          keychainConfig.kmsKeychainKeyId
+        );
         res.setHeader("x-payload-signature-algorythm", "SHA256withRSA");
         logger.info(`[END] familyStatusRouter`);
         return res.status(201).json(data).end();

@@ -1,7 +1,9 @@
 import { logger, testDbConnection } from "pdnd-common";
 import app from "./app.js";
+import { familyStatusConfiguration } from "./config/config.js";
 
-const port = process.env.PORT || 3001;
+const config = familyStatusConfiguration;
+const port = config.port;
 
 const startServer = async (): Promise<void> => {
   try {
