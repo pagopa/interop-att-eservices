@@ -8,15 +8,13 @@ import {
   HandShakesConfig,
 } from "pdnd-common";
 
-export const FiscalcodeVerificationConfig = LoggerConfig.and(DatabaseConfig)
+export const PivaVerificationConfig = LoggerConfig.and(DatabaseConfig)
   .and(HTTPServerConfig)
   .and(SignerConfig)
   .and(JWTConfig)
   .and(HandShakesConfig);
 
-export type FiscalcodeVerificationConfig = z.infer<
-  typeof FiscalcodeVerificationConfig
->;
+export type PivaVerificationConfig = z.infer<typeof PivaVerificationConfig>;
 
-export const fiscalcodeVerificationConfig: FiscalcodeVerificationConfig =
-  FiscalcodeVerificationConfig.parse(process.env);
+export const pivaVerificationConfig: PivaVerificationConfig =
+  PivaVerificationConfig.parse(process.env);
