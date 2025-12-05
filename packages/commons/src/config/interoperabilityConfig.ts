@@ -5,6 +5,7 @@ export const InteroperabilityConfig = z.preprocess(
     const env = c as {
       SKIP_INTEROPERABILITY_VERIFICATION?: string;
       SKIP_AGID_PAYLOAD_VERIFICATION?: string;
+      TOKEN_AUD?: string;
     };
 
     return {
@@ -13,6 +14,7 @@ export const InteroperabilityConfig = z.preprocess(
         env.SKIP_INTEROPERABILITY_VERIFICATION ?? "true",
       SKIP_AGID_PAYLOAD_VERIFICATION:
         env.SKIP_AGID_PAYLOAD_VERIFICATION ?? "false",
+      TOKEN_AUD: env.TOKEN_AUD ?? "",
     };
   },
 
@@ -21,6 +23,7 @@ export const InteroperabilityConfig = z.preprocess(
       z.object({
         SKIP_INTEROPERABILITY_VERIFICATION: z.literal("true"),
         SKIP_AGID_PAYLOAD_VERIFICATION: z.enum(["true", "false"]),
+        TOKEN_AUD: z.string(),
       }),
 
       z.object({
@@ -33,6 +36,7 @@ export const InteroperabilityConfig = z.preprocess(
         TOKEN_INTEROPERABILITY_HOST: z.string(),
         TOKEN_INTEROPERABILITY_KID: z.string(),
         TOKEN_FROM_ACCESS_CODE: z.string(),
+        TOKEN_AUD: z.string(),
       }),
     ])
     .transform((c) => {
@@ -50,10 +54,12 @@ export const InteroperabilityConfig = z.preprocess(
             host: c.TOKEN_INTEROPERABILITY_HOST,
             kid: c.TOKEN_INTEROPERABILITY_KID,
             tokenGenerateHost: c.TOKEN_FROM_ACCESS_CODE,
+            tokenAud: c.TOKEN_AUD,
           }
         : {
             skipInteroperabilityVerification: true as const,
             skipAgidPayloadVerification,
+            tokenAud: c.TOKEN_AUD,
           };
     })
 );
