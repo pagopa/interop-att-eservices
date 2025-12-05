@@ -1,20 +1,31 @@
 import { z } from "zod";
 
 export const InteroperabilityConfig = z.preprocess(
-  (c) =>
-    (c as { SKIP_INTEROPERABILITY_VERIFICATION?: string })
-      .SKIP_INTEROPERABILITY_VERIFICATION === undefined
-      ? { ...(c as object), SKIP_INTEROPERABILITY_VERIFICATION: "true" }
-      : c,
+  (c) => {
+    const env = c as {
+      SKIP_INTEROPERABILITY_VERIFICATION?: string;
+      SKIP_AGID_PAYLOAD_VERIFICATION?: string;
+    };
+
+    return {
+      ...(c as object),
+      SKIP_INTEROPERABILITY_VERIFICATION:
+        env.SKIP_INTEROPERABILITY_VERIFICATION ?? "true",
+      SKIP_AGID_PAYLOAD_VERIFICATION:
+        env.SKIP_AGID_PAYLOAD_VERIFICATION ?? "false",
+    };
+  },
 
   z
     .discriminatedUnion("SKIP_INTEROPERABILITY_VERIFICATION", [
       z.object({
         SKIP_INTEROPERABILITY_VERIFICATION: z.literal("true"),
+        SKIP_AGID_PAYLOAD_VERIFICATION: z.enum(["true", "false"]),
       }),
 
       z.object({
         SKIP_INTEROPERABILITY_VERIFICATION: z.literal("false"),
+        SKIP_AGID_PAYLOAD_VERIFICATION: z.enum(["true", "false"]),
         TOKEN_INTEROPERABILITY_SUBJECT: z.string(),
         TOKEN_INTEROPERABILITY_AUDIENCE: z.string(),
         TOKEN_INTEROPERABILITY_ISSUER: z.string(),
@@ -24,10 +35,14 @@ export const InteroperabilityConfig = z.preprocess(
         TOKEN_FROM_ACCESS_CODE: z.string(),
       }),
     ])
-    .transform((c) =>
-      c.SKIP_INTEROPERABILITY_VERIFICATION === "false"
+    .transform((c) => {
+      const skipAgidPayloadVerification =
+        c.SKIP_AGID_PAYLOAD_VERIFICATION === "true";
+
+      return c.SKIP_INTEROPERABILITY_VERIFICATION === "false"
         ? {
             skipInteroperabilityVerification: false as const,
+            skipAgidPayloadVerification,
             subject: c.TOKEN_INTEROPERABILITY_SUBJECT,
             audience: c.TOKEN_INTEROPERABILITY_AUDIENCE,
             issuer: c.TOKEN_INTEROPERABILITY_ISSUER,
@@ -38,8 +53,9 @@ export const InteroperabilityConfig = z.preprocess(
           }
         : {
             skipInteroperabilityVerification: true as const,
-          }
-    )
+            skipAgidPayloadVerification,
+          };
+    })
 );
 
 export type InteroperabilityConfig = z.infer<typeof InteroperabilityConfig>;

@@ -4,25 +4,13 @@ import {
   DatabaseConfig,
   SignerConfig,
   InteroperabilityConfig,
+  JWTConfig,
 } from "pdnd-common";
-
-const TrialServiceSpecificConfig = z
-  .object({
-    SKIP_JWT_VERIFICATION: z
-      .enum(["true", "false"])
-      .transform((v) => v === "true")
-      .default("false"),
-    WELL_KNOWN_URLS: z.string().optional(),
-  })
-  .transform((env) => ({
-    skipJwtVerification: env.SKIP_JWT_VERIFICATION,
-    wellKnownUrls: env.WELL_KNOWN_URLS,
-  }));
 
 export const TrialServiceConfig = LoggerConfig.and(DatabaseConfig)
   .and(SignerConfig)
   .and(InteroperabilityConfig)
-  .and(TrialServiceSpecificConfig);
+  .and(JWTConfig);
 
 export type TrialServiceConfig = z.infer<typeof TrialServiceConfig>;
 
