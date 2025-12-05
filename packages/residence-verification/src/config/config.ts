@@ -6,12 +6,14 @@ import {
   SignerConfig,
   InteroperabilityConfig,
   JWTConfig,
+  ContextConfig,
 } from "pdnd-common";
 
 export const ResidenceVerificationConfig = LoggerConfig.and(DatabaseConfig)
   .and(ShConfig)
   .and(SignerConfig)
   .and(InteroperabilityConfig)
+  .and(ContextConfig)
   .and(JWTConfig);
 
 export type ResidenceVerificationConfig = z.infer<

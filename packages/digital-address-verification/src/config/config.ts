@@ -7,6 +7,7 @@ import {
   M2mConfig,
   SignerConfig,
   JWTConfig,
+  ContextConfig,
 } from "pdnd-common";
 
 export const DigitalAddressVerificationConfig = LoggerConfig.and(DatabaseConfig)
@@ -14,6 +15,7 @@ export const DigitalAddressVerificationConfig = LoggerConfig.and(DatabaseConfig)
   .and(M2mConfig)
   .and(SignerConfig)
   .and(ShClientConfig)
+  .and(ContextConfig)
   .and(JWTConfig);
 
 export type DigitalAddressVerificationConfig = z.infer<

@@ -7,6 +7,7 @@ import {
   SignerConfig,
   InteroperabilityConfig,
   JWTConfig,
+  ContextConfig,
 } from "pdnd-common";
 
 export const ResidenceSubmissionConfig = LoggerConfig.and(DatabaseConfig)
@@ -14,6 +15,7 @@ export const ResidenceSubmissionConfig = LoggerConfig.and(DatabaseConfig)
   .and(M2mConfig)
   .and(SignerConfig)
   .and(InteroperabilityConfig)
+  .and(ContextConfig)
   .and(JWTConfig);
 
 export type ResidenceSubmissionConfig = z.infer<

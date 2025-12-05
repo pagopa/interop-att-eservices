@@ -5,11 +5,13 @@ import {
   SignerConfig,
   InteroperabilityConfig,
   JWTConfig,
+  ContextConfig,
 } from "pdnd-common";
 
 export const TrialServiceConfig = LoggerConfig.and(DatabaseConfig)
   .and(SignerConfig)
   .and(InteroperabilityConfig)
+  .and(ContextConfig)
   .and(JWTConfig);
 
 export type TrialServiceConfig = z.infer<typeof TrialServiceConfig>;
