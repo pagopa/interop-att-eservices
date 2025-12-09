@@ -2,9 +2,9 @@ import fs from "fs";
 import https from "https";
 import { logger, testDbConnection } from "pdnd-common";
 import app from "./app.js";
-import { fiscalcodeVerificationConfig } from "./config/config.js";
+import { FiscalcodeVerificationConfig } from "./config/config.js";
 
-const config = fiscalcodeVerificationConfig;
+const config = FiscalcodeVerificationConfig.parse(process.env);
 const port = config.port;
 const portHttps = Number(port) + 443;
 
