@@ -17,9 +17,6 @@ export const JWTSeedConfig = z
 
 export type JWTSeedConfig = z.infer<typeof JWTSeedConfig>;
 
-export const jwtSeedConfig = (): JWTSeedConfig =>
-  JWTSeedConfig.parse(process.env);
-
 export const JWTConfig = z.preprocess(
   (c) =>
     (c as { SKIP_JWT_VERIFICATION?: string }).SKIP_JWT_VERIFICATION ===
@@ -60,5 +57,3 @@ export const JWTConfig = z.preprocess(
 );
 
 export type JWTConfig = z.infer<typeof JWTConfig>;
-
-export const jwtConfig = (): JWTConfig => JWTConfig.parse(process.env);

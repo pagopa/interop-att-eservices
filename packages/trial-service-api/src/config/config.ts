@@ -3,15 +3,15 @@ import {
   LoggerConfig,
   DatabaseConfig,
   SignerConfig,
-  InteroperabilityConfig,
   JWTConfig,
   ContextConfig,
+  HTTPServerConfig,
 } from "pdnd-common";
 
 export const TrialServiceConfig = LoggerConfig.and(DatabaseConfig)
   .and(SignerConfig)
-  .and(InteroperabilityConfig)
   .and(ContextConfig)
+  .and(HTTPServerConfig)
   .and(JWTConfig);
 
 export type TrialServiceConfig = z.infer<typeof TrialServiceConfig>;

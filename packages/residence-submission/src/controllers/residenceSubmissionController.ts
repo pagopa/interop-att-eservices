@@ -1,16 +1,9 @@
-import {
-  logger,
-  getContext,
-  ResidenceSubmissionService,
-  translateKeys,
-} from "pdnd-common";
+import { logger, ResidenceSubmissionService, translateKeys } from "pdnd-common";
 import { RichiestaAR003 } from "../model/domain/models.js";
 import { InternalRequestAR003 } from "../model/internal-models.js";
 import { REQ_AR003_ITA_TO_ENG } from "../utilities/residence-submission-mapping.js";
 
 class ResidenceSubmissionController {
-  public appContext = getContext();
-
   public async createUser(
     request: RichiestaAR003
   ): Promise<{ status: string; message: string }> {

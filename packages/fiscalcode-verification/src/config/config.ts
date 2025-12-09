@@ -1,8 +1,18 @@
 import { z } from "zod";
-import { DatabaseConfig, HTTPServerConfig, SslConfig } from "pdnd-common";
+import {
+  DatabaseConfig,
+  HTTPServerConfig,
+  SignerConfig,
+  SslConfig,
+  ContextConfig,
+  LoggerConfig,
+} from "pdnd-common";
 
-export const FiscalcodeVerificationConfig =
-  DatabaseConfig.and(HTTPServerConfig).and(SslConfig);
+export const FiscalcodeVerificationConfig = DatabaseConfig.and(HTTPServerConfig)
+  .and(SslConfig)
+  .and(SignerConfig)
+  .and(ContextConfig)
+  .and(LoggerConfig);
 
 export type FiscalcodeVerificationConfig = z.infer<
   typeof FiscalcodeVerificationConfig

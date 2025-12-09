@@ -1,9 +1,11 @@
 import crypto from "crypto";
 import { logger } from "../logging/index.js";
-import { shConfig } from "../config/shConfig.js";
+import { ShConfig } from "../config/shConfig.js";
 
-export function getRotatedSeed(masterSaltKey: string): string {
-  const config = shConfig();
+export function getRotatedSeed(
+  masterSaltKey: string,
+  config: ShConfig
+): string {
   const nowMs: number = Date.now();
 
   const START_TIMESTAMP_MS: number = new Date(config.startDateMs).getTime();

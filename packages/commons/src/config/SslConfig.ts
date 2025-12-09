@@ -9,6 +9,5 @@ export const SslConfig = z
     httpsKeyPath: c.HTTPS_KEY_PATH ?? null,
     httpsCertPath: c.HTTPS_CERT_PATH ?? null,
   }));
-export type SslConfig = z.infer<typeof SslConfig>;
 
-export const sslConfig = (): SslConfig => SslConfig.parse(process.env);
+export type SslConfig = z.infer<typeof SslConfig>;

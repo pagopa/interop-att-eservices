@@ -15,5 +15,3 @@ export const ShConfig = z
   }));
 
 export type ShConfig = z.infer<typeof ShConfig>;
-
-export const shConfig: () => ShConfig = () => ShConfig.parse(process.env);

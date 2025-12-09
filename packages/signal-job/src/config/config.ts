@@ -1,3 +1,10 @@
+import {
+  InteroperabilityConfig,
+  JWTConfig,
+  LoggerConfig,
+  M2mConfig,
+  SignerConfig,
+} from "pdnd-common";
 import { z } from "zod";
 
 export const ShConfig = z
@@ -24,8 +31,13 @@ export const ShConfig = z
     signalHubHost: c.SIGNAL_HUB_HOST,
     signalHubApiVersion: c.SIGNAL_HUB_API_VERSION,
     cronTime: c.CRON_TIME_JOB,
-  }));
+  }))
+  .and(SignerConfig)
+  .and(InteroperabilityConfig)
+  .and(JWTConfig)
+  .and(LoggerConfig)
+  .and(M2mConfig);
 
 export type ShConfig = z.infer<typeof ShConfig>;
 
-export const shConfig: () => ShConfig = () => ShConfig.parse(process.env);
+export const shConfig: ShConfig = ShConfig.parse(process.env);

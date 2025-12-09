@@ -1,11 +1,17 @@
-import { logger } from "pdnd-common";
+import { initContext, initDB, initLogger, logger } from "pdnd-common";
 import { testDbConnection } from "pdnd-common";
 import app from "./app.js";
-
-const port = process.env.PORT || 3007;
+import { digitalAddressVerificationConfig } from "./config/config.js";
 
 const startServer = async (): Promise<void> => {
+  const port = digitalAddressVerificationConfig.httpPort;
   try {
+    initContext(digitalAddressVerificationConfig);
+    initLogger(
+      digitalAddressVerificationConfig,
+      "digital-address-verification"
+    );
+    initDB(digitalAddressVerificationConfig);
     await testDbConnection();
     logger.info("Connection to Database has been established.");
     app.listen(port, () => {

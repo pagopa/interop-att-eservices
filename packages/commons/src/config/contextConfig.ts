@@ -13,6 +13,3 @@ export const ContextConfig = z
   }));
 
 export type ContextConfig = z.infer<typeof ContextConfig>;
-
-export const contextConfig = (): ContextConfig =>
-  ContextConfig.parse(process.env);

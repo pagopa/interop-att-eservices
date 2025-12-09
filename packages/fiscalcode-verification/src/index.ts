@@ -1,22 +1,39 @@
 import fs from "fs";
 import https from "https";
-import { logger, testDbConnection } from "pdnd-common";
+import {
+  initContext,
+  initDB,
+  initLogger,
+  logger,
+  testDbConnection,
+} from "pdnd-common";
 import app from "./app.js";
-import { FiscalcodeVerificationConfig } from "./config/config.js";
+import { fiscalcodeVerificationConfig } from "./config/config.js";
 
-const config = FiscalcodeVerificationConfig.parse(process.env);
-const port = config.port;
+const port = fiscalcodeVerificationConfig.httpPort;
 const portHttps = Number(port) + 443;
 
 const startServer = async (): Promise<void> => {
   try {
+    initContext(fiscalcodeVerificationConfig);
+    initLogger(fiscalcodeVerificationConfig, "fiscalcode-verification");
+    initDB(fiscalcodeVerificationConfig);
     await testDbConnection();
 
     logger.info("Connection to Database has been established.");
 
-    if (config.httpsKeyPath && config.httpsCertPath) {
-      const privateKey = fs.readFileSync(config.httpsKeyPath, "utf8");
-      const certificate = fs.readFileSync(config.httpsCertPath, "utf8");
+    if (
+      fiscalcodeVerificationConfig.httpsKeyPath &&
+      fiscalcodeVerificationConfig.httpsCertPath
+    ) {
+      const privateKey = fs.readFileSync(
+        fiscalcodeVerificationConfig.httpsKeyPath,
+        "utf8"
+      );
+      const certificate = fs.readFileSync(
+        fiscalcodeVerificationConfig.httpsCertPath,
+        "utf8"
+      );
       const credentials = { key: privateKey, cert: certificate };
 
       const httpsServer = https.createServer(credentials, app);

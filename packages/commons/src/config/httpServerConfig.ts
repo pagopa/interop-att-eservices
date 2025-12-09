@@ -7,10 +7,8 @@ export const HTTPServerConfig = z
     PORT: z.coerce.number().min(1001),
   })
   .transform((c) => ({
-    host: c.HOST,
-    port: c.PORT,
+    httpHost: c.HOST,
+    httpPort: c.PORT,
   }));
-export type HTTPServerConfig = z.infer<typeof HTTPServerConfig>;
 
-export const httpServerConfig = (): HTTPServerConfig =>
-  HTTPServerConfig.parse(process.env);
+export type HTTPServerConfig = z.infer<typeof HTTPServerConfig>;

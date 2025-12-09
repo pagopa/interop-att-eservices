@@ -1,22 +1,19 @@
 import { buildPublicKeyService } from "../../aws-kms/publicKeyService.js";
 import { buildSignerService } from "../../aws-kms/signerService.js";
-import { signerConfig } from "../../config/signerConfig.js";
 import { getContext } from "../../context/context.js";
-import { logger } from "../../index.js";
+import { logger, SignerConfig } from "../../index.js";
 import { testDbConnection } from "../../utility/testDbConnection.js";
 
 export const HealtService = {
-  appContext: getContext(),
-
-  async status(): Promise<boolean | null> {
-    const config = signerConfig();
-    const publicKeyService = buildPublicKeyService();
+  async status(config: SignerConfig): Promise<boolean | null> {
+    getContext();
+    const publicKeyService = buildPublicKeyService(config);
 
     if (!(await publicKeyService.KMSAvailability(config.kmsKeyId))) {
       return false;
     }
 
-    const signerService = buildSignerService();
+    const signerService = buildSignerService(config);
     if (!(await signerService.KMSAvailability(config.kmsKeyId, "token"))) {
       return false;
     }

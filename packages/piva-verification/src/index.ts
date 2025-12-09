@@ -1,16 +1,26 @@
 import fs from "fs";
 import https from "https";
-import { logger, testDbConnection } from "pdnd-common";
+import {
+  initContext,
+  initDB,
+  initLogger,
+  logger,
+  testDbConnection,
+} from "pdnd-common";
 import app from "./app.js";
 import { pivaVerificationConfig } from "./config/config.js";
 
 const config = pivaVerificationConfig;
-const port = config.port;
+const port = config.httpPort;
 const portHttps = Number(port) + 443;
 
 const startServer = async (): Promise<void> => {
   try {
+    initContext(pivaVerificationConfig);
+    initLogger(pivaVerificationConfig, "piva-verification");
+    initDB(pivaVerificationConfig);
     logger.info(`Piva verficiation`);
+
     await testDbConnection();
 
     logger.info("Connection to Database has been established.");

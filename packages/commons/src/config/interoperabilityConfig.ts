@@ -1,70 +1,52 @@
 import { z } from "zod";
 
-export const InteroperabilityConfig = z.preprocess(
-  (c) => {
-    const env = c as {
-      SKIP_INTEROPERABILITY_VERIFICATION?: string;
-      SKIP_AGID_PAYLOAD_VERIFICATION?: string;
-      TOKEN_AUD?: string;
-    };
+const EnvBoolean = z.enum(["true", "false"]).transform((v) => v === "true");
+
+const SkippedSchema = z.object({
+  SKIP_INTEROPERABILITY_VERIFICATION: z.literal("true"),
+  SKIP_AGID_PAYLOAD_VERIFICATION: EnvBoolean.default("false"),
+  TOKEN_AUD: z.string().default(""),
+});
+
+const ActiveSchema = z.object({
+  SKIP_INTEROPERABILITY_VERIFICATION: z.literal("false"),
+  SKIP_AGID_PAYLOAD_VERIFICATION: EnvBoolean.default("false"),
+  TOKEN_INTEROPERABILITY_SUBJECT: z.string(),
+  TOKEN_INTEROPERABILITY_AUDIENCE: z.string(),
+  TOKEN_INTEROPERABILITY_ISSUER: z.string(),
+  TOKEN_INTEROPERABILITY_EXPIRATION_SECONDS: z.string(),
+  TOKEN_INTEROPERABILITY_HOST: z.string(),
+  TOKEN_INTEROPERABILITY_KID: z.string(),
+  TOKEN_FROM_ACCESS_CODE: z.string(),
+  TOKEN_AUD: z.string().default(""),
+});
+
+export const InteroperabilityConfig = z
+  .discriminatedUnion("SKIP_INTEROPERABILITY_VERIFICATION", [
+    SkippedSchema,
+    ActiveSchema,
+  ])
+  .transform((c) => {
+    if (c.SKIP_INTEROPERABILITY_VERIFICATION === "true") {
+      return {
+        skipInteroperabilityVerification: true as const,
+        skipAgidPayloadVerification: c.SKIP_AGID_PAYLOAD_VERIFICATION,
+        tokenAud: c.TOKEN_AUD,
+      };
+    }
 
     return {
-      ...(c as object),
-      SKIP_INTEROPERABILITY_VERIFICATION:
-        env.SKIP_INTEROPERABILITY_VERIFICATION ?? "true",
-      SKIP_AGID_PAYLOAD_VERIFICATION:
-        env.SKIP_AGID_PAYLOAD_VERIFICATION ?? "false",
-      TOKEN_AUD: env.TOKEN_AUD ?? "",
+      skipInteroperabilityVerification: false as const,
+      skipAgidPayloadVerification: c.SKIP_AGID_PAYLOAD_VERIFICATION,
+      subject: c.TOKEN_INTEROPERABILITY_SUBJECT,
+      audience: c.TOKEN_INTEROPERABILITY_AUDIENCE,
+      issuer: c.TOKEN_INTEROPERABILITY_ISSUER,
+      expirationInSeconds: c.TOKEN_INTEROPERABILITY_EXPIRATION_SECONDS,
+      host: c.TOKEN_INTEROPERABILITY_HOST,
+      kid: c.TOKEN_INTEROPERABILITY_KID,
+      tokenGenerateHost: c.TOKEN_FROM_ACCESS_CODE,
+      tokenAud: c.TOKEN_AUD,
     };
-  },
-
-  z
-    .discriminatedUnion("SKIP_INTEROPERABILITY_VERIFICATION", [
-      z.object({
-        SKIP_INTEROPERABILITY_VERIFICATION: z.literal("true"),
-        SKIP_AGID_PAYLOAD_VERIFICATION: z.enum(["true", "false"]),
-        TOKEN_AUD: z.string(),
-      }),
-
-      z.object({
-        SKIP_INTEROPERABILITY_VERIFICATION: z.literal("false"),
-        SKIP_AGID_PAYLOAD_VERIFICATION: z.enum(["true", "false"]),
-        TOKEN_INTEROPERABILITY_SUBJECT: z.string(),
-        TOKEN_INTEROPERABILITY_AUDIENCE: z.string(),
-        TOKEN_INTEROPERABILITY_ISSUER: z.string(),
-        TOKEN_INTEROPERABILITY_EXPIRATION_SECONDS: z.string(),
-        TOKEN_INTEROPERABILITY_HOST: z.string(),
-        TOKEN_INTEROPERABILITY_KID: z.string(),
-        TOKEN_FROM_ACCESS_CODE: z.string(),
-        TOKEN_AUD: z.string(),
-      }),
-    ])
-    .transform((c) => {
-      const skipAgidPayloadVerification =
-        c.SKIP_AGID_PAYLOAD_VERIFICATION === "true";
-
-      return c.SKIP_INTEROPERABILITY_VERIFICATION === "false"
-        ? {
-            skipInteroperabilityVerification: false as const,
-            skipAgidPayloadVerification,
-            subject: c.TOKEN_INTEROPERABILITY_SUBJECT,
-            audience: c.TOKEN_INTEROPERABILITY_AUDIENCE,
-            issuer: c.TOKEN_INTEROPERABILITY_ISSUER,
-            expirationInSeconds: c.TOKEN_INTEROPERABILITY_EXPIRATION_SECONDS,
-            host: c.TOKEN_INTEROPERABILITY_HOST,
-            kid: c.TOKEN_INTEROPERABILITY_KID,
-            tokenGenerateHost: c.TOKEN_FROM_ACCESS_CODE,
-            tokenAud: c.TOKEN_AUD,
-          }
-        : {
-            skipInteroperabilityVerification: true as const,
-            skipAgidPayloadVerification,
-            tokenAud: c.TOKEN_AUD,
-          };
-    })
-);
+  });
 
 export type InteroperabilityConfig = z.infer<typeof InteroperabilityConfig>;
-
-export const interoperabilityConfig = (): InteroperabilityConfig =>
-  InteroperabilityConfig.parse(process.env);

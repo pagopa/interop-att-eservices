@@ -6,6 +6,7 @@ import {
   InteroperabilityConfig,
   JWTConfig,
   ContextConfig,
+  HTTPServerConfig,
 } from "pdnd-common";
 
 export const ResidenceVerificationDirectConfig = LoggerConfig.and(
@@ -14,7 +15,8 @@ export const ResidenceVerificationDirectConfig = LoggerConfig.and(
   .and(SignerConfig)
   .and(InteroperabilityConfig)
   .and(ContextConfig)
-  .and(JWTConfig);
+  .and(JWTConfig)
+  .and(HTTPServerConfig);
 
 export type ResidenceVerificationDirectConfig = z.infer<
   typeof ResidenceVerificationDirectConfig

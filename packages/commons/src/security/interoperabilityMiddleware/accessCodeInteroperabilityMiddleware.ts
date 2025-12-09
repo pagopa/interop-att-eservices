@@ -3,15 +3,16 @@ import {
   buildInteropTokenGenerator as buildInteropAccessCodeGenerator,
 } from "../../auth/index.js";
 import { InternalToken, TokenHeader } from "../../auth/index.js";
-import { InteroperabilityConfig } from "../../config/index.js";
+import { InteroperabilityConfig, SignerConfig } from "../../config/index.js";
 import { logger } from "../../logging/index.js";
 
 export const generateInternalAccessCode = async (
-  kid: string
+  kid: string,
+  configSigner: SignerConfig,
+  config: InteroperabilityConfig
 ): Promise<InternalToken | null> => {
   try {
-    const tokenGenerator = buildInteropAccessCodeGenerator();
-    const config = InteroperabilityConfig.parse(process.env);
+    const tokenGenerator = buildInteropAccessCodeGenerator(configSigner);
     if (!config.skipInteroperabilityVerification) {
       const tokenPayloadSeed: TokenPayloadInternal = {
         subject: config.subject,

@@ -2,11 +2,9 @@ import axios from "axios";
 import { getPDNDTokenM2M } from "pdnd-common";
 import { shConfig } from "../config/config.js";
 
-const config = shConfig();
-
-const SIGNAL_HUB_HOST = config.signalHubHost;
-const SIGNAL_HUB_API_VERSION = config.signalHubApiVersion;
-const SIGNAL_HUB_AUTH_TOKEN = await getPDNDTokenM2M();
+const SIGNAL_HUB_HOST = shConfig.signalHubHost;
+const SIGNAL_HUB_API_VERSION = shConfig.signalHubApiVersion;
+const SIGNAL_HUB_AUTH_TOKEN = await getPDNDTokenM2M(shConfig);
 
 if (!SIGNAL_HUB_HOST || !SIGNAL_HUB_API_VERSION || !SIGNAL_HUB_AUTH_TOKEN) {
   throw new Error("Missing Signal Hub configuration");

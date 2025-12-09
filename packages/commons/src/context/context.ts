@@ -21,20 +21,37 @@ export const zodiosCtx = zodiosContext(
   })
 );
 
-const config = ContextConfig.parse(process.env);
+type ContextState = {
+  defaultContext: AppContext | undefined;
+};
+
+const state: ContextState = {
+  defaultContext: undefined,
+};
 
 const globalStore = new AsyncLocalStorage<AppContext>();
-const defaultAppContext: AppContext = {
-  authData: {
-    purposeId: config.purposeId,
-    clientId: config.clientId,
-  },
-  correlationId: config.correlationId,
+
+export const initContext = (config: ContextConfig): void => {
+  state.defaultContext = {
+    authData: {
+      purposeId: config.purposeId,
+      clientId: config.clientId,
+    },
+    correlationId: config.correlationId,
+  };
 };
 
 export const getContext = (): AppContext => {
   const context = globalStore.getStore();
-  return !context ? defaultAppContext : context;
+  if (context) {
+    return context;
+  }
+
+  if (!state.defaultContext) {
+    throw new Error("Context not initialized. Call initContext(config) first.");
+  }
+
+  return state.defaultContext;
 };
 
 export const globalContextMiddleware = (
@@ -42,6 +59,9 @@ export const globalContextMiddleware = (
   _res: Response,
   next: NextFunction
 ): void => {
-  globalStore.run(defaultAppContext, () => defaultAppContext);
-  next();
+  if (!state.defaultContext) {
+    next();
+    return;
+  }
+  globalStore.run(state.defaultContext, () => next());
 };

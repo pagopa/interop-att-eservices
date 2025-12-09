@@ -11,15 +11,13 @@ export const M2mConfig = z
     M2M_KID: z.string().min(1),
   })
   .transform((c) => ({
-    alg: c.ALG,
-    typ: c.TYP,
-    tokenEndpoint: c.M2M_TOKEN_ENDPOINT,
-    privateKeyPath: c.M2M_PRIVATE_KEY_PATH,
-    clientId: c.M2M_CLIENT_ID,
-    authAudience: c.M2M_AUTH_AUDIENCE,
-    kid: c.M2M_KID,
+    m2mAlg: c.ALG,
+    m2mtTyp: c.TYP,
+    m2mTokenEndpoint: c.M2M_TOKEN_ENDPOINT,
+    m2mPrivateKeyPath: c.M2M_PRIVATE_KEY_PATH,
+    m2mClientId: c.M2M_CLIENT_ID,
+    m2mAuthAudience: c.M2M_AUTH_AUDIENCE,
+    m2mKid: c.M2M_KID,
   }));
 
 export type M2mConfig = z.infer<typeof M2mConfig>;
-
-export const m2mConfig: () => M2mConfig = () => M2mConfig.parse(process.env);

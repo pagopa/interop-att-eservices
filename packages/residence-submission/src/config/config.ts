@@ -8,6 +8,8 @@ import {
   InteroperabilityConfig,
   JWTConfig,
   ContextConfig,
+  ShConfig,
+  HTTPServerConfig,
 } from "pdnd-common";
 
 export const ResidenceSubmissionConfig = LoggerConfig.and(DatabaseConfig)
@@ -16,7 +18,9 @@ export const ResidenceSubmissionConfig = LoggerConfig.and(DatabaseConfig)
   .and(SignerConfig)
   .and(InteroperabilityConfig)
   .and(ContextConfig)
-  .and(JWTConfig);
+  .and(JWTConfig)
+  .and(ShConfig)
+  .and(HTTPServerConfig);
 
 export type ResidenceSubmissionConfig = z.infer<
   typeof ResidenceSubmissionConfig

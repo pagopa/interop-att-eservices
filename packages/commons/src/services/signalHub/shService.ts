@@ -1,7 +1,6 @@
 import axios from "axios";
 import { SHRepository } from "../../repositories/signalHub/index.js";
-import { logger } from "../../index.js";
-import { shClientConfig } from "../../config/shClientConfig.js";
+import { logger, ShClientConfig, ShConfig } from "../../index.js";
 
 export interface SignalPayload {
   signalId: number;
@@ -12,8 +11,11 @@ export interface SignalPayload {
 }
 
 export const SHService = {
-  async sendSignal(payload: SignalPayload, m2mToken: string): Promise<void> {
-    const config = shClientConfig();
+  async sendSignal(
+    payload: SignalPayload,
+    m2mToken: string,
+    config: ShClientConfig
+  ): Promise<void> {
     logger.info(`[SHService] Sending signal (axios) for ${payload.objectId}`);
 
     if (!config.signalHubHost) {
@@ -52,13 +54,19 @@ export const SHService = {
     }
   },
 
-  async findSeedByEserviceId(eserviceId: string): Promise<string> {
+  async findSeedByEserviceId(
+    eserviceId: string,
+    config: ShConfig
+  ): Promise<string> {
     logger.info(
       `[SeedRepository] Searching for seed for e-service: ${eserviceId}`
     );
 
     try {
-      const seed = await SHRepository.findConfigByEserviceId(eserviceId);
+      const seed = await SHRepository.findConfigByEserviceId(
+        eserviceId,
+        config
+      );
       if (!seed) {
         logger.error(
           `[SeedRepository] 'seed' field is null in JSONB for ${eserviceId}`

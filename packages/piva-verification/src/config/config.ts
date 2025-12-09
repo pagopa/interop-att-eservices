@@ -6,13 +6,15 @@ import {
   SignerConfig,
   JWTConfig,
   SslConfig,
+  ContextConfig,
 } from "pdnd-common";
 
 export const PivaVerificationConfig = LoggerConfig.and(DatabaseConfig)
   .and(HTTPServerConfig)
   .and(SignerConfig)
   .and(JWTConfig)
-  .and(SslConfig);
+  .and(SslConfig)
+  .and(ContextConfig);
 
 export type PivaVerificationConfig = z.infer<typeof PivaVerificationConfig>;
 
