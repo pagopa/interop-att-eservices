@@ -54,7 +54,6 @@
     "connection-string": "^4.3.6",
     "crypto": "^1.0.1",
     "debug": "^4.3.4",
-    "dns": "^0.2.2",
     "dotenv": "^16.4.5",
     "dotenv-flow": "^3.2.0",
     "drizzle-orm": "^0.42.0",
