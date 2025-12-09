@@ -22,13 +22,14 @@ type LoggerState = {
 const defaultLogger = winston.createLogger({
   level: "info",
   transports: [new winston.transports.Console()],
-  silent: false,
+  silent: process.env.NODE_ENV === "test",
 });
 
 const state: LoggerState = {
   config: {
     logLevel: "info",
     loggerSilent: true,
+    nodeEnv: "test",
   },
   serviceName: "app",
   loggerInstance: defaultLogger,

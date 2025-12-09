@@ -14,6 +14,9 @@ vi.mock("pdnd-common", () => ({
     signalHubApiVersion: "v1",
   })),
   getPDNDTokenM2M: vi.fn(() => Promise.resolve("fake-jwt-token")),
+  SignerConfig: {},
+  InteroperabilityConfig: {},
+  JWTConfig: {},
 }));
 
 vi.mock("cron", () => ({
@@ -25,6 +28,12 @@ vi.mock("cron", () => ({
 vi.mock("../src/controllers/signalServiceController.js", () => ({
   SeedRotationController: {
     executeSeedRotation: vi.fn(),
+  },
+}));
+
+vi.mock("../src/config/config.js", () => ({
+  shConfig: {
+    cronTime: "0 5 0 * * *",
   },
 }));
 
