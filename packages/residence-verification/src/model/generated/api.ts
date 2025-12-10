@@ -36,16 +36,70 @@ const TipoDatiNascitaE000 = z
   })
   .partial()
   .passthrough();
-const TipocriteriaAR002 = z
+const TipoParametriRicercaAR001 = z
   .object({
     subjectId: z.string(),
     id: z.string(),
     surname: z.string(),
-    nosurname: z.string(),
+    noSurname: z.string(),
     name: z.string(),
-    noname: z.string(),
+    noName: z.string(),
     gender: z.string(),
     birthDate: TipoDatiNascitaE000,
+  })
+  .partial()
+  .passthrough();
+const TipoRichiestaAR001 = z
+  .object({
+    dateOfRequest: z.string(),
+    motivation: z.string(),
+    useCase: z.string(),
+  })
+  .passthrough();
+const RichiestaAR001 = z
+  .object({
+    operationId: z.string(),
+    criteria: TipoParametriRicercaAR001,
+    requestData: TipoRichiestaAR001,
+  })
+  .passthrough();
+const TipoCodiceFiscale = z
+  .object({
+    subjectId: z.string(),
+    subjectIdValidity: z.string(),
+    dataAttributionValidity: z.string(),
+  })
+  .partial()
+  .passthrough();
+const TipoLuogoEvento = z
+  .object({
+    exceptionalPlace: z.string(),
+    municipality: TipoComune,
+    place: TipoLocalita,
+  })
+  .partial()
+  .passthrough();
+const TipoIdSchedaSoggettoComune = z
+  .object({ idCommonSubjectDataIstat: z.string(), idSubjectData: z.string() })
+  .partial()
+  .passthrough();
+const TipoGeneralita = z
+  .object({
+    subjectId: TipoCodiceFiscale,
+    surname: z.string(),
+    noSurname: z.string(),
+    name: z.string(),
+    noName: z.string(),
+    gender: z.string(),
+    birthDate: z.string(),
+    noDay: z.string(),
+    noMonth: z.string(),
+    birthPlace: TipoLuogoEvento,
+    AIRESubject: z.string(),
+    yearExpatriation: z.string(),
+    idCommonSubjectData: TipoIdSchedaSoggettoComune,
+    idSubjectData: z.string(),
+    note: z.string(),
   })
   .partial()
   .passthrough();
@@ -385,17 +439,6 @@ const AnomaliaAR002 = z
   })
   .partial()
   .passthrough();
-const TipoErroriAnomalia = z
-  .object({
-    warningErrorCode: z.string(),
-    warningErrorType: z.string(),
-    warningErrorText: z.string(),
-    warningErrorObject: z.string(),
-    warningErrorField: z.string(),
-    warningErrorValue: z.string(),
-  })
-  .partial()
-  .passthrough();
 const RispostaAR002OK = z
   .object({
     idOperazioneANPR: z.string(),
@@ -429,7 +472,13 @@ export const schemas = {
   TipoLocalita,
   TipoLuogoNascitaE000,
   TipoDatiNascitaE000,
-  TipocriteriaAR002,
+  TipoParametriRicercaAR001,
+  TipoRichiestaAR001,
+  RichiestaAR001,
+  TipoCodiceFiscale,
+  TipoLuogoEvento,
+  TipoIdSchedaSoggettoComune,
+  TipoGeneralita,
   TipoToponimo,
   TipoCivicoInterno,
   TipoNumeroCivico,
@@ -471,6 +520,43 @@ export const schemas = {
 };
 
 const endpoints = makeApi([
+  {
+    method: "post",
+    path: "/residence-verification",
+    alias: "AR001",
+    description: `Search for a residential address`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: RichiestaAR001,
+      },
+    ],
+    response: RispostaAR001,
+    errors: [
+      {
+        status: 400,
+        description: `Bad request`,
+        schema: z.void(),
+      },
+      {
+        status: 401,
+        description: `Unauthorized`,
+        schema: z.void(),
+      },
+      {
+        status: 403,
+        description: `Forbidden`,
+        schema: z.void(),
+      },
+      {
+        status: 429,
+        description: `Too Many Requests`,
+        schema: z.void(),
+      },
+    ],
+  },
   {
     method: "post",
     path: "/residence-verification/check",
