@@ -36,8 +36,8 @@ const residenceSubissionController = (
     "/residence-submission",
     contextDataResidenceMiddleware,
     authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
+    integrityValidationMiddleware(residenceSubmissionConfig),
+    auditValidationMiddleware(residenceSubmissionConfig),
     async (req, res) => {
       try {
         logger.info(`[START] residenceSubissionController: ${req.body}`);
@@ -78,8 +78,8 @@ const residenceSubissionController = (
     "/residence-submission",
     contextDataResidenceMiddleware,
     authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
+    integrityValidationMiddleware(residenceSubmissionConfig),
+    auditValidationMiddleware(residenceSubmissionConfig),
     async (req, res) => {
       try {
         logger.info(`[START] residenceSubissionController update: ${req.body}`);
@@ -181,8 +181,8 @@ const residenceSubissionController = (
     "/residence-submission/:id",
     contextDataResidenceMiddleware,
     authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
+    integrityValidationMiddleware(residenceSubmissionConfig),
+    auditValidationMiddleware(residenceSubmissionConfig),
     async (req, res) => {
       try {
         const { id } = req.params;

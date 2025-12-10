@@ -22,7 +22,7 @@ type LoggerState = {
 const defaultLogger = winston.createLogger({
   level: "info",
   transports: [new winston.transports.Console()],
-  silent: process.env.NODE_ENV === "test",
+  silent: true,
 });
 
 const state: LoggerState = {
@@ -85,7 +85,6 @@ export const customFormat = () =>
 export const initLogger = (config: LoggerConfig, serviceName: string) => {
   state.config = config;
   state.serviceName = serviceName;
-  const isTest = process.env.NODE_ENV === "test";
 
   state.loggerInstance.configure({
     level: state.config.logLevel,
@@ -100,7 +99,7 @@ export const initLogger = (config: LoggerConfig, serviceName: string) => {
       winston.format.errors({ stack: true }),
       customFormat()
     ),
-    silent: isTest || state.config.loggerSilent,
+    silent: false,
   });
 
   return state.loggerInstance;

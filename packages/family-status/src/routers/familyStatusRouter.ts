@@ -20,6 +20,7 @@ import { contextDataFamilyMiddleware } from "../context/context.js";
 import familyStatusController from "../controllers/familyStatusController.js";
 import { keychainSignatureUtility } from "../utilities/keychainSignatureUtility.js";
 import { keychainSignerConfig } from "../config/keychainSignerConfig.js";
+import { familyStatusConfiguration } from "../config/config.js";
 
 const familyStatusRouter = (
   ctx: ZodiosContext
@@ -30,8 +31,8 @@ const familyStatusRouter = (
     "/family-status",
     contextDataFamilyMiddleware,
     authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
+    integrityValidationMiddleware(familyStatusConfiguration),
+    auditValidationMiddleware(familyStatusConfiguration),
     async (req, res) => {
       try {
         logger.info(`[START] familyStatusRouter: ${req.body}`);
@@ -64,8 +65,8 @@ const familyStatusRouter = (
     "/family-status/check-with-payload-signature",
     contextDataFamilyMiddleware,
     authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
+    integrityValidationMiddleware(familyStatusConfiguration),
+    auditValidationMiddleware(familyStatusConfiguration),
     async (req, res) => {
       try {
         logger.info(`[START] familyStatusRouter: ${req.body}`);

@@ -7,6 +7,7 @@ import {
   SslConfig,
   JWTConfig,
   ContextConfig,
+  InteroperabilityConfig,
 } from "pdnd-common";
 
 export const FamilyStatusConfiguration = LoggerConfig.and(DatabaseConfig)
@@ -14,7 +15,8 @@ export const FamilyStatusConfiguration = LoggerConfig.and(DatabaseConfig)
   .and(SignerConfig)
   .and(SslConfig)
   .and(JWTConfig)
-  .and(ContextConfig);
+  .and(ContextConfig)
+  .and(InteroperabilityConfig);
 
 export type FamilyStatusConfiguration = z.infer<
   typeof FamilyStatusConfiguration

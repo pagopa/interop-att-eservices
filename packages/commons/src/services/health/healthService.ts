@@ -1,12 +1,10 @@
 import { buildPublicKeyService } from "../../aws-kms/publicKeyService.js";
 import { buildSignerService } from "../../aws-kms/signerService.js";
-import { getContext } from "../../context/context.js";
 import { logger, SignerConfig } from "../../index.js";
 import { testDbConnection } from "../../utility/testDbConnection.js";
 
 export const HealtService = {
   async status(config: SignerConfig): Promise<boolean | null> {
-    getContext();
     const publicKeyService = buildPublicKeyService(config);
 
     if (!(await publicKeyService.KMSAvailability(config.kmsKeyId))) {

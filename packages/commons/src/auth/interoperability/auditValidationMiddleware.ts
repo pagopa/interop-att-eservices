@@ -7,94 +7,91 @@ import { ExpressContext } from "../../index.js";
 import { InteroperabilityConfig } from "../../config/interoperabilityConfig.js";
 import { logger } from "../../logging/index.js";
 import { TrialService } from "../../services/trial-api/trialService.js";
+
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 
-export const auditValidationMiddleware: () => ZodiosRouterContextRequestHandler<ExpressContext> =
-  () => {
-    const auditMiddleware: ZodiosRouterContextRequestHandler<
-      ExpressContext
-    > = async (req, res, next): Promise<unknown> => {
-      try {
-        const config = InteroperabilityConfig.parse(process.env);
-        if (config.skipInteroperabilityVerification) {
-          return next();
-        }
-        if (
-          req.headers["agid-jwt-trackingevidence"] === null ||
-          req.headers["agid-jwt-trackingevidence"] === undefined
-        ) {
-          logger.error(
-            `auditValidationMiddleware - No matching headers found: agid-jwt-trackingevidence`
-          );
-          void TrialService.insert(
-            req.url,
-            req.method,
-            "TRACKING_EVIDENCE_NOT_PRESENT"
-          );
-          throw ErrorHandling.missingHeader("agid-jwt-trackingevidence");
-        }
-        const trackingEvidenceToken = Array.isArray(
-          req.headers["agid-jwt-trackingevidence"]
-        )
-          ? req.headers["agid-jwt-trackingevidence"][0]
-          : req.headers["agid-jwt-trackingevidence"];
-        if (!trackingEvidenceToken) {
-          logger.error(
-            `auditValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`
-          );
-          void TrialService.insert(
-            req.url,
-            req.method,
-            "TRACKING_EVIDENCE_NOT_VALID"
-          );
-          throw ErrorHandling.missingHeader("agid-jwt-trackingevidence");
-        }
-
-        if (config.skipAgidPayloadVerification !== true) {
-          verifyJwtPayload(trackingEvidenceToken, req.url, req.method);
-        }
-
+export const auditValidationMiddleware = (
+  config: InteroperabilityConfig
+): ZodiosRouterContextRequestHandler<ExpressContext> => {
+  const auditMiddleware: ZodiosRouterContextRequestHandler<
+    ExpressContext
+  > = async (req, res, next): Promise<unknown> => {
+    try {
+      if (config.skipInteroperabilityVerification) {
+        return next();
+      }
+      if (
+        req.headers["agid-jwt-trackingevidence"] === null ||
+        req.headers["agid-jwt-trackingevidence"] === undefined
+      ) {
+        logger.error(
+          `auditValidationMiddleware - No matching headers found: agid-jwt-trackingevidence`
+        );
         void TrialService.insert(
           req.url,
           req.method,
-          "TRACKING_EVIDENCE",
-          "OK"
+          "TRACKING_EVIDENCE_NOT_PRESENT"
         );
-        logger.info(`[COMPLETED] auditValidationMiddleware`);
-        return next();
-      } catch (error) {
-        if (error instanceof Object && !("code" in error)) {
-          if ("message" in error) {
-            logger.error(
-              `auditValidationMiddleware - error not managed with message: ${error.message}`
-            );
-          }
-          return res.status(500).json().end();
-        }
-        const problem = makeApiProblem(error, (err) =>
-          match(err.code)
-            .with("unauthorizedError", () => 401)
-            .with("operationForbidden", () => 403)
-            .with("missingHeader", () => 400)
-            .otherwise(() => 500)
-        );
-        return res.status(problem.status).json(problem).end();
+        throw ErrorHandling.missingHeader("agid-jwt-trackingevidence");
       }
-    };
+      const trackingEvidenceToken = Array.isArray(
+        req.headers["agid-jwt-trackingevidence"]
+      )
+        ? req.headers["agid-jwt-trackingevidence"][0]
+        : req.headers["agid-jwt-trackingevidence"];
 
-    return auditMiddleware;
+      if (!trackingEvidenceToken) {
+        logger.error(
+          `auditValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "TRACKING_EVIDENCE_NOT_VALID"
+        );
+        throw ErrorHandling.missingHeader("agid-jwt-trackingevidence");
+      }
+
+      if (config.skipAgidPayloadVerification !== true) {
+        verifyJwtPayload(trackingEvidenceToken, req.url, req.method, config);
+      }
+
+      void TrialService.insert(req.url, req.method, "TRACKING_EVIDENCE", "OK");
+      logger.info(`[COMPLETED] auditValidationMiddleware`);
+      return next();
+    } catch (error) {
+      if (error instanceof Object && !("code" in error)) {
+        if ("message" in error) {
+          logger.error(
+            `auditValidationMiddleware - error not managed with message: ${error.message}`
+          );
+        }
+        return res.status(500).json().end();
+      }
+      const problem = makeApiProblem(error, (err) =>
+        match(err.code)
+          .with("unauthorizedError", () => 401)
+          .with("operationForbidden", () => 403)
+          .with("missingHeader", () => 400)
+          .otherwise(() => 500)
+      );
+      return res.status(problem.status).json(problem).end();
+    }
   };
+
+  return auditMiddleware;
+};
 
 const verifyJwtPayload = (
   jwtToken: string,
   url: string,
-  method: string
+  method: string,
+  config: InteroperabilityConfig
 ): void => {
   const decodedToken = jwt.decode(jwtToken, { complete: true }) as {
     header: JwtHeader;
     payload: JwtPayload;
   };
-  const config = InteroperabilityConfig.parse(process.env);
 
   if (!decodedToken.payload) {
     logger.error(`verifyJwtPayload - Token not valid`);
@@ -134,6 +131,7 @@ const verifyJwtPayload = (
     void TrialService.insert(url, method, "TRACKING_EVIDENCE_AUD_NOT_PRESENT");
     throw ErrorHandling.tokenNotValid();
   }
+
   if (decodedToken.payload.aud !== config.tokenAud) {
     logger.error(`verifyJwtPayload - Request header 'aud' is not valid`);
     void TrialService.insert(url, method, "TRACKING_EVIDENCE_AUD_NOT_VALID");
