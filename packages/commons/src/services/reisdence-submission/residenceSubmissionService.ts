@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from "zod";
 import { RequestAR003 } from "../../zod/residence-submission/requestAR003.js";
 import { Subject } from "../../db/schema/residence-verification/subject.model.js";
@@ -95,9 +96,18 @@ export const ResidenceSubmissionService = {
             `[DEBUG UPDATE] Found existing addresses for ${id}. Updating using ID (CF).`
           );
 
+          const today = new Date().toISOString().split("T")[0];
+
+          const addressToUpdate = {
+            ...updatedAddress,
+            address_start_date: today,
+          };
+
+          logger.info(`[DEBUG UPDATE] Setting new address date to: ${today}`);
+
           await DataPreparationRepository.updateAddressById(
             id,
-            updatedAddress as unknown as Address
+            addressToUpdate as unknown as Address
           );
         } else {
           logger.warn(
@@ -187,9 +197,15 @@ export const ResidenceSubmissionService = {
       await DataPreparationRepository.createSubject(newSubject);
 
       if (newAddress) {
+        const today = new Date().toISOString().split("T")[0];
+
+        const addressToSave = {
+          ...newAddress,
+          address_start_date: today,
+        };
         logger.info(`[DEBUG CREATE] Calling Repo createAddress...`);
         await DataPreparationRepository.createAddress(
-          newAddress as unknown as Address
+          addressToSave as unknown as Address
         );
       } else {
         logger.warn(

@@ -93,7 +93,7 @@ export const mockAddress = {
   id: "123e4667-e89b-12d3-a456-426614174000",
   address_type: "residence",
   note_address: "Indirizzo principale del soggetto",
-  address_start_date: "2020-01-15",
+  address_start_date: "2025-12-10",
   address_municipality_name: "Roma",
   address_municipality_istat_code: "H501",
   toponym_denomination: "Via del Corso",
