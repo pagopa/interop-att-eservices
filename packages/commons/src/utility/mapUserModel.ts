@@ -88,9 +88,9 @@ function mapAddressData(address: Address): TipoResidenzaModel {
     addressStartDate: address.address_start_date ?? "",
     presso: address.presso ?? "",
     address: {
-      cap: address.foreign_cap ?? "",
+      cap: address.cap ?? "",
       municipality: mapMunicipality(address),
-      fraction: "",
+      fraction: address.fraction ?? "",
       toponym: mapToponym(address),
       civicNumber: mapCivicNumber(address),
     },
