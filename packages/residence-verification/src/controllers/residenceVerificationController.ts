@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { UserModel } from "pdnd-models";
 import { logger, userService, translateKeys } from "pdnd-common";
 import { userModelNotFound } from "../exceptions/errors.js";
@@ -6,7 +7,7 @@ import {
   RichiestaAR001,
   RispostaAR001,
   TipoParametriRicercaAR001,
-} from "../model/modelAr001.js";
+} from "../model/domain/models.js";
 import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
 import {
   REQ_ITA_TO_ENG,
@@ -47,6 +48,15 @@ class ResidenceVerificationController {
       idOperazioneANPR: internalRequest.operationId,
       listaSoggetti: {
         datiSoggetto: data.map((user) => {
+          const rawDate =
+            user.address?.addressStartDate ||
+            (user as any).address_start_date ||
+            (user.address as any)?.address_start_date;
+
+          const dataInserimentoResidenza = rawDate
+            ? new Date(rawDate).toISOString().split("T")[0]
+            : new Date().toISOString().split("T")[0];
+
           const flatItalianObj: RispostaAR002OK = translateKeys(
             user,
             RES_ENG_TO_ITA_KEYS,
@@ -54,13 +64,16 @@ class ResidenceVerificationController {
           );
 
           const infoSoggettoEnte = Object.entries(flatItalianObj).map(
-            ([chiave, valore]) => {
+            ([chiave, valore], index) => {
               const isDate = chiave.toUpperCase().includes("DATA");
+
               return {
+                id: String(index + 1),
                 chiave,
                 valore: (isDate ? "D" : "A") as "A" | "N" | "S" | "D",
-                valoreTesto: !isDate ? String(valore) : undefined,
-                valoreData: isDate ? String(valore) : undefined,
+                valoreTesto: String(valore || ""),
+                valoreData: dataInserimentoResidenza,
+                dettaglio: "",
               };
             }
           );

@@ -1,5 +1,10 @@
 import { z } from "zod";
-import * as api from "./generated/api.js";
+import {
+  TipoIndirizzoEstero,
+  TipoConsolato,
+  TipoIndirizzo,
+  TipoDatiNascitaE000,
+} from "../model/modelAr001.js";
 
 export const TipoInfoValore = z.enum(["A", "N", "S"]);
 export type TipoInfoValore = z.infer<typeof TipoInfoValore>;
@@ -37,8 +42,8 @@ export type VerifyTipoDatiSubjects = z.infer<
 
 const TipoLocalitaEsteraInternal = z
   .object({
-    foreignAddress: api.schemas.TipoIndirizzoEstero.optional(),
-    consulate: api.schemas.TipoConsolato.optional(),
+    foreignAddress: TipoIndirizzoEstero.optional(),
+    consulate: TipoConsolato.optional(),
   })
   .partial()
   .passthrough();
@@ -46,7 +51,7 @@ const TipoLocalitaEsteraInternal = z
 const TipoVerificaResidenzaInternal = z
   .object({
     addressType: z.string().optional(),
-    address: api.schemas.TipoIndirizzo.optional(),
+    address: TipoIndirizzo.optional(),
     foreignState: TipoLocalitaEsteraInternal.optional(),
   })
   .partial()
@@ -61,7 +66,7 @@ const TipocriteriaInternal = z
     name: z.string(),
     noName: z.string(),
     gender: z.string(),
-    birthDate: api.schemas.TipoDatiNascitaE000,
+    birthDate: TipoDatiNascitaE000,
   })
   .partial()
   .passthrough();

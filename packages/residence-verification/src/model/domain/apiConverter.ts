@@ -36,25 +36,6 @@ import {
 } from "pdnd-models";
 
 import {
-  TipoIndirizzoEstero,
-  TipoLocalitaEstera1,
-  TipoResidenza,
-  TipoParametriRicercaAR001,
-  TipoRichiestaAR001,
-  RichiestaAR001,
-  TipoCodiceFiscale,
-  TipoLuogoEvento,
-  TipoIdSchedaSoggettoComune,
-  TipoGeneralita,
-  TipoIdentificativi,
-  TipoAtto,
-  TipoAttoANSC,
-  TipoAttoEvento,
-  TipoDatiEvento,
-  TipoDatiSoggettiEnte,
-  TipoListaSoggetti,
-} from "../modelAr001.js";
-import {
   TipoLocalita,
   TipoComune,
   TipoLuogoNascitaE000,
@@ -69,6 +50,23 @@ import {
   TipoErroriAnomalia,
   ProblemError,
   Problem,
+  TipoIndirizzoEstero,
+  RichiestaAR001,
+  TipoAtto,
+  TipoAttoANSC,
+  TipoAttoEvento,
+  TipoCodiceFiscale,
+  TipoDatiEvento,
+  TipoDatiSoggettiEnte,
+  TipoGeneralita,
+  TipoIdentificativi,
+  TipoIdSchedaSoggettoComune,
+  TipoListaSoggetti,
+  TipoLocalitaEstera1,
+  TipoLuogoEvento,
+  TipoParametriRicercaAR001,
+  TipoResidenza,
+  TipoRichiestaAR001,
 } from "./models.js";
 
 export const apiTipoComuneToTipoComuneModel = (
