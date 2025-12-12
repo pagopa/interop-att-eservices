@@ -81,7 +81,6 @@ export function mapGeneralErrorModel(
   };
 
   const anomalies = parseAnomalies(problem.detail);
-  logger.info(`anomalie ${JSON.stringify(anomalies)}`);
   // eslint-disable-next-line @typescript-eslint/array-type
   const listaErrori: ReadonlyArray<AnomaliaItem> = anomalies
     ? anomalies.map((a) => ({
@@ -106,7 +105,6 @@ export function mapGeneralErrorModel(
         },
       ];
 
-  // Costruiamo l'oggetto, ma lo ritorniamo come 'any' per far contento il router
   const response: ResidenceErrorResponse = {
     idOperazioneANPR: idOperazione,
     listaErrori,

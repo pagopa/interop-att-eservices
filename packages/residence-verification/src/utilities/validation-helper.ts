@@ -1,158 +1,119 @@
+/* eslint-disable functional/no-let */
 /* eslint-disable functional/immutable-data */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { MismatchPayload } from "../exceptions/errors.js";
 import { InternalRequestAR002 } from "../model/internal-model.js";
 import { RES_ENG_TO_ITA_KEYS } from "./residence-mappings.js";
-const translateField = (fieldName: string): string => {
-  const entry = Object.entries(RES_ENG_TO_ITA_KEYS).find(
-    ([key]) => key === fieldName || key.endsWith(`.${fieldName}`)
-  );
-  if (entry) {
-    return entry[1];
-  }
 
-  return RES_ENG_TO_ITA_KEYS[fieldName] || fieldName;
+const BOOLEAN_KEYS = [
+  "subject.noSurname",
+  "subject.noName",
+  "subject.birthDate.noDay",
+  "subject.birthDate.noDayMonth",
+  "address.address.civicNumber.internalCivic.secondary",
+  "address.address.civicNumber.internalCivic.isolated",
+];
+
+const getValueByPath = (obj: any, path: string): any => {
+  if (!obj) {
+    return undefined;
+  }
+  return path.split(".").reduce((acc, part) => acc?.[part], obj);
 };
 
-const getTrimmedString = (value: any): string =>
-  value !== undefined && value !== null ? String(value).trim() : "";
-
-const normalizeStringForComparison = (str: string): string =>
-  str.replace(/[^a-z0-9]/g, "").toLowerCase();
-
-const createMismatchPayload = (
-  rawFieldName: string,
-  requestValue: string
-): ReadonlyArray<MismatchPayload> => {
-  const translatedField = translateField(rawFieldName);
-  return [
-    {
-      field: translatedField,
-      value: requestValue,
-    },
-  ];
+const normalizeString = (val: any): string => {
+  if (val === undefined || val === null) {
+    return "";
+  }
+  return String(val)
+    .toLowerCase()
+    .replaceAll(/[^a-z0-9]/gu, "");
 };
 
-const comparePrimitiveValues = (
-  strReq: string,
-  strDb: string,
-  path: string
-): ReadonlyArray<MismatchPayload> => {
-  const rawFieldName = path.split(".").pop() || path;
-
-  const normalizedReq = normalizeStringForComparison(strReq);
-  const normalizedDb = normalizeStringForComparison(strDb);
-
-  if (
-    normalizedReq !== normalizedDb &&
-    normalizedReq !== "" &&
-    normalizedDb !== ""
-  ) {
-    return createMismatchPayload(rawFieldName, strReq);
+const adjustBooleanValue = (key: string, value: any): any => {
+  if (BOOLEAN_KEYS.includes(key)) {
+    if (value === "false" || value === false || value === "0") {
+      return "";
+    }
+    if (value === "true" || value === true || value === "1") {
+      return "true";
+    }
   }
-
-  return [];
+  return value;
 };
 
-export const getAnomalies = (
-  requestObj: any,
-  dbObj: any,
-  path = ""
-): ReadonlyArray<MismatchPayload> => {
-  if (
-    (requestObj === undefined || requestObj === null || requestObj === "") &&
-    (dbObj === undefined || dbObj === null || dbObj === "")
-  ) {
-    return [];
+const resolveRoots = (reqAny: any, userFromDb: any): any => {
+  const reqCheckRoot = reqAny.check || reqAny.verifica;
+
+  return {
+    reqSubject: reqAny.criteria || reqAny.subject,
+    dbSubject: userFromDb.subject || userFromDb,
+    reqAddress:
+      reqCheckRoot?.address || reqCheckRoot?.residenza || reqCheckRoot,
+    dbAddress: userFromDb.address || userFromDb,
+  };
+};
+
+const retrieveValues = (
+  fullKey: string,
+  roots: any
+): { reqVal: any; dbVal: any } | null => {
+  if (fullKey.startsWith("subject.")) {
+    const path = fullKey.replace("subject.", "");
+    return {
+      reqVal: getValueByPath(roots.reqSubject, path),
+      dbVal: getValueByPath(roots.dbSubject, path),
+    };
   }
 
-  if (
-    typeof requestObj === "object" &&
-    requestObj !== null &&
-    !Array.isArray(requestObj)
-  ) {
-    const effectiveDbObj = dbObj || {};
-
-    return Object.keys(requestObj).reduce<ReadonlyArray<MismatchPayload>>(
-      (acc, key) => {
-        if (key.startsWith("no") || key.startsWith("senza")) {
-          return acc;
-        }
-
-        const newPath = path ? `${path}.${key}` : key;
-        const childErrors = getAnomalies(
-          requestObj[key],
-          effectiveDbObj[key],
-          newPath
-        );
-        return [...acc, ...childErrors];
-      },
-      []
-    );
+  if (fullKey.startsWith("address.")) {
+    if (!roots.reqAddress || !roots.dbAddress) {
+      return null;
+    }
+    const path = fullKey.replace("address.", "");
+    return {
+      reqVal: getValueByPath(roots.reqAddress, path),
+      dbVal: getValueByPath(roots.dbAddress, path),
+    };
   }
 
-  const strReq = getTrimmedString(requestObj);
-  const strDb = getTrimmedString(dbObj);
-
-  return comparePrimitiveValues(strReq, strDb, path);
+  return null;
 };
 
 export const validateFullRequest = (
-  originalRequest: any,
   internalRequest: InternalRequestAR002,
-  userFromDb: any
+  userFromDbInput: any
 ): ReadonlyArray<MismatchPayload> => {
-  const reqCriteria = internalRequest.criteria;
-  const dbUserAny = userFromDb;
+  const anomalies: MismatchPayload[] = [];
 
-  const anagraphicAnomalies: ReadonlyArray<MismatchPayload> =
-    ((): ReadonlyArray<MismatchPayload> => {
-      if (!reqCriteria || !dbUserAny.subject) {
-        return [];
-      }
+  const userFromDb = Array.isArray(userFromDbInput)
+    ? userFromDbInput[0]
+    : userFromDbInput;
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { subjectId, idANPR, ...restCriteria } = reqCriteria;
+  if (!userFromDb) {
+    return anomalies;
+  }
 
-      const cfErrors = subjectId
-        ? getAnomalies(
-            subjectId,
-            dbUserAny.subject.subjectId || dbUserAny.subject.id,
-            "codiceFiscale"
-          )
-        : [];
+  const roots = resolveRoots(internalRequest as any, userFromDb);
 
-      const anprErrors = idANPR
-        ? getAnomalies(idANPR, dbUserAny.subject.id, "idANPR")
-        : [];
+  for (const [fullKey, labelIta] of Object.entries(RES_ENG_TO_ITA_KEYS)) {
+    const rawValues = retrieveValues(fullKey, roots);
 
-      const otherErrors = getAnomalies(restCriteria, dbUserAny.subject);
+    if (!rawValues) {
+      continue;
+    }
 
-      return [...cfErrors, ...anprErrors, ...otherErrors];
-    })();
+    const cleanReqValue = adjustBooleanValue(fullKey, rawValues.reqVal);
 
-  const reqAny = internalRequest as any;
-  const reqCheckRoot = reqAny.check || reqAny.verifica || reqAny;
-  const reqAddressRoot = reqCheckRoot?.address || reqCheckRoot?.residenza;
+    const normReq = normalizeString(cleanReqValue);
+    const normDb = normalizeString(rawValues.dbVal);
 
-  const reqAddressItalian = reqAddressRoot?.address;
-  const reqAddressForeign = reqAddressRoot?.foreignState?.foreignAddress;
-  const dbAddressData = dbUserAny.address?.address || dbUserAny.address;
-
-  const addressAnomalies =
-    originalRequest.verifica?.residenza?.indirizzo && reqAddressItalian
-      ? getAnomalies(reqAddressItalian, dbAddressData, "address")
-      : [];
-
-  const dbForeignAddressData =
-    dbUserAny.foreignState?.foreignAddress ||
-    dbUserAny.address?.foreignAddress ||
-    dbUserAny.address;
-
-  const foreignAnomalies =
-    originalRequest.verifica?.residenza?.localitaEstera && reqAddressForeign
-      ? getAnomalies(reqAddressForeign, dbForeignAddressData, "foreignAddress")
-      : [];
-
-  return [...anagraphicAnomalies, ...addressAnomalies, ...foreignAnomalies];
+    if (normReq !== "" && normReq !== normDb) {
+      anomalies.push({
+        field: labelIta,
+        value: cleanReqValue !== undefined ? String(cleanReqValue).trim() : "",
+      });
+    }
+  }
+  return anomalies;
 };

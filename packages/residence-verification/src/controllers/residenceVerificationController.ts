@@ -49,11 +49,11 @@ class ResidenceVerificationController {
     if (data.length === 0) {
       throw userModelNotFound();
     }
-    const totalAnomalies = validateFullRequest(
-      request,
-      internalRequest,
-      data[0]
-    );
+    logger.info(`request ${JSON.stringify(request)}`);
+    logger.info(`internalRequest ${JSON.stringify(internalRequest)}`);
+    logger.info(`DATA ${JSON.stringify(data[0])}`);
+
+    const totalAnomalies = validateFullRequest(internalRequest, data);
 
     if (totalAnomalies.length > 0) {
       throw requestParamNotValid(JSON.stringify(totalAnomalies));
