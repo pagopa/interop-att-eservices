@@ -226,43 +226,6 @@ export const schemas = {
 const endpoints = makeApi([
   {
     method: "post",
-    path: "/residence-verification",
-    alias: "AR001",
-    description: `Search for a residential address`,
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "body",
-        type: "Body",
-        schema: RichiestaAR001,
-      },
-    ],
-    response: RispostaAR001,
-    errors: [
-      {
-        status: 400,
-        description: `Bad request`,
-        schema: z.void(),
-      },
-      {
-        status: 401,
-        description: `Unauthorized`,
-        schema: z.void(),
-      },
-      {
-        status: 403,
-        description: `Forbidden`,
-        schema: z.void(),
-      },
-      {
-        status: 429,
-        description: `Too Many Requests`,
-        schema: z.void(),
-      },
-    ],
-  },
-  {
-    method: "post",
     path: "/residence-verification/check",
     alias: "AR002",
     description: `Check for a residential address`,

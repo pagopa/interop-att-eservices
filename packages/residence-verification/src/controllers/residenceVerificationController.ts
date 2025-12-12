@@ -3,10 +3,10 @@
 import { UserModel } from "pdnd-models";
 import { logger, userService, translateKeys } from "pdnd-common";
 import {
-import { RispostaAR002OK, RichiestaAR002 } from "../model/domain/models.js";
-import {
   RichiestaAR001,
+  RichiestaAR002,
   RispostaAR001,
+  RispostaAR002OK,
   TipoParametriRicercaAR001,
 } from "../model/domain/models.js";
 import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
@@ -17,6 +17,10 @@ import {
 import { InternalRequestAR002 } from "../model/internal-model.js";
 import { validateFullRequest } from "../utilities/validation-helper.js";
 import { residenceVerificationConfig } from "../config/config.js";
+import {
+  requestParamNotValid,
+  userModelNotFound,
+} from "../exceptions/errors.js";
 
 class ResidenceVerificationController {
   public async findUser(request: RichiestaAR001): Promise<RispostaAR001> {
