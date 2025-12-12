@@ -1,7 +1,8 @@
+/* eslint-disable functional/immutable-data */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { UserModel } from "pdnd-models";
 import { logger, userService, translateKeys } from "pdnd-common";
-import { userModelNotFound } from "../exceptions/errors.js";
+import {
 import { RispostaAR002OK, RichiestaAR002 } from "../model/domain/models.js";
 import {
   RichiestaAR001,
@@ -14,6 +15,7 @@ import {
   RES_ENG_TO_ITA_KEYS,
 } from "../utilities/residence-mappings.js";
 import { InternalRequestAR002 } from "../model/internal-model.js";
+import { validateFullRequest } from "../utilities/validation-helper.js";
 import { residenceVerificationConfig } from "../config/config.js";
 
 class ResidenceVerificationController {
@@ -42,6 +44,11 @@ class ResidenceVerificationController {
 
     if (data.length === 0) {
       throw userModelNotFound();
+    }
+    const totalAnomalies = validateFullRequest(internalRequest, data);
+
+    if (totalAnomalies.length > 0) {
+      throw requestParamNotValid(JSON.stringify(totalAnomalies));
     }
 
     return {

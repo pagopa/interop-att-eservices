@@ -2,6 +2,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { userService, translateKeys, logger } from "pdnd-common";
 import { UserModel } from "pdnd-models";
+import { userModelNotFound } from "../src/exceptions/errors.js"; // Updated import
+import { UserModelToApiTipoDatiSoggettiEnte } from "../src/model/domain/apiConverter.js";
+import { RichiestaAR001, RichiestaAR002 } from "../src/model/domain/models.js";
 import controller from "../src/controllers/residenceVerificationController.js";
 import { RichiestaAR002 } from "../src/model/domain/models.js";
 import { RichiestaAR001 } from "../src/model/modelAr001.js";
@@ -59,15 +62,22 @@ vi.mock("../utilities/residence-mappings.js", () => ({
   RES_ENG_TO_ITA_KEYS: {},
 }));
 
-const birthDateStructure = {
-  eventDate: "1990-01-01",
-  birthPlace: {
-    municipality: { nameMunicipality: "Roma" },
-    place: { codState: "IT" },
-  },
-};
+vi.mock("../src/exceptions/errors.js", async () => ({
+  userModelNotFound: vi.fn((msg) => new Error(msg || "Utente non trovato")),
+  requestParamNotValid: vi.fn(
+    (msg) => new Error(msg || "Request param not valid")
+  ),
+}));
 
-const mockUser: UserModel = {
+vi.mock("../src/model/domain/apiConverter.js", async () => ({
+  UserModelToApiTipoDatiSoggettiEnte: vi.fn(),
+}));
+
+vi.mock("../src/utilities/validation-helper.js", async () => ({
+  validateFullRequest: vi.fn(() => []),
+}));
+
+const mockUser = {
   subjectId: "UTENTE_123",
   name: "Mario",
   surname: "Rossi",
