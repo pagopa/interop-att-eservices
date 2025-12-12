@@ -1,6 +1,6 @@
 import { UserModel } from "pdnd-models";
-import { TipoParametriRicercaAR001 } from "../model/modelAr001.js";
 import { userModelNotFound } from "../exceptions/errors.js";
+import { TipoParametriRicercaAR001 } from "../model/domain/models.js";
 /* eslint-disable */
 
 export function appendUniqueUserModelsToArray(

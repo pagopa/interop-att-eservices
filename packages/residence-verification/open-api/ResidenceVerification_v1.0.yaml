@@ -18,53 +18,6 @@ security:
     Agid-JWT-Signature: []
 
 paths:
-  /residence-verification:
-    post:
-      tags:
-        - Residence Address Check
-      summary: Search for a residential address
-      description: Search for a residential address
-      operationId: AR001
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/RichiestaAR001"
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RispostaAR001"
-        "400":
-          description: Bad request
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/GeneralError"
-        "401":
-          description: Unauthorized
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/GeneralError"
-        "403":
-          description: Forbidden
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/GeneralError"
-        "429":
-          description: Too Many Requests
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/GeneralError"
-
   /residence-verification/check:
     post:
       tags:

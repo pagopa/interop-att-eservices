@@ -1,240 +1,237 @@
-export interface RichiestaAR001 {
-  operationId: string;
-  criteria: TipoParametriRicercaAR001;
-  requestData: TipoRichiestaAR001;
-}
+import { z } from "zod";
 
-export interface RispostaAR001 {
-  idOp?: string;
-  subjects?: TipoListaSubjects;
-  warnings?: TipoErroriAnomalia[];
-}
+export const TipoComune = z.object({
+  nameMunicipality: z.string().optional(),
+  istatCode: z.string().optional(),
+  acronymIstatProvince: z.string().optional(),
+  placeDescription: z.string().optional(),
+});
 
-export interface TipoParametriRicercaAR001 {
-  subjectId?: string;
-  id?: string;
-  surname?: string;
-  noSurname?: string;
-  name?: string;
-  noName?: string;
-  gender?: string;
-  birthDate?: TipoDatiNascitaE000;
-}
+export const TipoLocalita = z.object({
+  placeDescription: z.string().optional(),
+  countryDescription: z.string().optional(),
+  codState: z.string().optional(),
+  provinceCounty: z.string().optional(),
+});
 
-export interface TipoRichiestaAR001 {
-  dateOfRequest: string;
-  motivation: string;
-  useCase: string;
-}
+export const TipoLuogoNascitaE000 = z.object({
+  exceptionalPlace: z.string().optional(),
+  municipality: TipoComune.optional(),
+  place: TipoLocalita.optional(),
+});
 
-export interface TipoListaSubjects {
-  subject?: TipoDatiSubjectsEnte[];
-}
+export const TipoDatiNascitaE000 = z.object({
+  eventDate: z.string().optional(),
+  noDay: z.string().optional(),
+  noMonth: z.string().optional(),
+  birthPlace: TipoLuogoNascitaE000.optional(),
+});
 
-export interface TipoErroriAnomalia {
-  warningErrorCode?: string;
-  warningErrorType?: string;
-  warningErrorText?: string;
-  warningErrorObject?: string;
-  warningErrorField?: string;
-  warningErrorValue?: string;
-}
+export const TipoParametriRicercaAR001 = z.object({
+  subjectId: z.string().optional(),
+  id: z.string().optional(),
+  surname: z.string().optional(),
+  noSurname: z.string().optional(),
+  name: z.string().optional(),
+  noName: z.string().optional(),
+  gender: z.string().optional(),
+  birthDate: TipoDatiNascitaE000.optional(),
+});
 
-export interface TipoDatiNascitaE000 {
-  eventDate?: string;
-  noDay?: string;
-  noMonth?: string;
-  birthPlace?: TipoLuogoNascitaE000;
-}
+export const TipoRichiestaAR001 = z.object({
+  dateOfRequest: z.string(),
+  motivation: z.string(),
+  useCase: z.string(),
+});
 
-export interface TipoLuogoNascitaE000 {
-  exceptionalPlace?: string;
-  municipality?: TipoComune;
-  place?: TipoLocalita;
-}
+export const TipoErroriAnomalia = z.object({
+  warningErrorCode: z.string().optional(),
+  warningErrorType: z.string().optional(),
+  warningErrorText: z.string().optional(),
+  warningErrorObject: z.string().optional(),
+  warningErrorField: z.string().optional(),
+  warningErrorValue: z.string().optional(),
+});
 
-export interface TipoComune {
-  nameMunicipality?: string;
-  istatCode?: string;
-  acronymIstatProvince?: string;
-  placeDescription?: string;
-}
+export const TipoCodiceFiscale = z.object({
+  subjectId: z.string().optional(),
+  subjectIdValidity: z.string().optional(),
+  dataAttributionValidity: z.string().optional(),
+});
 
-export interface TipoLocalita {
-  placeDescription?: string;
-  countryDescription?: string;
-  codState?: string;
-  provinceCounty?: string;
-}
+export const TipoIdSchedaSoggettoComune = z.object({
+  idCommonSubjectDataIstat: z.string().optional(),
+  idSubjectData: z.string().optional(),
+});
 
-export interface TipoDatiSubjectsEnte {
-  generality?: TipoGeneralita;
-  address?: TipoResidenza[];
-  identifiers?: TipoIdentificativi;
-  deathDate?: TipoDatiEvento;
-}
+export const TipoLuogoEvento = z.object({
+  exceptionalPlace: z.string().optional(),
+  municipality: TipoComune.optional(),
+  place: TipoLocalita.optional(),
+});
 
-export interface TipoGeneralita {
-  subjectId?: TipoCodiceFiscale;
-  surname?: string;
-  noSurname?: string;
-  name?: string;
-  noName?: string;
-  gender?: string;
-  birthDate?: string;
-  noDay?: string;
-  noMonth?: string;
-  birthPlace?: TipoLuogoEvento;
-  AIRESubject?: string;
-  yearExpatriation?: string;
-  idCommonSubjectData?: TipoIdSchedaSoggettoComune;
-  idSubjectData?: string;
-  note?: string;
-}
+export const TipoGeneralita = z.object({
+  subjectId: TipoCodiceFiscale.optional(),
+  surname: z.string().optional(),
+  noSurname: z.string().optional(),
+  name: z.string().optional(),
+  noName: z.string().optional(),
+  gender: z.string().optional(),
+  birthDate: z.string().optional(),
+  noDay: z.string().optional(),
+  noMonth: z.string().optional(),
+  birthPlace: TipoLuogoEvento.optional(),
+  AIRESubject: z.string().optional(),
+  yearExpatriation: z.string().optional(),
+  idCommonSubjectData: TipoIdSchedaSoggettoComune.optional(),
+  idSubjectData: z.string().optional(),
+  note: z.string().optional(),
+});
 
-export interface TipoCodiceFiscale {
-  subjectId?: string;
-  subjectIdValidity?: string;
-  dataAttributionValidity?: string;
-}
+export const TipoToponimo = z.object({
+  codType: z.string().optional(),
+  type: z.string().optional(),
+  originType: z.string().optional(),
+  toponymCod: z.string().optional(),
+  toponymDenomination: z.string().optional(),
+  toponymSource: z.string().optional(),
+});
 
-export interface TipoLuogoEvento {
-  exceptionalPlace?: string;
-  municipality?: TipoComune;
-  place?: TipoLocalita;
-}
+export const TipoCivicoInterno = z.object({
+  court: z.string().optional(),
+  stairs: z.string().optional(),
+  internal1: z.string().optional(),
+  espInternal1: z.string().optional(),
+  internal2: z.string().optional(),
+  espInternal2: z.string().optional(),
+  externalStairs: z.string().optional(),
+  secondary: z.string().optional(),
+  floor: z.string().optional(),
+  nui: z.string().optional(),
+  isolated: z.string().optional(),
+});
 
-export interface TipoIdSchedaSoggettoComune {
-  idCommonSubjectDataIstat?: string;
-  idSubjectData?: string;
-}
+export const TipoNumeroCivico = z.object({
+  civicCod: z.string().optional(),
+  civicSource: z.string().optional(),
+  civicNumber: z.string().optional(),
+  metric: z.string().optional(),
+  progSNC: z.string().optional(),
+  letter: z.string().optional(),
+  exponent1: z.string().optional(),
+  color: z.string().optional(),
+  internalCivic: TipoCivicoInterno.optional(),
+});
 
-export interface TipoResidenza {
-  addressType?: string;
-  noteaddress?: string;
-  address?: TipoIndirizzo;
-  foreignState?: TipoLocalitaEstera1;
-  presso?: string;
-  addressStartDate?: string;
-}
+export const TipoIndirizzo = z.object({
+  cap: z.string().optional(),
+  municipality: TipoComune.optional(),
+  fraction: z.string().optional(),
+  toponym: TipoToponimo.optional(),
+  civicNumber: TipoNumeroCivico.optional(),
+  coords: z
+    .object({
+      latitude: z.string().optional(),
+      longitude: z.string().optional(),
+    })
+    .optional(),
+});
 
-export interface TipoIndirizzo {
-  cap?: string;
-  municipality?: TipoComune;
-  fraction?: string;
-  toponym?: TipoToponimo;
-  civicNumber?: TipoNumeroCivico;
-}
+export const TipoConsolato = z.object({
+  consulateCod: z.string().optional(),
+  consulateDescription: z.string().optional(),
+});
 
-export interface TipoLocalitaEstera1 {
-  foreignAddress?: TipoIndirizzoEstero;
-  consulate?: TipoConsolato;
-}
+export const TipoDatoLocalitaEstera = z.object({
+  placeDescription: z.string().optional(),
+  countryDescription: z.string().optional(),
+  countryState: z.string().optional(),
+  provinceCounty: z.string().optional(),
+});
 
-export interface TipoToponimo {
-  codType?: string;
-  type?: string;
-  originType?: string;
-  toponymCod?: string;
-  toponymDenomination?: string;
-  toponymSource?: string;
-}
+export const TipoToponimoEstero = z.object({
+  denomination: z.string().optional(),
+  civicNumber: z.string().optional(),
+});
 
-export interface TipoNumeroCivico {
-  civicCod?: string;
-  civicSource?: string;
-  civicNumber?: string;
-  metric?: string;
-  progSNC?: string;
-  letter?: string;
-  exponent1?: string;
-  color?: string;
-  internalCivic?: TipoCivicoInterno;
-}
+export const TipoIndirizzoEstero = z.object({
+  cap: z.string().optional(),
+  place: TipoDatoLocalitaEstera.optional(),
+  toponym: TipoToponimoEstero.optional(),
+});
 
-export interface TipoCivicoInterno {
-  court?: string;
-  stairs?: string;
-  internal1?: string;
-  espInternal1?: string;
-  internal2?: string;
-  espInternal2?: string;
-  externalStairs?: string;
-  secondary?: string;
-  floor?: string;
-  nui?: string;
-  isolated?: string;
-}
+export const TipoLocalitaEstera1 = z.object({
+  foreignAddress: TipoIndirizzoEstero.optional(),
+  consulate: TipoConsolato.optional(),
+});
 
-export interface TipoIndirizzoEstero {
-  cap?: string;
-  place?: TipoDatoLocalitaEstera;
-  toponym?: TipoToponimoEstero;
-}
+export const TipoResidenza = z.object({
+  addressType: z.string().optional(),
+  noteaddress: z.string().optional(),
+  address: TipoIndirizzo.optional(),
+  foreignState: TipoLocalitaEstera1.optional(),
+  presso: z.string().optional(),
+  addressStartDate: z.string().optional(),
+});
 
-export interface TipoConsolato {
-  consulateCod?: string;
-  consulateDescription?: string;
-}
+export const TipoIdentificativi = z.object({
+  id: z.string().optional(),
+});
 
-export interface TipoDatoLocalitaEstera {
-  placeDescription?: string;
-  countryDescription?: string;
-  countryState?: string;
-  provinceCounty?: string;
-}
+export const TipoAtto = z.object({
+  municipalityRegistration: TipoComune.optional(),
+  municipalOffice: z.string().optional(),
+  year: z.string().optional(),
+  part: z.string().optional(),
+  series: z.string().optional(),
+  actNumber: z.string().optional(),
+  volume: z.string().optional(),
+  dateFormationAct: z.string().optional(),
+  transcribed: z.string().optional(),
+});
 
-export interface TipoToponimoEstero {
-  denomination?: string;
-  civicNumber?: string;
-}
+export const TipoAttoANSC = z.object({
+  idANSC: z.string().optional(),
+  municipalityRegistration: TipoComune.optional(),
+  act: z.string().optional(),
+  municipalOffice: z.string().optional(),
+  municipalNumber: z.string().optional(),
+  dateFormationAct: z.string().optional(),
+  transcribed: z.string().optional(),
+});
 
-export interface TipoIdentificativi {
-  id?: string;
-}
+export const TipoAttoEvento = z.object({
+  act: TipoAtto.optional(),
+  actANSC: TipoAttoANSC.optional(),
+});
 
-export interface TipoDatiEvento {
-  eventDate?: string;
-  noDay?: string;
-  noMonth?: string;
-  eventPlace?: TipoLuogoEvento;
-  eventAct?: TipoAttoEvento;
-}
+export const TipoDatiEvento = z.object({
+  eventDate: z.string().optional(),
+  noDay: z.string().optional(),
+  noMonth: z.string().optional(),
+  eventPlace: TipoLuogoEvento.optional(),
+  eventAct: TipoAttoEvento.optional(),
+});
 
-export interface TipoAttoEvento {
-  act?: TipoAtto;
-  actANSC?: TipoAttoANSC;
-}
+export const TipoDatiSoggettiEnte = z.object({
+  generality: TipoGeneralita.optional(),
+  address: z.array(TipoResidenza).optional(),
+  identifiers: TipoIdentificativi.optional(),
+  deathDate: TipoDatiEvento.optional(),
+});
 
-export interface TipoAttoANSC {
-  idANSC?: string;
-  municipalityRegistration?: TipoComune;
-  act?: string;
-  municipalOffice?: string;
-  municipalNumber?: string;
-  dateFormationAct?: string;
-  transcribed?: string;
-}
+export const TipoListaSoggetti = z.object({
+  subject: z.array(TipoDatiSoggettiEnte).optional(),
+});
 
-export interface TipoAtto {
-  municipalityRegistration?: TipoComune;
-  municipalOffice?: string;
-  year?: string;
-  part?: string;
-  series?: string;
-  actNumber?: string;
-  volume?: string;
-  dateFormationAct?: string;
-  transcribed?: string;
-}
+export const RichiestaAR001 = z.object({
+  operationId: z.string(),
+  criteria: TipoParametriRicercaAR001,
+  requestData: TipoRichiestaAR001,
+});
 
-export interface TipoDatiSoggettiEnte {
-  generality?: TipoGeneralita;
-  address?: TipoResidenza[];
-  identifiers?: TipoIdentificativi;
-  deathDate?: TipoDatiEvento;
-}
-
-export interface TipoListaSoggetti {
-  subject?: TipoDatiSoggettiEnte[];
-}
+export const RispostaAR001 = z.object({
+  idOp: z.string().optional(),
+  subjects: TipoListaSoggetti.optional(),
+  warnings: z.array(TipoErroriAnomalia).optional(),
+});
