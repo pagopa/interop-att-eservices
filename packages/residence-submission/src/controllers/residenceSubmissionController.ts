@@ -3,6 +3,7 @@ import {
   getContext,
   ResidenceSubmissionService,
   translateKeys,
+  userModelNotFound,
 } from "pdnd-common";
 import { RichiestaAR003 } from "../model/domain/models.js";
 import { InternalRequestAR003 } from "../model/internal-models.js";
@@ -52,10 +53,9 @@ class ResidenceSubmissionController {
       };
     } catch (error) {
       logger.error(`Error in 'updateUser': `, error);
-      return {
-        status: "KO",
-        message: "Errore durante l'aggiornamento dell'utente.",
-      };
+      throw userModelNotFound(
+        "Errore durante l’aggiornamento, utente non trovato"
+      );
     }
   }
 
