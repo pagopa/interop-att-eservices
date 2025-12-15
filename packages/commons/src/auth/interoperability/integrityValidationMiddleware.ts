@@ -4,7 +4,7 @@ import { makeApiProblemBuilder, ErrorHandling } from "pdnd-models";
 import { match } from "ts-pattern";
 import { Request } from "express";
 import { ExpressContext } from "../../index.js";
-import { InteroperabilityConfig } from "../../config/commonConfig.js";
+import { InteroperabilityConfig } from "../../config/interoperabilityConfig.js";
 import { logger } from "../../logging/index.js";
 import {
   generateHashFromString,
@@ -14,76 +14,76 @@ import { TrialService } from "../../services/trial-api/trialService.js";
 
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 
-export const integrityValidationMiddleware: () => ZodiosRouterContextRequestHandler<ExpressContext> =
-  () => {
-    const integrityMiddleware: ZodiosRouterContextRequestHandler<
-      ExpressContext
-    > = async (req, res, next): Promise<unknown> => {
-      try {
-        const config = InteroperabilityConfig.parse(process.env);
-        if (config.skipInteroperabilityVerification) {
-          return next();
-        }
-        if (
-          req.headers["agid-jwt-signature"] === null ||
-          req.headers["agid-jwt-signature"] === undefined
-        ) {
-          logger.error(
-            `integrityValidationMiddleware - No matching headers found: agid-jwt-signature`
-          );
-          void TrialService.insert(
-            req.url,
-            req.method,
-            "SIGNATURE_NOT_PRESENT"
-          );
-          throw ErrorHandling.missingHeader("agid-jwt-signature");
-        }
-        const signatureToken = Array.isArray(req.headers["agid-jwt-signature"])
-          ? req.headers["agid-jwt-signature"][0]
-          : req.headers["agid-jwt-signature"];
-        if (!signatureToken) {
-          logger.error(
-            `integrityValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`
-          );
-          void TrialService.insert(req.url, req.method, "SIGNATURE_NOT_VALID");
-          throw ErrorHandling.missingHeader("agid-jwt-signature");
-        }
-
-        if (process.env.SKIP_AGID_PAYLOAD_VERIFICATION !== "true") {
-          verifyJwtPayload(signatureToken, req);
-        }
-
-        void TrialService.insert(req.url, req.method, "SIGNATURE", "OK");
-        logger.info(`[COMPLETED] integrityValidationMiddleware`);
+export const integrityValidationMiddleware: (
+  config: InteroperabilityConfig
+) => ZodiosRouterContextRequestHandler<ExpressContext> = (config) => {
+  const integrityMiddleware: ZodiosRouterContextRequestHandler<
+    ExpressContext
+  > = async (req, res, next): Promise<unknown> => {
+    try {
+      if (config.skipInteroperabilityVerification) {
         return next();
-      } catch (error) {
-        if (error instanceof Object && !("code" in error)) {
-          if ("message" in error) {
-            logger.error(
-              `integrityValidationMiddleware - error not managed with message: ${error.message}`
-            );
-          }
-          return res.status(500).json().end();
-        }
-        const problem = makeApiProblem(error, (err) =>
-          match(err.code)
-            .with("unauthorizedError", () => 401)
-            .with("operationForbidden", () => 403)
-            .with("missingHeader", () => 400)
-            .with("missingBearer", () => 401)
-            .with("tokenNotValid", () => 401)
-            .with("genericBadRequest", () => 400)
-            .with("genericError", () => 500)
-            .otherwise(() => 500)
-        );
-        return res.status(problem.status).json(problem).end();
       }
-    };
+      if (
+        req.headers["agid-jwt-signature"] === null ||
+        req.headers["agid-jwt-signature"] === undefined
+      ) {
+        logger.error(
+          `integrityValidationMiddleware - No matching headers found: agid-jwt-signature`
+        );
+        void TrialService.insert(req.url, req.method, "SIGNATURE_NOT_PRESENT");
+        throw ErrorHandling.missingHeader("agid-jwt-signature");
+      }
+      const signatureToken = Array.isArray(req.headers["agid-jwt-signature"])
+        ? req.headers["agid-jwt-signature"][0]
+        : req.headers["agid-jwt-signature"];
+      if (!signatureToken) {
+        logger.error(
+          `integrityValidationMiddleware - No authentication has been provided for this call ${req.method} ${req.url}`
+        );
+        void TrialService.insert(req.url, req.method, "SIGNATURE_NOT_VALID");
+        throw ErrorHandling.missingHeader("agid-jwt-signature");
+      }
 
-    return integrityMiddleware;
+      if (config.skipAgidPayloadVerification !== true) {
+        verifyJwtPayload(signatureToken, req, config);
+      }
+
+      void TrialService.insert(req.url, req.method, "SIGNATURE", "OK");
+      logger.info(`[COMPLETED] integrityValidationMiddleware`);
+      return next();
+    } catch (error) {
+      if (error instanceof Object && !("code" in error)) {
+        if ("message" in error) {
+          logger.error(
+            `integrityValidationMiddleware - error not managed with message: ${error.message}`
+          );
+        }
+        return res.status(500).json().end();
+      }
+      const problem = makeApiProblem(error, (err) =>
+        match(err.code)
+          .with("unauthorizedError", () => 401)
+          .with("operationForbidden", () => 403)
+          .with("missingHeader", () => 400)
+          .with("missingBearer", () => 401)
+          .with("tokenNotValid", () => 401)
+          .with("genericBadRequest", () => 400)
+          .with("genericError", () => 500)
+          .otherwise(() => 500)
+      );
+      return res.status(problem.status).json(problem).end();
+    }
   };
 
-export const verifyJwtPayload = (jwtToken: string, req: Request): void => {
+  return integrityMiddleware;
+};
+
+export const verifyJwtPayload = (
+  jwtToken: string,
+  req: Request,
+  config: InteroperabilityConfig
+): void => {
   const decodedToken = jwt.decode(jwtToken, { complete: true }) as {
     header: JwtHeader;
     payload: JwtPayload;
@@ -95,7 +95,7 @@ export const verifyJwtPayload = (jwtToken: string, req: Request): void => {
 
   verifyTemporalClaims(payload, req);
 
-  verifyAudience(payload, req);
+  verifyAudience(payload, req, config.tokenAud);
 
   verifySignedHeaders(payload, req);
 
@@ -161,8 +161,12 @@ const verifyTemporalClaims = (payload: JwtPayload, req: Request): void => {
   }
 };
 
-const verifyAudience = (payload: JwtPayload, req: Request): void => {
-  if (!payload.aud || payload.aud !== process.env.TOKEN_AUD) {
+const verifyAudience = (
+  payload: JwtPayload,
+  req: Request,
+  expectedAudience: string
+): void => {
+  if (!payload.aud || payload.aud !== expectedAudience) {
     logger.error(`verifyJwtPayload - "aud" claim is missing or not valid`);
     void TrialService.insert(req.url, req.method, "SIGNATURE_AUD_NOT_VALID");
     throw ErrorHandling.tokenNotValid();

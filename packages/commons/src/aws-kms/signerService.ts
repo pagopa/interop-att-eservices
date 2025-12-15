@@ -5,7 +5,7 @@ import {
   SigningAlgorithmSpec,
 } from "@aws-sdk/client-kms";
 import { ErrorHandling } from "pdnd-models";
-import { logger, signerConfig } from "../index.js";
+import { logger, SignerConfig } from "../index.js";
 
 /**
  * Service to sign data using AWS KMS
@@ -28,9 +28,7 @@ export type SignerService = {
   KMSAvailability: (keyId: string, data: string) => Promise<boolean>;
 };
 
-export const buildSignerService = (): SignerService => {
-  const config = signerConfig();
-
+export const buildSignerService = (config: SignerConfig): SignerService => {
   const kmsClient = config.kmsEndpoint
     ? new KMSClient({
         endpoint: config.kmsEndpoint,

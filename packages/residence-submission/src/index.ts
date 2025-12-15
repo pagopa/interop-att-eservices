@@ -1,10 +1,20 @@
-import { logger, testDbConnection } from "pdnd-common";
+import {
+  initContext,
+  initDB,
+  initLogger,
+  logger,
+  testDbConnection,
+} from "pdnd-common";
 import app from "./app.js";
+import { residenceSubmissionConfig } from "./config/config.js";
 
-const port = process.env.PORT || 3006;
+const port = residenceSubmissionConfig.httpPort;
 
 const startServer = async (): Promise<void> => {
   try {
+    initContext(residenceSubmissionConfig);
+    initLogger(residenceSubmissionConfig, "residence-submission");
+    initDB(residenceSubmissionConfig);
     await testDbConnection();
 
     logger.info("Connection to Database has been established.");

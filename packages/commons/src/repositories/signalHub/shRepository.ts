@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { sql } from "drizzle-orm";
-import { client } from "../../index.js";
+import { client, ShConfig } from "../../index.js";
 import { logger } from "../../index.js";
 import { signalCounters } from "../../db/schema/signalHub/index.js";
 import { getRotatedSeed } from "../../utility/seedUtility.js";
 
 export const SHRepository = {
-  async findConfigByEserviceId(eserviceId: string): Promise<string> {
+  async findConfigByEserviceId(
+    eserviceId: string,
+    config: ShConfig
+  ): Promise<string> {
     try {
       logger.info(`[SHRepository] Finding config for e-service: ${eserviceId}`);
-      const seed = await this.getSeed(eserviceId);
+      const seed = await this.getSeed(eserviceId, config);
       if (!seed) {
         logger.error(
           `[SeedRepository] Seed non configurato per l'e-service: ${eserviceId}`
@@ -65,9 +68,9 @@ export const SHRepository = {
       throw new Error("DB Error during signalId generation.");
     }
   },
-  async getSeed(eserviceId: string): Promise<string> {
+  async getSeed(eserviceId: string, config: ShConfig): Promise<string> {
     try {
-      return getRotatedSeed(eserviceId);
+      return getRotatedSeed(eserviceId, config);
     } catch (error) {
       logger.error(`impossible get seed for ${eserviceId}:`, error);
       throw error;

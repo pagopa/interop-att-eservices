@@ -1,5 +1,4 @@
-import { logger, getContext } from "pdnd-common";
-import { FamilyStatusService } from "pdnd-common";
+import { logger, FamilyStatusService } from "pdnd-common";
 import {
   requestParamNotValid,
   userModelNotFound,
@@ -8,8 +7,6 @@ import { RequestFS001, ResponseFS001 } from "../model/domain/models.js";
 import { mapDbRecordToResponseFS001 } from "../utilities/mapDbRecordToResponseFS001.js";
 
 class FamilyStatusController {
-  public appContext = getContext();
-
   public async findUser(
     request: RequestFS001
   ): Promise<ResponseFS001 | null | undefined> {

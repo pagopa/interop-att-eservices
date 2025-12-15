@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import { zodiosContext } from "@zodios/express";
 import { z } from "zod";
 import { AuthData } from "../auth/authData.js";
+import { ContextConfig } from "../config/contextConfig.js";
 
 export type AppContext = z.infer<typeof ctx>;
 export type ZodiosContext = NonNullable<typeof zodiosCtx>;
@@ -20,19 +21,37 @@ export const zodiosCtx = zodiosContext(
   })
 );
 
+type ContextState = {
+  defaultContext: AppContext | undefined;
+};
+
+const state: ContextState = {
+  defaultContext: undefined,
+};
+
 const globalStore = new AsyncLocalStorage<AppContext>();
-const defaultAppContext: AppContext = {
-  authData: {
-    purposeId: process.env.PURPOSE_ID || "92e1624b-91cb-4b05-b8c0-cad208a30656",
-    clientId: process.env.CLIENT_ID || "7f9f24ca-78f5-4c69-9e4f-0efbeac7aa1a",
-  },
-  correlationId:
-    process.env.CORRELATION_ID || "bfbcb93c-58ab-4018-badf-d052294ac052",
+
+export const initContext = (config: ContextConfig): void => {
+  state.defaultContext = {
+    authData: {
+      purposeId: config.purposeId,
+      clientId: config.clientId,
+    },
+    correlationId: config.correlationId,
+  };
 };
 
 export const getContext = (): AppContext => {
   const context = globalStore.getStore();
-  return !context ? defaultAppContext : context;
+  if (context) {
+    return context;
+  }
+
+  if (!state.defaultContext) {
+    throw new Error("Context not initialized. Call initContext(config) first.");
+  }
+
+  return state.defaultContext;
 };
 
 export const globalContextMiddleware = (
@@ -40,6 +59,9 @@ export const globalContextMiddleware = (
   _res: Response,
   next: NextFunction
 ): void => {
-  globalStore.run(defaultAppContext, () => defaultAppContext);
-  next();
+  if (!state.defaultContext) {
+    next();
+    return;
+  }
+  globalStore.run(state.defaultContext, () => next());
 };

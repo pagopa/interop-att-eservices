@@ -1,10 +1,5 @@
 import { UserModel } from "pdnd-models";
-import {
-  logger,
-  getContext,
-  userServiceDirect,
-  CoordinatesService,
-} from "pdnd-common";
+import { logger, userServiceDirect, CoordinatesService } from "pdnd-common";
 import {
   requestParamNotValid,
   userModelNotFound,
@@ -19,8 +14,6 @@ import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter
 import { checkInfoSoggettoEquals } from "../utilities/equalsUtilities.js";
 
 class ResidenceVerificationController {
-  public appContext = getContext();
-
   public async findUser(
     request: RichiestaAR001
   ): Promise<RispostaAR001 | null | undefined> {

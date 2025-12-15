@@ -1,6 +1,5 @@
 import {
   logger,
-  getContext,
   ResidenceSubmissionService,
   translateKeys,
   userModelNotFound,
@@ -10,8 +9,6 @@ import { InternalRequestAR003 } from "../model/internal-models.js";
 import { REQ_AR003_ITA_TO_ENG } from "../utilities/residence-submission-mapping.js";
 
 class ResidenceSubmissionController {
-  public appContext = getContext();
-
   public async createUser(
     request: RichiestaAR003
   ): Promise<{ status: string; message: string }> {

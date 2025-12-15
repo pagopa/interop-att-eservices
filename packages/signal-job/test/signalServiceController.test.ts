@@ -3,7 +3,7 @@ import { logger } from "pdnd-common";
 import { SeedRotationController } from "../src/controllers/signalServiceController.js";
 import { SHRepository } from "../src/repositories/SHRepository.js";
 import { SignalHubClient } from "../src/repositories/SignalHubClient.js";
-import { shConfig } from "../src/config/config.js";
+
 vi.mock("pdnd-common", () => ({
   logger: {
     info: vi.fn(),
@@ -32,21 +32,18 @@ vi.mock("../src/repositories/SignalHubClient.js", () => ({
 }));
 
 vi.mock("../src/config/config.js", () => ({
-  shConfig: vi.fn(),
-}));
-
-describe("SeedRotationController", () => {
-  const MOCK_CONFIG = {
-    startDateMs: "2023-01-01T00:00:00.000Z",
+  shConfig: {
+    startDateMs: new Date("2023-01-01T00:00:00.000Z").getTime(),
     seedExpireDays: 7,
     saltLength: 16,
     algorithm: "sha256",
-  };
+  },
+}));
 
+describe("SeedRotationController", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
-    (shConfig as Mock).mockReturnValue(MOCK_CONFIG);
   });
 
   afterEach(() => {

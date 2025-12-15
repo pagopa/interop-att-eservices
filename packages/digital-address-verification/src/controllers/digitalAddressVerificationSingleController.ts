@@ -1,4 +1,4 @@
-import { logger, getContext, digitalAddressService } from "pdnd-common";
+import { logger, digitalAddressService } from "pdnd-common";
 import { fiscalcodeNotFound } from "../exceptions/errors.js";
 import {
   ResponseRequestDigitalAddress,
@@ -7,8 +7,6 @@ import {
 import { responseRequestDigitalAddressModelToResponseRequestDigitalAddress } from "../model/domain/apiConverter.js";
 
 class DigitalAddressVerificationSingleController {
-  public appContext = getContext();
-
   public async verify(
     idSubject: string,
     digitalAddressInput: string,

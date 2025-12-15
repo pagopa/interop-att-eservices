@@ -25,6 +25,7 @@ import {
 } from "../exceptions/errors.js";
 import { contextDataResidenceMiddleware } from "../context/context.js";
 import { SignalPayload } from "../../../commons/dist/services/signalHub/shService.js";
+import { residenceSubmissionConfig } from "../config/config.js";
 
 const residenceSubissionController = (
   ctx: ZodiosContext
@@ -35,8 +36,8 @@ const residenceSubissionController = (
     "/residence-submission",
     contextDataResidenceMiddleware,
     authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
+    integrityValidationMiddleware(residenceSubmissionConfig),
+    auditValidationMiddleware(residenceSubmissionConfig),
     async (req, res) => {
       try {
         logger.info(`[START] residenceSubissionController: ${req.body}`);
@@ -77,8 +78,8 @@ const residenceSubissionController = (
     "/residence-submission",
     contextDataResidenceMiddleware,
     authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
+    integrityValidationMiddleware(residenceSubmissionConfig),
+    auditValidationMiddleware(residenceSubmissionConfig),
     async (req, res) => {
       try {
         logger.info(`[START] residenceSubissionController update: ${req.body}`);
@@ -104,7 +105,10 @@ const residenceSubissionController = (
           throw new Error("Fiscal Code not found for 'objectId' generation.");
         }
 
-        const seed = await SHService.findSeedByEserviceId(eserviceId);
+        const seed = await SHService.findSeedByEserviceId(
+          eserviceId,
+          residenceSubmissionConfig
+        );
         if (!seed) {
           throw new Error(
             `Could not find 'seed' for eserviceId: ${eserviceId}`
@@ -128,7 +132,7 @@ const residenceSubissionController = (
           );
         }
 
-        const m2mToken = await getPDNDTokenM2M();
+        const m2mToken = await getPDNDTokenM2M(residenceSubmissionConfig);
         if (!m2mToken) {
           throw new Error("M2M token generation failed.");
         }
@@ -141,7 +145,11 @@ const residenceSubissionController = (
         };
         logger.info(`[signalObject]: ${JSON.stringify(signalObject)}`);
 
-        await SHService.sendSignal(signalObject, m2mToken);
+        await SHService.sendSignal(
+          signalObject,
+          m2mToken,
+          residenceSubmissionConfig
+        );
         void TrialService.insert(
           req.url,
           req.method,
@@ -173,8 +181,8 @@ const residenceSubissionController = (
     "/residence-submission/:id",
     contextDataResidenceMiddleware,
     authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
+    integrityValidationMiddleware(residenceSubmissionConfig),
+    auditValidationMiddleware(residenceSubmissionConfig),
     async (req, res) => {
       try {
         const { id } = req.params;
@@ -194,7 +202,10 @@ const residenceSubissionController = (
         if (!fiscalCode) {
           throw new Error("Fiscal Code not found for 'objectId' generation.");
         }
-        const seed = await SHService.findSeedByEserviceId(eserviceId);
+        const seed = await SHService.findSeedByEserviceId(
+          eserviceId,
+          residenceSubmissionConfig
+        );
         if (!seed) {
           throw new Error(
             `Could not find 'seed' for eserviceId: ${eserviceId}`
@@ -217,7 +228,7 @@ const residenceSubissionController = (
             `Failed to retrieve next 'signalId' for eserviceId: ${eserviceId}`
           );
         }
-        const m2mToken = await getPDNDTokenM2M();
+        const m2mToken = await getPDNDTokenM2M(residenceSubmissionConfig);
         if (!m2mToken) {
           throw new Error("M2M token generation failed.");
         }
@@ -229,7 +240,11 @@ const residenceSubissionController = (
           signalId,
           signalType: "DELETE",
         };
-        await SHService.sendSignal(signalObject, m2mToken);
+        await SHService.sendSignal(
+          signalObject,
+          m2mToken,
+          residenceSubmissionConfig
+        );
 
         void TrialService.insert(
           req.url,

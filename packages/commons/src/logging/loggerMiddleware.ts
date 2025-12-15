@@ -1,8 +1,10 @@
 /* eslint-disable max-params */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable functional/immutable-data */
 import * as expressWinston from "express-winston";
 import * as winston from "winston";
-import { LoggerConfig } from "../config/commonConfig.js";
+import { LoggerConfig } from "../config/loggerConfig.js";
 import { getContext } from "../index.js";
 
 export type SessionMetaData = {
@@ -11,12 +13,27 @@ export type SessionMetaData = {
   correlationId: string | undefined;
 };
 
-export const parsedLoggerConfig = LoggerConfig.safeParse(process.env);
-const config: LoggerConfig = parsedLoggerConfig.success
-  ? parsedLoggerConfig.data
-  : {
-      logLevel: "info",
-    };
+type LoggerState = {
+  config: LoggerConfig;
+  serviceName: string;
+  loggerInstance: winston.Logger;
+};
+
+const defaultLogger = winston.createLogger({
+  level: "info",
+  transports: [new winston.transports.Console()],
+  silent: true,
+});
+
+const state: LoggerState = {
+  config: {
+    logLevel: "info",
+    loggerSilent: true,
+    nodeEnv: "test",
+  },
+  serviceName: "app",
+  loggerInstance: defaultLogger,
+};
 
 const getLoggerMetadata = (): SessionMetaData => {
   const appContext = getContext();
@@ -40,11 +57,11 @@ const logFormat = (
   userId: string | undefined,
   organizationId: string | undefined,
   correlationId: string | undefined,
-  serviceName: string = ""
+  serviceName: string
 ) =>
   `${timestamp} ${level.toUpperCase()} [${serviceName}] - [UID=${userId}] [OID=${organizationId}] [CID=${correlationId}] ${msg}`;
 
-export const customFormat = (serviceName?: string) =>
+export const customFormat = () =>
   winston.format.printf(({ level, message, timestamp }) => {
     const { userId, organizationId, correlationId } = getLoggerMetadata();
     const msg = (message as string).toString();
@@ -59,15 +76,18 @@ export const customFormat = (serviceName?: string) =>
           userId,
           organizationId,
           correlationId,
-          serviceName
+          state.serviceName
         )
       );
     return lines.join("\n");
   });
 
-const getLogger = (serviceName?: string) =>
-  winston.createLogger({
-    level: config.logLevel,
+export const initLogger = (config: LoggerConfig, serviceName: string) => {
+  state.config = config;
+  state.serviceName = serviceName;
+
+  state.loggerInstance.configure({
+    level: state.config.logLevel,
     transports: [
       new winston.transports.Console({
         stderrLevels: ["error"],
@@ -77,27 +97,38 @@ const getLogger = (serviceName?: string) =>
       winston.format.timestamp(),
       winston.format.json(),
       winston.format.errors({ stack: true }),
-      customFormat(serviceName)
+      customFormat()
     ),
-    silent: process.env.NODE_ENV === "test",
+    silent: false,
   });
 
-export const loggerMiddleware = (serviceName: string) => () =>
+  return state.loggerInstance;
+};
+
+const getLoggerInstance = () => state.loggerInstance;
+
+export const loggerMiddleware = () =>
   expressWinston.logger({
-    winstonInstance: getLogger(serviceName),
+    winstonInstance: getLoggerInstance(),
     requestWhitelist:
-      config.logLevel === "info" ? ["body", "headers", "query"] : [],
+      state.config.logLevel === "info" ? ["body", "headers", "query"] : [],
     ignoredRoutes: ["/status"],
     responseWhitelist:
-      config.logLevel === "info" ? ["body", "statusCode", "statusMessage"] : [],
+      state.config.logLevel === "info"
+        ? ["body", "statusCode", "statusMessage"]
+        : [],
     meta: false,
     msg: (req, res) =>
       `Request ${req.method} ${req.url} - Response ${res.statusCode} ${res.statusMessage}`,
   });
 
-export const logger = getLogger();
-if (!parsedLoggerConfig.success) {
-  logger.info(
-    `No LOG_LEVEL env var: defaulting log level to "${config.logLevel}"`
-  );
-}
+export const logger = {
+  info: (msg: string, ...meta: any[]) => getLoggerInstance().info(msg, ...meta),
+  error: (msg: string, ...meta: any[]) =>
+    getLoggerInstance().error(msg, ...meta),
+  warn: (msg: string, ...meta: any[]) => getLoggerInstance().warn(msg, ...meta),
+  debug: (msg: string, ...meta: any[]) =>
+    getLoggerInstance().debug(msg, ...meta),
+  log: (level: string, msg: string, ...meta: any[]) =>
+    getLoggerInstance().log(level, msg, ...meta),
+} as winston.Logger;

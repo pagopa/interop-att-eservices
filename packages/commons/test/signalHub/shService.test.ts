@@ -1,5 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import {
+  SHService,
+  SignalPayload,
+} from "../../src/services/signalHub/shService.js";
+
+// 1. DEFINIZIONE LOCALE DELLA CONFIGURAZIONE
+// Niente più import esterni che rompono tutto.
+const localMockConfig = {
+  signalHubHost: "http://mock-signal-hub.com",
+  signalHubApiVersion: "v1",
+  // Aggiungi qui altre chiavi se servono
+} as any;
 
 const {
   mockLogger,
@@ -8,9 +20,8 @@ const {
   mockShClientConfig,
   mockAxiosPost,
   mockIsAxiosError,
-  mockConfig,
 } = vi.hoisted(() => {
-  const mockConfig = {
+  const hoistedMockConfig = {
     signalHubHost: "http://mock-signal-hub.com",
     signalHubApiVersion: "v1",
   };
@@ -22,10 +33,10 @@ const {
     },
     mockFindConfigByEserviceId: vi.fn(),
     mockEnsureAndIncrementSignalId: vi.fn(),
-    mockShClientConfig: vi.fn().mockReturnValue(mockConfig),
+    mockShClientConfig: vi.fn().mockReturnValue(hoistedMockConfig),
     mockAxiosPost: vi.fn(),
     mockIsAxiosError: vi.fn(),
-    mockConfig,
+    mockConfig: hoistedMockConfig,
   };
 });
 
@@ -51,11 +62,6 @@ vi.mock("axios", () => ({
   },
 }));
 
-import {
-  SHService,
-  SignalPayload,
-} from "../../src/services/signalHub/shService.js";
-
 describe("SHService", () => {
   const mockPayload: SignalPayload = {
     signalId: 1,
@@ -68,7 +74,7 @@ describe("SHService", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockShClientConfig.mockReturnValue(mockConfig);
+    mockShClientConfig.mockReturnValue(localMockConfig);
     mockIsAxiosError.mockReturnValue(false);
   });
 
@@ -84,7 +90,7 @@ describe("SHService", () => {
       };
       mockAxiosPost.mockResolvedValue(mockAxiosResponse);
 
-      await SHService.sendSignal(mockPayload, mockToken);
+      await SHService.sendSignal(mockPayload, mockToken, localMockConfig);
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         `[SHService] Sending signal (axios) for ${mockPayload.objectId}`
@@ -97,7 +103,7 @@ describe("SHService", () => {
     });
 
     it("should log error if pdndToken is not provided", async () => {
-      await SHService.sendSignal(mockPayload, "");
+      await SHService.sendSignal(mockPayload, "", localMockConfig);
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         "[SHService] M2M_TOKEN was not configured"
@@ -113,7 +119,7 @@ describe("SHService", () => {
       mockAxiosPost.mockRejectedValue(axiosError);
       mockIsAxiosError.mockReturnValue(true);
 
-      await SHService.sendSignal(mockPayload, mockToken);
+      await SHService.sendSignal(mockPayload, mockToken, localMockConfig);
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         `[ANPRService] API Error: 404 - Not Found`
@@ -125,7 +131,7 @@ describe("SHService", () => {
       mockAxiosPost.mockRejectedValue(genericError);
       mockIsAxiosError.mockReturnValue(false);
 
-      await SHService.sendSignal(mockPayload, mockToken);
+      await SHService.sendSignal(mockPayload, mockToken, localMockConfig);
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         `[ANPRService] Connection Error: Connection failed`
@@ -140,22 +146,28 @@ describe("SHService", () => {
       const expectedSeed = "my-secret-seed-value";
       mockFindConfigByEserviceId.mockResolvedValue(expectedSeed);
 
-      const result = await SHService.findSeedByEserviceId(eserviceId);
+      const result = await SHService.findSeedByEserviceId(
+        eserviceId,
+        localMockConfig
+      );
 
       expect(result).toBe(expectedSeed);
       expect(mockLogger.info).toHaveBeenCalledWith(
         `[SeedRepository] Searching for seed for e-service: ${eserviceId}`
       );
-      expect(mockFindConfigByEserviceId).toHaveBeenCalledWith(eserviceId);
+      expect(mockFindConfigByEserviceId).toHaveBeenCalledWith(
+        eserviceId,
+        localMockConfig
+      );
       expect(mockLogger.error).not.toHaveBeenCalled();
     });
 
     it("should throw and log if seed is null", async () => {
       mockFindConfigByEserviceId.mockResolvedValue(null);
 
-      await expect(SHService.findSeedByEserviceId(eserviceId)).rejects.toThrow(
-        "Error retrieving seed from DB."
-      );
+      await expect(
+        SHService.findSeedByEserviceId(eserviceId, localMockConfig)
+      ).rejects.toThrow("Error retrieving seed from DB.");
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         `[SeedRepository] 'seed' field is null in JSONB for ${eserviceId}`
@@ -169,9 +181,9 @@ describe("SHService", () => {
       const dbError = new Error("Repository connection failed");
       mockFindConfigByEserviceId.mockRejectedValue(dbError);
 
-      await expect(SHService.findSeedByEserviceId(eserviceId)).rejects.toThrow(
-        "Error retrieving seed from DB."
-      );
+      await expect(
+        SHService.findSeedByEserviceId(eserviceId, localMockConfig)
+      ).rejects.toThrow("Error retrieving seed from DB.");
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         `[SeedRepository] DB Error: ${dbError.message}`

@@ -1,6 +1,6 @@
 // app.ts
 import express from "express";
-import { zodiosCtx } from "pdnd-common";
+import { InteroperabilityConfig, zodiosCtx } from "pdnd-common";
 import {
   authenticationCorrelationMiddleware,
   integrityValidationMiddleware,
@@ -10,6 +10,7 @@ import residenceVerificationRouter from "./routers/residenceVerificationRouter.j
 import { rawBodySaver } from "./middleware/rawBody.js";
 import healthRouter from "./routers/healthRouter.js";
 import { contextDataResidenceMiddleware } from "./context/context.js";
+import { residenceVerificationConfig } from "./config/config.js";
 
 const app = express();
 app.use(express.json({ verify: rawBodySaver }));
@@ -26,10 +27,18 @@ residenceRouter.use((req, res, next) => {
   );
 });
 residenceRouter.use((req, res, next) => {
-  (integrityValidationMiddleware() as express.RequestHandler)(req, res, next);
+  (
+    integrityValidationMiddleware(
+      residenceVerificationConfig as unknown as InteroperabilityConfig
+    ) as express.RequestHandler
+  )(req, res, next);
 });
 residenceRouter.use((req, res, next) => {
-  (auditValidationMiddleware() as express.RequestHandler)(req, res, next);
+  (
+    auditValidationMiddleware(
+      residenceVerificationConfig as unknown as InteroperabilityConfig
+    ) as express.RequestHandler
+  )(req, res, next);
 });
 residenceRouter.use(
   "/",

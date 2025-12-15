@@ -1,23 +1,27 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { userService, translateKeys } from "pdnd-common";
 import { UserModel } from "pdnd-models";
-import { userModelNotFound } from "../src/exceptions/errors.js"; // Updated import
+import { userModelNotFound } from "../src/exceptions/errors.js";
 import { UserModelToApiTipoDatiSoggettiEnte } from "../src/model/domain/apiConverter.js";
 import { RichiestaAR001, RichiestaAR002 } from "../src/model/domain/models.js";
 import controller from "../src/controllers/residenceVerificationController.js";
 
-vi.mock("pdnd-common", async () => ({
-  logger: {
-    info: vi.fn(),
-    error: vi.fn(),
-  },
-  getContext: vi.fn(),
-  userService: {
-    getUserBySubjectId: vi.fn(),
-    getByPersonalInfo: vi.fn(),
-  },
-  translateKeys: vi.fn(),
-}));
+vi.mock("pdnd-common", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("pdnd-common")>();
+  return {
+    ...actual,
+    logger: {
+      info: vi.fn(),
+      error: vi.fn(),
+    },
+    getContext: vi.fn(),
+    userService: {
+      getUserBySubjectId: vi.fn(),
+      getByPersonalInfo: vi.fn(),
+    },
+    translateKeys: vi.fn(),
+  };
+});
 
 vi.mock("../src/utils/residence-mappings.js", async () => ({
   REQ_ITA_TO_ENG: {},
@@ -40,6 +44,7 @@ vi.mock("../src/utilities/validation-helper.js", async () => ({
 }));
 
 const mockUser = {
+  id: "internal-id-123",
   subjectId: "UTENTE_123",
   name: "Mario",
   surname: "Rossi",

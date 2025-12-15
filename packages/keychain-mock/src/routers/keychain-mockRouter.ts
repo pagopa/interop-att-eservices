@@ -22,9 +22,8 @@ const keychainMockRouter = (
     async (req, res) => {
       try {
         logger.info(`[START] Get - '/keychain-mock/signature' `);
-        const keychainConfig = keychainSignerConfig();
         const signatureUtility = new keychainSignatureUtility(
-          keychainConfig.kmsKeychainKeyId
+          keychainSignerConfig.kmsKeychainKeyId
         );
 
         const responseBody = {
@@ -36,7 +35,10 @@ const keychainMockRouter = (
         );
 
         res.setHeader("x-payload-signature", signature);
-        res.setHeader("x-payload-signature-kid", keychainConfig.KeychainKeyId);
+        res.setHeader(
+          "x-payload-signature-kid",
+          keychainSignerConfig.KeychainKeyId
+        );
         res.setHeader("x-payload-signature-algorythm", "SHA256withRSA");
         void TrialService.insert(
           req.url,
