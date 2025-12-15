@@ -18,7 +18,6 @@ type MappedDataUpdate = {
   address: Partial<Address>;
 };
 
-// Interfaccia per tipizzare l'oggetto che otteniamo dal parsing della data
 interface BirthDateStructure {
   eventDate?: string | number;
   birthPlace?: unknown;

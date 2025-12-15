@@ -234,7 +234,7 @@ const DatiEventoType = z
 const DatiSoggettoType = z
   .object({
     generality: GeneralitaType,
-    address: ResidenzaType, // CORRETTO: Oggetto singolo
+    address: ResidenzaType,
     identifiers: IdentificativiType,
     deathDate: DatiEventoType,
   })
