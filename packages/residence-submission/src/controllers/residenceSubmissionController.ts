@@ -68,10 +68,9 @@ class ResidenceSubmissionController {
       };
     } catch (error) {
       logger.error(`Error in 'deleteUser': `, error);
-      return {
-        status: "KO",
-        message: "Errore durante l'eliminazione dell'utente.",
-      };
+      throw userModelNotFound(
+        "Errore durante l'eliminazione dell'utente., utente non trovato"
+      );
     }
   }
 }
