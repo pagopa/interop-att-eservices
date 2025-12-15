@@ -13,7 +13,6 @@ export function getRotatedSeed(
   const ROTATION_PERIOD_MS: number =
     config.seedExpireDays * 24 * 60 * 60 * 1000;
 
-  // const SALT_LENGTH: number = 16;
   const elapsedMs: number = nowMs - START_TIMESTAMP_MS;
   const periodId: number = Math.floor(elapsedMs / ROTATION_PERIOD_MS);
   const message: string = periodId.toString();

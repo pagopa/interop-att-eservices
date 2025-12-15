@@ -5,12 +5,9 @@ import {
   SignalPayload,
 } from "../../src/services/signalHub/shService.js";
 
-// 1. DEFINIZIONE LOCALE DELLA CONFIGURAZIONE
-// Niente più import esterni che rompono tutto.
 const localMockConfig = {
   signalHubHost: "http://mock-signal-hub.com",
   signalHubApiVersion: "v1",
-  // Aggiungi qui altre chiavi se servono
 } as any;
 
 const {
