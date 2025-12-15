@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 export default function generateHash(strings: string[]): string {
   const concatenatedString = strings.join("");
