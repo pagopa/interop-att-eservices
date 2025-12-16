@@ -3,7 +3,6 @@
 import fs from "fs";
 import path from "path";
 const MIGRATIONS_DIR = "./drizzle";
-const SEED_DATA_FILE = "./src/scripts/seed-data.sql";
 
 function patchLatestMigration(): void {
   const files = [...fs.readdirSync(MIGRATIONS_DIR)]
@@ -159,19 +158,7 @@ END $$$$;
     ""
   );
 
-  let seedContent = "";
-  if (fs.existsSync(SEED_DATA_FILE)) {
-    seedContent = fs.readFileSync(SEED_DATA_FILE, "utf-8");
-    console.log(`✅ Contenuto letto da: ${SEED_DATA_FILE}`);
-  } else {
-    console.log(
-      `⚠️  Attenzione: file di seed non trovato a '${SEED_DATA_FILE}'. Verrà saltato.`
-    );
-  }
-
-  const contentToWrite = finalContent + seedContent;
-
-  fs.writeFileSync(latestFile, contentToWrite);
+  fs.writeFileSync(latestFile, finalContent);
   console.log(
     `✅ File di migrazione patchato. Dati di seed aggiunti a: ${latestFile}`
   );
