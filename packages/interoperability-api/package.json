@@ -35,7 +35,7 @@
     "@types/uuid": "^9.0.2",
     "class-transformer": "^0.5.1",
     "openapi-zod-client": "1.15.1",
-    "prettier": "^3.7.4",
+    "prettier": "^2.8.8",
     "testcontainers": "10.28.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
