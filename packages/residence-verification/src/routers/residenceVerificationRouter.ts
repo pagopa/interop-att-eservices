@@ -45,7 +45,7 @@ const residenceVerificationRouter = (
           req.method,
           "RESIDENCE_VERIFICATION_002",
           "KO",
-          JSON.stringify(generalErrorResponse)
+          JSON.stringify(generalErrorResponse).substring(0, 500)
         );
         return res.status(errorRes.status).json(generalErrorResponse).end();
       }

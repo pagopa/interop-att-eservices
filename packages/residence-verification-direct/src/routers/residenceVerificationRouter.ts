@@ -18,6 +18,7 @@ import {
   userModelNotFound,
 } from "../exceptions/errors.js";
 import { contextDataResidenceMiddleware } from "../context/context.js";
+import { residenceVerificationDirectConfig } from "../config/config.js";
 
 const residenceVerificationRouter = (
   ctx: ZodiosContext
@@ -28,8 +29,8 @@ const residenceVerificationRouter = (
     "/residence-verification-direct",
     contextDataResidenceMiddleware,
     authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
+    integrityValidationMiddleware(residenceVerificationDirectConfig),
+    auditValidationMiddleware(residenceVerificationDirectConfig),
     async (req, res) => {
       try {
         logger.info(
@@ -70,8 +71,8 @@ const residenceVerificationRouter = (
     "/residence-verification-direct/check",
     contextDataResidenceMiddleware,
     authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
+    integrityValidationMiddleware(residenceVerificationDirectConfig),
+    auditValidationMiddleware(residenceVerificationDirectConfig),
     async (req, res) => {
       try {
         const data = await ResidenceVerificationController.findUserVerify(

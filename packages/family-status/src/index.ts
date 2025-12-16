@@ -1,10 +1,20 @@
-import { logger, testDbConnection } from "pdnd-common";
+import {
+  initContext,
+  initDB,
+  initLogger,
+  logger,
+  testDbConnection,
+} from "pdnd-common";
 import app from "./app.js";
+import { familyStatusConfiguration } from "./config/config.js";
 
-const port = process.env.PORT || 3001;
+const port = familyStatusConfiguration.httpPort;
 
 const startServer = async (): Promise<void> => {
   try {
+    initContext(familyStatusConfiguration);
+    initLogger(familyStatusConfiguration, "family-status");
+    initDB(familyStatusConfiguration);
     await testDbConnection();
     logger.info("Connection to Database has been established.");
     app.listen(port, () => {

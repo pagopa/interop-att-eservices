@@ -1,23 +1,28 @@
+/* eslint-disable functional/immutable-data */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { UserModel } from "pdnd-models";
-import { logger, getContext, userService, translateKeys } from "pdnd-common";
-import { userModelNotFound } from "../exceptions/errors.js";
-import { RispostaAR002OK, RichiestaAR002 } from "../model/domain/models.js";
+import { logger, userService, translateKeys } from "pdnd-common";
 import {
   RichiestaAR001,
+  RichiestaAR002,
   RispostaAR001,
+  RispostaAR002OK,
   TipoParametriRicercaAR001,
-} from "../model/modelAr001.js";
+} from "../model/domain/models.js";
 import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
 import {
   REQ_ITA_TO_ENG,
   RES_ENG_TO_ITA_KEYS,
 } from "../utilities/residence-mappings.js";
 import { InternalRequestAR002 } from "../model/internal-model.js";
+import { validateFullRequest } from "../utilities/validation-helper.js";
+import { residenceVerificationConfig } from "../config/config.js";
+import {
+  requestParamNotValid,
+  userModelNotFound,
+} from "../exceptions/errors.js";
 
 class ResidenceVerificationController {
-  public appContext = getContext();
-
   public async findUser(request: RichiestaAR001): Promise<RispostaAR001> {
     const data = await this.getUserData(request);
     if (data.length === 0) {
@@ -43,6 +48,11 @@ class ResidenceVerificationController {
 
     if (data.length === 0) {
       throw userModelNotFound();
+    }
+    const totalAnomalies = validateFullRequest(internalRequest, data);
+
+    if (totalAnomalies.length > 0) {
+      throw requestParamNotValid(JSON.stringify(totalAnomalies));
     }
 
     return {
@@ -88,7 +98,10 @@ class ResidenceVerificationController {
 
   public async getRotatedSeed(eserviceId: string): Promise<string> {
     try {
-      return await userService.generateSeed(eserviceId);
+      return await userService.generateSeed(
+        eserviceId,
+        residenceVerificationConfig
+      );
     } catch (error) {
       logger.error(`Controller Error during getRotatedSeed`, error);
       throw error;

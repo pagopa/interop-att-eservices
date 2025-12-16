@@ -1,13 +1,23 @@
 import fs from "fs";
 import https from "https";
-import { logger, testDbConnection } from "pdnd-common";
+import {
+  initContext,
+  initDB,
+  initLogger,
+  logger,
+  testDbConnection,
+} from "pdnd-common";
 import app from "./app.js";
+import { keychainSignerConfig } from "./config/keychainSignerConfig.js";
 
-const port = process.env.PORT || 3005;
+const port = keychainSignerConfig.httpPort;
 const portHttps = Number(port) + 443;
 
 const startServer = async (): Promise<void> => {
   try {
+    initContext(keychainSignerConfig);
+    initLogger(keychainSignerConfig, "keychain-mock");
+    initDB(keychainSignerConfig);
     await testDbConnection();
 
     logger.info("Connection to Database has been established.");

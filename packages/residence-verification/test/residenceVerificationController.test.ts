@@ -6,18 +6,22 @@ import { UserModelToApiTipoDatiSoggettiEnte } from "../src/model/domain/apiConve
 import { RichiestaAR001, RichiestaAR002 } from "../src/model/domain/models.js";
 import controller from "../src/controllers/residenceVerificationController.js";
 
-vi.mock("pdnd-common", async () => ({
-  logger: {
-    info: vi.fn(),
-    error: vi.fn(),
-  },
-  getContext: vi.fn(),
-  userService: {
-    getUserBySubjectId: vi.fn(),
-    getByPersonalInfo: vi.fn(),
-  },
-  translateKeys: vi.fn(),
-}));
+vi.mock("pdnd-common", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("pdnd-common")>();
+  return {
+    ...actual,
+    logger: {
+      info: vi.fn(),
+      error: vi.fn(),
+    },
+    getContext: vi.fn(),
+    userService: {
+      getUserBySubjectId: vi.fn(),
+      getByPersonalInfo: vi.fn(),
+    },
+    translateKeys: vi.fn(),
+  };
+});
 
 vi.mock("../src/utils/residence-mappings.js", async () => ({
   REQ_ITA_TO_ENG: {},
@@ -26,13 +30,21 @@ vi.mock("../src/utils/residence-mappings.js", async () => ({
 
 vi.mock("../src/exceptions/errors.js", async () => ({
   userModelNotFound: vi.fn((msg) => new Error(msg || "Utente non trovato")),
+  requestParamNotValid: vi.fn(
+    (msg) => new Error(msg || "Request param not valid")
+  ),
 }));
 
 vi.mock("../src/model/domain/apiConverter.js", async () => ({
   UserModelToApiTipoDatiSoggettiEnte: vi.fn(),
 }));
 
+vi.mock("../src/utilities/validation-helper.js", async () => ({
+  validateFullRequest: vi.fn(() => []),
+}));
+
 const mockUser = {
+  id: "internal-id-123",
   subjectId: "UTENTE_123",
   name: "Mario",
   surname: "Rossi",

@@ -1,16 +1,14 @@
 import {
   logger,
-  getContext,
   ResidenceSubmissionService,
   translateKeys,
+  userModelNotFound,
 } from "pdnd-common";
 import { RichiestaAR003 } from "../model/domain/models.js";
 import { InternalRequestAR003 } from "../model/internal-models.js";
 import { REQ_AR003_ITA_TO_ENG } from "../utilities/residence-submission-mapping.js";
 
 class ResidenceSubmissionController {
-  public appContext = getContext();
-
   public async createUser(
     request: RichiestaAR003
   ): Promise<{ status: string; message: string }> {
@@ -52,10 +50,9 @@ class ResidenceSubmissionController {
       };
     } catch (error) {
       logger.error(`Error in 'updateUser': `, error);
-      return {
-        status: "KO",
-        message: "Errore durante l'aggiornamento dell'utente.",
-      };
+      throw userModelNotFound(
+        "Errore durante l’aggiornamento, utente non trovato"
+      );
     }
   }
 
@@ -71,10 +68,9 @@ class ResidenceSubmissionController {
       };
     } catch (error) {
       logger.error(`Error in 'deleteUser': `, error);
-      return {
-        status: "KO",
-        message: "Errore durante l'eliminazione dell'utente.",
-      };
+      throw userModelNotFound(
+        "Errore durante l'eliminazione dell'utente., utente non trovato"
+      );
     }
   }
 }

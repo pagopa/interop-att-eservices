@@ -2,18 +2,19 @@ import * as http from "http";
 import { logger } from "pdnd-common";
 import { makeApiProblemBuilder, ApiError, Problem } from "pdnd-models";
 
-export type ErrorModel = {
-  codiceErroreAnomalia: string;
-  tipoErroreAnomalia: number;
-  oggettoErroreAnomalia?: string;
-  testoErroreAnomalia: string;
-  campoErroreAnomalia?: string;
-  valoreErroreAnomalia?: string;
+export type AnomaliaItem = {
+  readonly codiceErroreAnomalia: string;
+  readonly tipoErroreAnomalia: string;
+  readonly testoErroreAnomalia: string;
+  readonly oggettoErroreAnomalia: string;
+  readonly campoErroreAnomalia: string;
+  readonly valoreErroreAnomalia: string;
 };
 
-export type GeneralErrorModel = {
-  idOperazione: string;
-  errors: ErrorModel[];
+export type ResidenceErrorResponse = {
+  readonly idOperazioneANPR: string;
+  // eslint-disable-next-line @typescript-eslint/array-type
+  readonly listaErrori: ReadonlyArray<AnomaliaItem>;
 };
 
 const errorCodes = {
@@ -52,25 +53,63 @@ export function requestParamNotValid(details: string): ApiError<ErrorCodes> {
   });
 }
 
-/* eslint-disable */
+export type MismatchPayload = {
+  readonly field: string;
+  readonly value: string;
+};
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export function mapGeneralErrorModel(
   idOperazione: string,
-  error: Problem
+  problem: Problem
 ): any {
-  const errorsModel: ErrorModel[] = error.errors.map((problemError) => ({
-    codiceErroreAnomalia: problemError.code,
-    tipoErroreAnomalia: error.status,
-    oggettoErroreAnomalia: http.STATUS_CODES[error.status],
-    testoErroreAnomalia: problemError.detail,
-    campoErroreAnomalia: undefined,
-    valoreErroreAnomalia: undefined,
-  }));
+  const status = problem.status;
+  const statusText = http.STATUS_CODES[status] || "Unknown Error";
 
-  const data: GeneralErrorModel = {
-    idOperazione,
-    errors: errorsModel,
+  const parseAnomalies = (
+    detail: string
+  ): ReadonlyArray<MismatchPayload> | null => {
+    try {
+      const parsed = JSON.parse(detail);
+      if (Array.isArray(parsed) && parsed.length > 0 && "field" in parsed[0]) {
+        return parsed as ReadonlyArray<MismatchPayload>;
+      }
+      return null;
+    } catch {
+      return null;
+    }
   };
 
-  return data;
+  const anomalies = parseAnomalies(problem.detail);
+  // eslint-disable-next-line @typescript-eslint/array-type
+  const listaErrori: ReadonlyArray<AnomaliaItem> = anomalies
+    ? anomalies.map((a) => ({
+        codiceErroreAnomalia: "0003",
+        tipoErroreAnomalia: String(status),
+        testoErroreAnomalia: a.value,
+        oggettoErroreAnomalia: statusText,
+        campoErroreAnomalia: a.field,
+        valoreErroreAnomalia: "",
+      }))
+    : [
+        {
+          codiceErroreAnomalia:
+            problem.errors && problem.errors.length > 0
+              ? problem.errors[0].code
+              : "GENERIC",
+          tipoErroreAnomalia: String(status),
+          testoErroreAnomalia: problem.detail || "Errore generico",
+          oggettoErroreAnomalia: statusText,
+          campoErroreAnomalia: "",
+          valoreErroreAnomalia: "",
+        },
+      ];
+
+  const response: ResidenceErrorResponse = {
+    idOperazioneANPR: idOperazione,
+    listaErrori,
+  };
+
+  return response;
 }
-/* eslint-enable */
+/* eslint-enable @typescript-eslint/no-explicit-any */

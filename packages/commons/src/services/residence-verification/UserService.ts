@@ -2,7 +2,7 @@
 import { UserModel } from "pdnd-models";
 import { mapUserModel } from "../../utility/mapUserModel.js";
 import { SubjectRepository } from "../../repositories/residence-verification/index.js";
-import { getRotatedSeed, logger } from "../../index.js";
+import { getRotatedSeed, logger, ShConfig } from "../../index.js";
 
 const subjectRepository = SubjectRepository;
 
@@ -49,12 +49,12 @@ export const userService = {
     }
   },
 
-  async generateSeed(eServiceId: string): Promise<string> {
+  async generateSeed(eServiceId: string, config: ShConfig): Promise<string> {
     try {
       logger.info(
         `[UserService] Generating rotated seed for eServiceId: ${eServiceId}`
       );
-      return getRotatedSeed(eServiceId);
+      return getRotatedSeed(eServiceId, config);
     } catch (error) {
       logger.error(
         `[UserService] Error in generateSeed for eServiceId: ${eServiceId}`,

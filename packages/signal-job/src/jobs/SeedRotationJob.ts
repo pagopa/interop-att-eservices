@@ -2,12 +2,11 @@ import { logger } from "pdnd-common";
 import { CronJob } from "cron";
 import { SeedRotationController } from "../controllers/signalServiceController.js";
 import { shConfig } from "../config/config.js";
-const config = shConfig();
 export async function runSeedRotationJob(): Promise<void> {
   logger.info("[SeedRotationJob] Starting seed rotation job...");
   try {
     CronJob.from({
-      cronTime: config.cronTime,
+      cronTime: shConfig.cronTime,
       onTick: async () => {
         await SeedRotationController.executeSeedRotation();
         logger.info("[SeedRotationJob] Seed rotation job finished.");

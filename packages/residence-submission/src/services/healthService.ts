@@ -1,25 +1,29 @@
 import {
-  signerConfig,
   buildPublicKeyService,
   buildSignerService,
   logger,
-  getContext,
   testDbConnection,
 } from "pdnd-common";
+import { residenceSubmissionConfig } from "../config/config.js";
 
 class HealtService {
-  public appContext = getContext();
-
   public async status(): Promise<boolean | null> {
-    const config = signerConfig();
+    const publicKeyService = buildPublicKeyService(residenceSubmissionConfig);
 
-    const publicKeyService = buildPublicKeyService();
-
-    if (!(await publicKeyService.KMSAvailability(config.kmsKeyId))) {
+    if (
+      !(await publicKeyService.KMSAvailability(
+        residenceSubmissionConfig.kmsKeyId
+      ))
+    ) {
       return false;
     }
-    const signerService = buildSignerService();
-    if (!(await signerService.KMSAvailability(config.kmsKeyId, "token"))) {
+    const signerService = buildSignerService(residenceSubmissionConfig);
+    if (
+      !(await signerService.KMSAvailability(
+        residenceSubmissionConfig.kmsKeyId,
+        "token"
+      ))
+    ) {
       return false;
     }
 

@@ -1,4 +1,4 @@
-import { logger, getContext } from "pdnd-common";
+import { logger } from "pdnd-common";
 import { CategoryResponse, CheckResponse } from "../model/domain/models.js";
 import checkService from "../services/checkService.js";
 import categoryService from "../services/categoryService.js";
@@ -6,8 +6,6 @@ import trialService from "../services/trialService.js";
 import { TrialPaginatedRequestParams } from "../model/trialPaginatedRequestParams.js";
 
 class TrialController {
-  public appContext = getContext();
-
   public async findAllChecks(): Promise<CheckResponse[]> {
     try {
       return checkService.getAll();

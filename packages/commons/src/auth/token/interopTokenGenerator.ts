@@ -1,9 +1,9 @@
 import { Algorithm, JwtPayload } from "jsonwebtoken";
 import { ErrorHandling } from "pdnd-models";
 import { v4 as uuidv4 } from "uuid";
-import { signerConfig } from "../../config/index.js";
 import { userRoles } from "../authData.js";
 import { buildSignerService } from "../../aws-kms/signerService.js";
+import { SignerConfig } from "../../config/signerConfig.js";
 import {
   InternalToken,
   TokenPayload,
@@ -52,9 +52,10 @@ const createInternalToken = ({
   };
 };
 
-export const buildInteropTokenGenerator = (): InteropTokenGenerator => {
-  const signerService = buildSignerService();
-  const config = signerConfig();
+export const buildInteropTokenGenerator = (
+  config: SignerConfig
+): InteropTokenGenerator => {
+  const signerService = buildSignerService(config);
 
   const createSignedJWT = async (
     seed: TokenPayload,

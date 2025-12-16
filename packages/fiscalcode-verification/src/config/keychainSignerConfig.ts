@@ -1,11 +1,14 @@
 import { z } from "zod";
 
-export const KeychainSignerConfig = z.preprocess(
-  (c) =>
-    (c as { KMS_KEYCHAIN_LOCAL_CONFIG: string | undefined })
-      .KMS_KEYCHAIN_LOCAL_CONFIG === undefined
-      ? { ...(c as object), KMS_KEYCHAIN_LOCAL_CONFIG: "false" }
-      : c,
+const normalizedKeychainEnv = z.preprocess(
+  (env) => {
+    const input = env as Record<string, unknown>;
+
+    return {
+      ...input,
+      KMS_KEYCHAIN_LOCAL_CONFIG: input.KMS_KEYCHAIN_LOCAL_CONFIG ?? "false",
+    };
+  },
 
   z
     .discriminatedUnion("KMS_KEYCHAIN_LOCAL_CONFIG", [
@@ -30,21 +33,24 @@ export const KeychainSignerConfig = z.preprocess(
         KMS_KEYCHAIN_SECRET_ACCESS_KEYID: z.string(),
       }),
     ])
-
-    .transform((c) => ({
+    .transform((cfg) => ({
       maxAcquisitionTimeoutSeconds:
-        c.KMS_KEYCHAIN_MAX_ACQUISITION_TIMEOUT_SECONDS,
-      kmsKeychainKeyId: c.KMS_KEYID,
-      KeychainKeyId: c.KMS_KEYCHAIN_PUBLICKEY_KID,
-      kmsKeychainEndpoint: c.KMS_KEYCHAIN_ENDPOINT,
-      localKeychainConfig: c.KMS_KEYCHAIN_LOCAL_CONFIG,
-      kmsRegion: c.KMS_KEYCHAIN_REGION,
-      kmsAccessKeyId: c.KMS_KEYCHAIN_ACCESS_KEYID,
-      kmsAccessKeySecret: c.KMS_KEYCHAIN_SECRET_ACCESS_KEYID,
+        cfg.KMS_KEYCHAIN_MAX_ACQUISITION_TIMEOUT_SECONDS,
+
+      kmsKeychainKeyId: cfg.KMS_KEYID,
+      keychainPublicKeyKid: cfg.KMS_KEYCHAIN_PUBLICKEY_KID,
+
+      kmsKeychainEndpoint: cfg.KMS_KEYCHAIN_ENDPOINT,
+      localKeychainConfig: cfg.KMS_KEYCHAIN_LOCAL_CONFIG === "true",
+
+      kmsRegion: cfg.KMS_KEYCHAIN_REGION,
+      kmsAccessKeyId: cfg.KMS_KEYCHAIN_ACCESS_KEYID,
+      kmsAccessKeySecret: cfg.KMS_KEYCHAIN_SECRET_ACCESS_KEYID,
     }))
 );
 
+export const KeychainSignerConfig = normalizedKeychainEnv;
 export type KeychainSignerConfig = z.infer<typeof KeychainSignerConfig>;
 
-export const keychainSignerConfig: () => KeychainSignerConfig = () =>
+export const keychainSignerConfig = (): KeychainSignerConfig =>
   KeychainSignerConfig.parse(process.env);

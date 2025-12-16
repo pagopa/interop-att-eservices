@@ -1,12 +1,11 @@
 import { logger } from "pdnd-common";
 import { SHRepository } from "../repositories/SHRepository.js";
 import { SignalHubClient } from "../repositories/SignalHubClient.js";
-import { shConfig, ShConfig } from "../config/config.js";
+import { shConfig } from "../config/config.js";
 
 function isTodayFirstDayOfSeedPeriod(): boolean {
-  const config: ShConfig = shConfig();
-  const START_TIMESTAMP_MS = new Date(config.startDateMs).getTime();
-  const PERIOD_MS = config.seedExpireDays * 24 * 60 * 60 * 1000;
+  const START_TIMESTAMP_MS = new Date(shConfig.startDateMs).getTime();
+  const PERIOD_MS = shConfig.seedExpireDays * 24 * 60 * 60 * 1000;
 
   const now = new Date();
   const todayUTC = new Date(
