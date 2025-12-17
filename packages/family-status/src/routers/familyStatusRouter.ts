@@ -21,6 +21,7 @@ import { contextDataFamilyMiddleware } from "../context/context.js";
 import familyStatusController from "../controllers/familyStatusController.js";
 import { keychainSignatureUtility } from "../utilities/keychainSignatureUtility.js";
 import { keychainSignerConfig } from "../config/keychainSignerConfig.js";
+import { familyStatusConfiguration } from "../config/config.js";
 
 const familyStatusRouter = (
   ctx: ZodiosContext
@@ -31,8 +32,8 @@ const familyStatusRouter = (
     "/family-status",
     contextDataFamilyMiddleware,
     authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
+    integrityValidationMiddleware(familyStatusConfiguration),
+    auditValidationMiddleware(familyStatusConfiguration),
     async (req, res) => {
       try {
         logger.info(`[START] familyStatusRouter: ${req.body}`);
@@ -65,8 +66,8 @@ const familyStatusRouter = (
     "/family-status/check-with-payload-signature",
     contextDataFamilyMiddleware,
     authenticationCorrelationMiddleware(true),
-    integrityValidationMiddleware(),
-    auditValidationMiddleware(),
+    integrityValidationMiddleware(familyStatusConfiguration),
+    auditValidationMiddleware(familyStatusConfiguration),
     async (req, res) => {
       try {
         logger.info(`[START] familyStatusRouter: ${req.body}`);
@@ -81,7 +82,10 @@ const familyStatusRouter = (
         void TrialService.insert(req.url, req.method, "FAMILY_STATUS", "OK");
         const signature = await signatureUtility.signData(JSON.stringify(data));
         res.setHeader("x-payload-signature", signature);
-        res.setHeader("x-payload-signature-kid", keychainConfig.KeychainKeyId);
+        res.setHeader(
+          "x-payload-signature-kid",
+          keychainConfig.kmsKeychainKeyId
+        );
         res.setHeader("x-payload-signature-algorythm", "SHA256withRSA");
         logger.info(`[END] familyStatusRouter`);
         return res.status(201).json(data).end();

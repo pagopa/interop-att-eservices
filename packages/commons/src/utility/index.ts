@@ -6,3 +6,4 @@ export * from "./testDbConnection.js";
 export * from "./seedUtility.js";
 export * from "./signalHubUtility.js";
 export * from "./client-assertion-m2m.js";
+export * from "./mapper-utility.js";

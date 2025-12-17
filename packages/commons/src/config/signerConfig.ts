@@ -19,7 +19,7 @@ export const SignerConfig = z.preprocess(
         KMS_LOCAL_CONFIG: z.literal("false"),
         KMS_MAX_ACQUISITION_TIMEOUT_SECONDS: z.coerce.number(),
         KMS_KEYID: z.string(),
-        KMS_ENDPOINT: z.undefined(),
+        KMS_ENDPOINT: z.string(),
       }),
     ])
 
@@ -32,6 +32,3 @@ export const SignerConfig = z.preprocess(
 );
 
 export type SignerConfig = z.infer<typeof SignerConfig>;
-
-export const signerConfig: () => SignerConfig = () =>
-  SignerConfig.parse(process.env);

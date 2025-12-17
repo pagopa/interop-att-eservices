@@ -1,4 +1,4 @@
-import { logger, getContext, digitalAddressService } from "pdnd-common";
+import { logger, digitalAddressService } from "pdnd-common";
 import {
   requestParamNotValid,
   requestVerificationNotFountError,
@@ -19,8 +19,6 @@ import { responseRequestDigitalAddressModelToResponseRequestDigitalAddress } fro
 import { calculateUpdatedRequestState } from "../utilities/simulationUtils.js";
 
 class DigitalAddressVerificationMultipleController {
-  public appContext = getContext();
-
   public async saveRequest(
     request: RequestListDigitalAddress
   ): Promise<ResponseRequestListDigitalAddress> {

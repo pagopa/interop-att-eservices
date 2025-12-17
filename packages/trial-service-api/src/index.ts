@@ -1,10 +1,19 @@
-import { logger, testDbConnection } from "pdnd-common";
+import {
+  initContext,
+  initDB,
+  initLogger,
+  logger,
+  testDbConnection,
+} from "pdnd-common";
 import app from "./app.js";
-
-const port = process.env.PORT || 3004;
+import { trialServiceConfig } from "./config/config.js";
 
 const startServer = async (): Promise<void> => {
+  const port = trialServiceConfig.httpPort;
   try {
+    initContext(trialServiceConfig);
+    initLogger(trialServiceConfig, "trial-service-api");
+    initDB(trialServiceConfig);
     await testDbConnection();
     logger.info("Connection to Database has been established.");
 

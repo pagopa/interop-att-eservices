@@ -9,7 +9,7 @@ export class keychainSignatureUtility {
   private keyId: string;
 
   constructor(keyId: string) {
-    const isLocal = config.localKeychainConfig === "true";
+    const isLocal = config.localKeychainConfig === true;
     if (isLocal) {
       this.kmsClient = new KMSClient({
         region: config.kmsRegion,

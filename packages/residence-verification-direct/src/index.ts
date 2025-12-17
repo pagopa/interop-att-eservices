@@ -1,10 +1,23 @@
-import { logger, testDbConnection } from "pdnd-common";
+import {
+  initContext,
+  initDB,
+  initLogger,
+  logger,
+  testDbConnection,
+} from "pdnd-common";
 import app from "./app.js";
+import { residenceVerificationDirectConfig } from "./config/config.js";
 
-const port = process.env.PORT || 3001;
+const port = residenceVerificationDirectConfig.httpPort;
 
 const startServer = async (): Promise<void> => {
   try {
+    initContext(residenceVerificationDirectConfig);
+    initLogger(
+      residenceVerificationDirectConfig,
+      "residence-verification-direct"
+    );
+    initDB(residenceVerificationDirectConfig);
     await testDbConnection();
 
     logger.info("Connection to Database has been established.");
