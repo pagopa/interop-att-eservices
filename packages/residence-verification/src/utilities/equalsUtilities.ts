@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { InfoSoggettoEnte, TipoInfoSoggetto } from "../model/domain/models.js";
+import { InfoSoggettoEnte, TipoInfoSoggetto } from "../model/internal-model.js";
 /* eslint-disable */
 export function deepEqual(obj1: any, obj2: any): boolean {
   if (obj1 === obj2) {

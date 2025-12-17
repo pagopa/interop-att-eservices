@@ -16,7 +16,7 @@ const healthRouter = (
     if (data) {
       return res.status(200).end();
     } else {
-      return res.status(500);
+      return res.status(500).end();
     }
   });
 

@@ -1,8 +1,7 @@
 openapi: 3.0.3
 info:
   title: Residence Address Verification API
-  description: |-
-    Service for verifying a citizen's residence for the purposes of an investigation
+  description: Service for verifying a citizen's residence for the purposes of an investigation
   version: "1.0.0"
   termsOfService: "http://swagger.io/terms/"
   x-summary: Residence verification
@@ -17,53 +16,8 @@ tags:
 security:
   - bearerAuth: []
     Agid-JWT-Signature: []
+
 paths:
-  /residence-verification:
-    post:
-      tags:
-        - Residence Address Check
-      summary: Search for a residential address
-      description: Search for a residential address
-      operationId: AR001
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/RichiestaAR001"
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RispostaAR001"
-        "400":
-          description: Bad request
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/GeneralError"
-        "401":
-          description: Unauthorized
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/GeneralError"
-        "403":
-          description: Forbidden
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/GeneralError"
-        "429":
-          description: Too Many Requests
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/GeneralError"
   /residence-verification/check:
     post:
       tags:
@@ -105,6 +59,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/RispostaKO"
+
   /residence-verification/status:
     get:
       tags:
@@ -119,6 +74,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
+
   /residence-verification/pseudonymization:
     get:
       tags:
@@ -134,161 +90,279 @@ paths:
               schema:
                 $ref: "#/components/schemas/PseudonymizationResponse"
 
-
 components:
   schemas:
     RichiestaAR002:
       type: object
       required:
-        - operationId
-        - criteria
-        - requestData
+        - idOperazioneClient
+        - criteriRicerca
+        - datiRichiesta
       properties:
-        operationId:
+        idOperazioneClient:
           type: string
-          description: Unique identifier for the operation.
-        criteria:
-          $ref: "#/components/schemas/TipocriteriaAR002"
-        check:
-          $ref: "#/components/schemas/TipoVerificaAR002"
-        requestData:
-          $ref: "#/components/schemas/TipoRequestDataAR002"
+        criteriRicerca:
+          $ref: "#/components/schemas/CriteriRicercaAR002"
+        verifica:
+          $ref: "#/components/schemas/VerificaAR002"
+        datiRichiesta:
+          $ref: "#/components/schemas/DatiRichiestaAR002"
+
+    CriteriRicercaAR002:
+      type: object
+      properties:
+        codiceFiscale:
+          type: string
+        idANPR:
+          type: string
+        cognome:
+          type: string
+        senzaCognome:
+          type: string
+        nome:
+          type: string
+        senzaNome:
+          type: string
+        sesso:
+          type: string
+        datiNascita:
+          $ref: "#/components/schemas/DatiNascitaAR002"
+
+    DatiNascitaAR002:
+      type: object
+      properties:
+        dataEvento:
+          type: string
+          format: date
+          example: "1985-08-01"
+        senzaGiorno:
+          type: string
+        senzaGiornoMese:
+          type: string
+        luogoNascita:
+          type: object
+          properties:
+            luogoEccezionale:
+              type: string
+            comune:
+              $ref: "#/components/schemas/TipoComuneAR002"
+            localita:
+              $ref: "#/components/schemas/TipoLocalitaAR002"
+
+    VerificaAR002:
+      type: object
+      properties:
+        residenza:
+          type: object
+          properties:
+            tipoIndirizzo:
+              type: string
+            indirizzo:
+              $ref: "#/components/schemas/TipoIndirizzoAR002"
+            localitaEstera:
+              $ref: "#/components/schemas/TipoLocalitaEsteraAR002"
+
+    TipoIndirizzoAR002:
+      type: object
+      properties:
+        cap:
+          type: string
+        comune:
+          $ref: "#/components/schemas/TipoComuneAR002"
+        frazione:
+          type: string
+        toponimo:
+          $ref: "#/components/schemas/TipoToponimoAR002"
+        numeroCivico:
+          $ref: "#/components/schemas/TipoNumeroCivicoAR002"
+
+    TipoToponimoAR002:
+      type: object
+      properties:
+        codSpecie:
+          type: string
+        specie:
+          type: string
+        specieFonte:
+          type: string
+        codToponimo:
+          type: string
+        denominazioneToponimo:
+          type: string
+        toponimoFonte:
+          type: string
+
+    TipoNumeroCivicoAR002:
+      type: object
+      properties:
+        codiceCivico:
+          type: string
+        civicoFonte:
+          type: string
+        numero:
+          type: string
+        metrico:
+          type: string
+        progSNC:
+          type: string
+        lettera:
+          type: string
+        esponente1:
+          type: string
+        colore:
+          type: string
+        civicoInterno:
+          $ref: "#/components/schemas/TipoCivicoInternoAR002"
+
+    TipoCivicoInternoAR002:
+      type: object
+      properties:
+        corte:
+          type: string
+        scala:
+          type: string
+        interno1:
+          type: string
+        espInterno1:
+          type: string
+        interno2:
+          type: string
+        espInterno2:
+          type: string
+        scalaEsterna:
+          type: string
+        secondario:
+          type: string
+        piano:
+          type: string
+        nui:
+          type: string
+        isolato:
+          type: string
+
+    TipoLocalitaEsteraAR002:
+       type: object
+       properties:
+         indirizzoEstero:
+           type: object
+           properties:
+             cap:
+               type: string
+             localita:
+               $ref: "#/components/schemas/TipoLocalitaAR002"
+             toponimo:
+               type: object
+               properties:
+                 denominazione:
+                   type: string
+                 numeroCivico:
+                   type: string
+         consolato:
+           type: object
+           properties:
+             codiceConsolato:
+               type: string
+             descrizioneConsolato:
+               type: string
+
+    DatiRichiestaAR002:
+      type: object
+      required:
+        - dataRiferimentoRichiesta
+        - casoUso
+        - motivoRichiesta
+      properties:
+        dataRiferimentoRichiesta:
+          type: string
+          format: date
+          example: "2021-11-15"
+        motivoRichiesta:
+          type: string
+        casoUso:
+          type: string
+
+    TipoComuneAR002:
+      type: object
+      properties:
+        nomeComune:
+          type: string
+        codiceIstat:
+          type: string
+        siglaProvinciaIstat:
+          type: string
+        descrizioneLocalita:
+          type: string
+
+    TipoLocalitaAR002:
+      type: object
+      properties:
+        descrizioneLocalita:
+          type: string
+        descrizioneStato:
+          type: string
+        codiceStato:
+          type: string
+        provinciaContea:
+          type: string
+
     RispostaAR002OK:
       type: object
       properties:
-        idOp:
+        idOperazioneANPR:
           type: string
-        subjects:
-          $ref: "#/components/schemas/VerifyTipoDatiSubjects"
-        warnings:
+        listaSoggetti:
+          type: object
+          properties:
+            datiSoggetto:
+              type: array
+              items:
+                $ref: "#/components/schemas/DatiSoggettoEnteAR002"
+        listaAnomalie:
           type: array
           items:
-            $ref: "#/components/schemas/TipoErroriAnomalia"
-    RispostaKO:
+            $ref: "#/components/schemas/AnomaliaAR002"
+
+    DatiSoggettoEnteAR002:
       type: object
       properties:
-        nationalUniqueIdentifier:
-          type: string
-        errors:
+        infoSoggettoEnte:
           type: array
           items:
-            $ref: "#/components/schemas/TipoErroriAnomalia"
-    TipocriteriaAR002:
+            $ref: "#/components/schemas/InfoSoggettoItemAR002"
+
+    InfoSoggettoItemAR002:
       type: object
       properties:
-        subjectId:
-          type: string
         id:
           type: string
-          description: National Unique Identifier
-        surname:
+        chiave:
           type: string
-        nosurname:
+        valore:
           type: string
-        name:
+          enum: ["A", "N", "S", "D"]
+        valoreTesto:
           type: string
-        noname:
+        valoreData:
           type: string
-        gender:
+        dettaglio:
           type: string
-        birthDate:
-          $ref: "#/components/schemas/TipoDatiNascitaE000"
-    TipoVerificaAR002:
+
+    AnomaliaAR002:
       type: object
       properties:
-        address:
-          $ref: "#/components/schemas/TipoVerificaResidenza"
-    TipoVerificaResidenza:
-      type: object
-      properties:
-        addressType:
+        codiceErroreAnomalia:
           type: string
-        address:
-          $ref: "#/components/schemas/TipoIndirizzo"
-        foreignState:
-          $ref: "#/components/schemas/TipoLocalitaEstera"
-    TipoLocalitaEstera:
-      type: object
-      properties:
-        foreignAddress:
-          $ref: "#/components/schemas/TipoIndirizzoEstero"
-        consulate:
-          $ref: "#/components/schemas/TipoConsolato"
-    TipoRequestDataAR002:
-      type: object
-      required:
-        - dateOfRequest
-        - useCase
-        - motivation
-      properties:
-        dateOfRequest:
+        tipoErroreAnomalia:
           type: string
-          description: Date to which the version of the personal data sheet must refer
-          format: date
-          example: "2021-11-15"
-        motivation:
+        testoErroreAnomalia:
           type: string
-          description: Mandatory field for entering the reference number of the case for which the inquiry is made (e.g., protocol number, file, report, etc.).
-        useCase:
+        oggettoErroreAnomalia:
           type: string
-          description: caso d'uso (es. C001)
-    Problem:
-      properties:
-        type:
-          description: URI reference of type definition
+        campoErroreAnomalia:
           type: string
-        status:
-          description: The HTTP status code generated by the origin server for this occurrence of the problem.
-          example: 503
-          type: integer
-        title:
-          description: A short, summary of the problem type. Written in english and readable
-          example: Service Unavailable
+        valoreErroreAnomalia:
           type: string
-        correlationId:
-          description: Unique identifier of the request
-          example: "53af4f2d-0c87-41ef-a645-b726a821852b"
-          type: string
-        detail:
-          description: A human readable explanation of the problem.
-          example: Request took too long to complete.
-          type: string
-        errors:
-          type: array
-          minItems: 1
-          items:
-            $ref: "#/components/schemas/ProblemError"
-      required:
-        - type
-        - status
-        - title
-        - errors
-    PseudonymizationResponse:
-      type: object
-      description: Success
-      properties:
-        seed:
-          type: string
-          example: 3b9942ce-1f07-4512-8f34-f31b1a7b0061
-        cryptoHashFunction:
-          type: string
-          example: sha256
-      required:
-        - seed
-        - cryptoHashFunction
-    ProblemError:
-      properties:
-        code:
-          description: Internal code of the error
-          example: 123-4567
-          type: string
-        detail:
-          description: A human readable explanation specific to this occurrence of the problem.
-          example: Parameter not valid
-          type: string
-      required:
-        - code
-        - detail
+
     RichiestaAR001:
       type: object
       required:
@@ -310,6 +384,15 @@ components:
         subjects:
           $ref: "#/components/schemas/TipoListaSubjects"
         warnings:
+          type: array
+          items:
+            $ref: "#/components/schemas/TipoErroriAnomalia"
+    RispostaKO:
+      type: object
+      properties:
+        nationalUniqueIdentifier:
+          type: string
+        errors:
           type: array
           items:
             $ref: "#/components/schemas/TipoErroriAnomalia"
@@ -373,43 +456,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/TipoDatiSubjectsEnte"
-    VerifyTipoDatiSubjects:
-      type: object
-      properties:
-        infoSubject:
-          type: array
-          items:
-            $ref: "#/components/schemas/InfoSoggettoEnte"
-    InfoSoggettoEnte:
-      type: object
-      properties:
-        infoInstitution:
-          type: array
-          items:
-            $ref: "#/components/schemas/TipoInfoSoggetto"
-    TipoInfoSoggetto:
-      type: object
-      properties:
-        id:
-          type: string
-        key:
-          type: string
-        value:
-          $ref: "#/components/schemas/TipoInfoValore"
-        textValue:
-          type: string
-        dataValue:
-          type: string
-          format: date
-          example: "2021-11-15"
-        otherData:
-          type: string
-    TipoInfoValore:
-      enum:
-        - "A"
-        - "N"
-        - "S"
-      type: string
     TipoDatiSubjectsEnte:
       type: object
       properties:
@@ -754,6 +800,63 @@ components:
           type: string
         warningErrorValue:
           type: string
+    PseudonymizationResponse:
+      type: object
+      description: Success
+      properties:
+        seed:
+          type: string
+          example: 3b9942ce-1f07-4512-8f34-f31b1a7b0061
+        cryptoHashFunction:
+          type: string
+          example: sha256
+      required:
+        - seed
+        - cryptoHashFunction
+    Problem:
+      properties:
+        type:
+          description: URI reference of type definition
+          type: string
+        status:
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
+          example: 503
+          type: integer
+        title:
+          description: A short, summary of the problem type. Written in english and readable
+          example: Service Unavailable
+          type: string
+        correlationId:
+          description: Unique identifier of the request
+          example: "53af4f2d-0c87-41ef-a645-b726a821852b"
+          type: string
+        detail:
+          description: A human readable explanation of the problem.
+          example: Request took too long to complete.
+          type: string
+        errors:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/ProblemError"
+      required:
+        - type
+        - status
+        - title
+        - errors
+    ProblemError:
+      properties:
+        code:
+          description: Internal code of the error
+          example: 123-4567
+          type: string
+        detail:
+          description: A human readable explanation specific to this occurrence of the problem.
+          example: Parameter not valid
+          type: string
+      required:
+        - code
+        - detail
 
   securitySchemes:
     bearerAuth:

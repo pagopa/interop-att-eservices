@@ -1,9 +1,8 @@
-import { logger, getContext, digitalAddressService } from "pdnd-common";
+import { logger, digitalAddressService } from "pdnd-common";
 import { ResponseRequestDigitalAddressModel } from "pdnd-models";
 import { appendUniqueFiscalcodeModelsToArray } from "../utilities/fiscalcodeUtilities.js";
 
 class DataPreparationController {
-  public appContext = getContext();
   public eService: string = "digital-address-verification";
 
   public async saveList(

@@ -1,4 +1,8 @@
-import { expect, it, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { translateKeys, ResidenceSubmissionService } from "pdnd-common";
+import { RichiestaAR003 } from "../src/model/domain/models.js";
+import ResidenceSubmissionController from "../src/controllers/residenceSubmissionController.js";
+import { InternalRequestAR003 } from "../src/model/internal-models.js";
 
 vi.mock("fs", async () => {
   const actual = await vi.importActual<typeof import("fs")>("fs");
@@ -12,23 +16,110 @@ vi.mock("fs", async () => {
   };
 });
 
-import ResidenceSubmissionController from "../src/controllers/residenceSubmissionController.js";
-import { RichiestaAR003 } from "../src/model/domain/models.js";
-
-vi.mock("../src/services/residenceSubmissionService.js", () => ({
-  default: {
+vi.mock("pdnd-common", () => ({
+  logger: {
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  },
+  getContext: vi.fn(),
+  translateKeys: vi.fn(),
+  ResidenceSubmissionService: {
     create: vi.fn(),
-    updateByUsecasesIdService: vi.fn(),
+    updateBySubjectId: vi.fn(),
     delete: vi.fn(),
   },
+  REQ_AR003_ITA_TO_ENG: {},
 }));
 
-const mockRequest = { subject_id: "subjectId" } as RichiestaAR003;
+describe("ResidenceSubmissionController", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
-it("should return OK on successful user creation", async () => {
-  const result = await ResidenceSubmissionController.createUser(mockRequest);
-  expect(result).toEqual({
-    status: "OK",
-    message: "User created successfully",
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("should return OK on successful user creation", async () => {
+    const mockRequestItaliana = {
+      idOperazioneClient: "OP-123",
+      soggetto: {
+        codiceFiscale: "RSSMRA80A01H501U",
+      },
+    } as unknown as RichiestaAR003;
+
+    const mockInternalRequest = {
+      operationId: "OP-123",
+      subjects: {
+        subject: {
+          generality: {
+            subjectId: { subjectId: "RSSMRA80A01H501U" },
+          },
+        },
+      },
+    };
+    vi.mocked(translateKeys).mockReturnValue(
+      mockInternalRequest as InternalRequestAR003
+    );
+
+    vi.mocked(ResidenceSubmissionService.create).mockResolvedValue();
+
+    const result = await ResidenceSubmissionController.createUser(
+      mockRequestItaliana
+    );
+
+    expect(translateKeys).toHaveBeenCalledWith(
+      mockRequestItaliana,
+      expect.anything()
+    );
+    expect(ResidenceSubmissionService.create).toHaveBeenCalledWith(
+      mockInternalRequest
+    );
+    expect(result).toEqual({
+      status: "OK",
+      message: "Utente creato con successo",
+    });
+  });
+
+  it("should return OK on successful user update", async () => {
+    const mockRequestItaliana = {
+      idOperazioneClient: "OP-UPDATE",
+      soggetto: { codiceFiscale: "RSSMRA..." },
+    } as unknown as RichiestaAR003;
+
+    const mockInternalRequest = { operationId: "OP-UPDATE", foo: "bar" };
+
+    vi.mocked(translateKeys).mockReturnValue(
+      mockInternalRequest as InternalRequestAR003
+    );
+    vi.mocked(ResidenceSubmissionService.updateBySubjectId).mockResolvedValue();
+
+    const result = await ResidenceSubmissionController.updateUser(
+      mockRequestItaliana
+    );
+
+    expect(ResidenceSubmissionService.updateBySubjectId).toHaveBeenCalledWith(
+      mockInternalRequest
+    );
+    expect(result).toEqual({
+      status: "OK",
+      message: "Utente aggiornato con successo",
+    });
+  });
+
+  it("should return OK on successful user deletion", async () => {
+    const mockId = "RSSMRA...";
+
+    vi.mocked(ResidenceSubmissionService.delete).mockResolvedValue();
+
+    const result = await ResidenceSubmissionController.deleteUser(mockId);
+
+    expect(ResidenceSubmissionService.delete).toHaveBeenCalledWith(mockId);
+    expect(result).toEqual({
+      status: "OK",
+      message: "Utente eliminato con successo",
+    });
   });
 });

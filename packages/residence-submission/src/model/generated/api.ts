@@ -1,357 +1,156 @@
 import { makeApi, Zodios, type ZodiosOptions } from "@zodios/core";
 import { z } from "zod";
 
-const DbAddress = z
+const ComuneAR003 = z
   .object({
-    id: z.string(),
-    address_type: z.string(),
-    note_address: z.string(),
-    address_start_date: z.string(),
-    presso: z.string(),
-    address_municipality_name: z.string(),
-    address_municipality_istat_code: z.string(),
-    address_municipality_acronym_istat_province: z.string(),
-    address_municipality_place_description: z.string(),
-    toponym_cod_type: z.string(),
-    toponym_type: z.string(),
-    toponym_origin_type: z.string(),
-    toponym_cod: z.string(),
-    toponym_denomination: z.string(),
-    toponym_source: z.string(),
-    civic_cod: z.string(),
-    civic_source: z.string(),
-    civic_number: z.string(),
-    metric: z.string(),
-    prog_snc: z.string(),
-    letter: z.string(),
-    exponent1: z.string(),
-    color: z.string(),
-    internal_court: z.string(),
-    internal_stairs: z.string(),
-    internal1: z.string(),
-    esp_internal1: z.string(),
-    internal2: z.string(),
-    esp_internal2: z.string(),
-    external_stairs: z.string(),
-    secondary: z.string(),
-    floor: z.string(),
+    nomeComune: z.string(),
+    codiceIstat: z.string(),
+    siglaProvinciaIstat: z.string(),
+    descrizioneLocalita: z.string(),
+  })
+  .partial()
+  .passthrough();
+const LocalitaAR003 = z
+  .object({
+    descrizioneLocalita: z.string(),
+    descrizioneStato: z.string(),
+    codiceStato: z.string(),
+    provinciaContea: z.string(),
+  })
+  .partial()
+  .passthrough();
+const DatiNascitaAR003 = z
+  .object({
+    dataEvento: z.string(),
+    senzaGiorno: z.string(),
+    senzaGiornoMese: z.string(),
+    luogoNascita: z
+      .object({
+        luogoEccezionale: z.string(),
+        comune: ComuneAR003,
+        localita: LocalitaAR003,
+      })
+      .partial()
+      .passthrough(),
+  })
+  .partial()
+  .passthrough();
+const ToponimoAR003 = z
+  .object({
+    codSpecie: z.string(),
+    specie: z.string(),
+    specieFonte: z.string(),
+    codToponimo: z.string(),
+    denominazioneToponimo: z.string(),
+    toponimoFonte: z.string(),
+  })
+  .partial()
+  .passthrough();
+const CivicoInternoAR003 = z
+  .object({
+    corte: z.string(),
+    scala: z.string(),
+    interno1: z.string(),
+    espInterno1: z.string(),
+    interno2: z.string(),
+    espInterno2: z.string(),
+    scalaEsterna: z.string(),
+    secondario: z.string(),
+    piano: z.string(),
     nui: z.string(),
-    isolated: z.string(),
-    latitude: z.string(),
-    longitude: z.string(),
-    foreign_cap: z.string(),
-    foreign_place_description: z.string(),
-    foreign_country_description: z.string(),
-    foreign_country_state: z.string(),
-    foreign_province_county: z.string(),
-    foreign_toponym_denomination: z.string(),
-    foreign_toponym_civic_number: z.string(),
-    consulate_cod: z.string(),
-    consulate_description: z.string(),
+    isolato: z.string(),
   })
   .partial()
   .passthrough();
-const DbUsecase = z
+const NumeroCivicoAR003 = z
   .object({
-    id: z.string(),
-    purpose_id: z.string(),
-    subject_id: z.string(),
-    address_id: z.string(),
-  })
-  .partial()
-  .passthrough();
-const DbSubject = z
-  .object({
-    uuid: z.string(),
-    id: z.string(),
-    subject_id: z.string(),
-    surname: z.string(),
-    name: z.string(),
-    gender: z.string(),
-    birth_event_date: z.string(),
-    birth_exceptional_place: z.string(),
-    birth_municipality_name: z.string(),
-    birth_municipality_istat_code: z.string(),
-    birth_municipality_acronym_istat_province: z.string(),
-    birth_municipality_place_description: z.string(),
-    birth_place_description: z.string(),
-    birth_country_description: z.string(),
-    birth_cod_state: z.string(),
-    birth_province_county: z.string(),
-  })
-  .partial()
-  .passthrough();
-const DbPurpose = z.object({ id: z.string() }).partial().passthrough();
-const MappedDbData = z
-  .object({
-    purpose: DbPurpose,
-    subject: DbSubject,
-    addresses: z.array(DbAddress),
-    usecases: z.array(DbUsecase),
-  })
-  .partial()
-  .passthrough();
-const DebugSchema = z.union([
-  DbAddress,
-  DbUsecase,
-  DbSubject,
-  DbPurpose,
-  MappedDbData,
-]);
-const TipoCodiceFiscale = z
-  .object({
-    subjectId: z.string(),
-    subjectIdValidity: z.string(),
-    dataAttributionValidity: z.string(),
-  })
-  .partial()
-  .passthrough();
-const TipoComune = z
-  .object({
-    nameMunicipality: z.string(),
-    istatCode: z.string(),
-    acronymIstatProvince: z.string(),
-    placeDescription: z.string(),
-  })
-  .partial()
-  .passthrough();
-const TipoLocalita = z
-  .object({
-    placeDescription: z.string(),
-    countryDescription: z.string(),
-    codState: z.string(),
-    provinceCounty: z.string(),
-  })
-  .partial()
-  .passthrough();
-const TipoLuogoEvento = z
-  .object({
-    exceptionalPlace: z.string(),
-    municipality: TipoComune,
-    place: TipoLocalita,
-  })
-  .partial()
-  .passthrough();
-const TipoIdSchedaSoggettoComune = z
-  .object({ idCommonSubjectDataIstat: z.string(), idSubjectData: z.string() })
-  .partial()
-  .passthrough();
-const TipoGeneralita = z
-  .object({
-    subjectId: TipoCodiceFiscale,
-    surname: z.string(),
-    noSurname: z.string(),
-    name: z.string(),
-    noName: z.string(),
-    gender: z.string(),
-    birthDate: z.string(),
-    noDay: z.string(),
-    noMonth: z.string(),
-    birthPlace: TipoLuogoEvento,
-    AIRESubject: z.string(),
-    yearExpatriation: z.string(),
-    idCommonSubjectData: TipoIdSchedaSoggettoComune,
-    idSubjectData: z.string(),
-    note: z.string(),
-  })
-  .partial()
-  .passthrough();
-const TipoToponimo = z
-  .object({
-    codType: z.string(),
-    type: z.string(),
-    originType: z.string(),
-    toponymCod: z.string(),
-    toponymDenomination: z.string(),
-    toponymSource: z.string(),
-  })
-  .partial()
-  .passthrough();
-const TipoCivicoInterno = z
-  .object({
-    court: z.string(),
-    stairs: z.string(),
-    internal1: z.string(),
-    espInternal1: z.string(),
-    internal2: z.string(),
-    espInternal2: z.string(),
-    externalStairs: z.string(),
-    secondary: z.string(),
-    floor: z.string(),
-    nui: z.string(),
-    isolated: z.string(),
-  })
-  .partial()
-  .passthrough();
-const TipoNumeroCivico = z
-  .object({
-    civicCod: z.string(),
-    civicSource: z.string(),
-    civicNumber: z.string(),
-    metric: z.string(),
+    codiceCivico: z.string(),
+    civicoFonte: z.string(),
+    numero: z.string(),
+    metrico: z.string(),
     progSNC: z.string(),
-    letter: z.string(),
-    exponent1: z.string(),
-    color: z.string(),
-    internalCivic: TipoCivicoInterno,
+    lettera: z.string(),
+    esponente1: z.string(),
+    colore: z.string(),
+    civicoInterno: CivicoInternoAR003,
   })
   .partial()
   .passthrough();
-const TipoIndirizzo = z
+const IndirizzoCompletoAR003 = z
   .object({
     cap: z.string(),
-    municipality: TipoComune,
-    fraction: z.string(),
-    toponym: TipoToponimo,
-    civicNumber: TipoNumeroCivico,
+    comune: ComuneAR003,
+    frazione: z.string(),
+    toponimo: ToponimoAR003,
+    numeroCivico: NumeroCivicoAR003,
   })
   .partial()
   .passthrough();
-const TipoDatoLocalitaEstera = z
+const LocalitaEsteraAR003 = z
   .object({
-    placeDescription: z.string(),
-    countryDescription: z.string(),
-    countryState: z.string(),
-    provinceCounty: z.string(),
+    indirizzoEstero: z
+      .object({
+        cap: z.string(),
+        localita: LocalitaAR003,
+        toponimo: z
+          .object({ denominazione: z.string(), numeroCivico: z.string() })
+          .partial()
+          .passthrough(),
+      })
+      .partial()
+      .passthrough(),
+    consolato: z
+      .object({ codiceConsolato: z.string(), descrizioneConsolato: z.string() })
+      .partial()
+      .passthrough(),
   })
   .partial()
   .passthrough();
-const TipoToponimoEstero = z
-  .object({ denomination: z.string(), civicNumber: z.string() })
-  .partial()
-  .passthrough();
-const TipoIndirizzoEstero = z
+const ResidenzaAR003 = z
   .object({
-    cap: z.string(),
-    place: TipoDatoLocalitaEstera,
-    toponym: TipoToponimoEstero,
+    tipoIndirizzo: z.string(),
+    indirizzo: IndirizzoCompletoAR003,
+    localitaEstera: LocalitaEsteraAR003,
   })
   .partial()
   .passthrough();
-const TipoConsolato = z
-  .object({ consulateCod: z.string(), consulateDescription: z.string() })
-  .partial()
-  .passthrough();
-const TipoLocalitaEstera1 = z
-  .object({ foreignAddress: TipoIndirizzoEstero, consulate: TipoConsolato })
-  .partial()
-  .passthrough();
-const TipoResidenza = z
+const SoggettoAR003 = z
   .object({
-    addressType: z.string(),
-    noteaddress: z.string(),
-    address: TipoIndirizzo,
-    foreignState: TipoLocalitaEstera1,
-    presso: z.string(),
-    addressStartDate: z.string(),
+    codiceFiscale: z.string(),
+    idANPR: z.string().optional(),
+    cognome: z.string().optional(),
+    senzaCognome: z.string().optional(),
+    nome: z.string().optional(),
+    senzaNome: z.string().optional(),
+    sesso: z.string().optional(),
+    datiNascita: DatiNascitaAR003.optional(),
+    residenza: ResidenzaAR003.optional(),
   })
-  .partial()
-  .passthrough();
-const TipoIdentificativi = z.object({ id: z.string() }).partial().passthrough();
-const TipoAtto = z
-  .object({
-    municipalityRegistration: TipoComune,
-    municipalOffice: z.string(),
-    year: z.string(),
-    part: z.string(),
-    series: z.string(),
-    actNumber: z.string(),
-    volume: z.string(),
-    dateFormationAct: z.string(),
-    transcribed: z.string(),
-  })
-  .partial()
-  .passthrough();
-const TipoAttoANSC = z
-  .object({
-    idANSC: z.string(),
-    municipalityRegistration: TipoComune,
-    act: z.string(),
-    municipalOffice: z.string(),
-    municipalNumber: z.string(),
-    dateFormationAct: z.string(),
-    transcribed: z.string(),
-  })
-  .partial()
-  .passthrough();
-const TipoAttoEvento = z
-  .object({ act: TipoAtto, actANSC: TipoAttoANSC })
-  .partial()
-  .passthrough();
-const TipoDatiEvento = z
-  .object({
-    eventDate: z.string(),
-    noDay: z.string(),
-    noMonth: z.string(),
-    eventPlace: TipoLuogoEvento,
-    eventAct: TipoAttoEvento,
-  })
-  .partial()
-  .passthrough();
-const TipoDatiSoggettiEnte = z
-  .object({
-    generality: TipoGeneralita,
-    address: z.array(TipoResidenza),
-    identifiers: TipoIdentificativi,
-    deathDate: TipoDatiEvento,
-  })
-  .partial()
-  .passthrough();
-const TipoListaSoggetti = z
-  .object({ subject: z.array(TipoDatiSoggettiEnte) })
-  .partial()
   .passthrough();
 const RichiestaAR003 = z
-  .object({ idOp: z.string(), subjects: TipoListaSoggetti })
-  .partial()
+  .object({ idOperazioneClient: z.string(), soggetto: SoggettoAR003 })
   .passthrough();
 
 export const schemas = {
-  DbAddress,
-  DbUsecase,
-  DbSubject,
-  DbPurpose,
-  MappedDbData,
-  DebugSchema,
-  TipoCodiceFiscale,
-  TipoComune,
-  TipoLocalita,
-  TipoLuogoEvento,
-  TipoIdSchedaSoggettoComune,
-  TipoGeneralita,
-  TipoToponimo,
-  TipoCivicoInterno,
-  TipoNumeroCivico,
-  TipoIndirizzo,
-  TipoDatoLocalitaEstera,
-  TipoToponimoEstero,
-  TipoIndirizzoEstero,
-  TipoConsolato,
-  TipoLocalitaEstera1,
-  TipoResidenza,
-  TipoIdentificativi,
-  TipoAtto,
-  TipoAttoANSC,
-  TipoAttoEvento,
-  TipoDatiEvento,
-  TipoDatiSoggettiEnte,
-  TipoListaSoggetti,
+  ComuneAR003,
+  LocalitaAR003,
+  DatiNascitaAR003,
+  ToponimoAR003,
+  CivicoInternoAR003,
+  NumeroCivicoAR003,
+  IndirizzoCompletoAR003,
+  LocalitaEsteraAR003,
+  ResidenzaAR003,
+  SoggettoAR003,
   RichiestaAR003,
 };
 
 const endpoints = makeApi([
   {
-    method: "get",
-    path: "/debug/schema",
-    alias: "getDebugSchema",
-    requestFormat: "json",
-    response: DebugSchema,
-  },
-  {
     method: "post",
     path: "/residence-submission",
     alias: "upsertUser",
-    description: `Creates a user based on the provided criteria.`,
+    description: `Crea un utente in base ai criteri forniti.`,
     requestFormat: "json",
     parameters: [
       {
@@ -360,7 +159,10 @@ const endpoints = makeApi([
         schema: RichiestaAR003,
       },
     ],
-    response: z.void(),
+    response: z
+      .object({ status: z.string(), message: z.string() })
+      .partial()
+      .passthrough(),
     errors: [
       {
         status: 400,
@@ -388,7 +190,7 @@ const endpoints = makeApi([
     method: "put",
     path: "/residence-submission",
     alias: "updateUser",
-    description: `Updates an existing user based on the provided criteria.`,
+    description: `Aggiorna un utente esistente in base ai criteri forniti.`,
     requestFormat: "json",
     parameters: [
       {
@@ -397,7 +199,10 @@ const endpoints = makeApi([
         schema: RichiestaAR003,
       },
     ],
-    response: z.void(),
+    response: z
+      .object({ status: z.string(), message: z.string() })
+      .partial()
+      .passthrough(),
     errors: [
       {
         status: 400,
@@ -430,7 +235,7 @@ const endpoints = makeApi([
     method: "delete",
     path: "/residence-submission/:id",
     alias: "deleteUser",
-    description: `Deletes a user by their unique identifier.`,
+    description: `Elimina un utente tramite il suo identificativo univoco.`,
     requestFormat: "json",
     parameters: [
       {
@@ -472,7 +277,7 @@ const endpoints = makeApi([
     method: "get",
     path: "/residence-submission/status",
     alias: "healthCheck",
-    description: `Return ok`,
+    description: `Restituisce ok`,
     requestFormat: "json",
     response: z
       .object({ status: z.string(), uptime: z.number(), timestamp: z.string() })

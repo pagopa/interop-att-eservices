@@ -29,8 +29,20 @@
     "prune-modules": "find . -name 'node_modules' -type d -exec rm -rf {} +"
   },
   "devDependencies": {
-    "@tsconfig/node-lts": "^18.12.3",
-    "turbo": "^1.10.7"
+    "@pagopa/eslint-config": "^3.0.0",
+    "@tsconfig/node-lts": "^18.12.5",
+    "turbo": "^1.13.4"
   },
-  "packageManager": "pnpm@8.6.3"
+  "packageManager": "pnpm@8.6.3",
+  "pnpm": {
+    "overrides": {
+      "esbuild@<=0.24.2": "^0.25.0",
+      "vite@<=5.4.19": "^5.4.20",
+      "vite@>=4.5.3 <5.0.0": "^5.4.21",
+      "multer": "^2.0.2",
+      "rimraf@<4": "^6.1.2",
+      "glib@<9": "^10.3.10",
+      "@types/axios": "^0.9.36"
+    }
+  }
 }

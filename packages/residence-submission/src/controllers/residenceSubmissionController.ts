@@ -1,24 +1,34 @@
-import { logger, getContext, ResidenceSubmissionService } from "pdnd-common";
+import {
+  logger,
+  ResidenceSubmissionService,
+  translateKeys,
+  userModelNotFound,
+} from "pdnd-common";
 import { RichiestaAR003 } from "../model/domain/models.js";
+import { InternalRequestAR003 } from "../model/internal-models.js";
+import { REQ_AR003_ITA_TO_ENG } from "../utilities/residence-submission-mapping.js";
 
 class ResidenceSubmissionController {
-  public appContext = getContext();
-
   public async createUser(
     request: RichiestaAR003
   ): Promise<{ status: string; message: string }> {
     try {
-      await ResidenceSubmissionService.create(request);
+      const internalRequest: InternalRequestAR003 = translateKeys(
+        request,
+        REQ_AR003_ITA_TO_ENG
+      );
+
+      await ResidenceSubmissionService.create(internalRequest);
 
       return {
         status: "OK",
-        message: "User created successfully",
+        message: "Utente creato con successo",
       };
     } catch (error) {
       logger.error(` Error in 'createUser': `, error);
       return {
         status: "KO",
-        message: "saveList - Error during list saving.",
+        message: "Errore durante il salvataggio dell'utente.",
       };
     }
   }
@@ -27,18 +37,22 @@ class ResidenceSubmissionController {
     request: RichiestaAR003
   ): Promise<{ status: string; message: string }> {
     try {
-      await ResidenceSubmissionService.updateBySubjectId(request);
+      const internalRequest: InternalRequestAR003 = translateKeys(
+        request,
+        REQ_AR003_ITA_TO_ENG
+      );
+
+      await ResidenceSubmissionService.updateBySubjectId(internalRequest);
 
       return {
         status: "OK",
-        message: "User updated successfully",
+        message: "Utente aggiornato con successo",
       };
     } catch (error) {
       logger.error(`Error in 'updateUser': `, error);
-      return {
-        status: "KO",
-        message: "Error during user update.",
-      };
+      throw userModelNotFound(
+        "Errore durante l’aggiornamento, utente non trovato"
+      );
     }
   }
 
@@ -50,14 +64,13 @@ class ResidenceSubmissionController {
 
       return {
         status: "OK",
-        message: "User deleted successfully",
+        message: "Utente eliminato con successo",
       };
     } catch (error) {
       logger.error(`Error in 'deleteUser': `, error);
-      return {
-        status: "KO",
-        message: "Error during user deletion.",
-      };
+      throw userModelNotFound(
+        "Errore durante l'eliminazione dell'utente., utente non trovato"
+      );
     }
   }
 }

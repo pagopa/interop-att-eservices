@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from "zod";
 import { RequestAR003 } from "../../zod/residence-submission/requestAR003.js";
 import { Subject } from "../../db/schema/residence-verification/subject.model.js";
+import { Address } from "../../db/schema/residence-verification/address.model.js";
 import { logger } from "../../index.js";
 import { userModelNotFound } from "../../logging/index.js";
 import { DataPreparationRepository } from "../../repositories/residence-submission/dataPreparation.js";
@@ -14,7 +16,7 @@ type RequestAR003Type = z.infer<typeof RequestAR003>;
 export const ResidenceSubmissionService = {
   async getBySubjectId(subjectId: string): Promise<Subject> {
     try {
-      logger.info(`[residence-submission][START] getBySubjectId`);
+      logger.info(`[residence-submission][START] getBySubjectId: ${subjectId}`);
 
       if (!subjectId) {
         throw userModelNotFound("The subjectId is missing or invalid");
@@ -24,10 +26,11 @@ export const ResidenceSubmissionService = {
         subjectId
       );
       if (!subject) {
+        logger.warn(`[DEBUG] Subject not found in DB for ID: ${subjectId}`);
         throw userModelNotFound("The subjectId is missing or invalid");
       }
 
-      logger.info(`[residence-submission][END] getBySubjectId`);
+      logger.info(`[residence-submission][END] getBySubjectId - Found`);
       return subject;
     } catch (error) {
       logger.error(`[residence-submission] Error in getBySubjectId`, error);
@@ -39,45 +42,82 @@ export const ResidenceSubmissionService = {
     try {
       logger.info(`[residence-submission][START] updateBySubjectId`);
 
-      const subjects = updatedUser?.subjects?.subject;
-      if (!Array.isArray(subjects)) {
-        throw new Error("Missing or invalid 'subjects.subject' array");
+      logger.info(
+        `[DEBUG UPDATE] RAW INPUT: ${JSON.stringify(updatedUser, null, 2)}`
+      );
+
+      const id =
+        updatedUser.subjects?.subject?.generality?.subjectId?.subjectId;
+
+      logger.info(`[DEBUG UPDATE] Extracted Subject ID (CF): ${id}`);
+
+      if (!id) {
+        throw new Error("Subject ID missing in update request");
       }
 
-      for (const subject of subjects) {
-        const id: string = subject?.generality?.subjectId?.subjectId;
+      await this.getBySubjectId(id);
 
-        const existingSubject = await this.getBySubjectId(id);
-        if (!existingSubject) {
-          throw userModelNotFound(`User with subjectId ${id} not found`);
-        }
+      const mappedResult = mapApiBodyToDbModelsUpdate(updatedUser);
+      const { subject: updatedSubject, address: updatedAddress } = mappedResult;
 
-        const queryData = mapApiBodyToDbModelsUpdate(updatedUser);
-        const updatedSubject = queryData.subject;
-        const updatedAddresses = queryData.addresses;
+      logger.info(
+        `[DEBUG UPDATE] Mapped Subject Object: ${JSON.stringify(
+          updatedSubject,
+          null,
+          2
+        )}`
+      );
+      logger.info(
+        `[DEBUG UPDATE] Mapped Address Object: ${JSON.stringify(
+          updatedAddress,
+          null,
+          2
+        )}`
+      );
 
-        if (!updatedSubject || !updatedAddresses) {
-          throw new Error(`Mapping error for subjectId ${id}.`);
-        }
+      logger.info(
+        `[DEBUG UPDATE] Calling Repo updateSubjectById with ID: ${id}`
+      );
+      await DataPreparationRepository.updateSubjectById(
+        id,
+        updatedSubject as unknown as Subject
+      );
 
-        await DataPreparationRepository.updateSubjectById(id, updatedSubject);
+      if (updatedAddress && Object.keys(updatedAddress).length > 0) {
+        logger.info(
+          `[DEBUG UPDATE] Address data present, proceeding to update address.`
+        );
 
         const existingAddresses =
           await DataPreparationRepository.findAddressesBySubjectId(id);
-        const existingAddressIds = existingAddresses.map(
-          (addr) => addr.subject_id
-        );
-        for (const address of updatedAddresses) {
-          if (
-            address.subject_id &&
-            existingAddressIds.includes(address.subject_id)
-          ) {
-            await DataPreparationRepository.updateAddressById(
-              address.subject_id,
-              address
-            );
-          }
+
+        if (existingAddresses && existingAddresses.length > 0) {
+          logger.info(
+            `[DEBUG UPDATE] Found existing addresses for ${id}. Updating using ID (CF).`
+          );
+
+          const today = new Date().toISOString().split("T")[0];
+
+          const addressToUpdate = {
+            ...updatedAddress,
+            address_start_date: today,
+          };
+
+          logger.info(`[DEBUG UPDATE] Setting new address date to: ${today}`);
+
+          await DataPreparationRepository.updateAddressById(
+            id,
+            addressToUpdate as unknown as Address
+          );
+        } else {
+          logger.warn(
+            `[DEBUG UPDATE] No existing address found in DB for subject ${id}. Skipping address update.`
+          );
         }
+      } else {
+        logger.info(
+          `[DEBUG UPDATE] No address data to update (updatedAddress is empty).`
+        );
       }
 
       logger.info(`[residence-submission][END] updateBySubjectId`);
@@ -94,37 +134,83 @@ export const ResidenceSubmissionService = {
     try {
       logger.info(`[residence-submission][START] create`);
 
-      if (request.subjects && Array.isArray(request.subjects.subject)) {
-        for (const subject of request.subjects.subject) {
-          const queryData = mapApiBodyToDbModels(subject);
-          const newSubject = queryData.subject;
-          const newAddresses = queryData.addresses;
+      logger.info(
+        `[DEBUG CREATE] RAW REQUEST: ${JSON.stringify(request, null, 2)}`
+      );
 
-          if (!newSubject || !newAddresses || newAddresses.length === 0) {
-            throw new Error(
-              "Subject or at least one address is missing in the request."
-            );
-          }
+      const subjectData = request.subjects?.subject;
 
-          const existingSubject =
-            await DataPreparationRepository.findSubjectById(
-              newSubject.subject_id
-            );
-          if (existingSubject) {
-            throw new Error(
-              `Subject with subject_id ${newSubject.subject_id} already exists.`
-            );
-          }
+      logger.info(
+        `[DEBUG CREATE] Extracted subjects.subject: ${JSON.stringify(
+          subjectData,
+          null,
+          2
+        )}`
+      );
 
-          await DataPreparationRepository.createSubject(newSubject);
+      if (!subjectData) {
+        throw new Error("Missing 'subjects.subject' data in the request.");
+      }
 
-          for (const address of newAddresses) {
-            await DataPreparationRepository.createAddress({
-              ...address,
-              subject_id: newSubject.subject_id,
-            });
-          }
-        }
+      logger.info(`[DEBUG CREATE] Calling mapApiBodyToDbModels...`);
+      const { subject: newSubject, address: newAddress } =
+        mapApiBodyToDbModels(request);
+
+      logger.info(
+        `[DEBUG CREATE] MAPPED DB SUBJECT: ${JSON.stringify(
+          newSubject,
+          null,
+          2
+        )}`
+      );
+      logger.info(
+        `[DEBUG CREATE] MAPPED DB ADDRESS: ${JSON.stringify(
+          newAddress,
+          null,
+          2
+        )}`
+      );
+
+      if (!newSubject) {
+        throw new Error("Subject data is missing after mapping.");
+      }
+
+      logger.info(
+        `[DEBUG CREATE] Checking existence for Subject ID: ${newSubject.subject_id}`
+      );
+      const existingSubject = await DataPreparationRepository.findSubjectById(
+        newSubject.subject_id
+      );
+
+      if (existingSubject) {
+        logger.error(
+          `[DEBUG CREATE] Subject already exists: ${JSON.stringify(
+            existingSubject
+          )}`
+        );
+        throw new Error(
+          `Subject with subject_id ${newSubject.subject_id} already exists.`
+        );
+      }
+
+      logger.info(`[DEBUG CREATE] Calling Repo createSubject...`);
+      await DataPreparationRepository.createSubject(newSubject);
+
+      if (newAddress) {
+        const today = new Date().toISOString().split("T")[0];
+
+        const addressToSave = {
+          ...newAddress,
+          address_start_date: today,
+        };
+        logger.info(`[DEBUG CREATE] Calling Repo createAddress...`);
+        await DataPreparationRepository.createAddress(
+          addressToSave as unknown as Address
+        );
+      } else {
+        logger.warn(
+          `[DEBUG CREATE] No address mapped, skipping createAddress.`
+        );
       }
 
       logger.info(`[residence-submission][END] create`);
@@ -136,7 +222,9 @@ export const ResidenceSubmissionService = {
 
   async delete(subjectId: string): Promise<void> {
     try {
-      logger.info(`[residence-submission][START] deleteBySubjectId`);
+      logger.info(
+        `[residence-submission][START] deleteBySubjectId: ${subjectId}`
+      );
 
       if (!subjectId) {
         throw userModelNotFound("The subjectId is missing or invalid");
@@ -151,10 +239,17 @@ export const ResidenceSubmissionService = {
 
       const addresses =
         await DataPreparationRepository.findAddressesBySubjectId(subjectId);
-      for (const address of addresses) {
-        await DataPreparationRepository.deleteAddressById(address.id);
+
+      if (addresses && addresses.length > 0) {
+        logger.info(`[DEBUG DELETE] Deleting ${addresses.length} addresses.`);
+        await Promise.all(
+          addresses.map((address) =>
+            DataPreparationRepository.deleteAddressById(address.id)
+          )
+        );
       }
 
+      logger.info(`[DEBUG DELETE] Deleting subject.`);
       await DataPreparationRepository.deleteSubjectById(subjectId);
 
       logger.info(`[residence-submission][END] deleteBySubjectId`);

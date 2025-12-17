@@ -1,21 +1,33 @@
 import fs from "fs";
 import https from "https";
-import { logger, testDbConnection } from "pdnd-common";
+import {
+  initContext,
+  initDB,
+  initLogger,
+  logger,
+  testDbConnection,
+} from "pdnd-common";
 import app from "./app.js";
+import { pivaVerificationConfig } from "./config/config.js";
 
-const port = process.env.PORT || 3003;
+const config = pivaVerificationConfig;
+const port = config.httpPort;
 const portHttps = Number(port) + 443;
 
 const startServer = async (): Promise<void> => {
   try {
+    initContext(pivaVerificationConfig);
+    initLogger(pivaVerificationConfig, "piva-verification");
+    initDB(pivaVerificationConfig);
     logger.info(`Piva verficiation`);
+
     await testDbConnection();
 
     logger.info("Connection to Database has been established.");
 
-    if (process.env.HTTPS_KEY_PATH && process.env.HTTPS_CERT_PATH) {
-      const privateKey = fs.readFileSync(process.env.HTTPS_KEY_PATH, "utf8");
-      const certificate = fs.readFileSync(process.env.HTTPS_CERT_PATH, "utf8");
+    if (config.httpsKeyPath && config.httpsCertPath) {
+      const privateKey = fs.readFileSync(config.httpsKeyPath, "utf8");
+      const certificate = fs.readFileSync(config.httpsCertPath, "utf8");
       const credentials = { key: privateKey, cert: certificate };
       const httpsServer = https.createServer(credentials, app);
       httpsServer.listen(portHttps, () => {

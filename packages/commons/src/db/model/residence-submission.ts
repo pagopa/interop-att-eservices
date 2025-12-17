@@ -8,6 +8,10 @@ export interface DbAddress {
   address_municipality_istat_code?: string;
   address_municipality_acronym_istat_province?: string;
   address_municipality_place_description?: string;
+
+  cap?: string;
+  fraction?: string;
+
   toponym_cod_type?: string;
   toponym_type?: string;
   toponym_origin_type?: string;
@@ -52,9 +56,13 @@ export interface DbSubject {
   id?: string;
   subject_id?: string;
   surname?: string;
+  no_surname?: string;
   name?: string;
+  no_name?: string;
   gender?: string;
   birth_event_date?: string;
+  birth_no_day?: string;
+  birth_no_day_month?: string;
   birth_exceptional_place?: string;
   birth_municipality_name?: string;
   birth_municipality_istat_code?: string;
@@ -243,13 +251,13 @@ export interface TipoDatiEvento {
 
 export interface TipoDatiSoggettiEnte {
   generality?: TipoGeneralita;
-  address?: TipoResidenza[];
+  address?: TipoResidenza;
   identifiers?: TipoIdentificativi;
   deathDate?: TipoDatiEvento;
 }
 
 export interface TipoListaSoggetti {
-  subject?: TipoDatiSoggettiEnte[];
+  subject?: TipoDatiSoggettiEnte;
 }
 
 export interface RichiestaAR003 {

@@ -1,5 +1,4 @@
-import { z } from "zod";
-import type { ZodType } from "zod";
+import { z, ZodType } from "zod";
 
 const MunicipalityType = z
   .object({
@@ -21,7 +20,7 @@ const PlaceType = z
   .partial()
   .passthrough();
 
-const DataBirthType = z
+const BirthPlaceType = z
   .object({
     exceptionalPlace: z.string(),
     municipality: MunicipalityType,
@@ -58,7 +57,7 @@ const GeneralitaType = z
     birthDate: z.string(),
     noDay: z.string(),
     noMonth: z.string(),
-    birthPlace: DataBirthType,
+    birthPlace: BirthPlaceType,
     AIRESubject: z.string(),
     yearExpatriation: z.string(),
     idCommonSubjectData: IdSchedaSoggettoComuneType,
@@ -226,7 +225,7 @@ const DatiEventoType = z
     eventDate: z.string(),
     noDay: z.string(),
     noMonth: z.string(),
-    eventPlace: DataBirthType,
+    eventPlace: BirthPlaceType,
     eventAct: AttoEventoType,
   })
   .partial()
@@ -235,7 +234,7 @@ const DatiEventoType = z
 const DatiSoggettoType = z
   .object({
     generality: GeneralitaType,
-    address: z.array(ResidenzaType),
+    address: ResidenzaType,
     identifiers: IdentificativiType,
     deathDate: DatiEventoType,
   })
@@ -244,7 +243,7 @@ const DatiSoggettoType = z
 
 const ListaSoggettiType = z
   .object({
-    subject: z.array(DatiSoggettoType),
+    subject: DatiSoggettoType,
   })
   .partial()
   .passthrough();

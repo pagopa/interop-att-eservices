@@ -2,25 +2,27 @@
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 import axios from "axios";
-import { logger, m2mConfig } from "../index.js";
+import { logger } from "../logging/index.js";
+import { M2mConfig } from "../config/index.js";
 
-const config = m2mConfig();
-
-export const exec_pdnd_client_assertion_m2m = (private_key: string): string => {
+export const exec_pdnd_client_assertion_m2m = (
+  private_key: string,
+  config: M2mConfig
+): string => {
   const issued = Math.floor(Date.now() / 1000);
   const expire_in = issued + 2592000;
   const jti = uuidv4();
 
   const headers_rsa = {
-    kid: config.kid,
-    alg: config.alg,
-    typ: config.typ,
+    kid: config.m2mKid,
+    alg: config.m2mAlg,
+    typ: config.m2mtTyp,
   };
 
   const payload = {
-    iss: config.clientId,
-    sub: config.clientId,
-    aud: config.authAudience,
+    iss: config.m2mClientId,
+    sub: config.m2mClientId,
+    aud: config.m2mAuthAudience,
     jti,
     iat: issued,
     exp: expire_in,
@@ -33,10 +35,11 @@ export const exec_pdnd_client_assertion_m2m = (private_key: string): string => {
 };
 
 export const get_pdnd_token_m2m = async (
-  client_assertion: string
+  client_assertion: string,
+  config: M2mConfig
 ): Promise<string | undefined> => {
   const data = {
-    client_id: config.clientId,
+    client_id: config.m2mClientId,
     grant_type: "client_credentials",
     client_assertion_type:
       "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
@@ -46,7 +49,8 @@ export const get_pdnd_token_m2m = async (
 
   try {
     const response = await axios.post(
-      config.tokenEndpoint || "https://auth.uat.interop.pagopa.it/token.oauth2",
+      config.m2mTokenEndpoint ||
+        "https://auth.uat.interop.pagopa.it/token.oauth2",
       data,
       {
         headers,

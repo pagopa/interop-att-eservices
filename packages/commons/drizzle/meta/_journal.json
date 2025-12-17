@@ -15,6 +15,13 @@
       "when": 1762189351507,
       "tag": "0003_flowery_veda",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1764587256194,
+      "tag": "0002_concerned_snowbird",
+      "breakpoints": true
     }
   ]
 }

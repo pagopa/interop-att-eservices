@@ -8,9 +8,13 @@ export const subjectTable = customSchema.table("subjects", {
   subject_id: text("subject_id").primaryKey(),
 
   surname: text("surname"),
+  no_surname: text("no_surname"),
   name: text("name"),
+  no_name: text("no_name"),
   gender: text("gender"),
   birth_event_date: text("birth_event_date"),
+  birth_no_day: text("birth_no_day"),
+  birth_no_day_month: text("birth_no_day_month"),
   birth_exceptional_place: text("birth_exceptional_place"),
   birth_municipality_name: text("birth_municipality_name"),
   birth_municipality_istat_code: text("birth_municipality_istat_code"),

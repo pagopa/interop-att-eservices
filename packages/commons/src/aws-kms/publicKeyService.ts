@@ -1,14 +1,15 @@
 import { KMSClient, GetPublicKeyCommand } from "@aws-sdk/client-kms";
 import { ErrorHandling } from "pdnd-models";
-import { logger, signerConfig } from "../index.js";
+import { logger, SignerConfig } from "../index.js";
 
 export type PublicKeyService = {
   getRSAPublicKey: (keyId: string) => Promise<Uint8Array>;
   KMSAvailability: (keyId: string) => Promise<boolean>;
 };
 
-export const buildPublicKeyService = (): PublicKeyService => {
-  const config = signerConfig();
+export const buildPublicKeyService = (
+  config: SignerConfig
+): PublicKeyService => {
   const kmsClient = config.kmsEndpoint
     ? new KMSClient({
         endpoint: config.kmsEndpoint,

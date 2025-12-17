@@ -18,15 +18,10 @@ key_id=$(aws --endpoint-url=http://localhost:4566 kms create-key \
     --output text)
 
 packages=(
-  "digital-address-verification"
   "family-status"
   "fiscalcode-verification"
   "keychain-mock"
   "piva-verification"
-  "residence-submission"
-  "residence-verification"
-  "residence-verification-direct"
-  "trial-service-api"
 )
 
 update_env_variable() {
