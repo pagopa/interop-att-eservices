@@ -2,7 +2,6 @@ import { z } from "zod";
 import {
   LoggerConfig,
   DatabaseConfig,
-  SignerConfig,
   InteroperabilityConfig,
   JWTConfig,
   ContextConfig,
@@ -12,7 +11,6 @@ import {
 export const ResidenceVerificationDirectConfig = LoggerConfig.and(
   DatabaseConfig
 )
-  .and(SignerConfig)
   .and(InteroperabilityConfig)
   .and(ContextConfig)
   .and(JWTConfig)

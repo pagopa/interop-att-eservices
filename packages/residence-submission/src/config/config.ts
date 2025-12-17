@@ -4,7 +4,6 @@ import {
   DatabaseConfig,
   ShClientConfig,
   M2mConfig,
-  SignerConfig,
   InteroperabilityConfig,
   JWTConfig,
   ContextConfig,
@@ -15,7 +14,6 @@ import {
 export const ResidenceSubmissionConfig = LoggerConfig.and(DatabaseConfig)
   .and(ShClientConfig)
   .and(M2mConfig)
-  .and(SignerConfig)
   .and(InteroperabilityConfig)
   .and(ContextConfig)
   .and(JWTConfig)

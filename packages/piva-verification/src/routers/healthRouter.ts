@@ -14,7 +14,7 @@ const healthRouter = (
       return res.status(500);
     }
 
-    const data = await HealtService.status(pivaVerificationConfig);
+    const data = await HealtService.statusHandShake(pivaVerificationConfig);
     if (data) {
       return res.status(200).end();
     } else {

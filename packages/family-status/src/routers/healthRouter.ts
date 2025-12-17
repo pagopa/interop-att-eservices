@@ -2,7 +2,6 @@ import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, HealtService, ZodiosContext } from "pdnd-common";
 import { api } from "../model/generated/api.js";
-import { familyStatusConfiguration } from "../config/config.js";
 
 const healthRouter = (
   ctx: ZodiosContext
@@ -13,7 +12,7 @@ const healthRouter = (
     if (!req) {
       return res.status(500);
     }
-    const data = await HealtService.status(familyStatusConfiguration);
+    const data = await HealtService.status();
     if (data) {
       return res.status(200).end();
     } else {

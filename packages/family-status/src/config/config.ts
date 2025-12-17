@@ -3,7 +3,6 @@ import {
   DatabaseConfig,
   HTTPServerConfig,
   LoggerConfig,
-  SignerConfig,
   SslConfig,
   JWTConfig,
   ContextConfig,
@@ -12,7 +11,6 @@ import {
 
 export const FamilyStatusConfiguration = LoggerConfig.and(DatabaseConfig)
   .and(HTTPServerConfig)
-  .and(SignerConfig)
   .and(SslConfig)
   .and(JWTConfig)
   .and(ContextConfig)
