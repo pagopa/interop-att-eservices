@@ -5,7 +5,6 @@ module.exports = {
     project: ["./packages/*/tsconfig.json", "./packages/*/test/tsconfig.json"],
   },
   rules: {
-    // Any project level custom rule
     "@typescript-eslint/switch-exhaustiveness-check": "error",
     "default-case": "off",
     "prefer-arrow/prefer-arrow-functions": "off",

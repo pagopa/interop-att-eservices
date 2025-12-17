@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
 import { logger } from "../logging/index.js";
 import { ShConfig } from "../config/shConfig.js";
 
