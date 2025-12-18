@@ -1,7 +1,7 @@
-import { logger } from "pdnd-common";
-import { PivaVerificationService } from "pdnd-common";
+import { logger, PivaVerificationService, userService } from "pdnd-common";
 import { Richiesta, VerificaPartitaIva } from "../model/domain/models.js";
 import { requestParamNotValid } from "../exceptions/errors.js";
+import { pivaVerificationConfig } from "../config/config.js";
 
 class PivaVerificationController {
   public async findPiva(request: Richiesta): Promise<VerificaPartitaIva> {
@@ -26,7 +26,7 @@ class PivaVerificationController {
   }
   public async getRotatedSeed(eserviceId: string): Promise<string> {
     try {
-      return await userService.generateSeed(eserviceId);
+      return await userService.generateSeed(eserviceId, pivaVerificationConfig);
     } catch (error) {
       logger.error(`Controller Error during getRotatedSeed`, error);
       throw error;

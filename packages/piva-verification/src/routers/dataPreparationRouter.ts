@@ -4,15 +4,16 @@ import {
   ExpressContext,
   HashAlgorithm,
   SHService,
+  SignalPayload,
   ZodiosContext,
   generateObjectId,
   getEserviceIdFromToken,
   getPDNDTokenM2M,
+  authenticationMiddleware,
+  PivaVerificationService,
   logger,
 } from "pdnd-common";
-import { authenticationMiddleware } from "pdnd-common";
 import { ErrorHandling } from "pdnd-models";
-import { PivaVerificationService } from "pdnd-common";
 import { api } from "../model/generated/api.js";
 import { makeApiProblem } from "../exceptions/errors.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -21,7 +22,7 @@ import {
   apiDatapreparationTemplateToPivaModel,
 } from "../model/domain/apiConverter.js";
 import { contextDataPivaMiddleware } from "../context/context.js";
-import { SignalPayload } from "../../../commons/dist/services/signalHub/shService.js";
+import { pivaVerificationConfig } from "../config/config.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -113,7 +114,7 @@ const dataPreparationRouter = (
           );
         }
 
-        const seed = await SHService.findSeedByEserviceId(eserviceId);
+        const seed = await SHService.findSeedByEserviceId(eserviceId, pivaVerificationConfig);
         if (!seed) {
           throw new Error(
             `Could not find 'seed' for eserviceId: ${eserviceId}`
@@ -137,7 +138,7 @@ const dataPreparationRouter = (
           );
         }
 
-        const m2mToken = await getPDNDTokenM2M();
+        const m2mToken = await getPDNDTokenM2M(pivaVerificationConfig);
         if (!m2mToken) {
           throw new Error("M2M token generation failed.");
         }
@@ -148,13 +149,7 @@ const dataPreparationRouter = (
           signalId,
           signalType: "DELETE",
         };
-        try {
-          await SHService.sendSignal(signalObject, m2mToken);
-        } catch (error) {
-          logger.error(
-            `[Controller] Error sending signal. Reverting signalId for ${eserviceId}. Error: ${error}`
-          );
-        }
+          await SHService.sendSignal(signalObject, m2mToken, pivaVerificationConfig);
         return res.status(201).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);

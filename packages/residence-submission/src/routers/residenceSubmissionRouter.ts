@@ -14,6 +14,7 @@ import {
   SHService,
   HashAlgorithm,
   getPDNDTokenM2M,
+  SignalPayload,
 } from "pdnd-common";
 import ResidenceSubmissionController from "../controllers/residenceSubmissionController.js";
 import { api } from "../model/generated/api.js";
@@ -24,7 +25,6 @@ import {
   userModelNotFound,
 } from "../exceptions/errors.js";
 import { contextDataResidenceMiddleware } from "../context/context.js";
-import { SignalPayload } from "../../../commons/dist/services/signalHub/shService.js";
 import { residenceSubmissionConfig } from "../config/config.js";
 
 const residenceSubissionController = (
@@ -145,17 +145,24 @@ const residenceSubissionController = (
         };
         logger.info(`[signalObject]: ${JSON.stringify(signalObject)}`);
 
-        await SHService.sendSignal(
-          signalObject,
-          m2mToken,
-          residenceSubmissionConfig
-        );
-        void TrialService.insert(
-          req.url,
-          req.method,
-          "RESIDENCE_SUBMISSION_001",
-          "OK"
-        );
+        try {
+          await SHService.sendSignal(
+            signalObject,
+            m2mToken,
+            residenceSubmissionConfig
+          );
+          void TrialService.insert(
+            req.url,
+            req.method,
+            "RESIDENCE_SUBMISSION_001",
+            "OK"
+          );
+        } catch (error) {
+          logger.error(
+            `[Controller] Error sending signal. Reverting signalId for ${eserviceId}. Error: ${error}`
+          );
+          throw new Error(`Signal Hub Deposit Failed: ${error}`);
+        }
         logger.info(`[END] residenceSubissionController update`);
         return res.status(200).json(data).end();
       } catch (error) {

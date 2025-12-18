@@ -1,20 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import pivaVerificationController from "../src/controllers/pivaVerificationController.js";
-import { PivaVerificationService } from "pdnd-common";
+import { PivaVerificationService, userService } from "pdnd-common";
 import type {
   Richiesta,
   VerificaPartitaIva,
 } from "../src/model/domain/models.js";
 
-vi.mock("pdnd-common", () => ({
-  PivaVerificationService: {
-    getByPiva: vi.fn(),
-  },
-  getContext: vi.fn(() => ({})),
-  logger: {
-    error: vi.fn(),
-  },
-}));
+vi.mock("pdnd-common", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("pdnd-common")>();
+  return {
+    ...actual,
+    PivaVerificationService: {
+      getByPiva: vi.fn(),
+    },
+    userService: {
+      generateSeed: vi.fn(),
+    },
+    getContext: vi.fn(() => ({})),
+    logger: {
+      error: vi.fn(),
+    },
+  };
+});
 
 vi.mock("../exceptions/errors", () => ({
   requestParamNotValid: vi.fn((message) => new Error(message)),
@@ -32,13 +39,15 @@ describe("PivaVerificationController", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(PivaVerificationService.getByPiva).mockReset();
+    vi.mocked(userService.generateSeed).mockReset();
   });
 
-  it("dovrebbe restituire i dati corretti per una richiesta valida", async () => {
+  it("should return correct data for a valid request", async () => {
     const request: Richiesta = { organizationId: "IT12345678901" };
     const mockData = {
       piva: "IT12345678901",
-      ragioneSociale: "Test S.p.A.",
+      ragioneSociale: "Test Corp",
+      organizationId: "IT12345678901"
     };
 
     vi.mocked(PivaVerificationService.getByPiva).mockResolvedValue(mockData);
@@ -48,14 +57,15 @@ describe("PivaVerificationController", () => {
     };
 
     const result = await pivaVerificationController.findPiva(request);
+
     expect(result).toEqual(expectedResult);
     expect(PivaVerificationService.getByPiva).toHaveBeenCalledWith(
       "IT12345678901",
     );
   });
 
-  it("dovrebbe lanciare un errore se organizationId è assente", async () => {
-    const request: Richiesta = { organizationId: undefined };
+  it("should throw an error if organizationId is missing", async () => {
+    const request = { organizationId: undefined } as unknown as Richiesta;
 
     await expect(pivaVerificationController.findPiva(request)).rejects.toThrow(
       "The request body has one or more required param not valid",
@@ -63,9 +73,9 @@ describe("PivaVerificationController", () => {
     expect(PivaVerificationService.getByPiva).not.toHaveBeenCalled();
   });
 
-  it("dovrebbe lanciare l'errore sollevato dal servizio esterno", async () => {
+  it("should throw the error raised by the external service", async () => {
     const request: Richiesta = { organizationId: "IT12345678901" };
-    const externalError = new Error("Errore del servizio esterno");
+    const externalError = new Error("External service error");
 
     vi.mocked(PivaVerificationService.getByPiva).mockRejectedValue(
       externalError,
