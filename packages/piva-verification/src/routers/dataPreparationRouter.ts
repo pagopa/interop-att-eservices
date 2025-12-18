@@ -105,16 +105,17 @@ const dataPreparationRouter = (
 
         const eserviceId = await getEserviceIdFromToken(pdndToken);
         const organizationId = req.body.organizationId;
-        logger.info(
-          `[SHRepository] Found fiscalCode: ${JSON.stringify(organizationId)}`
-        );
+
         if (!organizationId) {
           throw new Error(
             "Organization ID not found for 'objectId' generation."
           );
         }
 
-        const seed = await SHService.findSeedByEserviceId(eserviceId, pivaVerificationConfig);
+        const seed = await SHService.findSeedByEserviceId(
+          eserviceId,
+          pivaVerificationConfig
+        );
         if (!seed) {
           throw new Error(
             `Could not find 'seed' for eserviceId: ${eserviceId}`
@@ -149,7 +150,17 @@ const dataPreparationRouter = (
           signalId,
           signalType: "DELETE",
         };
-          await SHService.sendSignal(signalObject, m2mToken, pivaVerificationConfig);
+        try {
+          await SHService.sendSignal(
+            signalObject,
+            m2mToken,
+            pivaVerificationConfig
+          );
+        } catch (error) {
+          logger.error(
+            `[Controller] Error sending signal. Reverting signalId for ${eserviceId}. Error: ${error}`
+          );
+        }
         return res.status(201).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);
