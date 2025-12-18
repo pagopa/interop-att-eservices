@@ -1,10 +1,11 @@
-import { logger, FamilyStatusService } from "pdnd-common";
+import { logger, FamilyStatusService, userService } from "pdnd-common";
 import {
   requestParamNotValid,
   userModelNotFound,
 } from "../exceptions/errors.js";
 import { RequestFS001, ResponseFS001 } from "../model/domain/models.js";
 import { mapDbRecordToResponseFS001 } from "../utilities/mapDbRecordToResponseFS001.js";
+import { familyStatusConfiguration } from "../config/config.js";
 
 class FamilyStatusController {
   public async findUser(
@@ -104,7 +105,10 @@ class FamilyStatusController {
   }
   public async getRotatedSeed(eserviceId: string): Promise<string> {
     try {
-      return await userService.generateSeed(eserviceId);
+      return await userService.generateSeed(
+        eserviceId,
+        familyStatusConfiguration
+      );
     } catch (error) {
       logger.error(`Controller Error during getRotatedSeed`, error);
       throw error;

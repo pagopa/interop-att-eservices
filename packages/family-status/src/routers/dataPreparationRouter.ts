@@ -12,13 +12,14 @@ import {
   getPDNDTokenM2M,
   HashAlgorithm,
   logger,
+  SignalPayload,
   SHService,
 } from "pdnd-common";
 import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, userModelNotFound } from "../exceptions/errors.js";
 import { contextDataFamilyMiddleware } from "../context/context.js";
-import { SignalPayload } from "../../../commons/dist/services/signalHub/shService.js";
+import { familyStatusConfiguration } from "../config/config.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -58,7 +59,10 @@ const dataPreparationRouter = (
             throw new Error("Fiscal Code not found for 'objectId' generation.");
           }
 
-          const seed = await SHService.findSeedByEserviceId(eserviceId);
+          const seed = await SHService.findSeedByEserviceId(
+            eserviceId,
+            familyStatusConfiguration
+          );
           if (!seed) {
             throw new Error(
               `Could not find 'seed' for eserviceId: ${eserviceId}`
@@ -82,7 +86,7 @@ const dataPreparationRouter = (
             );
           }
 
-          const m2mToken = await getPDNDTokenM2M();
+          const m2mToken = await getPDNDTokenM2M(familyStatusConfiguration);
 
           if (!m2mToken) {
             throw new Error("M2M token generation failed.");
@@ -96,7 +100,11 @@ const dataPreparationRouter = (
           };
 
           try {
-            await SHService.sendSignal(signalObject, m2mToken);
+            await SHService.sendSignal(
+              signalObject,
+              m2mToken,
+              familyStatusConfiguration
+            );
           } catch (error) {
             logger.error(
               `[Controller] Error sending signal. Reverting signalId for ${eserviceId}. Error: ${error}`
@@ -182,6 +190,14 @@ const dataPreparationRouter = (
         if (!req) {
           return res.status(500);
         }
+        const paramUUID = req.params.uuid;
+        if (!paramUUID) {
+          throw new Error("UUID Params missing");
+        }
+        const fiscalCode = await SHService.getFiscalCodeFromFamily(paramUUID);
+        if (!fiscalCode) {
+          throw new Error("Fiscal code missing");
+        }
         await FamilyStatusService.deleteByUUID(req.params.uuid);
 
         const authHeader = req.headers.authorization;
@@ -191,15 +207,12 @@ const dataPreparationRouter = (
         }
 
         const eserviceId = await getEserviceIdFromToken(pdndToken);
-        const fiscalCode = (req.body as RawPayload).subject?.subjectId;
-        logger.info(
-          `[SHRepository] Found fiscalCode: ${JSON.stringify(fiscalCode)}`
-        );
-        if (!fiscalCode) {
-          throw new Error("Fiscal Code not found for 'objectId' generation.");
-        }
 
-        const seed = await SHService.findSeedByEserviceId(eserviceId);
+        const seed = await SHService.findSeedByEserviceId(
+          eserviceId,
+          familyStatusConfiguration
+        );
+
         if (!seed) {
           throw new Error(
             `Could not find 'seed' for eserviceId: ${eserviceId}`
@@ -223,7 +236,7 @@ const dataPreparationRouter = (
           );
         }
 
-        const m2mToken = await getPDNDTokenM2M();
+        const m2mToken = await getPDNDTokenM2M(familyStatusConfiguration);
 
         if (!m2mToken) {
           throw new Error("M2M token generation failed.");
@@ -237,7 +250,11 @@ const dataPreparationRouter = (
         };
 
         try {
-          await SHService.sendSignal(signalObject, m2mToken);
+          await SHService.sendSignal(
+            signalObject,
+            m2mToken,
+            familyStatusConfiguration
+          );
         } catch (error) {
           logger.error(
             `[Controller] Error sending signal. Reverting signalId for ${eserviceId}. Error: ${error}`

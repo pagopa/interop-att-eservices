@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { sql } from "drizzle-orm";
-import { client, ShConfig } from "../../index.js";
+import { sql, eq } from "drizzle-orm";
+import { client, familyStatus, ShConfig } from "../../index.js";
 import { logger } from "../../index.js";
 import { signalCounters } from "../../db/schema/signalHub/index.js";
 import { getRotatedSeed } from "../../utility/seedUtility.js";
@@ -74,6 +74,33 @@ export const SHRepository = {
     } catch (error) {
       logger.error(`impossible get seed for ${eserviceId}:`, error);
       throw error;
+    }
+  },
+  async findSubjectIdByUuid(uuid: string): Promise<string | null> {
+    logger.info(
+      `[SHRepository] Searching subjectId (fiscalCode) for uuid: ${uuid}`
+    );
+    try {
+      const result = await client
+        .select({ subjectId: familyStatus.subjectId })
+        .from(familyStatus)
+        .where(eq(familyStatus.uuid, uuid))
+        .limit(1)
+        .execute();
+
+      if (result.length > 0 && result[0].subjectId) {
+        logger.info(`[SHRepository] Found subjectId: ${result[0].subjectId}`);
+        return result[0].subjectId;
+      }
+
+      logger.warn(`[SHRepository] No subjectId found for uuid: ${uuid}`);
+      return null;
+    } catch (error) {
+      const errorMessage = (error as Error).message || String(error);
+      logger.error(
+        `[SHRepository] DB Error finding subjectId: ${errorMessage}`
+      );
+      throw new Error("Error retrieving fiscalCode from DB.");
     }
   },
 };
