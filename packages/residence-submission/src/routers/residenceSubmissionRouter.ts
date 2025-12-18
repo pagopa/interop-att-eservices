@@ -247,12 +247,17 @@ const residenceSubissionController = (
           signalId,
           signalType: "DELETE",
         };
-        await SHService.sendSignal(
-          signalObject,
-          m2mToken,
-          residenceSubmissionConfig
-        );
-
+        try {
+          await SHService.sendSignal(
+            signalObject,
+            m2mToken,
+            residenceSubmissionConfig
+          );
+        } catch (error) {
+          logger.error(
+            `[Controller] Error sending signal. Reverting signalId for ${eserviceId}. Error: ${error}`
+          );
+        }
         void TrialService.insert(
           req.url,
           req.method,
