@@ -11,6 +11,7 @@ import {
   auditValidationMiddleware,
   getEserviceIdFromToken,
   generateObjectId,
+  SignalPayload,
   SHService,
   HashAlgorithm,
   getPDNDTokenM2M,
@@ -24,7 +25,6 @@ import {
   userModelNotFound,
 } from "../exceptions/errors.js";
 import { contextDataResidenceMiddleware } from "../context/context.js";
-import { SignalPayload } from "../../../commons/dist/services/signalHub/shService.js";
 import { residenceSubmissionConfig } from "../config/config.js";
 
 const residenceSubissionController = (
