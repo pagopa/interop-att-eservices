@@ -21,7 +21,7 @@ class DigitalAddressVerificationSingleController {
       /* eslint-disable */
       if (richiesta) {
         const foundItem = richiesta.digitalAddress.find(
-          (richiesta) => richiesta.digitalAddress === digitalAddressInput,
+          (richiesta) => richiesta.digitalAddress === digitalAddressInput
         );
         if (foundItem) {
           if (richiesta.from <= from) {
