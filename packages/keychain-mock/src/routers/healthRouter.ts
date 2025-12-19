@@ -14,7 +14,7 @@ const healthRouter = (
       return res.status(500);
     }
 
-    const data = await HealtService.status(keychainSignerConfig);
+    const data = await HealtService.statusHandShake(keychainSignerConfig);
     if (data) {
       return res.status(200).end();
     } else {

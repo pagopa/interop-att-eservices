@@ -2,14 +2,12 @@ import { z } from "zod";
 import {
   LoggerConfig,
   DatabaseConfig,
-  SignerConfig,
   JWTConfig,
   ContextConfig,
   HTTPServerConfig,
 } from "pdnd-common";
 
 export const TrialServiceConfig = LoggerConfig.and(DatabaseConfig)
-  .and(SignerConfig)
   .and(ContextConfig)
   .and(HTTPServerConfig)
   .and(JWTConfig);

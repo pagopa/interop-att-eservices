@@ -17,7 +17,7 @@ const startServer = async (): Promise<void> => {
   try {
     initContext(keychainSignerConfig);
     initLogger(keychainSignerConfig, "keychain-mock");
-    initDB(keychainSignerConfig);
+    await initDB(keychainSignerConfig);
     await testDbConnection();
 
     logger.info("Connection to Database has been established.");

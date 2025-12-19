@@ -13,7 +13,9 @@ const state = {
   dbInstance: undefined as DrizzleClient | undefined,
 };
 
-export const initDB = (config: DatabaseConfig): DrizzleClient => {
+export const initDB = async (
+  config: DatabaseConfig
+): Promise<DrizzleClient> => {
   if (state.dbInstance) {
     return state.dbInstance;
   }
@@ -23,13 +25,21 @@ export const initDB = (config: DatabaseConfig): DrizzleClient => {
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
+    ssl: config.dbSSL ? { rejectUnauthorized: false } : undefined,
   });
 
   pool.on("error", (err) => {
-    if (logger) {
-      logger.error("Unexpected error on idle database client", err);
-    }
+    logger.error("Unexpected error on idle database client", err);
   });
+
+  try {
+    const client = await pool.connect();
+    client.release();
+    logger.info("Database connection ready");
+  } catch (err) {
+    logger.error("Database connection failed at startup", err);
+    throw err;
+  }
 
   state.dbInstance = drizzle(pool);
   return state.dbInstance;

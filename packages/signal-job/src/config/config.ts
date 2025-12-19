@@ -3,7 +3,6 @@ import {
   JWTConfig,
   LoggerConfig,
   M2mConfig,
-  SignerConfig,
 } from "pdnd-common";
 import { z } from "zod";
 
@@ -32,7 +31,6 @@ export const ShConfig = z
     signalHubApiVersion: c.SIGNAL_HUB_API_VERSION,
     cronTime: c.CRON_TIME_JOB,
   }))
-  .and(SignerConfig)
   .and(InteroperabilityConfig)
   .and(JWTConfig)
   .and(LoggerConfig)

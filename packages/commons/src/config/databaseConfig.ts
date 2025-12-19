@@ -8,6 +8,10 @@ export const DatabaseConfig = z
     DATABASE_PASSWORD: z.string(),
     DATABASE_NAME: z.string(),
     DATABASE_SCHEMA: z.string(),
+    DATABASE_SSL: z
+      .enum(["true", "false"])
+      .transform((value) => value === "true")
+      .default("false"),
   })
   .transform((c) => ({
     databaseUrl: `postgres://${c.DATABASE_USERNAME}:${c.DATABASE_PASSWORD}@${c.DATABASE_HOST}:${c.DATABASE_PORT}/${c.DATABASE_NAME}?currentSchema=${c.DATABASE_SCHEMA}`,
@@ -17,6 +21,7 @@ export const DatabaseConfig = z
     dbPort: c.DATABASE_PORT,
     dbName: c.DATABASE_NAME,
     dbSchema: c.DATABASE_SCHEMA,
+    dbSSL: c.DATABASE_SSL,
   }));
 
 export type DatabaseConfig = z.infer<typeof DatabaseConfig>;

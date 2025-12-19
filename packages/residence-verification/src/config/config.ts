@@ -3,7 +3,6 @@ import {
   LoggerConfig,
   DatabaseConfig,
   ShConfig,
-  SignerConfig,
   InteroperabilityConfig,
   ContextConfig,
   HTTPServerConfig,
@@ -11,7 +10,6 @@ import {
 
 export const ResidenceVerificationConfig = LoggerConfig.and(DatabaseConfig)
   .and(ShConfig)
-  .and(SignerConfig)
   .and(ContextConfig)
   .and(InteroperabilityConfig)
   .and(HTTPServerConfig);

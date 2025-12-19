@@ -13,7 +13,7 @@ const startServer = async (): Promise<void> => {
   try {
     initContext(trialServiceConfig);
     initLogger(trialServiceConfig, "trial-service-api");
-    initDB(trialServiceConfig);
+    await initDB(trialServiceConfig);
     await testDbConnection();
     logger.info("Connection to Database has been established.");
 

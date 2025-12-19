@@ -5,7 +5,6 @@ import {
   ShConfig,
   ShClientConfig,
   M2mConfig,
-  SignerConfig,
   JWTConfig,
   ContextConfig,
   InteroperabilityConfig,
@@ -15,7 +14,6 @@ import {
 export const DigitalAddressVerificationConfig = LoggerConfig.and(DatabaseConfig)
   .and(ShConfig)
   .and(M2mConfig)
-  .and(SignerConfig)
   .and(ShClientConfig)
   .and(ContextConfig)
   .and(HTTPServerConfig)

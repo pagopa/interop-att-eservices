@@ -14,7 +14,7 @@ const startServer = async (): Promise<void> => {
   try {
     initContext(residenceSubmissionConfig);
     initLogger(residenceSubmissionConfig, "residence-submission");
-    initDB(residenceSubmissionConfig);
+    await initDB(residenceSubmissionConfig);
     await testDbConnection();
 
     logger.info("Connection to Database has been established.");
