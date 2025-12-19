@@ -25,6 +25,7 @@ export const initDB = async (
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
+    ssl: config.dbSSL ? { rejectUnauthorized: false } : undefined,
   });
 
   pool.on("error", (err) => {
