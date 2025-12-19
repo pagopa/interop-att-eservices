@@ -8,18 +8,24 @@ vi.mock("../src/utilities/mapDbRecordToResponseFS001.js", () => ({
   mapDbRecordToResponseFS001: vi.fn(),
 }));
 
-vi.mock("pdnd-common", () => ({
-  logger: {
-    info: vi.fn(),
-    error: vi.fn(),
-  },
-  getContext: vi.fn(),
-  FamilyStatusService: {
-    verifyBySubjectId: vi.fn(),
-    findByPersonalInfo: vi.fn(),
-    findById: vi.fn(),
-  },
-}));
+vi.mock("pdnd-common", async () => {
+  const actual = await vi.importActual<typeof import("pdnd-common")>(
+    "pdnd-common"
+  );
+  return {
+    ...actual,
+    logger: {
+      info: vi.fn(),
+      error: vi.fn(),
+    },
+    getContext: vi.fn(),
+    FamilyStatusService: {
+      verifyBySubjectId: vi.fn(),
+      findByPersonalInfo: vi.fn(),
+      findById: vi.fn(),
+    },
+  };
+});
 
 vi.mock("../src/exceptions/errors.js", () => ({
   requestParamNotValid: (message: string): Error => new Error(message),
