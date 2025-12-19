@@ -18,11 +18,8 @@ const startServer = async (): Promise<void> => {
   try {
     initContext(pivaVerificationConfig);
     initLogger(pivaVerificationConfig, "piva-verification");
-    initDB(pivaVerificationConfig);
-    logger.info(`Piva verficiation`);
-
+    await initDB(pivaVerificationConfig);
     await testDbConnection();
-
     logger.info("Connection to Database has been established.");
 
     if (config.httpsKeyPath && config.httpsCertPath) {

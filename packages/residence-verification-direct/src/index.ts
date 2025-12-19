@@ -17,7 +17,7 @@ const startServer = async (): Promise<void> => {
       residenceVerificationDirectConfig,
       "residence-verification-direct"
     );
-    initDB(residenceVerificationDirectConfig);
+    await initDB(residenceVerificationDirectConfig);
     await testDbConnection();
 
     logger.info("Connection to Database has been established.");
