@@ -32,7 +32,6 @@ export const HealtService = {
       logger.error(`Errore nella connessione al database: ${error}`);
       return false;
     }
-    logger.info("status: OK");
     return true;
   },
 };
