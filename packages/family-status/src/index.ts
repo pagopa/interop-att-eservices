@@ -14,7 +14,7 @@ const startServer = async (): Promise<void> => {
   try {
     initContext(familyStatusConfiguration);
     initLogger(familyStatusConfiguration, "family-status");
-    initDB(familyStatusConfiguration);
+    await initDB(familyStatusConfiguration);
     await testDbConnection();
     logger.info("Connection to Database has been established.");
     app.listen(port, () => {

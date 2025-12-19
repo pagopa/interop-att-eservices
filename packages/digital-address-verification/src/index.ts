@@ -11,7 +11,7 @@ const startServer = async (): Promise<void> => {
       digitalAddressVerificationConfig,
       "digital-address-verification"
     );
-    initDB(digitalAddressVerificationConfig);
+    await initDB(digitalAddressVerificationConfig);
     await testDbConnection();
     logger.info("Connection to Database has been established.");
     app.listen(port, () => {
