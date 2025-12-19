@@ -17,7 +17,7 @@ const startServer = async (): Promise<void> => {
   try {
     initContext(fiscalcodeVerificationConfig);
     initLogger(fiscalcodeVerificationConfig, "fiscalcode-verification");
-    initDB(fiscalcodeVerificationConfig);
+    await initDB(fiscalcodeVerificationConfig);
     await testDbConnection();
 
     logger.info("Connection to Database has been established.");

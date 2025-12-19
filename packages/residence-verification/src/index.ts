@@ -13,8 +13,8 @@ const port = residenceVerificationConfig.httpPort;
 const startServer = async (): Promise<void> => {
   try {
     initContext(residenceVerificationConfig);
-    initDB(residenceVerificationConfig);
     initLogger(residenceVerificationConfig, "residence-verification");
+    await initDB(residenceVerificationConfig);
     await testDbConnection();
     logger.info("Connection to Database has been established.");
     app.listen(port, () => {
