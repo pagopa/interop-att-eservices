@@ -31,8 +31,6 @@ export const exec_pdnd_client_assertion_m2m = async (
     exp: expire_in,
   };
 
-  logger.info(`headers_rsa: ${JSON.stringify(headers_rsa)}`);
-  logger.info(`payload: ${JSON.stringify(payload)}`);
   const encodedHeader = b64UrlEncode(JSON.stringify(headers_rsa));
   const encodedPayload = b64UrlEncode(JSON.stringify(payload));
   const tokenData = `${encodedHeader}.${encodedPayload}`;
