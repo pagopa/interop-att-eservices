@@ -1,14 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { v4 as uuidv4 } from "uuid";
-import jwt from "jsonwebtoken";
 import axios from "axios";
-import { logger } from "../logging/index.js";
+import {
+  KMSClient,
+  SignCommand,
+  SigningAlgorithmSpec,
+} from "@aws-sdk/client-kms";
+import { logger } from "../index.js";
 import { M2mConfig } from "../config/index.js";
 
-export const exec_pdnd_client_assertion_m2m = (
-  private_key: string,
+export const exec_pdnd_client_assertion_m2m = async (
   config: M2mConfig
-): string => {
+): Promise<string> => {
   const issued = Math.floor(Date.now() / 1000);
   const expire_in = issued + 2592000;
   const jti = uuidv4();
@@ -28,10 +31,27 @@ export const exec_pdnd_client_assertion_m2m = (
     exp: expire_in,
   };
 
-  return jwt.sign(payload, private_key, {
-    algorithm: "RS256",
-    header: headers_rsa,
+  logger.info(`headers_rsa: ${JSON.stringify(headers_rsa)}`);
+  logger.info(`payload: ${JSON.stringify(payload)}`);
+  const encodedHeader = b64UrlEncode(JSON.stringify(headers_rsa));
+  const encodedPayload = b64UrlEncode(JSON.stringify(payload));
+  const tokenData = `${encodedHeader}.${encodedPayload}`;
+
+  const signCommand = new SignCommand({
+    KeyId: config.m2mKmsKid, // KMS Key ID
+    Message: new TextEncoder().encode(tokenData),
+    SigningAlgorithm: SigningAlgorithmSpec.RSASSA_PKCS1_V1_5_SHA_256,
   });
+
+  const kmsClient = new KMSClient();
+  const response = await kmsClient.send(signCommand);
+  if (!response.Signature) {
+    throw Error("JWT Signature failed. Empty signature returned");
+  }
+
+  const jwtSignature = b64ByteUrlEncode(response.Signature);
+
+  return `${tokenData}.${jwtSignature}`;
 };
 
 export const get_pdnd_token_m2m = async (
@@ -62,3 +82,16 @@ export const get_pdnd_token_m2m = async (
     return undefined;
   }
 };
+
+const b64UrlEncode = (str: string): string =>
+  bufferB64UrlEncode(Buffer.from(str, "utf-8"));
+
+const bufferB64UrlEncode = (b: Buffer): string =>
+  b
+    .toString("base64")
+    .replace(/=/g, "")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_");
+
+const b64ByteUrlEncode = (b: Uint8Array): string =>
+  bufferB64UrlEncode(Buffer.from(b));
