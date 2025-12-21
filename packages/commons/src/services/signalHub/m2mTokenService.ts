@@ -1,4 +1,3 @@
-import fs from "fs";
 import {
   exec_pdnd_client_assertion_m2m,
   get_pdnd_token_m2m,
