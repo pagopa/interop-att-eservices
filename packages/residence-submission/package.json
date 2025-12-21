@@ -44,6 +44,7 @@
     "vitest": "^0.33.0"
   },
   "dependencies": {
+    "@aws-sdk/client-kms": "^3.515.0",
     "@protobuf-ts/runtime": "^2.9.1",
     "@testcontainers/postgresql": "^11.0.3",
     "@zodios/core": "^10.9.2",
