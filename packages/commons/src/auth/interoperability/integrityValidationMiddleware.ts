@@ -174,18 +174,6 @@ const verifyAudience = (
 };
 
 const verifySignedHeaders = (payload: JwtPayload, req: Request): void => {
-  if (!req.headers["content-type"] || !req.headers["content-encoding"]) {
-    logger.error(
-      `verifyJwtPayload - Missing "content-type" or "content-encoding" in request headers`
-    );
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_HEADER_NOT_PRESENT"
-    );
-    throw ErrorHandling.tokenNotValid();
-  }
-
   const { signed_headers: signedHeaders } = payload;
   if (typeof signedHeaders !== "object" || !signedHeaders) {
     logger.error(
@@ -208,21 +196,6 @@ const verifySignedHeaders = (payload: JwtPayload, req: Request): void => {
       checkValueTrial(req.url, req.method, header);
       throw ErrorHandling.tokenNotValid();
     }
-  }
-
-  if (
-    signedHeaders["content-type"] !== req.headers["content-type"] ||
-    signedHeaders["content-encoding"] !== req.headers["content-encoding"]
-  ) {
-    logger.error(
-      `verifyJwtPayload - Signed headers do not match request headers`
-    );
-    void TrialService.insert(
-      req.url,
-      req.method,
-      "SIGNATURE_SIGNED_HEADERS_NOT_MATCH"
-    );
-    throw ErrorHandling.tokenNotValid();
   }
 };
 
