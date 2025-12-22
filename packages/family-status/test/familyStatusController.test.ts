@@ -1,8 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { DbRecord, FamilyStatusService } from "pdnd-common";
-import { RequestFS001 } from "../src/model/domain/models.js";
-import { mapDbRecordToResponseFS001 } from "../src/utilities/mapDbRecordToResponseFS001.js";
-import controller from "../src/controllers/familyStatusController.js";
+
+vi.mock("../src/config/config.js", () => ({
+  familyStatusConfiguration: {
+    M2M_KMS_KID: "mock-kid-id",
+  },
+}));
 
 vi.mock("../src/utilities/mapDbRecordToResponseFS001.js", () => ({
   mapDbRecordToResponseFS001: vi.fn(),
@@ -31,6 +33,11 @@ vi.mock("../src/exceptions/errors.js", () => ({
   requestParamNotValid: (message: string): Error => new Error(message),
   userModelNotFound: (): Error => new Error("User model not found"),
 }));
+
+import { DbRecord, FamilyStatusService } from "pdnd-common";
+import { RequestFS001 } from "../src/model/domain/models.js";
+import { mapDbRecordToResponseFS001 } from "../src/utilities/mapDbRecordToResponseFS001.js";
+import controller from "../src/controllers/familyStatusController.js";
 
 describe("FamilyStatusController", () => {
   beforeEach(() => {
