@@ -158,7 +158,7 @@ const dataPreparationRouter = (
           );
         } catch (error) {
           logger.error(
-            `[Controller] Error sending signal. Reverting signalId for ${eserviceId}. Error: ${error}`
+            `[Controller] Error sending signal for eserviceId ${eserviceId}. Error: ${error}`
           );
         }
         return res.status(201).end();

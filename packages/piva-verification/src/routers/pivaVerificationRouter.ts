@@ -66,7 +66,7 @@ const pivaVerificationRouter = (
         const authHeader = req.headers.authorization;
         const pdndToken = authHeader?.split(" ")[1];
         if (!pdndToken) {
-          throw new Error("Token PDND non trovato nella richiesta.");
+          throw new Error("PDND token not found in request.");
         }
 
         const eserviceId = await getEserviceIdFromToken(pdndToken);
