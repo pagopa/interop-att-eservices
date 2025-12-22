@@ -1,10 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import pivaVerificationController from "../src/controllers/pivaVerificationController.js";
 import { PivaVerificationService, userService } from "pdnd-common";
+import pivaVerificationController from "../src/controllers/pivaVerificationController.js";
 import type {
   Richiesta,
   VerificaPartitaIva,
 } from "../src/model/domain/models.js";
+vi.mock("../src/config/config.js", () => ({
+  pivaVerificationConfig: {
+    M2M_KMS_KID: "mock-kid",
+    M2M_CLIENT_ID: "mock-client",
+  },
+}));
 
 vi.mock("pdnd-common", async (importOriginal) => {
   const actual = await importOriginal<typeof import("pdnd-common")>();
@@ -18,22 +24,16 @@ vi.mock("pdnd-common", async (importOriginal) => {
     },
     getContext: vi.fn(() => ({})),
     logger: {
+      info: vi.fn(),
       error: vi.fn(),
+      warn: vi.fn(),
     },
   };
 });
 
-vi.mock("../exceptions/errors", () => ({
+vi.mock("../src/exceptions/errors.js", () => ({
   requestParamNotValid: vi.fn((message) => new Error(message)),
 }));
-
-vi.stubEnv("DATABASE_HOST", "localhost");
-vi.stubEnv("DATABASE_PORT", "5432");
-vi.stubEnv("AUTH_CLIENT_ID", "mock-client-id");
-vi.stubEnv("AUTH_CLIENT_SECRET", "mock-client-secret");
-vi.stubEnv("AUTH_TOKEN_URL", "http://mock.token.url");
-vi.stubEnv("STORAGE_HOST", "http://mock.storage.host");
-vi.stubEnv("STORAGE_PORT", "8080");
 
 describe("PivaVerificationController", () => {
   beforeEach(() => {
@@ -47,7 +47,7 @@ describe("PivaVerificationController", () => {
     const mockData = {
       piva: "IT12345678901",
       ragioneSociale: "Test Corp",
-      organizationId: "IT12345678901"
+      organizationId: "IT12345678901",
     };
 
     vi.mocked(PivaVerificationService.getByPiva).mockResolvedValue(mockData);
@@ -60,7 +60,7 @@ describe("PivaVerificationController", () => {
 
     expect(result).toEqual(expectedResult);
     expect(PivaVerificationService.getByPiva).toHaveBeenCalledWith(
-      "IT12345678901",
+      "IT12345678901"
     );
   });
 
@@ -68,7 +68,7 @@ describe("PivaVerificationController", () => {
     const request = { organizationId: undefined } as unknown as Richiesta;
 
     await expect(pivaVerificationController.findPiva(request)).rejects.toThrow(
-      "The request body has one or more required param not valid",
+      "The request body has one or more required param not valid"
     );
     expect(PivaVerificationService.getByPiva).not.toHaveBeenCalled();
   });
@@ -78,14 +78,14 @@ describe("PivaVerificationController", () => {
     const externalError = new Error("External service error");
 
     vi.mocked(PivaVerificationService.getByPiva).mockRejectedValue(
-      externalError,
+      externalError
     );
 
     await expect(pivaVerificationController.findPiva(request)).rejects.toThrow(
-      externalError,
+      externalError
     );
     expect(PivaVerificationService.getByPiva).toHaveBeenCalledWith(
-      "IT12345678901",
+      "IT12345678901"
     );
   });
 });
