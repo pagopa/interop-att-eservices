@@ -128,6 +128,9 @@ export const verifyJwtPayloadAndHeader = (
     }
 
     if (decodedToken.payload.iss !== config.issValue) {
+      logger.info(
+        `verifyJwtPayloadAndHeader - decodedToken iss: ${decodedToken.payload.iss} - config iss: ${config.issValue}`
+      );
       logger.error(
         `verifyJwtPayloadAndHeader - Error parsing token iss not valid`
       );
@@ -142,7 +145,10 @@ export const verifyJwtPayloadAndHeader = (
     }
 
     if (decodedToken.payload.aud !== config.audValue) {
-      logger.info(`verifyJwtPayloadAndHeader - decodedToken: ${decodedToken}`);
+      logger.info(
+        `verifyJwtPayloadAndHeader - decodedToken aud: ${decodedToken.payload.aud} - config aud: ${config.audValue}`
+      );
+
       logger.error(
         `verifyJwtPayloadAndHeader - Error parsing token aud not valid`
       );
