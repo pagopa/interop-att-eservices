@@ -16,7 +16,10 @@ const makeApiProblem = makeApiProblemBuilder(logger, {});
 export const authenticationMiddleware: (
   isEnableTrial: boolean,
   config: SkipDigestConfig
-) => ZodiosRouterContextRequestHandler<ExpressContext> = (isEnableTrial, config) => {
+) => ZodiosRouterContextRequestHandler<ExpressContext> = (
+  isEnableTrial,
+  config
+) => {
   const authMiddleware: ZodiosRouterContextRequestHandler<
     ExpressContext
   > = async (req, res, next): Promise<unknown> => {
