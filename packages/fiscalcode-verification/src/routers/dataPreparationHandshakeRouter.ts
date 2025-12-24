@@ -17,6 +17,7 @@ import {
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { getCertificateFingerprintFromBuffer } from "../utilities/certificateUtility.js";
 import { contextDataFiscalCodeMiddleware } from "../context/context.js";
+import { fiscalcodeVerificationConfig } from "../config/config.js";
 
 const dataPreparationHandshakeRouter = (
   ctx: ZodiosContext
@@ -28,7 +29,7 @@ const dataPreparationHandshakeRouter = (
   dataPreparationHandshakeRouter.post(
     "/subject-id-verification/data-preparation/handshake",
     contextDataFiscalCodeMiddleware,
-    authenticationMiddleware(false),
+    authenticationMiddleware(false, fiscalcodeVerificationConfig),
     upload.single("certificate"),
     async (req, res) => {
       try {

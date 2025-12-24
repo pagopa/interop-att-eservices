@@ -11,6 +11,7 @@ import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import trialController from "../controllers/trialController.js";
 import { TrialPaginatedRequestParams } from "../model/trialPaginatedRequestParams.js";
+import { trialServiceConfig } from "../config/config.js";
 
 const trialRouter = (
   ctx: ZodiosContext
@@ -53,7 +54,7 @@ const trialRouter = (
 
   trialRouter.get(
     "/trial/search",
-    authenticationMiddleware(false),
+    authenticationMiddleware(false, trialServiceConfig),
     async (req, res) => {
       try {
         logger.info("[START] POST - '/trial/search'");

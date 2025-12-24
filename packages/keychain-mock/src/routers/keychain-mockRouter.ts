@@ -18,7 +18,7 @@ const keychainMockRouter = (
   keychainMockRouter.get(
     "/keychain-mock/signature",
     contextDataKeychainMockMiddleware,
-    authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(true, keychainSignerConfig),
     async (req, res) => {
       try {
         logger.info(`[START] Get - '/keychain-mock/signature' `);
@@ -70,7 +70,7 @@ const keychainMockRouter = (
   keychainMockRouter.post(
     "/keychain-mock/verify",
     contextDataKeychainMockMiddleware,
-    authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(true, keychainSignerConfig),
     async (req, res) => {
       try {
         logger.info(`[START] Post - '/keychain-mock/verify'`);

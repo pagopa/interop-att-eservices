@@ -12,6 +12,7 @@ import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataDigitalAddressMiddleware } from "../context/context.js";
 import digitalAddressVerificationMultipleController from "../controllers/digitalAddressVerificationMultipleController.js";
+import { digitalAddressVerificationConfig } from "../config/config.js";
 
 const DigitalAddressVerificationMultipleRouter = (
   ctx: ZodiosContext
@@ -21,7 +22,7 @@ const DigitalAddressVerificationMultipleRouter = (
   digitalAddressVerificationMultipleRouter.post(
     "/digital-address-verification/list",
     contextDataDigitalAddressMiddleware,
-    authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(true, digitalAddressVerificationConfig),
     async (req, res) => {
       try {
         logger.info(`[START] Post - '/verifica' : ${req.body.codiciFiscali}`);
@@ -65,7 +66,7 @@ const DigitalAddressVerificationMultipleRouter = (
   digitalAddressVerificationMultipleRouter.get(
     "/digital-address-verification/list/state/:id",
     contextDataDigitalAddressMiddleware,
-    authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(true, digitalAddressVerificationConfig),
     async (req, res) => {
       try {
         logger.info(`[START] Post - '/verifica' : ${req.params.id}`);
@@ -120,7 +121,7 @@ const DigitalAddressVerificationMultipleRouter = (
   digitalAddressVerificationMultipleRouter.get(
     "/digital-address-verification/list/response/:id",
     contextDataDigitalAddressMiddleware,
-    authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(true, digitalAddressVerificationConfig),
     async (req, res) => {
       try {
         logger.info(`[START] Post - '/verifica' : ${req.body}`);

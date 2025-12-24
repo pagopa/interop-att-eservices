@@ -28,7 +28,10 @@ const residenceVerificationRouter = (
   residenceVerificationDirectRouter.post(
     "/residence-verification-direct",
     contextDataResidenceMiddleware,
-    authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(
+      true,
+      residenceVerificationDirectConfig
+    ),
     integrityValidationMiddleware(residenceVerificationDirectConfig),
     auditValidationMiddleware(residenceVerificationDirectConfig),
     async (req, res) => {
@@ -70,7 +73,10 @@ const residenceVerificationRouter = (
   residenceVerificationDirectRouter.post(
     "/residence-verification-direct/check",
     contextDataResidenceMiddleware,
-    authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(
+      true,
+      residenceVerificationDirectConfig
+    ),
     integrityValidationMiddleware(residenceVerificationDirectConfig),
     auditValidationMiddleware(residenceVerificationDirectConfig),
     async (req, res) => {

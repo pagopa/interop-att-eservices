@@ -12,6 +12,7 @@ import {
   apiDatapreparationTemplateToPivaModel,
 } from "../model/domain/apiConverter.js";
 import { contextDataPivaMiddleware } from "../context/context.js";
+import { pivaVerificationConfig } from "../config/config.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -21,7 +22,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.post(
     "/organization-id-verification/data-preparation",
     contextDataPivaMiddleware,
-    authenticationMiddleware(false),
+    authenticationMiddleware(false, pivaVerificationConfig),
     async (req, res) => {
       try {
         await PivaVerificationService.saveList(
@@ -38,7 +39,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.get(
     "/organization-id-verification/data-preparation",
     contextDataPivaMiddleware,
-    authenticationMiddleware(false),
+    authenticationMiddleware(false, pivaVerificationConfig),
     async (req, res) => {
       try {
         if (!req) {
@@ -59,7 +60,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.delete(
     "/organization-id-verification/data-preparation",
     contextDataPivaMiddleware,
-    authenticationMiddleware(false),
+    authenticationMiddleware(false, pivaVerificationConfig),
     async (req, res) => {
       try {
         if (!req) {
@@ -77,7 +78,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.post(
     "/organization-id-verification/data-preparation/remove",
     contextDataPivaMiddleware,
-    authenticationMiddleware(false),
+    authenticationMiddleware(false, pivaVerificationConfig),
     async (req, res) => {
       try {
         const data = await PivaVerificationService.deleteByPiva(

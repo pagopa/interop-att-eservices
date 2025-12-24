@@ -30,7 +30,7 @@ const familyStatusRouter = (
   familyStatusRouter.post(
     "/family-status",
     contextDataFamilyMiddleware,
-    authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(true, familyStatusConfiguration),
     integrityValidationMiddleware(familyStatusConfiguration),
     auditValidationMiddleware(familyStatusConfiguration),
     async (req, res) => {
@@ -64,7 +64,7 @@ const familyStatusRouter = (
   familyStatusRouter.post(
     "/family-status/check-with-payload-signature",
     contextDataFamilyMiddleware,
-    authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(true, familyStatusConfiguration),
     integrityValidationMiddleware(familyStatusConfiguration),
     auditValidationMiddleware(familyStatusConfiguration),
     async (req, res) => {

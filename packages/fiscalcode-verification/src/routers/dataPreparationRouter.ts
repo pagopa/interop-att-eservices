@@ -16,6 +16,7 @@ import {
   apiDatapreparationTemplateToFiscalcodeModel,
 } from "../model/domain/apiConverter.js";
 import { contextDataFiscalCodeMiddleware } from "../context/context.js";
+import { fiscalcodeVerificationConfig } from "../config/config.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -25,7 +26,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.post(
     "/subject-id-verification/data-preparation",
     contextDataFiscalCodeMiddleware,
-    authenticationMiddleware(false),
+    authenticationMiddleware(false, fiscalcodeVerificationConfig),
     async (req, res) => {
       try {
         await FiscalCodeService.saveList(
@@ -42,7 +43,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.get(
     "/subject-id-verification/data-preparation",
     contextDataFiscalCodeMiddleware,
-    authenticationMiddleware(false),
+    authenticationMiddleware(false, fiscalcodeVerificationConfig),
     async (req, res) => {
       try {
         if (!req) {
@@ -63,7 +64,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.delete(
     "/subject-id-verification/data-preparation",
     contextDataFiscalCodeMiddleware,
-    authenticationMiddleware(false),
+    authenticationMiddleware(false, fiscalcodeVerificationConfig),
     async (req, res) => {
       try {
         if (!req) {
@@ -82,7 +83,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.post(
     "/subject-id-verification/data-preparation/remove",
     contextDataFiscalCodeMiddleware,
-    authenticationMiddleware(false),
+    authenticationMiddleware(false, fiscalcodeVerificationConfig),
     async (req, res) => {
       /* eslint-enable */
       try {

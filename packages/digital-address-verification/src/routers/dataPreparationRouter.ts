@@ -13,6 +13,7 @@ import {
 } from "../model/domain/apiConverter.js";
 import dataPreparationController from "../controllers/dataPreparationController.js";
 import { contextDataDigitalAddressMiddleware } from "../context/context.js";
+import { digitalAddressVerificationConfig } from "../config/config.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -22,7 +23,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.post(
     "/digital-address-verification/data-preparation",
     contextDataDigitalAddressMiddleware,
-    authenticationMiddleware(false),
+    authenticationMiddleware(false, digitalAddressVerificationConfig),
     async (req, res) => {
       try {
         const responseData = await dataPreparationController.saveList(
@@ -45,7 +46,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.get(
     "/digital-address-verification/data-preparation",
     contextDataDigitalAddressMiddleware,
-    authenticationMiddleware(false),
+    authenticationMiddleware(false, digitalAddressVerificationConfig),
     async (req, res) => {
       try {
         if (!req) {
@@ -70,7 +71,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.get(
     "/digital-address-verification/data-preparation/:idSubject",
     contextDataDigitalAddressMiddleware,
-    authenticationMiddleware(false),
+    authenticationMiddleware(false, digitalAddressVerificationConfig),
     async (req, res) => {
       try {
         if (!req) {
@@ -101,7 +102,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.delete(
     "/digital-address-verification/data-preparation",
     contextDataDigitalAddressMiddleware,
-    authenticationMiddleware(false),
+    authenticationMiddleware(false, digitalAddressVerificationConfig),
     async (req, res) => {
       try {
         if (!req) {
@@ -118,7 +119,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.delete(
     "/digital-address-verification/data-preparation/:idSubject",
     contextDataDigitalAddressMiddleware,
-    authenticationMiddleware(false),
+    authenticationMiddleware(false, digitalAddressVerificationConfig),
     async (req, res) => {
       try {
         if (!req) {

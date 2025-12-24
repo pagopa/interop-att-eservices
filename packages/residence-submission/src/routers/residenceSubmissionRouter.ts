@@ -35,7 +35,7 @@ const residenceSubissionController = (
   residenceSubissionController.post(
     "/residence-submission",
     contextDataResidenceMiddleware,
-    authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(true, residenceSubmissionConfig),
     integrityValidationMiddleware(residenceSubmissionConfig),
     auditValidationMiddleware(residenceSubmissionConfig),
     async (req, res) => {
@@ -77,7 +77,7 @@ const residenceSubissionController = (
   residenceSubissionController.put(
     "/residence-submission",
     contextDataResidenceMiddleware,
-    authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(true, residenceSubmissionConfig),
     integrityValidationMiddleware(residenceSubmissionConfig),
     auditValidationMiddleware(residenceSubmissionConfig),
     async (req, res) => {
@@ -180,7 +180,7 @@ const residenceSubissionController = (
   residenceSubissionController.delete(
     "/residence-submission/:id",
     contextDataResidenceMiddleware,
-    authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(true, residenceSubmissionConfig),
     integrityValidationMiddleware(residenceSubmissionConfig),
     auditValidationMiddleware(residenceSubmissionConfig),
     async (req, res) => {

@@ -13,6 +13,7 @@ import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataDigitalAddressMiddleware } from "../context/context.js";
 import digitalAddressVerificationSingleController from "../controllers/digitalAddressVerificationSingleController.js";
 import logHeadersMiddleware from "../middlewares/logHeaderMiddleware.js";
+import { digitalAddressVerificationConfig } from "../config/config.js";
 const DigitalAddressVerificationSingleRouter = (
   ctx: ZodiosContext
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
@@ -22,7 +23,7 @@ const DigitalAddressVerificationSingleRouter = (
     "/digital-address-verification/verify/:id_subject",
     logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
-    authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(true, digitalAddressVerificationConfig),
     async (req, res) => {
       try {
         logger.info(`[START] Post - '/verifica' : ${req.body}`);
@@ -65,7 +66,7 @@ const DigitalAddressVerificationSingleRouter = (
     "/digital-address-verification/retrieve/:id_subject",
     logHeadersMiddleware,
     contextDataDigitalAddressMiddleware,
-    authenticationCorrelationMiddleware(true),
+    authenticationCorrelationMiddleware(true, digitalAddressVerificationConfig),
     async (req, res) => {
       try {
         const { id_subject } = req.params;

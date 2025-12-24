@@ -20,11 +20,12 @@ app.use("/", healthRouter(zodiosCtx) as unknown as express.Router);
 const residenceRouter = express.Router();
 residenceRouter.use(contextDataResidenceMiddleware);
 residenceRouter.use((req, res, next) => {
-  (authenticationCorrelationMiddleware(true) as express.RequestHandler)(
-    req,
-    res,
-    next
-  );
+  (
+    authenticationCorrelationMiddleware(
+      true,
+      residenceVerificationConfig
+    ) as express.RequestHandler
+  )(req, res, next);
 });
 residenceRouter.use((req, res, next) => {
   (
