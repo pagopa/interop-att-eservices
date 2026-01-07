@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
 import {
   KMSClient,
   SignCommand,
   SigningAlgorithmSpec,
 } from "@aws-sdk/client-kms";
-import { logger } from "../index.js";
 import { M2mConfig } from "../config/index.js";
 
-export const exec_pdnd_client_assertion_m2m = async (
+export const get_pdnd_token_m2m = async (
   config: M2mConfig
 ): Promise<string> => {
   const issued = Math.floor(Date.now() / 1000);
@@ -17,7 +15,7 @@ export const exec_pdnd_client_assertion_m2m = async (
   const jti = uuidv4();
 
   const headers_rsa = {
-    kid: config.m2mKid,
+    kid: config.m2mKmsKid,
     alg: config.m2mAlg,
     typ: config.m2mtTyp,
   };
@@ -25,10 +23,14 @@ export const exec_pdnd_client_assertion_m2m = async (
   const payload = {
     iss: config.m2mClientId,
     sub: config.m2mClientId,
+    client_id: config.m2mClientId,
     aud: config.m2mAuthAudience,
     jti,
     iat: issued,
+    nbf: issued,
     exp: expire_in,
+    organizationId: config.m2mOrgId,
+    role: config.m2mRole,
   };
 
   const encodedHeader = b64UrlEncode(JSON.stringify(headers_rsa));
@@ -50,35 +52,6 @@ export const exec_pdnd_client_assertion_m2m = async (
   const jwtSignature = b64ByteUrlEncode(response.Signature);
 
   return `${tokenData}.${jwtSignature}`;
-};
-
-export const get_pdnd_token_m2m = async (
-  client_assertion: string,
-  config: M2mConfig
-): Promise<string | undefined> => {
-  const data = {
-    client_id: config.m2mClientId,
-    grant_type: "client_credentials",
-    client_assertion_type:
-      "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-    client_assertion,
-  };
-  const headers = { "Content-Type": "application/x-www-form-urlencoded" };
-
-  try {
-    const response = await axios.post(
-      config.m2mTokenEndpoint ||
-        "https://auth.uat.interop.pagopa.it/token.oauth2",
-      data,
-      {
-        headers,
-      }
-    );
-    return response.data.access_token;
-  } catch (error: any) {
-    logger.error(`Error making POST request: ${error.message}`);
-    return undefined;
-  }
 };
 
 const b64UrlEncode = (str: string): string =>
