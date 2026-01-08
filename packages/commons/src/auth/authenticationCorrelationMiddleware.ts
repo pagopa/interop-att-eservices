@@ -14,10 +14,8 @@ import {
 const makeApiProblem = makeApiProblemBuilder(logger, {});
 /* eslint-disable */
 export const authenticationCorrelationMiddleware: (
-  isEnableTrial: boolean,
-) => ZodiosRouterContextRequestHandler<ExpressContext> = (
-  isEnableTrial,
-) => {
+  isEnableTrial: boolean
+) => ZodiosRouterContextRequestHandler<ExpressContext> = (isEnableTrial) => {
   const authCorrelationMiddleware: ZodiosRouterContextRequestHandler<
     ExpressContext
   > = async (req, res, next): Promise<unknown> => {
