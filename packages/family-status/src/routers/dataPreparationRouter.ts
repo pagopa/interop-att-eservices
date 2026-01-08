@@ -12,7 +12,6 @@ import { api } from "../model/generated/api.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, userModelNotFound } from "../exceptions/errors.js";
 import { contextDataFamilyMiddleware } from "../context/context.js";
-import { familyStatusConfiguration } from "../config/config.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -22,7 +21,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.post(
     "/family-status/data-preparation",
     contextDataFamilyMiddleware,
-    authenticationMiddleware(false, familyStatusConfiguration),
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         const data = await FamilyStatusService.prepareData(
@@ -44,7 +43,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.get(
     "/family-status/data-preparation",
     contextDataFamilyMiddleware,
-    authenticationMiddleware(false, familyStatusConfiguration),
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {
@@ -63,7 +62,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.get(
     "/family-status/data-preparation/:uuid",
     contextDataFamilyMiddleware,
-    authenticationMiddleware(false, familyStatusConfiguration),
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {
@@ -84,7 +83,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.delete(
     "/family-status/data-preparation",
     contextDataFamilyMiddleware,
-    authenticationMiddleware(false, familyStatusConfiguration),
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {
@@ -102,7 +101,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.delete(
     "/family-status/data-preparation/:uuid",
     contextDataFamilyMiddleware,
-    authenticationMiddleware(false, familyStatusConfiguration),
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         if (!req) {

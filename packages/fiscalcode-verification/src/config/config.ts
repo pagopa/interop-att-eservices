@@ -6,14 +6,14 @@ import {
   SslConfig,
   ContextConfig,
   LoggerConfig,
-  SkipDigestConfig,
+  JWTConfig,
 } from "pdnd-common";
 
 export const FiscalcodeVerificationConfig = DatabaseConfig.and(HTTPServerConfig)
   .and(SslConfig)
   .and(SignerConfig)
   .and(ContextConfig)
-  .and(SkipDigestConfig)
+  .and(JWTConfig)
   .and(LoggerConfig);
 
 export type FiscalcodeVerificationConfig = z.infer<

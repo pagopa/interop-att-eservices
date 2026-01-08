@@ -18,11 +18,17 @@ export const JWTSeedConfig = z
 export type JWTSeedConfig = z.infer<typeof JWTSeedConfig>;
 
 export const JWTConfig = z.preprocess(
-  (c) =>
-    (c as { SKIP_JWT_VERIFICATION?: string }).SKIP_JWT_VERIFICATION ===
-    undefined
-      ? { ...(c as object), SKIP_JWT_VERIFICATION: "false" }
-      : c,
+  (c) => {
+    const conf = c as {
+      SKIP_JWT_VERIFICATION?: string;
+      SKIP_DIGEST_CHECK?: string;
+    };
+    return {
+      ...(conf as object),
+      SKIP_JWT_VERIFICATION: conf.SKIP_JWT_VERIFICATION ?? "false",
+      SKIP_DIGEST_CHECK: conf.SKIP_DIGEST_CHECK ?? "false",
+    };
+  },
 
   z
     .discriminatedUnion("SKIP_JWT_VERIFICATION", [
@@ -32,6 +38,10 @@ export const JWTConfig = z.preprocess(
 
       z.object({
         SKIP_JWT_VERIFICATION: z.literal("false"),
+        SKIP_DIGEST_CHECK: z
+          .enum(["true", "false"])
+          .transform((value) => value === "true")
+          .default("false"),
         WELL_KNOWN_URLS: z
           .string()
           .transform((s) => s.split(","))
@@ -45,6 +55,7 @@ export const JWTConfig = z.preprocess(
       c.SKIP_JWT_VERIFICATION === "false"
         ? {
             skipJWTVerification: false as const,
+            skipDigestCheck: c.SKIP_DIGEST_CHECK,
             wellKnownUrls: c.WELL_KNOWN_URLS,
             issValue: c.TOKEN_ISS,
             audValue: c.TOKEN_AUD,

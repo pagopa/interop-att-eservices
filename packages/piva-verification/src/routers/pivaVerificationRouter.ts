@@ -14,7 +14,6 @@ import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import logHeadersMiddleware from "../middlewares/logHeaderMiddleware.js";
 import { contextDataPivaMiddleware } from "../context/context.js";
 import { verifyCertValidity } from "../security/certValidityMiddleware.js";
-import { pivaVerificationConfig } from "../config/config.js";
 
 const pivaVerificationRouter = (
   ctx: ZodiosContext
@@ -25,7 +24,7 @@ const pivaVerificationRouter = (
     "/organization-id-verification/check",
     logHeadersMiddleware,
     contextDataPivaMiddleware,
-    authenticationCorrelationMiddleware(true, pivaVerificationConfig),
+    authenticationCorrelationMiddleware(true),
     verifyCertValidity,
     async (req, res) => {
       try {

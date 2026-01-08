@@ -15,7 +15,6 @@ import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataFiscalCodeMiddleware } from "../context/context.js";
 import { keychainSignatureUtility } from "../utilities/keychainSignatureUtility.js";
 import { keychainSignerConfig } from "../config/keychainSignerConfig.js";
-import { fiscalcodeVerificationConfig } from "../config/config.js";
 
 const fiscalcodeVerificationRouter = (
   ctx: ZodiosContext
@@ -25,7 +24,7 @@ const fiscalcodeVerificationRouter = (
   fiscalcodeVerificationRouter.post(
     "/subject-id-verification/check",
     contextDataFiscalCodeMiddleware,
-    authenticationCorrelationMiddleware(true, fiscalcodeVerificationConfig),
+    authenticationCorrelationMiddleware(true),
     verifyCertValidity,
     async (req, res) => {
       try {
@@ -63,7 +62,7 @@ const fiscalcodeVerificationRouter = (
   fiscalcodeVerificationRouter.post(
     "/subject-id-verification/check-with-payload-signature",
     contextDataFiscalCodeMiddleware,
-    authenticationCorrelationMiddleware(true, fiscalcodeVerificationConfig),
+    authenticationCorrelationMiddleware(true),
     verifyCertValidity,
     async (req, res) => {
       try {

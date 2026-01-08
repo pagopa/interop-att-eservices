@@ -13,7 +13,6 @@ import {
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { getCertificateFingerprintFromBuffer } from "../utilities/certificateUtility.js";
 import { contextDataPivaMiddleware } from "../context/context.js";
-import { pivaVerificationConfig } from "../config/config.js";
 
 const dataPreparationHandshakeRouter = (
   ctx: ZodiosContext
@@ -25,7 +24,7 @@ const dataPreparationHandshakeRouter = (
   dataPreparationHandshakeRouter.post(
     "/organization-id-verification/data-preparation/handshake",
     contextDataPivaMiddleware,
-    authenticationMiddleware(false, pivaVerificationConfig),
+    authenticationMiddleware(false),
     upload.single("certificate"),
     async (req, res) => {
       try {

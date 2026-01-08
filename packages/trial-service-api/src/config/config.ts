@@ -5,14 +5,12 @@ import {
   JWTConfig,
   ContextConfig,
   HTTPServerConfig,
-  SkipDigestConfig,
 } from "pdnd-common";
 
 export const TrialServiceConfig = LoggerConfig.and(DatabaseConfig)
   .and(ContextConfig)
   .and(HTTPServerConfig)
-  .and(JWTConfig)
-  .and(SkipDigestConfig);
+  .and(JWTConfig);
 
 export type TrialServiceConfig = z.infer<typeof TrialServiceConfig>;
 

@@ -7,7 +7,6 @@ import {
   JWTConfig,
   SslConfig,
   ContextConfig,
-  SkipDigestConfig,
 } from "pdnd-common";
 
 export const PivaVerificationConfig = LoggerConfig.and(DatabaseConfig)
@@ -15,7 +14,6 @@ export const PivaVerificationConfig = LoggerConfig.and(DatabaseConfig)
   .and(SignerConfig)
   .and(JWTConfig)
   .and(SslConfig)
-  .and(SkipDigestConfig)
   .and(ContextConfig);
 
 export type PivaVerificationConfig = z.infer<typeof PivaVerificationConfig>;

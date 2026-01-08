@@ -1,7 +1,7 @@
 import { ZodiosRouterContextRequestHandler } from "@zodios/express";
 import { ErrorHandling, makeApiProblemBuilder } from "pdnd-models";
 import { P, match } from "ts-pattern";
-import { ExpressContext, SkipDigestConfig, sendCustomEvent } from "../index.js";
+import { ExpressContext, sendCustomEvent } from "../index.js";
 import { logger } from "../logging/index.js";
 import { AuthData } from "./authData.js";
 import { Headers } from "./headers.js";
@@ -15,10 +15,8 @@ const makeApiProblem = makeApiProblemBuilder(logger, {});
 /* eslint-disable */
 export const authenticationCorrelationMiddleware: (
   isEnableTrial: boolean,
-  config: SkipDigestConfig
 ) => ZodiosRouterContextRequestHandler<ExpressContext> = (
   isEnableTrial,
-  config
 ) => {
   const authCorrelationMiddleware: ZodiosRouterContextRequestHandler<
     ExpressContext
@@ -90,8 +88,7 @@ export const authenticationCorrelationMiddleware: (
           req.path,
           req.method,
           isEnableTrial,
-          agidJwtTrackingEvidence,
-          config
+          agidJwtTrackingEvidence
         );
         if (!validPayloadAndHeader) {
           logger.error(

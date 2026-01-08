@@ -5,7 +5,6 @@ import {
   JWTConfig,
   LoggerConfig,
   DatabaseConfig,
-  SkipDigestConfig,
 } from "pdnd-common";
 import { z } from "zod";
 
@@ -45,7 +44,6 @@ export const KeychainSignerConfig = z
       }))
   )
   .and(SignerConfig)
-  .and(SkipDigestConfig)
   .and(ContextConfig)
   .and(HTTPServerConfig)
   .and(JWTConfig)

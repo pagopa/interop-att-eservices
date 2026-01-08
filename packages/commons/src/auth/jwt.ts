@@ -2,12 +2,7 @@
 /* eslint-disable max-params */
 import jwt, { JwtHeader, JwtPayload, SigningKeyCallback } from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
-import {
-  JWTConfig,
-  logger,
-  sendCustomEvent,
-  SkipDigestConfig,
-} from "../index.js";
+import { JWTConfig, logger, sendCustomEvent } from "../index.js";
 import { generateHashFromString } from "../utility/hashUtility.js";
 import { AuthData, AuthJWTToken } from "./authData.js";
 
@@ -83,15 +78,16 @@ export const verifyJwtPayloadAndHeader = (
   operationPath: string,
   operationMethod: string,
   isEnableTrial: boolean,
-  tracking_jwt: string,
-  interOpConfig: SkipDigestConfig
+  tracking_jwt: string
 ): Promise<boolean> =>
   new Promise((resolve) => {
     const config = JWTConfig.parse(process.env);
+    logger.info(`Config for JWT verification: ${JSON.stringify(config)}`);
     const decodedToken = jwt.decode(jwtToken, { complete: true }) as {
       header: JwtHeader;
       payload: JwtPayload;
     };
+    logger.info(`Decoded token: ${JSON.stringify(decodedToken)}`);
 
     if (!decodedToken?.header) {
       logger.error(
@@ -170,10 +166,7 @@ export const verifyJwtPayloadAndHeader = (
       resolve(false);
     }
 
-    if (
-      !interOpConfig.skipInteroperabilityVerification &&
-      !interOpConfig.skipAgidPayloadVerification
-    ) {
+    if (config.skipDigestCheck === false) {
       const expectedDigest = generateHashFromString(tracking_jwt);
 
       logger.info(

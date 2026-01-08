@@ -7,8 +7,8 @@ import {
   ZodiosContext,
   authenticationCorrelationMiddleware,
   TrialService,
-  integrityValidationMiddleware,
-  auditValidationMiddleware,
+  // integrityValidationMiddleware,
+  // auditValidationMiddleware,
   getEserviceIdFromToken,
   generateObjectId,
   SHService,
@@ -23,7 +23,7 @@ import {
   mapGeneralErrorModel,
   userModelNotFound,
 } from "../exceptions/errors.js";
-import { contextDataResidenceMiddleware } from "../context/context.js";
+// import { contextDataResidenceMiddleware } from "../context/context.js";
 import { SignalPayload } from "../../../commons/dist/services/signalHub/shService.js";
 import { residenceSubmissionConfig } from "../config/config.js";
 
@@ -34,10 +34,10 @@ const residenceSubissionController = (
 
   residenceSubissionController.post(
     "/residence-submission",
-    contextDataResidenceMiddleware,
-    authenticationCorrelationMiddleware(true, residenceSubmissionConfig),
-    integrityValidationMiddleware(residenceSubmissionConfig),
-    auditValidationMiddleware(residenceSubmissionConfig),
+    // contextDataResidenceMiddleware,
+    authenticationCorrelationMiddleware(true),
+    // integrityValidationMiddleware(residenceSubmissionConfig),
+    // auditValidationMiddleware(residenceSubmissionConfig),
     async (req, res) => {
       try {
         logger.info(`[START] residenceSubissionController: ${req.body}`);
@@ -76,10 +76,10 @@ const residenceSubissionController = (
 
   residenceSubissionController.put(
     "/residence-submission",
-    contextDataResidenceMiddleware,
-    authenticationCorrelationMiddleware(true, residenceSubmissionConfig),
-    integrityValidationMiddleware(residenceSubmissionConfig),
-    auditValidationMiddleware(residenceSubmissionConfig),
+    // contextDataResidenceMiddleware,
+    authenticationCorrelationMiddleware(true),
+    // integrityValidationMiddleware(residenceSubmissionConfig),
+    // auditValidationMiddleware(residenceSubmissionConfig),
     async (req, res) => {
       try {
         logger.info(`[START] residenceSubissionController update: ${req.body}`);
@@ -179,10 +179,10 @@ const residenceSubissionController = (
 
   residenceSubissionController.delete(
     "/residence-submission/:id",
-    contextDataResidenceMiddleware,
-    authenticationCorrelationMiddleware(true, residenceSubmissionConfig),
-    integrityValidationMiddleware(residenceSubmissionConfig),
-    auditValidationMiddleware(residenceSubmissionConfig),
+    // contextDataResidenceMiddleware,
+    authenticationCorrelationMiddleware(true),
+    // integrityValidationMiddleware(residenceSubmissionConfig),
+    // auditValidationMiddleware(residenceSubmissionConfig),
     async (req, res) => {
       try {
         const { id } = req.params;
