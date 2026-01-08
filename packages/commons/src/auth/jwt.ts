@@ -82,12 +82,10 @@ export const verifyJwtPayloadAndHeader = (
 ): Promise<boolean> =>
   new Promise((resolve) => {
     const config = JWTConfig.parse(process.env);
-    logger.info(`Config for JWT verification: ${JSON.stringify(config)}`);
     const decodedToken = jwt.decode(jwtToken, { complete: true }) as {
       header: JwtHeader;
       payload: JwtPayload;
     };
-    logger.info(`Decoded token: ${JSON.stringify(decodedToken)}`);
 
     if (!decodedToken?.header) {
       logger.error(
