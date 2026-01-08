@@ -1,6 +1,5 @@
 import {
   SignerConfig,
-  InteroperabilityConfig,
   ContextConfig,
   HTTPServerConfig,
   JWTConfig,
@@ -45,7 +44,6 @@ export const KeychainSignerConfig = z
       }))
   )
   .and(SignerConfig)
-  .and(InteroperabilityConfig)
   .and(ContextConfig)
   .and(HTTPServerConfig)
   .and(JWTConfig)
