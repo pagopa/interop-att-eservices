@@ -14,13 +14,6 @@ export const ShConfig = z
     START_DATE_MS: z.string(),
     SIGNAL_HUB_HOST: z.string().url(),
     SIGNAL_HUB_API_VERSION: z.string().min(1),
-    CRON_TIME_JOB: z
-      .string()
-      .min(1, "CRON_TIME_JOB is required")
-      .regex(
-        /^(\S+\s+){5}\S+$/,
-        "CRON_TIME_JOB must be a 6-field cron expression"
-      ),
   })
   .transform((c) => ({
     seedExpireDays: c.SEED_EXPIRATION_DAYS,
@@ -29,7 +22,6 @@ export const ShConfig = z
     startDateMs: c.START_DATE_MS,
     signalHubHost: c.SIGNAL_HUB_HOST,
     signalHubApiVersion: c.SIGNAL_HUB_API_VERSION,
-    cronTime: c.CRON_TIME_JOB,
   }))
   .and(InteroperabilityConfig)
   .and(JWTConfig)

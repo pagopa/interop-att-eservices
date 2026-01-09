@@ -24,11 +24,13 @@ export const SignalHubClient = {
       objectId: "-",
     };
 
+    console.log("")
+
     await axios.post(url, payload, {
       headers: {
         Authorization: `Bearer ${SIGNAL_HUB_AUTH_TOKEN}`,
         "Content-Type": "application/json",
       },
     });
-  },
+  }
 };
