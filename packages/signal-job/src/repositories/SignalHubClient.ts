@@ -30,5 +30,5 @@ export const SignalHubClient = {
         "Content-Type": "application/json",
       },
     });
-  }
+  },
 };
