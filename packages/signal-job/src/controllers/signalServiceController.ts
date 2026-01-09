@@ -49,8 +49,7 @@ export class SeedRotationController {
         logger.info(
           `[SeedRotationController] SEEDUPDATE sent for ${eserviceId} with signalId=${newSignalId}`
         );
-      } catch (error: any) {
-        logger.error(`Error message ${error.message}`);
+      } catch (error) {
         logger.error(
           `[SeedRotationController] Error for e-service ${eserviceId}:`,
           error
