@@ -39,5 +39,5 @@ COPY --from=build /out /app
 WORKDIR /app/packages/signal-job
 EXPOSE 3000
 
-CMD [ "node", "." ]
+CMD ["node", "dist/index.js"]
  
