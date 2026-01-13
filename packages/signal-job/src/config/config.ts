@@ -3,6 +3,7 @@ import {
   JWTConfig,
   LoggerConfig,
   M2mConfig,
+  ContextConfig,
 } from "pdnd-common";
 import { z } from "zod";
 
@@ -26,6 +27,7 @@ export const ShConfig = z
   .and(InteroperabilityConfig)
   .and(JWTConfig)
   .and(LoggerConfig)
+  .and(ContextConfig)
   .and(M2mConfig);
 
 export type ShConfig = z.infer<typeof ShConfig>;
