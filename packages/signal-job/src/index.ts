@@ -1,20 +1,22 @@
 import "dotenv/config";
-import { logger } from "pdnd-common";
+import { initContext, initLogger, logger } from "pdnd-common";
 import { runSeedRotationJob } from "./jobs/SeedRotationJob.js";
+import { shConfig } from "./config/config.js";
 
-logger.info("[App] Starting Seed Rotation Service...");
 try {
+  initContext(shConfig);
+  initLogger(shConfig, "signal-job");
+
+  logger.info("[SeedRotationJob] Starting Seed Rotation Service...");
   await runSeedRotationJob();
+
+  logger.info(
+    "[SeedRotationJob] Seed Rotation Service completed successfully."
+  );
 } catch (error) {
   logger.error(
     "[SeedRotationJob] Fatal error during seed rotation job:",
     error
   );
+  process.exit(1);
 }
-process.stdin.resume();
-process.stdin.setEncoding("utf8");
-process.stdin.on("data", () => void 0);
-process.on("SIGINT", () => {
-  logger.info("[App] Shutting down gracefully...");
-  process.exit(0);
-});

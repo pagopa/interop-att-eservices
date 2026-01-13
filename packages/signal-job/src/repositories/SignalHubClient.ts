@@ -4,10 +4,22 @@ import { shConfig } from "../config/config.js";
 
 const SIGNAL_HUB_HOST = shConfig.signalHubHost;
 const SIGNAL_HUB_API_VERSION = shConfig.signalHubApiVersion;
-const SIGNAL_HUB_AUTH_TOKEN = await getPDNDTokenM2M(shConfig);
 
-if (!SIGNAL_HUB_HOST || !SIGNAL_HUB_API_VERSION || !SIGNAL_HUB_AUTH_TOKEN) {
+// eslint-disable-next-line functional/no-let
+let SIGNAL_HUB_AUTH_TOKEN: string | undefined;
+
+if (!SIGNAL_HUB_HOST || !SIGNAL_HUB_API_VERSION) {
   throw new Error("Missing Signal Hub configuration");
+}
+
+async function getAuthToken(): Promise<string> {
+  if (!SIGNAL_HUB_AUTH_TOKEN) {
+    SIGNAL_HUB_AUTH_TOKEN = await getPDNDTokenM2M(shConfig);
+    if (!SIGNAL_HUB_AUTH_TOKEN) {
+      throw new Error("Failed to obtain PDND M2M token");
+    }
+  }
+  return SIGNAL_HUB_AUTH_TOKEN;
 }
 
 export const SignalHubClient = {
@@ -15,6 +27,8 @@ export const SignalHubClient = {
     eserviceId: string,
     signalId: number
   ): Promise<void> {
+    const token = await getAuthToken();
+
     const url = `${SIGNAL_HUB_HOST}/${SIGNAL_HUB_API_VERSION}/push/signals`;
     const payload = {
       signalId,
@@ -26,7 +40,7 @@ export const SignalHubClient = {
 
     await axios.post(url, payload, {
       headers: {
-        Authorization: `Bearer ${SIGNAL_HUB_AUTH_TOKEN}`,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
