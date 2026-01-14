@@ -7,10 +7,12 @@ import {
   ContextConfig,
   LoggerConfig,
   JWTConfig,
+  KeychainSignerConfig,
 } from "pdnd-common";
 
 export const FiscalcodeVerificationConfig = DatabaseConfig.and(HTTPServerConfig)
   .and(SslConfig)
+  .and(KeychainSignerConfig)
   .and(SignerConfig)
   .and(ContextConfig)
   .and(JWTConfig)

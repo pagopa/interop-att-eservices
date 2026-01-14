@@ -14,7 +14,7 @@ import { verifyCertValidity } from "../security/certValidityMiddleware.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataFiscalCodeMiddleware } from "../context/context.js";
 import { keychainSignatureUtility } from "../utilities/keychainSignatureUtility.js";
-import { keychainSignerConfig } from "../config/keychainSignerConfig.js";
+import { fiscalcodeVerificationConfig } from "../config/config.js";
 
 const fiscalcodeVerificationRouter = (
   ctx: ZodiosContext
@@ -66,9 +66,8 @@ const fiscalcodeVerificationRouter = (
     verifyCertValidity,
     async (req, res) => {
       try {
-        const keychainConfig = keychainSignerConfig();
         const signatureUtility = new keychainSignatureUtility(
-          keychainConfig.kmsKeychainKeyId
+          fiscalcodeVerificationConfig.kmsKeychainKeyId
         );
 
         logger.info(
@@ -88,7 +87,7 @@ const fiscalcodeVerificationRouter = (
         res.setHeader("x-payload-signature", signature);
         res.setHeader(
           "x-payload-signature-kid",
-          keychainConfig.kmsKeychainKeyId
+          fiscalcodeVerificationConfig.kmsKeychainKeyId
         );
         res.setHeader("x-payload-signature-algorythm", "SHA256withRSA");
 

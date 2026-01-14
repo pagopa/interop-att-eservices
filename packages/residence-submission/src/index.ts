@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {
   initContext,
   initDB,
@@ -12,11 +13,17 @@ const port = residenceSubmissionConfig.httpPort;
 
 const startServer = async (): Promise<void> => {
   try {
-    initContext(residenceSubmissionConfig);
+    initContext({
+      purposeId: "",
+      clientId: "",
+      correlationId: "",
+    });
     initLogger(residenceSubmissionConfig, "residence-submission");
+    logger.warn("DEFAULT_PURPOSE_ID");
+    logger.warn("DEFAULT_CLIENT_ID");
+    logger.warn("DEFAULT_CORRELATION_ID");
     await initDB(residenceSubmissionConfig);
     await testDbConnection();
-
     logger.info("Connection to Database has been established.");
     app.listen(port, () => {
       logger.info(`Server is running on http://localhost:${port}`);
