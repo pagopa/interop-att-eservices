@@ -16,12 +16,14 @@ const startServer = async (): Promise<void> => {
     initContext({
       purposeId: "",
       clientId: "",
-      correlationId: "",
+      correlationId: "00000000-0000-0000-0000-00000000000",
     });
     initLogger(residenceSubmissionConfig, "residence-submission");
-    logger.warn("DEFAULT_PURPOSE_ID");
-    logger.warn("DEFAULT_CLIENT_ID");
-    logger.warn("DEFAULT_CORRELATION_ID");
+    logger.warn("Purpose ID configuration missing. Using: DEFAULT_PURPOSE_ID");
+    logger.warn("Client ID configuration missing. Using: DEFAULT_CLIENT_ID");
+    logger.warn(
+      "Correlation ID configuration missing. Using: DEFAULT_CORRELATION_ID"
+    );
     await initDB(residenceSubmissionConfig);
     await testDbConnection();
     logger.info("Connection to Database has been established.");
