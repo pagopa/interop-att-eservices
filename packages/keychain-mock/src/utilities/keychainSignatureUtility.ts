@@ -1,6 +1,5 @@
 import { logger } from "pdnd-common";
 import { KMSClient, SignCommand } from "@aws-sdk/client-kms";
-
 export class keychainSignatureUtility {
   private kmsClient: KMSClient;
   private keyId: string;
