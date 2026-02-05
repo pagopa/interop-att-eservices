@@ -6,7 +6,6 @@ import {
   M2mConfig,
   InteroperabilityConfig,
   JWTConfig,
-  ContextConfig,
   ShConfig,
   HTTPServerConfig,
 } from "pdnd-common";
@@ -15,7 +14,6 @@ export const ResidenceSubmissionConfig = LoggerConfig.and(DatabaseConfig)
   .and(ShClientConfig)
   .and(M2mConfig)
   .and(InteroperabilityConfig)
-  .and(ContextConfig)
   .and(JWTConfig)
   .and(ShConfig)
   .and(HTTPServerConfig);

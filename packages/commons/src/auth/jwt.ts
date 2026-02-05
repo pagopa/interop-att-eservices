@@ -1,3 +1,5 @@
+/* eslint-disable sonarjs/cognitive-complexity */
+/* eslint-disable max-params */
 import jwt, { JwtHeader, JwtPayload, SigningKeyCallback } from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
 import { JWTConfig, logger, sendCustomEvent } from "../index.js";
@@ -128,6 +130,9 @@ export const verifyJwtPayloadAndHeader = (
     }
 
     if (decodedToken.payload.iss !== config.issValue) {
+      logger.info(
+        `verifyJwtPayloadAndHeader - decodedToken iss: ${decodedToken.payload.iss} - config iss: ${config.issValue}`
+      );
       logger.error(
         `verifyJwtPayloadAndHeader - Error parsing token iss not valid`
       );
@@ -142,7 +147,10 @@ export const verifyJwtPayloadAndHeader = (
     }
 
     if (decodedToken.payload.aud !== config.audValue) {
-      logger.info(`verifyJwtPayloadAndHeader - decodedToken: ${decodedToken}`);
+      logger.info(
+        `verifyJwtPayloadAndHeader - decodedToken aud: ${decodedToken.payload.aud} - config aud: ${config.audValue}`
+      );
+
       logger.error(
         `verifyJwtPayloadAndHeader - Error parsing token aud not valid`
       );
@@ -156,23 +164,26 @@ export const verifyJwtPayloadAndHeader = (
       resolve(false);
     }
 
-    const expectedDigest = generateHashFromString(tracking_jwt);
-    logger.info(
-      `verifyJwtPayloadAndHeader - expectedDigest: ${expectedDigest}, digest in token: ${decodedToken.payload.digest.value}`
-    );
+    if (config.skipDigestCheck === false) {
+      const expectedDigest = generateHashFromString(tracking_jwt);
 
-    if (decodedToken.payload.digest.value !== expectedDigest) {
-      logger.error(
+      logger.info(
         `verifyJwtPayloadAndHeader - expectedDigest: ${expectedDigest}, digest in token: ${decodedToken.payload.digest.value}`
       );
-      if (isEnableTrial) {
-        sendCustomEvent("trialEvent", {
-          operationPath,
-          operationMethod,
-          checkName: "VOUCHER_DIGEST_NOT_VALID",
-        });
+
+      if (decodedToken.payload.digest.value !== expectedDigest) {
+        logger.error(
+          `verifyJwtPayloadAndHeader - expectedDigest: ${expectedDigest}, digest in token: ${decodedToken.payload.digest.value}`
+        );
+        if (isEnableTrial) {
+          sendCustomEvent("trialEvent", {
+            operationPath,
+            operationMethod,
+            checkName: "VOUCHER_DIGEST_NOT_VALID",
+          });
+        }
+        resolve(false);
       }
-      resolve(false);
     }
 
     resolve(true);

@@ -7,8 +7,8 @@ import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
 import { makeApiProblem, mapGeneralErrorModel } from "../exceptions/errors.js";
 import { contextDataKeychainMockMiddleware } from "../context/context.js";
 import { keychainSignatureUtility } from "../utilities/keychainSignatureUtility.js";
-import { keychainSignerConfig } from "../config/keychainSignerConfig.js";
 import { api } from "../model/generated/api.js";
+import { keychainMockConfig } from "../config/keychainMockConfig.js";
 
 const keychainMockRouter = (
   ctx: ZodiosContext
@@ -23,7 +23,7 @@ const keychainMockRouter = (
       try {
         logger.info(`[START] Get - '/keychain-mock/signature' `);
         const signatureUtility = new keychainSignatureUtility(
-          keychainSignerConfig.kmsKeychainKeyId
+          keychainMockConfig.kmsKeychainKeyId
         );
 
         const responseBody = {
@@ -37,7 +37,7 @@ const keychainMockRouter = (
         res.setHeader("x-payload-signature", signature);
         res.setHeader(
           "x-payload-signature-kid",
-          keychainSignerConfig.KeychainKeyId
+          keychainMockConfig.keychainPublicKeyKid
         );
         res.setHeader("x-payload-signature-algorythm", "SHA256withRSA");
         void TrialService.insert(

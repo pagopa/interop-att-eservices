@@ -2,7 +2,7 @@ import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ExpressContext, HealtService, ZodiosContext } from "pdnd-common";
 import { api } from "../model/generated/api.js";
-import { keychainSignerConfig } from "../config/keychainSignerConfig.js";
+import { keychainMockConfig } from "../config/keychainMockConfig.js";
 
 const healthRouter = (
   ctx: ZodiosContext
@@ -14,7 +14,7 @@ const healthRouter = (
       return res.status(500);
     }
 
-    const data = await HealtService.statusHandShake(keychainSignerConfig);
+    const data = await HealtService.statusHandShake(keychainMockConfig);
     if (data) {
       return res.status(200).end();
     } else {

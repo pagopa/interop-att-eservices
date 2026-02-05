@@ -11,7 +11,6 @@ export * from "./types/index.js";
 export * from "./utility/index.js";
 export * from "./security/index.js";
 export * from "./events/index.js";
-export * from "./middleware/index.js";
 export * from "./services/index.js";
 export * from "./zod/family-status/index.js";
 export { testDbConnection } from "./utility/index.js";
