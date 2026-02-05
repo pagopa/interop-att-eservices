@@ -20,7 +20,6 @@ import {
 import { contextDataFamilyMiddleware } from "../context/context.js";
 import familyStatusController from "../controllers/familyStatusController.js";
 import { keychainSignatureUtility } from "../utilities/keychainSignatureUtility.js";
-import { keychainSignerConfig } from "../config/keychainSignerConfig.js";
 import { familyStatusConfiguration } from "../config/config.js";
 
 const familyStatusRouter = (
@@ -71,9 +70,8 @@ const familyStatusRouter = (
     async (req, res) => {
       try {
         logger.info(`[START] familyStatusRouter: ${req.body}`);
-        const keychainConfig = keychainSignerConfig();
         const signatureUtility = new keychainSignatureUtility(
-          keychainConfig.kmsKeychainKeyId
+          familyStatusConfiguration.kmsKeychainKeyId
         );
         const data = await familyStatusController.findUser(req.body);
         if (!data || data.subjects?.subject?.length === 0) {
@@ -84,7 +82,7 @@ const familyStatusRouter = (
         res.setHeader("x-payload-signature", signature);
         res.setHeader(
           "x-payload-signature-kid",
-          keychainConfig.kmsKeychainKeyId
+          familyStatusConfiguration.kmsKeychainKeyId
         );
         res.setHeader("x-payload-signature-algorythm", "SHA256withRSA");
         logger.info(`[END] familyStatusRouter`);

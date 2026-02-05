@@ -8,16 +8,16 @@ import {
   testDbConnection,
 } from "pdnd-common";
 import app from "./app.js";
-import { keychainSignerConfig } from "./config/keychainSignerConfig.js";
+import { keychainMockConfig } from "./config/keychainMockConfig.js";
 
-const port = keychainSignerConfig.httpPort;
+const port = keychainMockConfig.httpPort;
 const portHttps = Number(port) + 443;
 
 const startServer = async (): Promise<void> => {
   try {
-    initContext(keychainSignerConfig);
-    initLogger(keychainSignerConfig, "keychain-mock");
-    await initDB(keychainSignerConfig);
+    initContext(keychainMockConfig);
+    initLogger(keychainMockConfig, "keychain-mock");
+    await initDB(keychainMockConfig);
     await testDbConnection();
 
     logger.info("Connection to Database has been established.");

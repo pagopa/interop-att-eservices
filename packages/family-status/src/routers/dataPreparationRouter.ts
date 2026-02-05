@@ -29,7 +29,7 @@ const dataPreparationRouter = (
   dataPreparationRouter.post(
     "/family-status/data-preparation",
     contextDataFamilyMiddleware,
-    authenticationMiddleware(true),
+    authenticationMiddleware(false),
     async (req, res) => {
       try {
         const data = await FamilyStatusService.prepareData(

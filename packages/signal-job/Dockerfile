@@ -1,4 +1,4 @@
-FROM node:22.1.0-slim AS build
+FROM node:22.14.0-slim AS build
 
 RUN corepack enable && corepack prepare pnpm@8.15.4 --activate
 
@@ -32,12 +32,12 @@ RUN pnpm build && \
     packages/signal-job/dist && \
     find /out -exec touch -h --date=@0 {} \;
 
-FROM node:22.1.0-slim AS final
+FROM node:22.14.0-slim AS final
 
 COPY --from=build /out /app
 
 WORKDIR /app/packages/signal-job
 EXPOSE 3000
 
-CMD [ "node", "." ]
+CMD ["node", "dist/index.js"]
  

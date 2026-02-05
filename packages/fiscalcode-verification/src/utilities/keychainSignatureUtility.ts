@@ -1,22 +1,20 @@
 import { logger } from "pdnd-common";
 import { KMSClient, SignCommand } from "@aws-sdk/client-kms";
-import { keychainSignerConfig } from "../config/keychainSignerConfig.js";
-
-const config = keychainSignerConfig();
+import { fiscalcodeVerificationConfig } from "../config/config.js";
 
 export class keychainSignatureUtility {
   private kmsClient: KMSClient;
   private keyId: string;
 
   constructor(keyId: string) {
-    const isLocal = config.localKeychainConfig === true;
+    const isLocal = fiscalcodeVerificationConfig.localKeychainConfig === true;
     if (isLocal) {
       this.kmsClient = new KMSClient({
-        region: config.kmsRegion,
-        endpoint: config.kmsKeychainEndpoint,
+        region: fiscalcodeVerificationConfig.kmsRegion,
+        endpoint: fiscalcodeVerificationConfig.kmsKeychainEndpoint,
         credentials: {
-          accessKeyId: config.kmsAccessKeyId,
-          secretAccessKey: config.kmsAccessKeySecret,
+          accessKeyId: fiscalcodeVerificationConfig.kmsAccessKeyId,
+          secretAccessKey: fiscalcodeVerificationConfig.kmsAccessKeySecret,
         },
       });
     } else {
