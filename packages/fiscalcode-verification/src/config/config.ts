@@ -6,8 +6,10 @@ import {
   SslConfig,
   ContextConfig,
   LoggerConfig,
-  JWTConfig,
-  KeychainSignerConfig,
+  ShConfig,
+  M2mConfig,
+  ShClientConfig,
+  KeychainSignerConfig
 } from "pdnd-common";
 
 export const FiscalcodeVerificationConfig = DatabaseConfig.and(HTTPServerConfig)
@@ -15,7 +17,9 @@ export const FiscalcodeVerificationConfig = DatabaseConfig.and(HTTPServerConfig)
   .and(KeychainSignerConfig)
   .and(SignerConfig)
   .and(ContextConfig)
-  .and(JWTConfig)
+  .and(ShConfig)
+  .and(M2mConfig)
+  .and(ShClientConfig)
   .and(LoggerConfig);
 
 export type FiscalcodeVerificationConfig = z.infer<

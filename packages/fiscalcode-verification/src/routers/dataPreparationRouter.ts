@@ -6,6 +6,13 @@ import {
   FiscalCodeService,
   logger,
   authenticationMiddleware,
+  SHService,
+  getEserviceIdFromToken,
+  HashAlgorithm,
+  generateObjectId,
+  getPDNDTokenM2M,
+  SignalPayload,
+  TrialService,
 } from "pdnd-common";
 import { ErrorHandling } from "pdnd-models";
 import { api } from "../model/generated/api.js";
@@ -16,6 +23,7 @@ import {
   apiDatapreparationTemplateToFiscalcodeModel,
 } from "../model/domain/apiConverter.js";
 import { contextDataFiscalCodeMiddleware } from "../context/context.js";
+import { fiscalcodeVerificationConfig } from "../config/config.js"
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -86,9 +94,73 @@ const dataPreparationRouter = (
     async (req, res) => {
       /* eslint-enable */
       try {
-        await FiscalCodeService.deleteByFiscalCode(
-          apiDatapreparationTemplateToFiscalcodeModel(req.body).fiscalCode
+
+        const fiscalCode = apiDatapreparationTemplateToFiscalcodeModel(req.body).fiscalCode
+
+        await FiscalCodeService.deleteByFiscalCode(fiscalCode);
+        const authHeader = req.headers.authorization;
+        const pdndToken = authHeader?.split(" ")[1];
+        if (!pdndToken) {
+          throw new Error("PDND token not found in request.");
+        }
+
+        if (!fiscalCode) {
+          throw new Error("Fiscal Code not found for 'objectId' generation.");
+        }
+
+        const eserviceId = await getEserviceIdFromToken(pdndToken);
+        const seed = await SHService.findSeedByEserviceId(
+          eserviceId,
+          fiscalcodeVerificationConfig
         );
+        if (!seed) {
+          throw new Error(
+            `Could not find 'seed' for eserviceId: ${eserviceId}`
+          );
+        }
+
+        const objectId = await generateObjectId(
+          fiscalCode,
+          HashAlgorithm.SHA256,
+          seed
+        );
+        if (!objectId) {
+          throw new Error("Failed to generate 'objectId'.");
+        }
+
+        const signalId = await SHService.getNextSignalId(eserviceId);
+
+        if (signalId === null || signalId === undefined) {
+          throw new Error(
+            `Failed to retrieve next 'signalId' for eserviceId: ${eserviceId}`
+          );
+        }
+        const m2mToken = await getPDNDTokenM2M(fiscalcodeVerificationConfig);
+        if (!m2mToken) {
+          throw new Error("M2M token generation failed.");
+        }
+
+        const signalObject: SignalPayload = {
+          objectType: "residenza",
+          eserviceId,
+          objectId,
+          signalId,
+          signalType: "DELETE",
+        };
+        await SHService.sendSignal(
+          signalObject,
+          m2mToken,
+          fiscalcodeVerificationConfig
+        );
+
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "RESIDENCE_SUBMISSION_001",
+          "OK"
+        );
+        logger.info(`[END] residenceSubissionController delete`);
+
         return res.status(201).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);

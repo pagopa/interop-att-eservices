@@ -1,6 +1,9 @@
 import { makeApi, Zodios, type ZodiosOptions } from "@zodios/core";
 import { z } from "zod";
 
+const PseudonymizationResponse = z
+  .object({ seed: z.string(), cryptoHashFunction: z.string() })
+  .passthrough();
 const CodiceFiscale = z.string();
 const DatapreparationTemplate = z
   .object({
@@ -48,6 +51,7 @@ const VerificaCodiceFiscale = z
   .passthrough();
 
 export const schemas = {
+  PseudonymizationResponse,
   CodiceFiscale,
   DatapreparationTemplate,
   DataPreparationResponse,
@@ -220,6 +224,14 @@ const endpoints = makeApi([
         schema: z.void(),
       },
     ],
+  },
+  {
+    method: "get",
+    path: "/subject-id-verification/pseudonymization",
+    alias: "getPseudonymization",
+    description: `Info about crypto hash function and seed`,
+    requestFormat: "json",
+    response: PseudonymizationResponse,
   },
   {
     method: "get",
