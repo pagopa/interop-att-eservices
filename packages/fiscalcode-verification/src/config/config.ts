@@ -9,7 +9,7 @@ import {
   ShConfig,
   M2mConfig,
   ShClientConfig,
-  KeychainSignerConfig
+  KeychainSignerConfig,
 } from "pdnd-common";
 
 export const FiscalcodeVerificationConfig = DatabaseConfig.and(HTTPServerConfig)

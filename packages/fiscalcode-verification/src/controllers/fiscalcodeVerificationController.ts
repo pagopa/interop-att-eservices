@@ -44,7 +44,7 @@ class FiscalcodeVerificationController {
       throw error;
     }
   }
-  
+
   public async getRotatedSeed(eserviceId: string): Promise<string> {
     try {
       return await userService.generateSeed(

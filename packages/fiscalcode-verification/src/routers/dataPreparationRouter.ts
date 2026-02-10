@@ -23,7 +23,7 @@ import {
   apiDatapreparationTemplateToFiscalcodeModel,
 } from "../model/domain/apiConverter.js";
 import { contextDataFiscalCodeMiddleware } from "../context/context.js";
-import { fiscalcodeVerificationConfig } from "../config/config.js"
+import { fiscalcodeVerificationConfig } from "../config/config.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -94,8 +94,9 @@ const dataPreparationRouter = (
     async (req, res) => {
       /* eslint-enable */
       try {
-
-        const fiscalCode = apiDatapreparationTemplateToFiscalcodeModel(req.body).fiscalCode
+        const fiscalCode = apiDatapreparationTemplateToFiscalcodeModel(
+          req.body
+        ).fiscalCode;
 
         await FiscalCodeService.deleteByFiscalCode(fiscalCode);
         const authHeader = req.headers.authorization;
