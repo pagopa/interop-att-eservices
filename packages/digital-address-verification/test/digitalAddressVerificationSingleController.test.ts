@@ -4,16 +4,23 @@ import { logger, digitalAddressService } from "pdnd-common";
 import { fiscalcodeNotFound } from "../src/exceptions/errors.js";
 import { responseRequestDigitalAddressModelToResponseRequestDigitalAddress } from "../src/model/domain/apiConverter.js";
 
-vi.mock("pdnd-common", async () => ({
-  logger: {
-    info: vi.fn(),
-    error: vi.fn(),
-  },
-  getContext: vi.fn(),
-  digitalAddressService: {
-    findSingleDataPreparationByFiscalCode: vi.fn(),
-  },
-}));
+vi.mock("pdnd-common", async () => {
+  const actual = await vi.importActual<typeof import("pdnd-common")>(
+    "pdnd-common"
+  );
+
+  return {
+    ...actual,
+    logger: {
+      info: vi.fn(),
+      error: vi.fn(),
+    },
+    getContext: vi.fn(),
+    digitalAddressService: {
+      findSingleDataPreparationByFiscalCode: vi.fn(),
+    },
+  };
+});
 
 vi.mock("../src/exceptions/errors.js", async () => ({
   fiscalcodeNotFound: vi.fn((msg) => new Error(msg)),
