@@ -190,7 +190,7 @@ const dataPreparationRouter = (
         }
 
         const signalObject: SignalPayload = {
-          objectType: "residenza",
+          objectType: "digital-address",
           eserviceId,
           objectId,
           signalId,
@@ -204,7 +204,7 @@ const dataPreparationRouter = (
           );
         } catch (error) {
           logger.error(
-            `[Controller] Error sending signal. Reverting signalId for ${eserviceId}. Error: ${error}`
+            `[Controller] Error sending signal for eserviceId ${eserviceId} and signalId ${signalId}. No revert operation was performed. Error: ${error}`
           );
         }
 
