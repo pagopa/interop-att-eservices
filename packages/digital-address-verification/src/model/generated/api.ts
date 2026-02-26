@@ -34,6 +34,9 @@ const Response_Request_Digital_Address = z
 const Response_List_Request_Digital_Address = z
   .object({ data: z.array(Response_Request_Digital_Address).optional() })
   .passthrough();
+const PseudonymizationResponse = z
+  .object({ seed: z.string(), cryptoHashFunction: z.string() })
+  .passthrough();
 const PracticalReference = z.string();
 const Request_List_Digital_Address = z
   .object({ idSubjects: z.array(CodiceFiscale), idRequest: PracticalReference })
@@ -75,6 +78,7 @@ export const schemas = {
   Element_Digital_Address,
   Response_Request_Digital_Address,
   Response_List_Request_Digital_Address,
+  PseudonymizationResponse,
   PracticalReference,
   Request_List_Digital_Address,
   Status_Processing_Request,
@@ -464,6 +468,14 @@ const endpoints = makeApi([
         schema: z.void(),
       },
     ],
+  },
+  {
+    method: "get",
+    path: "/digital-address-verification/pseudonymization",
+    alias: "getPseudonymization",
+    description: `Info about crypto hash function and seed`,
+    requestFormat: "json",
+    response: PseudonymizationResponse,
   },
   {
     method: "get",

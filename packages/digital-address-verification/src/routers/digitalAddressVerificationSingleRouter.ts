@@ -4,6 +4,7 @@ import {
   ZodiosContext,
   authenticationCorrelationMiddleware,
   TrialService,
+  getEserviceIdFromToken,
 } from "pdnd-common";
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
@@ -53,6 +54,56 @@ const DigitalAddressVerificationSingleRouter = (
           req.url,
           req.method,
           "DIGITAL_ADDRESS_VERIFICATION_VERIFY",
+          "KO",
+          JSON.stringify(generalErrorResponse)
+        );
+        return res.status(errorRes.status).json(generalErrorResponse).end();
+      }
+    }
+  );
+
+  digitalAddressVerificationSingleRouter.get(
+    "/digital-address-verification/pseudonymization",
+    async (req, res) => {
+      try {
+        logger.info(`[START] pseudonymization GET`);
+        const authHeader = req.headers.authorization;
+        const pdndToken = authHeader?.split(" ")[1];
+        if (!pdndToken) {
+          throw new Error("Token PDND non trovato nella richiesta.");
+        }
+
+        const eserviceId = await getEserviceIdFromToken(pdndToken);
+
+        const seed =
+          await digitalAddressVerificationSingleController.getRotatedSeed(
+            eserviceId
+          );
+        const cryptoHashFunction = "sha256";
+        const response = {
+          seed,
+          cryptoHashFunction,
+        };
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "PSEUDONYMIZATION_001",
+          "OK"
+        );
+
+        logger.info(`[END] pseudonymization GET`);
+        return res.status(200).json(response).end();
+      } catch (error) {
+        const errorRes = makeApiProblem(error, createEserviceDataPreparation);
+        const correlationId = req.headers["x-correlation-id"] as string;
+        const generalErrorResponse = mapGeneralErrorModel(
+          correlationId,
+          errorRes
+        );
+        void TrialService.insert(
+          req.url,
+          req.method,
+          "PSEUDONYMIZATION_001",
           "KO",
           JSON.stringify(generalErrorResponse)
         );

@@ -1,6 +1,16 @@
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
-import { ExpressContext, ZodiosContext, logger } from "pdnd-common";
+import {
+  ExpressContext,
+  HashAlgorithm,
+  SHService,
+  SignalPayload,
+  ZodiosContext,
+  generateObjectId,
+  getEserviceIdFromToken,
+  getPDNDTokenM2M,
+  logger,
+} from "pdnd-common";
 import { authenticationMiddleware } from "pdnd-common";
 import { ErrorHandling } from "pdnd-models";
 import { api } from "../model/generated/api.js";
@@ -13,6 +23,7 @@ import {
 } from "../model/domain/apiConverter.js";
 import dataPreparationController from "../controllers/dataPreparationController.js";
 import { contextDataDigitalAddressMiddleware } from "../context/context.js";
+import { digitalAddressVerificationConfig } from "../config/config.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -124,6 +135,28 @@ const dataPreparationRouter = (
         if (!req) {
           throw ErrorHandling.invalidApiRequest();
         }
+
+        const authHeader = req.headers.authorization;
+        const pdndToken = authHeader?.split(" ")[1];
+        if (!pdndToken) {
+          throw new Error("PDND token not found in request.");
+        }
+
+        const eserviceId = await getEserviceIdFromToken(pdndToken);
+        const fiscalCode = req.params.idSubject;
+        if (!fiscalCode) {
+          throw new Error("Fiscal Code not found for 'objectId' generation.");
+        }
+        const seed = await SHService.findSeedByEserviceId(
+          eserviceId,
+          digitalAddressVerificationConfig
+        );
+        if (!seed) {
+          throw new Error(
+            `Could not find 'seed' for eserviceId: ${eserviceId}`
+          );
+        }
+
         const data = await dataPreparationController.findByFiscalCode(
           req.params.idSubject
         );
@@ -133,6 +166,48 @@ const dataPreparationRouter = (
         await dataPreparationController.deleteByFiscalCode(
           req.params.idSubject
         );
+        const objectId = await generateObjectId(
+          fiscalCode,
+          HashAlgorithm.SHA256,
+          seed
+        );
+        if (!objectId) {
+          throw new Error("Failed to generate 'objectId'.");
+        }
+
+        const signalId = await SHService.getNextSignalId(eserviceId);
+
+        if (signalId === null || signalId === undefined) {
+          throw new Error(
+            `Failed to retrieve next 'signalId' for eserviceId: ${eserviceId}`
+          );
+        }
+        const m2mToken = await getPDNDTokenM2M(
+          digitalAddressVerificationConfig
+        );
+        if (!m2mToken) {
+          throw new Error("M2M token generation failed.");
+        }
+
+        const signalObject: SignalPayload = {
+          objectType: "digital-address",
+          eserviceId,
+          objectId,
+          signalId,
+          signalType: "DELETE",
+        };
+        try {
+          await SHService.sendSignal(
+            signalObject,
+            m2mToken,
+            digitalAddressVerificationConfig
+          );
+        } catch (error) {
+          logger.error(
+            `[Controller] Error sending signal for eserviceId ${eserviceId} and signalId ${signalId}. No revert operation was performed. Error: ${error}`
+          );
+        }
+
         return res.status(204).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, createEserviceDataPreparation);

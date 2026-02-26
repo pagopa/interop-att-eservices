@@ -9,6 +9,7 @@ import {
   TrialService,
   getEserviceIdFromToken,
   generateObjectId,
+  SignalPayload,
   SHService,
   HashAlgorithm,
   getPDNDTokenM2M,
@@ -21,7 +22,6 @@ import {
   mapGeneralErrorModel,
   userModelNotFound,
 } from "../exceptions/errors.js";
-import { SignalPayload } from "../../../commons/dist/services/signalHub/shService.js";
 import { residenceSubmissionConfig } from "../config/config.js";
 
 const residenceSubissionController = (
