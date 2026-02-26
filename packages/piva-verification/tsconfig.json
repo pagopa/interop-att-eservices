@@ -5,5 +5,5 @@
     "types": ["jsonwebtoken"],
  
   },
-  "include": ["src"]
+  "include": ["src", "test"]
 }

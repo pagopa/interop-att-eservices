@@ -1,9 +1,19 @@
 import { ZodiosRouter } from "@zodios/express";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
-import { ExpressContext, ZodiosContext, logger } from "pdnd-common";
-import { authenticationMiddleware } from "pdnd-common";
+import {
+  ExpressContext,
+  HashAlgorithm,
+  SHService,
+  SignalPayload,
+  ZodiosContext,
+  generateObjectId,
+  getEserviceIdFromToken,
+  getPDNDTokenM2M,
+  authenticationMiddleware,
+  PivaVerificationService,
+  logger,
+} from "pdnd-common";
 import { ErrorHandling } from "pdnd-models";
-import { PivaVerificationService } from "pdnd-common";
 import { api } from "../model/generated/api.js";
 import { makeApiProblem } from "../exceptions/errors.js";
 import { createEserviceDataPreparation } from "../exceptions/errorMappers.js";
@@ -12,6 +22,7 @@ import {
   apiDatapreparationTemplateToPivaModel,
 } from "../model/domain/apiConverter.js";
 import { contextDataPivaMiddleware } from "../context/context.js";
+import { pivaVerificationConfig } from "../config/config.js";
 
 const dataPreparationRouter = (
   ctx: ZodiosContext
@@ -85,6 +96,70 @@ const dataPreparationRouter = (
         );
         if (data == null) {
           return res.status(404).end();
+        }
+        const authHeader = req.headers.authorization;
+        const pdndToken = authHeader?.split(" ")[1];
+        if (!pdndToken) {
+          throw new Error("PDND token not found in request.");
+        }
+
+        const eserviceId = await getEserviceIdFromToken(pdndToken);
+        const organizationId = req.body.organizationId;
+
+        if (!organizationId) {
+          throw new Error(
+            "Organization ID not found for 'objectId' generation."
+          );
+        }
+
+        const seed = await SHService.findSeedByEserviceId(
+          eserviceId,
+          pivaVerificationConfig
+        );
+        if (!seed) {
+          throw new Error(
+            `Could not find 'seed' for eserviceId: ${eserviceId}`
+          );
+        }
+
+        const objectId = await generateObjectId(
+          organizationId,
+          HashAlgorithm.SHA256,
+          seed
+        );
+        if (!objectId) {
+          throw new Error("Failed to generate 'objectId'.");
+        }
+
+        const signalId = await SHService.getNextSignalId(eserviceId);
+
+        if (signalId === null || signalId === undefined) {
+          throw new Error(
+            `Failed to retrieve next 'signalId' for eserviceId: ${eserviceId}`
+          );
+        }
+
+        const m2mToken = await getPDNDTokenM2M(pivaVerificationConfig);
+        if (!m2mToken) {
+          throw new Error("M2M token generation failed.");
+        }
+        const signalObject: SignalPayload = {
+          objectType: "partita_iva",
+          eserviceId,
+          objectId,
+          signalId,
+          signalType: "DELETE",
+        };
+        try {
+          await SHService.sendSignal(
+            signalObject,
+            m2mToken,
+            pivaVerificationConfig
+          );
+        } catch (error) {
+          logger.error(
+            `[Controller] Error sending signal for eserviceId ${eserviceId}. Error: ${error}`
+          );
         }
         return res.status(201).end();
       } catch (error) {
