@@ -322,6 +322,21 @@ paths:
               schema:
                 $ref: "#/components/schemas/ResponseKO"
 
+  /family-status/pseudonymization:
+    get:
+      tags:
+        - Pseudonymization data
+      summary: Gets a pseudonymization data
+      description: Info about crypto hash function and seed
+      operationId: getPseudonymization
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PseudonymizationResponse"
+
 components:
   schemas:
     FamilyStatusDto:
@@ -451,6 +466,19 @@ components:
         useCase:
           type: string
           description: caso d'uso (es. C001)
+    PseudonymizationResponse:
+      type: object
+      description: Success
+      properties:
+        seed:
+          type: string
+          example: 3b9942ce-1f07-4512-8f34-f31b1a7b0061
+        cryptoHashFunction:
+          type: string
+          example: sha256
+      required:
+        - seed
+        - cryptoHashFunction
     ErrorsType:
       type: object
       properties:

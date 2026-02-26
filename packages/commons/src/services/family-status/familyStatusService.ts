@@ -10,7 +10,9 @@ import { DbRecord } from "../../types/dbRecord.js";
 import { CriteriaTypeFS001 } from "../../types/criteriaTypeFS001.js";
 
 export const FamilyStatusService = {
-  async prepareData(payload: RawPayload): Promise<object> {
+  async prepareData(
+    payload: RawPayload
+  ): Promise<{ uuid: string; isUpdate: boolean }> {
     const flat: InsertFamilyStatus = flattenPayload(payload);
 
     insertFamilyStatusSchema.parse(flat);
