@@ -48,6 +48,9 @@ const VerificaOrganizationId = z
   })
   .partial()
   .passthrough();
+const PseudonymizationResponse = z
+  .object({ seed: z.string(), cryptoHashFunction: z.string() })
+  .passthrough();
 
 export const schemas = {
   OrganizationId,
@@ -55,6 +58,7 @@ export const schemas = {
   DataPreparationResponse,
   Richiesta,
   VerificaOrganizationId,
+  PseudonymizationResponse,
 };
 
 const endpoints = makeApi([
@@ -203,6 +207,14 @@ for maintenance or a technical problem.
         schema: z.void(),
       },
     ],
+  },
+  {
+    method: "get",
+    path: "/organization-id-verification/pseudonymization",
+    alias: "getPseudonymization",
+    description: `Info about crypto hash function and seed`,
+    requestFormat: "json",
+    response: PseudonymizationResponse,
   },
   {
     method: "get",

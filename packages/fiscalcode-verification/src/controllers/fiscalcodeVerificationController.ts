@@ -1,7 +1,8 @@
-import { logger, FiscalCodeService } from "pdnd-common";
+import { logger, FiscalCodeService, userService } from "pdnd-common";
 import { Richiesta, VerificaCodiceFiscale } from "../model/domain/models.js";
 import { requestParamNotValid } from "../exceptions/errors.js";
 import { fiscalcodeModelToVerificaCodiceFiscale } from "../model/domain/apiConverter.js";
+import { fiscalcodeVerificationConfig } from "../config/config.js";
 
 class FiscalcodeVerificationController {
   public async findFiscalcode(
@@ -40,6 +41,18 @@ class FiscalcodeVerificationController {
         `Error during in method controller 'findFiscalcode': `,
         error
       );
+      throw error;
+    }
+  }
+
+  public async getRotatedSeed(eserviceId: string): Promise<string> {
+    try {
+      return await userService.generateSeed(
+        eserviceId,
+        fiscalcodeVerificationConfig
+      );
+    } catch (error) {
+      logger.error(`Controller Error during getRotatedSeed`, error);
       throw error;
     }
   }

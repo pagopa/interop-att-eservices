@@ -269,6 +269,9 @@ const ResponseKO = z
   .object({ idOp: z.string(), errors: z.array(ErrorsType) })
   .partial()
   .passthrough();
+const PseudonymizationResponse = z
+  .object({ seed: z.string(), cryptoHashFunction: z.string() })
+  .passthrough();
 
 export const schemas = {
   MunicipalityType,
@@ -298,6 +301,7 @@ export const schemas = {
   ErrorsType,
   ResponseFS001,
   ResponseKO,
+  PseudonymizationResponse,
 };
 
 const endpoints = makeApi([
@@ -535,6 +539,14 @@ const endpoints = makeApi([
         schema: z.void(),
       },
     ],
+  },
+  {
+    method: "get",
+    path: "/family-status/pseudonymization",
+    alias: "getPseudonymization",
+    description: `Info about crypto hash function and seed`,
+    requestFormat: "json",
+    response: PseudonymizationResponse,
   },
   {
     method: "get",

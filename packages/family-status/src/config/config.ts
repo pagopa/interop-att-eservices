@@ -7,6 +7,9 @@ import {
   SslConfig,
   JWTConfig,
   ContextConfig,
+  ShConfig,
+  ShClientConfig,
+  M2mConfig,
   InteroperabilityConfig,
 } from "pdnd-common";
 
@@ -16,6 +19,9 @@ export const FamilyStatusConfiguration = LoggerConfig.and(DatabaseConfig)
   .and(SslConfig)
   .and(JWTConfig)
   .and(ContextConfig)
+  .and(ShConfig)
+  .and(ShClientConfig)
+  .and(M2mConfig)
   .and(InteroperabilityConfig);
 
 export type FamilyStatusConfiguration = z.infer<

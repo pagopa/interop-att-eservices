@@ -86,4 +86,14 @@ export const SHService = {
     logger.info(`[SHService] Requesting signalId increment for ${eserviceId}`);
     return SHRepository.ensureAndIncrementSignalId(eserviceId);
   },
+  async getFiscalCodeFromFamily(uuid: string): Promise<string> {
+    logger.info(`[SHService] Retrieving fiscalCode for UUID: ${uuid}`);
+    const fiscalCode = await SHRepository.findSubjectIdByUuid(uuid);
+    if (!fiscalCode) {
+      logger.error(`[SHService] Fiscal Code not found for UUID: ${uuid}`);
+      throw new Error(`Fiscal Code not found for UUID: ${uuid}`);
+    }
+
+    return fiscalCode;
+  },
 };
