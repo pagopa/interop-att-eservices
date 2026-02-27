@@ -13,7 +13,6 @@ import {
   SHService,
   HashAlgorithm,
   getPDNDTokenM2M,
-  SignalPayload,
 } from "pdnd-common";
 import ResidenceSubmissionController from "../controllers/residenceSubmissionController.js";
 import { api } from "../model/generated/api.js";
