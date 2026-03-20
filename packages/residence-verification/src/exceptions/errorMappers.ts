@@ -19,5 +19,6 @@ export const createEserviceDataPreparation = (
     .with("eServiceNotFound", () => HTTP_STATUS_BAD_REQUEST)
     .with("userModelNotFound", () => HTTP_STATUS_NOT_FOUND)
     .with("requestParamNotValid", () => HTTP_STATUS_BAD_REQUEST)
+    .with("unknownRequestField", () => HTTP_STATUS_NOT_FOUND)
     .with("tokenNotValid", () => HTTP_STATUS_UNAUTHORIZED)
     .otherwise(() => HTTP_STATUS_INTERNAL_SERVER_ERROR);

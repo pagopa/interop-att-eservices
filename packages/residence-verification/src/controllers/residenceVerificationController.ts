@@ -17,12 +17,14 @@ import {
 import { InternalRequestAR002 } from "../model/internal-model.js";
 import {
   validateFullRequest,
-  getValueByPath
+  getValueByPath,
+  getUnknownRequestFields
 } from "../utilities/validation-helper.js";
 import { residenceVerificationConfig } from "../config/config.js";
 import {
   requestParamNotValid,
-  userModelNotFound
+  userModelNotFound,
+  unknownRequestField
 } from "../exceptions/errors.js";
 
 class ResidenceVerificationController {
@@ -42,6 +44,11 @@ class ResidenceVerificationController {
   public async findUserVerify(
     request: RichiestaAR002
   ): Promise<RispostaAR002OK> {
+    const unknownFields = getUnknownRequestFields(request, REQ_ITA_TO_ENG);
+    if (unknownFields.length > 0) {
+      throw unknownRequestField(unknownFields);
+    }
+
     const internalRequest: InternalRequestAR002 = translateKeys(
       request,
       REQ_ITA_TO_ENG
@@ -60,7 +67,9 @@ class ResidenceVerificationController {
     // Build the set of Italian response keys that correspond to fields present
     // in the original request, respecting the REQ_ITA_TO_ENG mapping.
     const allowedItalianKeys = new Set<string>();
-    for (const [itaRequestPath, engRequestPath] of Object.entries(REQ_ITA_TO_ENG)) {
+    for (const [itaRequestPath, engRequestPath] of Object.entries(
+      REQ_ITA_TO_ENG
+    )) {
       const value = getValueByPath(request, itaRequestPath);
       if (value === undefined || value === null || value === "") continue;
 
@@ -100,7 +109,6 @@ class ResidenceVerificationController {
             RES_ENG_TO_ITA_KEYS,
             true
           );
-          logger.info(`flatItalianObj: ${JSON.stringify(flatItalianObj)}`);
           const infoSoggettoEnte = Object.entries(flatItalianObj)
             .filter(([chiave]) => allowedItalianKeys.has(chiave))
             .map(([chiave, valore], index) => {
