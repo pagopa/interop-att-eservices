@@ -27,7 +27,9 @@ const normalizeString = (val: any): string => {
   }
   return String(val)
     .toLowerCase()
-    .replaceAll(/[^a-z0-9]/gu, "");
+    .trim()
+    .replaceAll(/[^a-z0-9 ]/gu, "")
+    .replaceAll(/\s+/gu, " ");
 };
 
 const adjustBooleanValue = (key: string, value: any): any => {
