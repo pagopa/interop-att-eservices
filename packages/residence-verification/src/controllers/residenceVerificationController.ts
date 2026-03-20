@@ -7,7 +7,7 @@ import {
   RichiestaAR002,
   RispostaAR001,
   RispostaAR002OK,
-  TipoParametriRicercaAR001
+  TipoParametriRicercaAR001,
 } from "../model/domain/models.js";
 import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
 import {
