@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { userService, translateKeys } from "pdnd-common";
 import { UserModel } from "pdnd-models";
-import { userModelNotFound } from "../src/exceptions/errors.js";
+import { userModelNotFound, unknownRequestField } from "../src/exceptions/errors.js";
+import { getUnknownRequestFields } from "../src/utilities/validation-helper.js";
 import { UserModelToApiTipoDatiSoggettiEnte } from "../src/model/domain/apiConverter.js";
 import { RichiestaAR001, RichiestaAR002 } from "../src/model/domain/models.js";
 import controller from "../src/controllers/residenceVerificationController.js";
@@ -33,15 +34,26 @@ vi.mock("../src/exceptions/errors.js", async () => ({
   requestParamNotValid: vi.fn(
     (msg) => new Error(msg || "Request param not valid")
   ),
+  unknownRequestField: vi.fn(
+    (fields: string[]) =>
+      new Error(`Campi non riconosciuti: ${fields.join(", ")}`)
+  ),
 }));
 
 vi.mock("../src/model/domain/apiConverter.js", async () => ({
   UserModelToApiTipoDatiSoggettiEnte: vi.fn(),
 }));
 
-vi.mock("../src/utilities/validation-helper.js", async () => ({
-  validateFullRequest: vi.fn(() => []),
-}));
+vi.mock("../src/utilities/validation-helper.js", async () => {
+  const actual = await vi.importActual<
+    typeof import("../src/utilities/validation-helper.js")
+  >("../src/utilities/validation-helper.js");
+  return {
+    ...actual,
+    validateFullRequest: vi.fn(() => []),
+    getUnknownRequestFields: vi.fn(() => []),
+  };
+});
 
 const mockUser = {
   id: "internal-id-123",
@@ -192,6 +204,21 @@ describe("ResidenceVerificationController", () => {
         "Utente non trovato"
       );
       expect(userModelNotFound).toHaveBeenCalled();
+    });
+
+    it("should throw 'unknownRequestField' if the request contains unrecognized fields", async () => {
+      const request = {
+        idOperazioneClient: "op-verifica-3",
+        criteriRicerca: { codiceFiscale: "UTENTE_123" },
+        campoFittizio: "valore",
+      } as unknown as RichiestaAR002;
+
+      vi.mocked(getUnknownRequestFields).mockReturnValue(["campoFittizio"]);
+
+      await expect(controller.findUserVerify(request)).rejects.toThrow(
+        "Campi non riconosciuti: campoFittizio"
+      );
+      expect(unknownRequestField).toHaveBeenCalledWith(["campoFittizio"]);
     });
   });
 });

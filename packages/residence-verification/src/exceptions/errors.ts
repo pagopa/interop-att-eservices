@@ -21,6 +21,7 @@ const errorCodes = {
   eServiceNotFound: "0001",
   userModelNotFound: "0002",
   requestParamNotValid: "0003",
+  unknownRequestField: "0004",
 };
 
 export type ErrorCodes = keyof typeof errorCodes;
@@ -50,6 +51,15 @@ export function requestParamNotValid(details: string): ApiError<ErrorCodes> {
     detail: details,
     code: "requestParamNotValid",
     title: "Request param not valid",
+  });
+}
+
+export function unknownRequestField(fields: string[]): ApiError<ErrorCodes> {
+  const fieldList = fields.map((f) => `'${f}'`).join(", ");
+  return new ApiError({
+    detail: `I seguenti campi non sono riconosciuti e la richiesta non può essere elaborata: ${fieldList}`,
+    code: "unknownRequestField",
+    title: "Campo non riconosciuto",
   });
 }
 

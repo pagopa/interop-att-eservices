@@ -5,6 +5,30 @@ import { MismatchPayload } from "../exceptions/errors.js";
 import { InternalRequestAR002 } from "../model/internal-model.js";
 import { RES_ENG_TO_ITA_KEYS } from "./residence-mappings.js";
 
+const flattenPaths = (obj: any, prefix = ""): string[] => {
+  if (obj === null || obj === undefined) {
+    return [];
+  }
+  if (typeof obj !== "object" || Array.isArray(obj)) {
+    return prefix ? [prefix] : [];
+  }
+  const entries = Object.entries(obj);
+  if (entries.length === 0) {
+    return [];
+  }
+  return entries.flatMap(([key, value]) =>
+    flattenPaths(value, prefix ? `${prefix}.${key}` : key)
+  );
+};
+
+export const getUnknownRequestFields = (
+  request: any,
+  mapping: Record<string, string>
+): string[] => {
+  const validPaths = new Set(Object.keys(mapping));
+  return flattenPaths(request).filter((path) => !validPaths.has(path));
+};
+
 const BOOLEAN_KEYS = [
   "subject.noSurname",
   "subject.noName",
@@ -14,7 +38,7 @@ const BOOLEAN_KEYS = [
   "address.address.civicNumber.internalCivic.isolated",
 ];
 
-const getValueByPath = (obj: any, path: string): any => {
+export const getValueByPath = (obj: any, path: string): any => {
   if (!obj) {
     return undefined;
   }
@@ -27,7 +51,9 @@ const normalizeString = (val: any): string => {
   }
   return String(val)
     .toLowerCase()
-    .replaceAll(/[^a-z0-9]/gu, "");
+    .trim()
+    .replaceAll(/[^a-z0-9 ]/gu, "")
+    .replaceAll(/\s+/gu, " ");
 };
 
 const adjustBooleanValue = (key: string, value: any): any => {
@@ -44,7 +70,6 @@ const adjustBooleanValue = (key: string, value: any): any => {
 
 const resolveRoots = (reqAny: any, userFromDb: any): any => {
   const reqCheckRoot = reqAny.check || reqAny.verifica;
-
   return {
     reqSubject: reqAny.criteria || reqAny.subject,
     dbSubject: userFromDb.subject || userFromDb,
@@ -93,9 +118,7 @@ export const validateFullRequest = (
   if (!userFromDb) {
     return anomalies;
   }
-
   const roots = resolveRoots(internalRequest as any, userFromDb);
-
   for (const [fullKey, labelIta] of Object.entries(RES_ENG_TO_ITA_KEYS)) {
     const rawValues = retrieveValues(fullKey, roots);
 

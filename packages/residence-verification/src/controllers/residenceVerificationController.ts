@@ -15,11 +15,16 @@ import {
   RES_ENG_TO_ITA_KEYS,
 } from "../utilities/residence-mappings.js";
 import { InternalRequestAR002 } from "../model/internal-model.js";
-import { validateFullRequest } from "../utilities/validation-helper.js";
+import {
+  validateFullRequest,
+  getValueByPath,
+  getUnknownRequestFields,
+} from "../utilities/validation-helper.js";
 import { residenceVerificationConfig } from "../config/config.js";
 import {
   requestParamNotValid,
   userModelNotFound,
+  unknownRequestField,
 } from "../exceptions/errors.js";
 
 class ResidenceVerificationController {
@@ -39,11 +44,15 @@ class ResidenceVerificationController {
   public async findUserVerify(
     request: RichiestaAR002
   ): Promise<RispostaAR002OK> {
+    const unknownFields = getUnknownRequestFields(request, REQ_ITA_TO_ENG);
+    if (unknownFields.length > 0) {
+      throw unknownRequestField(unknownFields);
+    }
+
     const internalRequest: InternalRequestAR002 = translateKeys(
       request,
       REQ_ITA_TO_ENG
     );
-
     const data = await this.getUserData(internalRequest);
 
     if (data.length === 0) {
@@ -54,6 +63,10 @@ class ResidenceVerificationController {
     if (totalAnomalies.length > 0) {
       throw requestParamNotValid(JSON.stringify(totalAnomalies));
     }
+
+    // Build the set of Italian response keys that correspond to fields present
+    // in the original request, respecting the REQ_ITA_TO_ENG mapping.
+    const allowedItalianKeys = this.buildAllowedItalianKeys(request);
 
     return {
       idOperazioneANPR: internalRequest.operationId,
@@ -73,9 +86,9 @@ class ResidenceVerificationController {
             RES_ENG_TO_ITA_KEYS,
             true
           );
-
-          const infoSoggettoEnte = Object.entries(flatItalianObj).map(
-            ([chiave, valore], index) => {
+          const infoSoggettoEnte = Object.entries(flatItalianObj)
+            .filter(([chiave]) => allowedItalianKeys.has(chiave))
+            .map(([chiave, valore], index) => {
               const isDate = chiave.toUpperCase().includes("DATA");
 
               return {
@@ -86,8 +99,7 @@ class ResidenceVerificationController {
                 valoreData: dataInserimentoResidenza,
                 dettaglio: "",
               };
-            }
-          );
+            });
 
           return { infoSoggettoEnte };
         }),
@@ -106,6 +118,39 @@ class ResidenceVerificationController {
       logger.error(`Controller Error during getRotatedSeed`, error);
       throw error;
     }
+  }
+
+  private buildAllowedItalianKeys(request: RichiestaAR002): Set<string> {
+    const allowedKeys = new Set<string>();
+    for (const [itaRequestPath, engRequestPath] of Object.entries(
+      REQ_ITA_TO_ENG
+    )) {
+      const value = getValueByPath(request, itaRequestPath);
+      if (value === undefined || value === null || value === "") {
+        continue;
+      }
+
+      // Convert English request path → English response path:
+      //   criteria.<field>  → subject.<field>
+      //   check.<rest>      → <rest>  (e.g. check.address.X → address.X)
+      const engResponsePath: string | null = engRequestPath.startsWith(
+        "criteria."
+      )
+        ? `subject.${engRequestPath.slice("criteria.".length)}`
+        : engRequestPath.startsWith("check.")
+        ? engRequestPath.slice("check.".length)
+        : null;
+
+      if (engResponsePath === null) {
+        continue;
+      }
+
+      const itaResponseKey = RES_ENG_TO_ITA_KEYS[engResponsePath];
+      if (itaResponseKey) {
+        allowedKeys.add(itaResponseKey);
+      }
+    }
+    return allowedKeys;
   }
 
   private async getUserData(
