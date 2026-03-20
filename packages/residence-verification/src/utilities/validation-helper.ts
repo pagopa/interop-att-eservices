@@ -11,10 +11,10 @@ const BOOLEAN_KEYS = [
   "subject.birthDate.noDay",
   "subject.birthDate.noDayMonth",
   "address.address.civicNumber.internalCivic.secondary",
-  "address.address.civicNumber.internalCivic.isolated",
+  "address.address.civicNumber.internalCivic.isolated"
 ];
 
-const getValueByPath = (obj: any, path: string): any => {
+export const getValueByPath = (obj: any, path: string): any => {
   if (!obj) {
     return undefined;
   }
@@ -44,13 +44,12 @@ const adjustBooleanValue = (key: string, value: any): any => {
 
 const resolveRoots = (reqAny: any, userFromDb: any): any => {
   const reqCheckRoot = reqAny.check || reqAny.verifica;
-
   return {
     reqSubject: reqAny.criteria || reqAny.subject,
     dbSubject: userFromDb.subject || userFromDb,
     reqAddress:
       reqCheckRoot?.address || reqCheckRoot?.residenza || reqCheckRoot,
-    dbAddress: userFromDb.address || userFromDb,
+    dbAddress: userFromDb.address || userFromDb
   };
 };
 
@@ -62,7 +61,7 @@ const retrieveValues = (
     const path = fullKey.replace("subject.", "");
     return {
       reqVal: getValueByPath(roots.reqSubject, path),
-      dbVal: getValueByPath(roots.dbSubject, path),
+      dbVal: getValueByPath(roots.dbSubject, path)
     };
   }
 
@@ -73,7 +72,7 @@ const retrieveValues = (
     const path = fullKey.replace("address.", "");
     return {
       reqVal: getValueByPath(roots.reqAddress, path),
-      dbVal: getValueByPath(roots.dbAddress, path),
+      dbVal: getValueByPath(roots.dbAddress, path)
     };
   }
 
@@ -93,9 +92,7 @@ export const validateFullRequest = (
   if (!userFromDb) {
     return anomalies;
   }
-
   const roots = resolveRoots(internalRequest as any, userFromDb);
-
   for (const [fullKey, labelIta] of Object.entries(RES_ENG_TO_ITA_KEYS)) {
     const rawValues = retrieveValues(fullKey, roots);
 
@@ -111,7 +108,7 @@ export const validateFullRequest = (
     if (normReq !== "" && normReq !== normDb) {
       anomalies.push({
         field: labelIta,
-        value: cleanReqValue !== undefined ? String(cleanReqValue).trim() : "",
+        value: cleanReqValue !== undefined ? String(cleanReqValue).trim() : ""
       });
     }
   }

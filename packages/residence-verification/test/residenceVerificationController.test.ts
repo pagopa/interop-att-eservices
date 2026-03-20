@@ -39,9 +39,15 @@ vi.mock("../src/model/domain/apiConverter.js", async () => ({
   UserModelToApiTipoDatiSoggettiEnte: vi.fn(),
 }));
 
-vi.mock("../src/utilities/validation-helper.js", async () => ({
-  validateFullRequest: vi.fn(() => []),
-}));
+vi.mock("../src/utilities/validation-helper.js", async () => {
+  const actual = await vi.importActual<
+    typeof import("../src/utilities/validation-helper.js")
+  >("../src/utilities/validation-helper.js");
+  return {
+    ...actual,
+    validateFullRequest: vi.fn(() => []),
+  };
+});
 
 const mockUser = {
   id: "internal-id-123",

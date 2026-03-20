@@ -7,19 +7,22 @@ import {
   RichiestaAR002,
   RispostaAR001,
   RispostaAR002OK,
-  TipoParametriRicercaAR001,
+  TipoParametriRicercaAR001
 } from "../model/domain/models.js";
 import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
 import {
   REQ_ITA_TO_ENG,
-  RES_ENG_TO_ITA_KEYS,
+  RES_ENG_TO_ITA_KEYS
 } from "../utilities/residence-mappings.js";
 import { InternalRequestAR002 } from "../model/internal-model.js";
-import { validateFullRequest } from "../utilities/validation-helper.js";
+import {
+  validateFullRequest,
+  getValueByPath
+} from "../utilities/validation-helper.js";
 import { residenceVerificationConfig } from "../config/config.js";
 import {
   requestParamNotValid,
-  userModelNotFound,
+  userModelNotFound
 } from "../exceptions/errors.js";
 
 class ResidenceVerificationController {
@@ -31,8 +34,8 @@ class ResidenceVerificationController {
     return {
       idOp: request.operationId,
       subjects: {
-        subject: data.map(UserModelToApiTipoDatiSoggettiEnte),
-      },
+        subject: data.map(UserModelToApiTipoDatiSoggettiEnte)
+      }
     };
   }
 
@@ -43,7 +46,6 @@ class ResidenceVerificationController {
       request,
       REQ_ITA_TO_ENG
     );
-
     const data = await this.getUserData(internalRequest);
 
     if (data.length === 0) {
@@ -53,6 +55,31 @@ class ResidenceVerificationController {
 
     if (totalAnomalies.length > 0) {
       throw requestParamNotValid(JSON.stringify(totalAnomalies));
+    }
+
+    // Build the set of Italian response keys that correspond to fields present
+    // in the original request, respecting the REQ_ITA_TO_ENG mapping.
+    const allowedItalianKeys = new Set<string>();
+    for (const [itaRequestPath, engRequestPath] of Object.entries(REQ_ITA_TO_ENG)) {
+      const value = getValueByPath(request, itaRequestPath);
+      if (value === undefined || value === null || value === "") continue;
+
+      // Convert English request path → English response path:
+      //   criteria.<field>      → subject.<field>
+      //   check.<rest>          → <rest>  (e.g. check.address.X → address.X)
+      let engResponsePath: string;
+      if (engRequestPath.startsWith("criteria.")) {
+        engResponsePath = "subject." + engRequestPath.slice("criteria.".length);
+      } else if (engRequestPath.startsWith("check.")) {
+        engResponsePath = engRequestPath.slice("check.".length);
+      } else {
+        continue;
+      }
+
+      const itaResponseKey = RES_ENG_TO_ITA_KEYS[engResponsePath];
+      if (itaResponseKey) {
+        allowedItalianKeys.add(itaResponseKey);
+      }
     }
 
     return {
@@ -73,9 +100,10 @@ class ResidenceVerificationController {
             RES_ENG_TO_ITA_KEYS,
             true
           );
-
-          const infoSoggettoEnte = Object.entries(flatItalianObj).map(
-            ([chiave, valore], index) => {
+          logger.info(`flatItalianObj: ${JSON.stringify(flatItalianObj)}`);
+          const infoSoggettoEnte = Object.entries(flatItalianObj)
+            .filter(([chiave]) => allowedItalianKeys.has(chiave))
+            .map(([chiave, valore], index) => {
               const isDate = chiave.toUpperCase().includes("DATA");
 
               return {
@@ -84,15 +112,14 @@ class ResidenceVerificationController {
                 valore: (isDate ? "D" : "A") as "A" | "N" | "S" | "D",
                 valoreTesto: String(valore || ""),
                 valoreData: dataInserimentoResidenza,
-                dettaglio: "",
+                dettaglio: ""
               };
-            }
-          );
+            });
 
           return { infoSoggettoEnte };
-        }),
+        })
       },
-      listaAnomalie: [],
+      listaAnomalie: []
     };
   }
 
