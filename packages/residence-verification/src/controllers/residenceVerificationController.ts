@@ -12,19 +12,19 @@ import {
 import { UserModelToApiTipoDatiSoggettiEnte } from "../model/domain/apiConverter.js";
 import {
   REQ_ITA_TO_ENG,
-  RES_ENG_TO_ITA_KEYS
+  RES_ENG_TO_ITA_KEYS,
 } from "../utilities/residence-mappings.js";
 import { InternalRequestAR002 } from "../model/internal-model.js";
 import {
   validateFullRequest,
   getValueByPath,
-  getUnknownRequestFields
+  getUnknownRequestFields,
 } from "../utilities/validation-helper.js";
 import { residenceVerificationConfig } from "../config/config.js";
 import {
   requestParamNotValid,
   userModelNotFound,
-  unknownRequestField
+  unknownRequestField,
 } from "../exceptions/errors.js";
 
 class ResidenceVerificationController {
@@ -36,8 +36,8 @@ class ResidenceVerificationController {
     return {
       idOp: request.operationId,
       subjects: {
-        subject: data.map(UserModelToApiTipoDatiSoggettiEnte)
-      }
+        subject: data.map(UserModelToApiTipoDatiSoggettiEnte),
+      },
     };
   }
 
@@ -66,30 +66,7 @@ class ResidenceVerificationController {
 
     // Build the set of Italian response keys that correspond to fields present
     // in the original request, respecting the REQ_ITA_TO_ENG mapping.
-    const allowedItalianKeys = new Set<string>();
-    for (const [itaRequestPath, engRequestPath] of Object.entries(
-      REQ_ITA_TO_ENG
-    )) {
-      const value = getValueByPath(request, itaRequestPath);
-      if (value === undefined || value === null || value === "") continue;
-
-      // Convert English request path → English response path:
-      //   criteria.<field>      → subject.<field>
-      //   check.<rest>          → <rest>  (e.g. check.address.X → address.X)
-      let engResponsePath: string;
-      if (engRequestPath.startsWith("criteria.")) {
-        engResponsePath = "subject." + engRequestPath.slice("criteria.".length);
-      } else if (engRequestPath.startsWith("check.")) {
-        engResponsePath = engRequestPath.slice("check.".length);
-      } else {
-        continue;
-      }
-
-      const itaResponseKey = RES_ENG_TO_ITA_KEYS[engResponsePath];
-      if (itaResponseKey) {
-        allowedItalianKeys.add(itaResponseKey);
-      }
-    }
+    const allowedItalianKeys = this.buildAllowedItalianKeys(request);
 
     return {
       idOperazioneANPR: internalRequest.operationId,
@@ -120,14 +97,14 @@ class ResidenceVerificationController {
                 valore: (isDate ? "D" : "A") as "A" | "N" | "S" | "D",
                 valoreTesto: String(valore || ""),
                 valoreData: dataInserimentoResidenza,
-                dettaglio: ""
+                dettaglio: "",
               };
             });
 
           return { infoSoggettoEnte };
-        })
+        }),
       },
-      listaAnomalie: []
+      listaAnomalie: [],
     };
   }
 
@@ -141,6 +118,39 @@ class ResidenceVerificationController {
       logger.error(`Controller Error during getRotatedSeed`, error);
       throw error;
     }
+  }
+
+  private buildAllowedItalianKeys(request: RichiestaAR002): Set<string> {
+    const allowedKeys = new Set<string>();
+    for (const [itaRequestPath, engRequestPath] of Object.entries(
+      REQ_ITA_TO_ENG
+    )) {
+      const value = getValueByPath(request, itaRequestPath);
+      if (value === undefined || value === null || value === "") {
+        continue;
+      }
+
+      // Convert English request path → English response path:
+      //   criteria.<field>  → subject.<field>
+      //   check.<rest>      → <rest>  (e.g. check.address.X → address.X)
+      const engResponsePath: string | null = engRequestPath.startsWith(
+        "criteria."
+      )
+        ? `subject.${engRequestPath.slice("criteria.".length)}`
+        : engRequestPath.startsWith("check.")
+        ? engRequestPath.slice("check.".length)
+        : null;
+
+      if (engResponsePath === null) {
+        continue;
+      }
+
+      const itaResponseKey = RES_ENG_TO_ITA_KEYS[engResponsePath];
+      if (itaResponseKey) {
+        allowedKeys.add(itaResponseKey);
+      }
+    }
+    return allowedKeys;
   }
 
   private async getUserData(

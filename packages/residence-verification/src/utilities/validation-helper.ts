@@ -6,12 +6,16 @@ import { InternalRequestAR002 } from "../model/internal-model.js";
 import { RES_ENG_TO_ITA_KEYS } from "./residence-mappings.js";
 
 const flattenPaths = (obj: any, prefix = ""): string[] => {
-  if (obj === null || obj === undefined) return [];
+  if (obj === null || obj === undefined) {
+    return [];
+  }
   if (typeof obj !== "object" || Array.isArray(obj)) {
     return prefix ? [prefix] : [];
   }
   const entries = Object.entries(obj);
-  if (entries.length === 0) return [];
+  if (entries.length === 0) {
+    return [];
+  }
   return entries.flatMap(([key, value]) =>
     flattenPaths(value, prefix ? `${prefix}.${key}` : key)
   );
@@ -31,7 +35,7 @@ const BOOLEAN_KEYS = [
   "subject.birthDate.noDay",
   "subject.birthDate.noDayMonth",
   "address.address.civicNumber.internalCivic.secondary",
-  "address.address.civicNumber.internalCivic.isolated"
+  "address.address.civicNumber.internalCivic.isolated",
 ];
 
 export const getValueByPath = (obj: any, path: string): any => {
@@ -71,7 +75,7 @@ const resolveRoots = (reqAny: any, userFromDb: any): any => {
     dbSubject: userFromDb.subject || userFromDb,
     reqAddress:
       reqCheckRoot?.address || reqCheckRoot?.residenza || reqCheckRoot,
-    dbAddress: userFromDb.address || userFromDb
+    dbAddress: userFromDb.address || userFromDb,
   };
 };
 
@@ -83,7 +87,7 @@ const retrieveValues = (
     const path = fullKey.replace("subject.", "");
     return {
       reqVal: getValueByPath(roots.reqSubject, path),
-      dbVal: getValueByPath(roots.dbSubject, path)
+      dbVal: getValueByPath(roots.dbSubject, path),
     };
   }
 
@@ -94,7 +98,7 @@ const retrieveValues = (
     const path = fullKey.replace("address.", "");
     return {
       reqVal: getValueByPath(roots.reqAddress, path),
-      dbVal: getValueByPath(roots.dbAddress, path)
+      dbVal: getValueByPath(roots.dbAddress, path),
     };
   }
 
@@ -130,7 +134,7 @@ export const validateFullRequest = (
     if (normReq !== "" && normReq !== normDb) {
       anomalies.push({
         field: labelIta,
-        value: cleanReqValue !== undefined ? String(cleanReqValue).trim() : ""
+        value: cleanReqValue !== undefined ? String(cleanReqValue).trim() : "",
       });
     }
   }
