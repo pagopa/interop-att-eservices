@@ -26,10 +26,7 @@ class ResidenceSubmissionController {
       };
     } catch (error) {
       logger.error(` Error in 'createUser': `, error);
-      return {
-        status: "KO",
-        message: "Errore durante il salvataggio dell'utente.",
-      };
+      throw error;
     }
   }
 
