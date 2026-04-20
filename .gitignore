@@ -6,6 +6,7 @@ package-lock.json
 pnpm-lock.yaml
 .idea/
 packages/*/src/model/generated
+packages/client-anpr-residence-verification-mockup/keys/
 packages/residence-verification/aws.config.local
 packages/residence-verification-direct/aws.config.local
-*.rsa.priv
+*.priv
