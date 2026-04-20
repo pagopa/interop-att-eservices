@@ -38,7 +38,7 @@ const residenceSubissionController = (
         const data: any = await ResidenceSubmissionController.createUser(
           req.body
         );
-        if (!data || data.subjects?.subject?.length === 0) {
+        if (!data) {
           throw userModelNotFound();
         }
         void TrialService.insert(

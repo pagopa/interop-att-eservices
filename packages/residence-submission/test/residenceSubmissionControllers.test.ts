@@ -16,6 +16,14 @@ vi.mock("fs", async () => {
   };
 });
 
+const { mockUserModelNotFound } = vi.hoisted(() => ({
+  mockUserModelNotFound: vi.fn((detail?: string) => {
+    const err = new Error(detail ?? "Data not found");
+    (err as any).code = "userModelNotFound";
+    return err;
+  }),
+}));
+
 vi.mock("pdnd-common", () => ({
   logger: {
     info: vi.fn(),
@@ -31,6 +39,7 @@ vi.mock("pdnd-common", () => ({
     delete: vi.fn(),
   },
   REQ_AR003_ITA_TO_ENG: {},
+  userModelNotFound: mockUserModelNotFound,
 }));
 
 describe("ResidenceSubmissionController", () => {
@@ -121,5 +130,51 @@ describe("ResidenceSubmissionController", () => {
       status: "OK",
       message: "Utente eliminato con successo",
     });
+  });
+
+  it("should re-throw the original error when createUser fails", async () => {
+    const serviceError = new Error("DB connection failed");
+
+    vi.mocked(translateKeys).mockReturnValue({} as InternalRequestAR003);
+    vi.mocked(ResidenceSubmissionService.create).mockRejectedValue(serviceError);
+
+    await expect(
+      ResidenceSubmissionController.createUser({
+        idOperazioneClient: "OP-ERR",
+        soggetto: { codiceFiscale: "RSSMRA80A01H501U" },
+      } as unknown as RichiestaAR003)
+    ).rejects.toThrow("DB connection failed");
+  });
+
+  it("should throw userModelNotFound when updateUser fails", async () => {
+    vi.mocked(translateKeys).mockReturnValue({} as InternalRequestAR003);
+    vi.mocked(ResidenceSubmissionService.updateBySubjectId).mockRejectedValue(
+      new Error("DB error")
+    );
+
+    await expect(
+      ResidenceSubmissionController.updateUser({
+        idOperazioneClient: "OP-ERR",
+        soggetto: { codiceFiscale: "RSSMRA80A01H501U" },
+      } as unknown as RichiestaAR003)
+    ).rejects.toMatchObject({ code: "userModelNotFound" });
+
+    expect(mockUserModelNotFound).toHaveBeenCalledWith(
+      expect.stringContaining("aggiornamento")
+    );
+  });
+
+  it("should throw userModelNotFound when deleteUser fails", async () => {
+    vi.mocked(ResidenceSubmissionService.delete).mockRejectedValue(
+      new Error("DB error")
+    );
+
+    await expect(
+      ResidenceSubmissionController.deleteUser("RSSMRA...")
+    ).rejects.toMatchObject({ code: "userModelNotFound" });
+
+    expect(mockUserModelNotFound).toHaveBeenCalledWith(
+      "Errore durante l'eliminazione dell'utente., utente non trovato"
+    );
   });
 });
